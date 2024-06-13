@@ -21,7 +21,7 @@ spec:
         image: {{.Values.partyrole.image}}
         env:
         - name: RELEASE_NAME
-          value: {{.Release.Name}}
+          value: {{.Release.Name}}           
         - name: COMPONENT_NAME
           value: {{.Release.Name}}-{{.Values.component.name}}
         - name: MONGODB_HOST
@@ -31,15 +31,15 @@ spec:
         - name: MONGODB_DATABASE
           value: {{.Values.mongodb.database}}
         - name: NODE_ENV
-          value: production
+          value: production           
         imagePullPolicy: Always
         ports:
         - name: {{.Release.Name}}-prapi
           containerPort: 8080
         startupProbe:
           httpGet:
-            path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4/partyRole
+            path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4/partyRole 
             port: 8080
           initialDelaySeconds: 10
-          periodSeconds: 5
+          periodSeconds: 5          
           failureThreshold: 30
