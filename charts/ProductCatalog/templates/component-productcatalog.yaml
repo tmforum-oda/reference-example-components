@@ -28,6 +28,13 @@ spec:
       path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4
       developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4/docs
       port: 8080
+    - name: promotionmanagement
+      specification: ["https://raw.githubusercontent.com/tmforum-apis/TMF671_Promotion/master/TMF671-Promotion-v4.0.0.swagger.json"]
+      implementation: {{.Release.Name}}-promgmtapi
+      apitype: openapi
+      path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/promotionManagement/v4
+      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/promotionManagement/v4/docs
+      port: 8080      
     dependentAPIs: 
     - name: party 
       apitype: openapi     
