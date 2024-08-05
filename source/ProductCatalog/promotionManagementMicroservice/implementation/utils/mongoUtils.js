@@ -10,27 +10,89 @@ const MongoClient = require('mongodb').MongoClient;
 
 const {getResponseType, getPayloadType, getTypeDefinition} = require('./swaggerUtils');
 
-var mongodb = null; 
+var mongodb = null;
 
+/* connection helper for running MongoDb from url */
 function connectHelper(callback) {
-  var config = require('../config.json');
+  const database = process.env.MONGODB_DATABASE;
+  const credentials_uri = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${database}`
+  let options = {
+    useNewUrlParser: true
+  };
+  MongoClient.connect(credentials_uri, options, function (err, db) {
+    if (err) {
+      mongodb = null;
+      callback(err,null);
+    } else {
+      mongodb = db.db(database);
+      callback(null,mongodb);
+    }
+  });
+}
 
-  var argv = require('minimist')(process.argv);
-  var dbhost = argv.dbhost ? argv.dbhost: config.db_host;
-  const mongourl = process.env.MONGO_URL || (config.db_prot + "://" + dbhost + ":" + config.db_port + "/" + config.db_name);
- 
-  MongoClient.connect(mongourl, { useNewUrlParser: true }, function (err, db) {
+/* connection helper for running MongoDb in CloudFoundary */
+function connectHelperCF(callback) {
 
+  // Now lets get cfenv and ask it to parse the environment variable
+  var cfenv = require('cfenv');
+
+  // load local VCAP configuration  and service credentials
+  var vcapLocal;
+  try {
+      vcapLocal = require('./vcap-local.json');
+      console.log("Loaded local VCAP");
+  } catch (e) {
+      // console.log(e)
+  }
+
+  const appEnvOpts = vcapLocal ? {
+      vcap: vcapLocal
+  } : {}
+
+  const appEnv = cfenv.getAppEnv(appEnvOpts);
+
+  // Within the application environment (appenv) there's a services object
+  let services = appEnv.services;
+
+  // The services object is a map named by service so we extract the one for MongoDB
+  let mongodb_services = services["compose-for-mongodb"];
+
+  // This check ensures there is a services for MongoDB databases
+  assert(!util.isUndefined(mongodb_services), "App must be bound to compose-for-mongodb service");
+
+  // We now take the first bound MongoDB service and extract it's credentials object
+  let credentials = mongodb_services[0].credentials;
+
+  // We always want to make a validated TLS/SSL connection
+  let options = {
+      ssl: true,
+      sslValidate: true,
+      useNewUrlParser: true
+  };
+
+  // If there is a certificate available, use that, otherwise assume Lets Encrypt certifications.
+  if (credentials.hasOwnProperty("ca_certificate_base64")) {
+      let ca = [new Buffer(credentials.ca_certificate_base64, 'base64')];
+      options.sslCA = ca;
+  }
+
+  // This is the MongoDB connection. From the application environment, we got the
+  // credentials and the credentials contain a URI for the database. Here, we
+  // connect to that URI, and also pass a number of SSL settings to the
+  // call. Among those SSL settings is the SSL CA, into which we pass the array
+  // wrapped and now decoded ca_certificate_base64,
+  MongoClient.connect(credentials.uri, options, function (err, db) {
       if (err) {
         mongodb = null;
         callback(err,null);
       } else {
-        mongodb = db.db("tmf");
+        mongodb = db.db(process.env.MONGODB_DATABASE);
         callback(null,mongodb);
       }
     }
   );
 };
+
 
 
 function getMongoQuery(req) {
