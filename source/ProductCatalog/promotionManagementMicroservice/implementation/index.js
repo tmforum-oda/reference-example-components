@@ -1,5 +1,6 @@
 'use strict';
-
+require("dotenv").config();
+require('./utils/instrumentationUtil').init();
 
 const fs = require('fs'),
       path = require('path'),

@@ -29,8 +29,8 @@ partyrole:
   image: lesterthomas/partyroleapi:1.0
   versionlabel: partyroleapi-1.0
 promotionmgmt:
-  image: lesterthomas/promotionmgmtapi:0.3
-  versionlabel: promotionmgmtapi-0.3
+  image: lesterthomas/promotionmgmtapi:0.5
+  versionlabel: promotionmgmtapi-0.5
   otlp:
     console:
       enabled: false
