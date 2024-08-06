@@ -2,6 +2,8 @@
 #docker push lesterthomas/productcatalogapi --all-tags
 docker buildx build -t "lesterthomas/productcatalogapi:0.4"  --platform "linux/amd64,linux/arm64" -f prodcat-dockerfile . --push
 
+docker buildx build -t "lesterthomas/promotionmgmtapi:0.2"  --platform "linux/amd64,linux/arm64" -f promotionmgmt-dockerfile . --push
+
 #docker build -t lesterthomas/partyroleapi:0.2 -t lesterthomas/partyroleapi:latest -f partyrole-dockerfile .
 #docker push lesterthomas/partyroleapi --all-tags
 docker buildx build -t "lesterthomas/partyroleapi:0.2"  -t "lesterthomas/partyroleapi:latest" --platform "linux/amd64,linux/arm64" -f partyrole-dockerfile . --push
