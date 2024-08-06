@@ -13,7 +13,7 @@ const swaggerUtils = require('../utils/swaggerUtils');
 const notificationUtils = require('../utils/notificationUtils');
 
 // for downstream API calls
-const axios = require('axios');
+const listDownstreamAPI = require('../utils/downstreamAPI').listDownstreamAPI;
 
 const {sendDoc} = require('../utils/mongoUtils');
 
@@ -220,10 +220,8 @@ exports.listCatalog = async function(req, res, next) {
   // Call downstream product catalogs and append the results
   const apiError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal error calling downstream API");
   try {
-    const apiResponse = await axios.get('http://localhost/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog')
-
+    doc = await listDownstreamAPI(doc, req.url)
     // Assuming the API response data needs to be appended to the doc
-    doc = doc.concat(apiResponse.data);        
     doc = cleanPayloadServiceType(doc);
     res.setHeader('X-Total-Count',totalSize);
     res.setHeader('X-Result-Count',doc.length);
