@@ -15,7 +15,7 @@ var mongodb = null;
 /* connection helper for running MongoDb from url */
 function connectHelper(callback) {
   const database = process.env.MONGODB_DATABASE;
-  const credentials_uri = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${database}`
+  const credentials_uri = `mongodb://localhost:27017` //`mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${database}`
   let options = {
     useNewUrlParser: true
   };

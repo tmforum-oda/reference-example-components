@@ -12,6 +12,9 @@ const mongoUtils = require('../utils/mongoUtils');
 const swaggerUtils = require('../utils/swaggerUtils');
 const notificationUtils = require('../utils/notificationUtils');
 
+// for downstream API calls
+const axios = require('axios');
+
 const {sendDoc} = require('../utils/mongoUtils');
 
 const {setBaseProperties, traverse, 
@@ -130,7 +133,7 @@ exports.deleteCatalog = function(req, res, next) {
 
 };
 
-exports.listCatalog = function(req, res, next) {
+exports.listCatalog = async function(req, res, next) {
   /**
    * List or find Catalog objects
    * This operation list or find Catalog entities
@@ -200,44 +203,42 @@ exports.listCatalog = function(req, res, next) {
     res.setHeader('Link',links.join(', '));
   }
 
+  let doc = [];
+  let totalSize=0;
   // Find some documents based on criteria plus attribute selection
-  mongoUtils.connect()
-  .then(db => {
-    db.collection(resourceType).stats()
-    .then(stats => {
-      const totalSize=stats.count;
-      db.collection(resourceType)
-      .find(query.criteria, query.options).toArray()
-      .then(doc => {
-        doc = cleanPayloadServiceType(doc);
-        res.setHeader('X-Total-Count',totalSize);
-        res.setHeader('X-Result-Count',doc.length);
-        var skip = query.options.skip!==undefined ? parseInt(query.options.skip) : 0;
-        var limit;
-        if(query.options.limit!==undefined) limit = parseInt(query.options.limit);        
-        if(limit || skip>0) setLinks(res,query,skip,limit,totalSize);
-
-        var code = 200;
-        if(limit && doc.length<totalSize) code=206;
-        sendDoc(res, code, doc);
-      })
-      .catch(error => {
-        console.log("listCatalog: error=" + error);
-        sendError(res, internalError);
-      })
-    })
-    .catch(error => {
-      console.log("listCatalog: error=" + error);
-      sendError(res, internalError);
-    })
-  })
-  .catch(error => {
+  try {
+    const db = await mongoUtils.connect()
+    const stats = await db.collection(resourceType).stats()
+    totalSize=stats.count;
+    doc = await db.collection(resourceType).find(query.criteria, query.options).toArray();
+  } catch (error) {
     console.log("listCatalog: error=" + error);
     sendError(res, internalError);
-  })
+  }
 
 
+  // Call downstream product catalogs and append the results
+  const apiError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal error calling downstream API");
+  try {
+    const apiResponse = await axios.get('http://localhost/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog')
 
+    // Assuming the API response data needs to be appended to the doc
+    doc = doc.concat(apiResponse.data);        
+    doc = cleanPayloadServiceType(doc);
+    res.setHeader('X-Total-Count',totalSize);
+    res.setHeader('X-Result-Count',doc.length);
+    var skip = query.options.skip!==undefined ? parseInt(query.options.skip) : 0;
+    var limit;
+    if(query.options.limit!==undefined) limit = parseInt(query.options.limit);        
+    if(limit || skip>0) setLinks(res,query,skip,limit,totalSize);
+
+    var code = 200;
+    if(limit && doc.length<totalSize) code=206;
+    sendDoc(res, code, doc);
+  } catch (error) {
+  console.log("listCatalog: downstream API error=" + error);
+    sendError(res, apiError);
+  }
 };
 
 exports.patchCatalog = function(req, res, next) {
