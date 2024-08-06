@@ -1,0 +1,3789 @@
+swagger: "2.0"
+info:
+  description: "This API is used to provide the additional discount, voucher, bonus\
+    \ or gift to the customer who meets the pre-defined criteria. Using promotion,\
+    \ the enterprise is able to attract the users and encourage more consumption,\
+    \ especially continuous purchases. Normally Promotion is not regarded as one type\
+    \ of product or product offering. It is often applied when the customer buys the\
+    \ product offerings with the price or amount surpassing the certain limit"
+  version: "4.1.0"
+  title: "Promotion Management"
+basePath: "/tmf-api/promotionManagement/v4/"
+tags:
+- name: "promotion"
+- name: "notification listeners (client side)"
+- name: "events subscription"
+schemes:
+- "http"
+consumes:
+- "application/json;charset=utf-8"
+produces:
+- "application/json;charset=utf-8"
+paths:
+  /promotion:
+    get:
+      tags:
+      - "promotion"
+      summary: "List or find Promotion objects"
+      description: "This operation list or find Promotion entities"
+      operationId: "listPromotion"
+      parameters:
+      - name: "fields"
+        in: "query"
+        description: "Comma-separated properties to be provided in response"
+        required: false
+        type: "string"
+      - name: "offset"
+        in: "query"
+        description: "Requested index for start of resources to be provided in response"
+        required: false
+        type: "integer"
+      - name: "limit"
+        in: "query"
+        description: "Requested number of resources to be provided in response"
+        required: false
+        type: "integer"
+      responses:
+        200:
+          description: "Success"
+          headers:
+            X-Result-Count:
+              type: "integer"
+              description: "Actual number of items returned in the response body"
+            X-Total-Count:
+              type: "integer"
+              description: "Total number of items matching criteria"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Promotion_Create"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Promotion"
+    post:
+      tags:
+      - "promotion"
+      summary: "Creates a Promotion"
+      description: "This operation creates a Promotion entity."
+      operationId: "createPromotion"
+      parameters:
+      - in: "body"
+        name: "promotion"
+        description: "The Promotion to be created"
+        required: true
+        schema:
+          $ref: "#/definitions/Promotion_Create"
+      responses:
+        201:
+          description: "Created"
+          schema:
+            $ref: "#/definitions/Promotion"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Promotion"
+  /promotion/{id}:
+    get:
+      tags:
+      - "promotion"
+      summary: "Retrieves a Promotion by ID"
+      description: "This operation retrieves a Promotion entity. Attribute selection\
+        \ is enabled for all first level attributes."
+      operationId: "retrievePromotion"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Identifier of the Promotion"
+        required: true
+        type: "string"
+      - name: "fields"
+        in: "query"
+        description: "Comma-separated properties to provide in response"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Promotion"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Promotion"
+    delete:
+      tags:
+      - "promotion"
+      summary: "Deletes a Promotion"
+      description: "This operation deletes a Promotion entity."
+      operationId: "deletePromotion"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Identifier of the Promotion"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: "Deleted"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Promotion"
+    patch:
+      tags:
+      - "promotion"
+      summary: "Updates partially a Promotion"
+      description: "This operation updates partially a Promotion entity."
+      operationId: "patchPromotion"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Identifier of the Promotion"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "promotion"
+        description: "The Promotion to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/Promotion_Update"
+      responses:
+        200:
+          description: "Updated"
+          schema:
+            $ref: "#/definitions/Promotion"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Promotion"
+  /hub:
+    post:
+      tags:
+      - "events subscription"
+      summary: "Register a listener"
+      description: "Sets the communication endpoint address the service instance must\
+        \ use to deliver information about its health state, execution state, failures\
+        \ and metrics."
+      operationId: "registerListener"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "Data containing the callback endpoint to deliver the information"
+        required: true
+        schema:
+          $ref: "#/definitions/EventSubscriptionInput"
+      responses:
+        201:
+          description: "Subscribed"
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "EventsSubscription"
+  /hub/{id}:
+    delete:
+      tags:
+      - "events subscription"
+      summary: "Unregister a listener"
+      description: "Resets the communication endpoint address the service instance\
+        \ must use to deliver information about its health state, execution state,\
+        \ failures and metrics."
+      operationId: "unregisterListener"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id of the registered listener"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: "Deleted"
+        400:
+          description: "Bad request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "EventsSubscription"
+  /listener/promotionCreateEvent:
+    post:
+      tags:
+      - "notification listeners (client side)"
+      summary: "Client listener for entity PromotionCreateEvent"
+      description: "Example of a client listener for receiving the notification PromotionCreateEvent"
+      operationId: "listenToPromotionCreateEvent"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "The event data"
+        required: true
+        schema:
+          $ref: "#/definitions/PromotionCreateEvent"
+      responses:
+        201:
+          description: "Notified"
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "NotificationListenersClientSide"
+  /listener/promotionDeleteEvent:
+    post:
+      tags:
+      - "notification listeners (client side)"
+      summary: "Client listener for entity PromotionDeleteEvent"
+      description: "Example of a client listener for receiving the notification PromotionDeleteEvent"
+      operationId: "listenToPromotionDeleteEvent"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "The event data"
+        required: true
+        schema:
+          $ref: "#/definitions/PromotionDeleteEvent"
+      responses:
+        201:
+          description: "Notified"
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "NotificationListenersClientSide"
+  /listener/promotionAttributeValueChangeEvent:
+    post:
+      tags:
+      - "notification listeners (client side)"
+      summary: "Client listener for entity PromotionAttributeValueChangeEvent"
+      description: "Example of a client listener for receiving the notification PromotionAttributeValueChangeEvent"
+      operationId: "listenToPromotionAttributeValueChangeEvent"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "The event data"
+        required: true
+        schema:
+          $ref: "#/definitions/PromotionAttributeValueChangeEvent"
+      responses:
+        201:
+          description: "Notified"
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "NotificationListenersClientSide"
+  /listener/promotionStateChangeEvent:
+    post:
+      tags:
+      - "notification listeners (client side)"
+      summary: "Client listener for entity PromotionStateChangeEvent"
+      description: "Example of a client listener for receiving the notification PromotionStateChangeEvent"
+      operationId: "listenToPromotionStateChangeEvent"
+      parameters:
+      - in: "body"
+        name: "data"
+        description: "The event data"
+        required: true
+        schema:
+          $ref: "#/definitions/PromotionStateChangeEvent"
+      responses:
+        201:
+          description: "Notified"
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        400:
+          description: "Bad Request"
+          schema:
+            $ref: "#/definitions/Error"
+        401:
+          description: "Unauthorized"
+          schema:
+            $ref: "#/definitions/Error"
+        403:
+          description: "Forbidden"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Method Not allowed"
+          schema:
+            $ref: "#/definitions/Error"
+        409:
+          description: "Conflict"
+          schema:
+            $ref: "#/definitions/Error"
+        500:
+          description: "Internal Server Error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "NotificationListenersClientSide"
+definitions:
+  Addressable:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "unique identifier"
+      href:
+        type: "string"
+        format: "uri"
+        description: "Hyperlink reference"
+    description: "Base schema for adressable entities"
+  Attachment:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        example: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+        description: "Unique identifier for this particular attachment"
+      href:
+        type: "string"
+        format: "uri"
+        example: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        description: "URI for this Attachment"
+      attachmentType:
+        type: "string"
+        example: "video"
+        description: "Attachment type such as video, picture"
+      content:
+        type: "string"
+        format: "base64"
+        description: "The actual contents of the attachment object, if embedded, encoded\
+          \ as base64"
+      description:
+        type: "string"
+        example: "Photograph of the Product"
+        description: "A narrative text describing the content of the attachment"
+      mimeType:
+        type: "string"
+        description: "Attachment mime type such as extension file for video, picture\
+          \ and document"
+      name:
+        type: "string"
+        description: "The name of the attachment"
+      url:
+        type: "string"
+        format: "uri"
+        example: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        description: "Uniform Resource Locator, is a web page address (a subset of\
+          \ URI)"
+      size:
+        description: "The size of the attachment."
+        $ref: "#/definitions/Quantity"
+      validFor:
+        description: "The period of time for which the attachment is valid"
+        $ref: "#/definitions/TimePeriod"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class Extensible name"
+    description: "Complements the description of an element (for instance a product)\
+      \ through video, pictures..."
+  AttachmentRef:
+    type: "object"
+    required:
+    - "id"
+    properties:
+      id:
+        type: "string"
+        description: "Unique-Identifier for this attachment"
+      href:
+        type: "string"
+        format: "uri"
+        description: "URL serving as reference for the attachment resource"
+      description:
+        type: "string"
+        description: "A narrative text describing the content of the attachment"
+      name:
+        type: "string"
+        description: "Name of the related entity."
+      url:
+        type: "string"
+        format: "uri"
+        description: "Link to the attachment media/content"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class Extensible name"
+      '@referredType':
+        type: "string"
+        description: "The actual type of the target instance when needed for disambiguation."
+    description: "Attachment reference. An attachment complements the description\
+      \ of an element (for instance a product) through video, pictures"
+  AttachmentRefOrValue:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        example: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+        description: "Unique identifier for this particular attachment"
+      href:
+        type: "string"
+        format: "uri"
+        example: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        description: "URI for this Attachment"
+      attachmentType:
+        type: "string"
+        example: "video"
+        description: "Attachment type such as video, picture"
+      content:
+        type: "string"
+        format: "base64"
+        description: "The actual contents of the attachment object, if embedded, encoded\
+          \ as base64"
+      description:
+        type: "string"
+        example: "Photograph of the Product"
+        description: "A narrative text describing the content of the attachment"
+      mimeType:
+        type: "string"
+        description: "Attachment mime type such as extension file for video, picture\
+          \ and document"
+      name:
+        type: "string"
+        description: "The name of the attachment"
+      url:
+        type: "string"
+        format: "uri"
+        example: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        description: "Uniform Resource Locator, is a web page address (a subset of\
+          \ URI)"
+      size:
+        description: "The size of the attachment."
+        $ref: "#/definitions/Quantity"
+      validFor:
+        description: "The period of time for which the attachment is valid"
+        $ref: "#/definitions/TimePeriod"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class Extensible name"
+      '@referredType':
+        type: "string"
+        description: "The actual type of the target instance when needed for disambiguation."
+    description: "An attachment by value or by reference. An attachment complements\
+      \ the description of an element, for example through a document, a video, a\
+      \ picture."
+    example:
+      '@referredType': "@referredType"
+      attachmentType: "video"
+      validFor:
+        startDateTime: "1985-04-12T23:20:50.52Z"
+        endDateTime: "1985-04-12T23:20:50.52Z"
+      '@type': "@type"
+      description: "Photograph of the Product"
+      mimeType: "mimeType"
+      content: "content"
+      url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+      size:
+        amount: 0.8008282
+        units: "units"
+      '@baseType': "@baseType"
+      name: "name"
+      id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+      href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+      '@schemaLocation': "http://example.com/aeiou"
+  Entity:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "unique identifier"
+      href:
+        type: "string"
+        format: "uri"
+        description: "Hyperlink reference"
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class Extensible name"
+    description: "Base entity schema for use in TMForum Open-APIs"
+  EntityRef:
+    type: "object"
+    required:
+    - "id"
+    properties:
+      id:
+        type: "string"
+        description: "unique identifier"
+      href:
+        type: "string"
+        format: "uri"
+        description: "Hyperlink reference"
+      name:
+        type: "string"
+        description: "Name of the related entity."
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class Extensible name"
+      '@referredType':
+        type: "string"
+        description: "The actual type of the target instance when needed for disambiguation."
+    description: "Entity reference schema to be use for all entityRef class."
+    example:
+      '@referredType': "@referredType"
+      '@baseType': "@baseType"
+      '@type': "@type"
+      name: "name"
+      id: "id"
+      href: "http://example.com/aeiou"
+      '@schemaLocation': "http://example.com/aeiou"
+  Extensible:
+    type: "object"
+    properties:
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class"
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class Extensible name"
+    description: "Base Extensible schema for use in TMForum Open-APIs"
+  Promotion:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "Unique identifier of promotion."
+      href:
+        type: "string"
+        description: "Hyperlink to access the promotion."
+      description:
+        type: "string"
+        description: "Details about the purpose of this promotion."
+      lastUpdate:
+        type: "string"
+        format: "date-time"
+        description: "Latest update date of promotion."
+      lifecycleStatus:
+        type: "string"
+        description: "Value of promotion status. Our suggestion would be: draft/test/waitForApproval/release/suspend/retirement."
+      name:
+        type: "string"
+        description: "Name of promotion."
+      promotionType:
+        type: "string"
+        description: "Type of promotion. The basic type are Award/Discount/Reduction."
+      attachment:
+        type: "array"
+        items:
+          $ref: "#/definitions/AttachmentRefOrValue"
+      pattern:
+        type: "array"
+        items:
+          $ref: "#/definitions/PromotionPattern"
+      validFor:
+        description: "The period for which the promotion is valid."
+        $ref: "#/definitions/TimePeriod"
+      '@baseType':
+        type: "string"
+        description: "The base type for use in polymorphic collections."
+      '@schemaLocation':
+        type: "string"
+        description: "A link to the schema describing a resource (for type extension)."
+      '@type':
+        type: "string"
+        description: "The class type of the actual resource (for type extension)."
+    description: "Promotion is used to provide the additional discount, voucher, bonus\
+      \ or gift to the customer who meets the pre-defined criteria. Using promotion,\
+      \ the enterprise is able to attract the users and encourage more consumption,\
+      \ especially continuous purchases. Normally Promotion is not regarded as one\
+      \ type of product or product offering. It is often applied when the customer\
+      \ buys the product offerings with the price or amount surpassing the certain\
+      \ limit."
+    example:
+      promotionType: "promotionType"
+      lifecycleStatus: "lifecycleStatus"
+      validFor:
+        startDateTime: "1985-04-12T23:20:50.52Z"
+        endDateTime: "1985-04-12T23:20:50.52Z"
+      '@type': "@type"
+      pattern:
+      - criteriaGroup:
+        - groupName: "groupName"
+          '@baseType': "@baseType"
+          criteria:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          '@type': "@type"
+          id: "id"
+          criteriaLogicalRelationship: "criteriaLogicalRelationship"
+          '@schemaLocation': "@schemaLocation"
+        - groupName: "groupName"
+          '@baseType': "@baseType"
+          criteria:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          '@type': "@type"
+          id: "id"
+          criteriaLogicalRelationship: "criteriaLogicalRelationship"
+          '@schemaLocation': "@schemaLocation"
+        '@baseType': "@baseType"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        name: "name"
+        description: "description"
+        action:
+        - actionType: "actionType"
+          actionEntityRef:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "http://example.com/aeiou"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          actionValue: "actionValue"
+          '@type': "@type"
+          id: "id"
+          '@schemaLocation': "@schemaLocation"
+        - actionType: "actionType"
+          actionEntityRef:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "http://example.com/aeiou"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          actionValue: "actionValue"
+          '@type': "@type"
+          id: "id"
+          '@schemaLocation': "@schemaLocation"
+        id: "id"
+        priority: 6
+        '@schemaLocation': "@schemaLocation"
+        criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+      - criteriaGroup:
+        - groupName: "groupName"
+          '@baseType': "@baseType"
+          criteria:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          '@type': "@type"
+          id: "id"
+          criteriaLogicalRelationship: "criteriaLogicalRelationship"
+          '@schemaLocation': "@schemaLocation"
+        - groupName: "groupName"
+          '@baseType': "@baseType"
+          criteria:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          '@type': "@type"
+          id: "id"
+          criteriaLogicalRelationship: "criteriaLogicalRelationship"
+          '@schemaLocation': "@schemaLocation"
+        '@baseType': "@baseType"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        name: "name"
+        description: "description"
+        action:
+        - actionType: "actionType"
+          actionEntityRef:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "http://example.com/aeiou"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          actionValue: "actionValue"
+          '@type': "@type"
+          id: "id"
+          '@schemaLocation': "@schemaLocation"
+        - actionType: "actionType"
+          actionEntityRef:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "http://example.com/aeiou"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          actionValue: "actionValue"
+          '@type': "@type"
+          id: "id"
+          '@schemaLocation': "@schemaLocation"
+        id: "id"
+        priority: 6
+        '@schemaLocation': "@schemaLocation"
+        criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+      description: "description"
+      attachment:
+      - '@referredType': "@referredType"
+        attachmentType: "video"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        description: "Photograph of the Product"
+        mimeType: "mimeType"
+        content: "content"
+        url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        size:
+          amount: 0.8008282
+          units: "units"
+        '@baseType': "@baseType"
+        name: "name"
+        id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+        href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        '@schemaLocation': "http://example.com/aeiou"
+      - '@referredType': "@referredType"
+        attachmentType: "video"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        description: "Photograph of the Product"
+        mimeType: "mimeType"
+        content: "content"
+        url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        size:
+          amount: 0.8008282
+          units: "units"
+        '@baseType': "@baseType"
+        name: "name"
+        id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+        href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        '@schemaLocation': "http://example.com/aeiou"
+      '@baseType': "@baseType"
+      lastUpdate: "2000-01-23T04:56:07.000+00:00"
+      name: "name"
+      id: "id"
+      href: "href"
+      '@schemaLocation': "@schemaLocation"
+  Promotion_Create:
+    type: "object"
+    required:
+    - "name"
+    properties:
+      description:
+        type: "string"
+        description: "Details about the purpose of this promotion."
+      lastUpdate:
+        type: "string"
+        format: "date-time"
+        description: "Latest update date of promotion."
+      lifecycleStatus:
+        type: "string"
+        description: "Value of promotion status. Our suggestion would be: draft/test/waitForApproval/release/suspend/retirement."
+      name:
+        type: "string"
+        description: "Name of promotion."
+      promotionType:
+        type: "string"
+        description: "Type of promotion. The basic type are Award/Discount/Reduction."
+      attachment:
+        type: "array"
+        items:
+          $ref: "#/definitions/AttachmentRefOrValue"
+      pattern:
+        type: "array"
+        items:
+          $ref: "#/definitions/PromotionPattern"
+      validFor:
+        description: "The period for which the promotion is valid."
+        $ref: "#/definitions/TimePeriod"
+      '@baseType':
+        type: "string"
+        description: "The base type for use in polymorphic collections."
+      '@schemaLocation':
+        type: "string"
+        description: "A link to the schema describing a resource (for type extension)."
+      '@type':
+        type: "string"
+        description: "The class type of the actual resource (for type extension)."
+    description: "Promotion is used to provide the additional discount, voucher, bonus\
+      \ or gift to the customer who meets the pre-defined criteria. Using promotion,\
+      \ the enterprise is able to attract the users and encourage more consumption,\
+      \ especially continuous purchases. Normally Promotion is not regarded as one\
+      \ type of product or product offering. It is often applied when the customer\
+      \ buys the product offerings with the price or amount surpassing the certain\
+      \ limit.\nSkipped properties: id,href"
+    example:
+      promotionType: "promotionType"
+      lifecycleStatus: "lifecycleStatus"
+      attachment:
+      - '@referredType': "@referredType"
+        attachmentType: "video"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        description: "Photograph of the Product"
+        mimeType: "mimeType"
+        content: "content"
+        url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        size:
+          amount: 0.8008282
+          units: "units"
+        '@baseType': "@baseType"
+        name: "name"
+        id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+        href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        '@schemaLocation': "http://example.com/aeiou"
+      - '@referredType': "@referredType"
+        attachmentType: "video"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        description: "Photograph of the Product"
+        mimeType: "mimeType"
+        content: "content"
+        url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        size:
+          amount: 0.8008282
+          units: "units"
+        '@baseType': "@baseType"
+        name: "name"
+        id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+        href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        '@schemaLocation': "http://example.com/aeiou"
+      '@baseType': "@baseType"
+      validFor:
+        startDateTime: "1985-04-12T23:20:50.52Z"
+        endDateTime: "1985-04-12T23:20:50.52Z"
+      '@type': "@type"
+      lastUpdate: "2000-01-23T04:56:07.000+00:00"
+      name: "name"
+      pattern:
+      - criteriaGroup:
+        - groupName: "groupName"
+          '@baseType': "@baseType"
+          criteria:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          '@type': "@type"
+          id: "id"
+          criteriaLogicalRelationship: "criteriaLogicalRelationship"
+          '@schemaLocation': "@schemaLocation"
+        - groupName: "groupName"
+          '@baseType': "@baseType"
+          criteria:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          '@type': "@type"
+          id: "id"
+          criteriaLogicalRelationship: "criteriaLogicalRelationship"
+          '@schemaLocation': "@schemaLocation"
+        '@baseType': "@baseType"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        name: "name"
+        description: "description"
+        action:
+        - actionType: "actionType"
+          actionEntityRef:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "http://example.com/aeiou"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          actionValue: "actionValue"
+          '@type': "@type"
+          id: "id"
+          '@schemaLocation': "@schemaLocation"
+        - actionType: "actionType"
+          actionEntityRef:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "http://example.com/aeiou"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          actionValue: "actionValue"
+          '@type': "@type"
+          id: "id"
+          '@schemaLocation': "@schemaLocation"
+        id: "id"
+        priority: 6
+        '@schemaLocation': "@schemaLocation"
+        criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+      - criteriaGroup:
+        - groupName: "groupName"
+          '@baseType': "@baseType"
+          criteria:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          '@type': "@type"
+          id: "id"
+          criteriaLogicalRelationship: "criteriaLogicalRelationship"
+          '@schemaLocation': "@schemaLocation"
+        - groupName: "groupName"
+          '@baseType': "@baseType"
+          criteria:
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          - '@baseType': "@baseType"
+            '@type': "@type"
+            criteriaOperator: "criteriaOperator"
+            criteriaParameter: "criteriaParameter"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+            criteriaValue: "criteriaValue"
+          '@type': "@type"
+          id: "id"
+          criteriaLogicalRelationship: "criteriaLogicalRelationship"
+          '@schemaLocation': "@schemaLocation"
+        '@baseType': "@baseType"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        name: "name"
+        description: "description"
+        action:
+        - actionType: "actionType"
+          actionEntityRef:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "http://example.com/aeiou"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          actionValue: "actionValue"
+          '@type': "@type"
+          id: "id"
+          '@schemaLocation': "@schemaLocation"
+        - actionType: "actionType"
+          actionEntityRef:
+            '@referredType': "@referredType"
+            '@baseType': "@baseType"
+            '@type': "@type"
+            name: "name"
+            id: "id"
+            href: "http://example.com/aeiou"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          actionValue: "actionValue"
+          '@type': "@type"
+          id: "id"
+          '@schemaLocation': "@schemaLocation"
+        id: "id"
+        priority: 6
+        '@schemaLocation': "@schemaLocation"
+        criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+      description: "description"
+      '@schemaLocation': "@schemaLocation"
+  Promotion_Update:
+    type: "object"
+    properties:
+      description:
+        type: "string"
+        description: "Details about the purpose of this promotion."
+      lastUpdate:
+        type: "string"
+        format: "date-time"
+        description: "Latest update date of promotion."
+      lifecycleStatus:
+        type: "string"
+        description: "Value of promotion status. Our suggestion would be: draft/test/waitForApproval/release/suspend/retirement."
+      name:
+        type: "string"
+        description: "Name of promotion."
+      promotionType:
+        type: "string"
+        description: "Type of promotion. The basic type are Award/Discount/Reduction."
+      attachment:
+        type: "array"
+        items:
+          $ref: "#/definitions/AttachmentRefOrValue"
+      validFor:
+        description: "The period for which the promotion is valid."
+        $ref: "#/definitions/TimePeriod"
+    description: "Promotion is used to provide the additional discount, voucher, bonus\
+      \ or gift to the customer who meets the pre-defined criteria. Using promotion,\
+      \ the enterprise is able to attract the users and encourage more consumption,\
+      \ especially continuous purchases. Normally Promotion is not regarded as one\
+      \ type of product or product offering. It is often applied when the customer\
+      \ buys the product offerings with the price or amount surpassing the certain\
+      \ limit.\nSkipped properties: id,href,pattern,@baseType,@type,@schemaLocation"
+    example:
+      promotionType: "promotionType"
+      lifecycleStatus: "lifecycleStatus"
+      attachment:
+      - '@referredType': "@referredType"
+        attachmentType: "video"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        description: "Photograph of the Product"
+        mimeType: "mimeType"
+        content: "content"
+        url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        size:
+          amount: 0.8008282
+          units: "units"
+        '@baseType': "@baseType"
+        name: "name"
+        id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+        href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        '@schemaLocation': "http://example.com/aeiou"
+      - '@referredType': "@referredType"
+        attachmentType: "video"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        description: "Photograph of the Product"
+        mimeType: "mimeType"
+        content: "content"
+        url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        size:
+          amount: 0.8008282
+          units: "units"
+        '@baseType': "@baseType"
+        name: "name"
+        id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+        href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+        '@schemaLocation': "http://example.com/aeiou"
+      validFor:
+        startDateTime: "1985-04-12T23:20:50.52Z"
+        endDateTime: "1985-04-12T23:20:50.52Z"
+      lastUpdate: "2000-01-23T04:56:07.000+00:00"
+      name: "name"
+      description: "description"
+  PromotionAction:
+    type: "object"
+    required:
+    - "actionType"
+    properties:
+      id:
+        type: "string"
+        description: "Unique identifier."
+      actionType:
+        type: "string"
+        description: "Action type can be one of the following: voice (minute), data\
+          \ (MB), data (GB), SMS, bonus point, physical gift, voucher, promotion code,\
+          \ an existing offering, currency."
+      actionValue:
+        type: "string"
+        description: "When the Promotion type is 1: Award, it means the amount or\
+          \ value of the awards decided by actionType, such as: Amount of gift, Amount\
+          \ of bonus, Value of discount;  \n • When the Promotion type is 2: Discount,\
+          \ it means the value of the discount;  \n • When the Promotion type is 3:\
+          \ reduction, it means the value of the reduced money."
+      actionEntityRef:
+        description: "It refers to the entity which is impacted by the promotion action.\
+          \ \n • When the Promotion type is 1: Award, the actionEntityRef is the party\
+          \ account; \n • When the Promotion type is 2: Discount, it is the product\
+          \ offering; \n • When the Promotion type is 3: Reduction, it is the product\
+          \ offering also."
+        $ref: "#/definitions/EntityRef"
+      '@baseType':
+        type: "string"
+        description: "The base type for use in polymorphic collections"
+      '@schemaLocation':
+        type: "string"
+        description: "A link to the schema describing a resource (for type extension)."
+      '@type':
+        type: "string"
+        description: "The class type of the actual resource (for type extension)."
+    description: "Action of the promotion. When the customer meets the conditions\
+      \ in the promotion pattern, the customer can be given the benefits in the action."
+    example:
+      actionType: "actionType"
+      actionEntityRef:
+        '@referredType': "@referredType"
+        '@baseType': "@baseType"
+        '@type': "@type"
+        name: "name"
+        id: "id"
+        href: "http://example.com/aeiou"
+        '@schemaLocation': "http://example.com/aeiou"
+      '@baseType': "@baseType"
+      actionValue: "actionValue"
+      '@type': "@type"
+      id: "id"
+      '@schemaLocation': "@schemaLocation"
+  PromotionCriteria:
+    type: "object"
+    required:
+    - "criteriaOperator"
+    - "criteriaParameter"
+    - "criteriaValue"
+    properties:
+      id:
+        type: "string"
+        description: "Unique identifier."
+      criteriaOperator:
+        type: "string"
+        description: "Logic operator of this criteria instruction: '=' or '>' or '<'\
+          \ or '>=' or '<=' or '<>'."
+      criteriaParameter:
+        type: "string"
+        description: "The parameter (factor) of the criteria.The basic factors are\
+          \ abstracted from these data sources.There are several detail parameters."
+      criteriaValue:
+        type: "string"
+        description: "The value is filled for the comparison of the criteria."
+      '@baseType':
+        type: "string"
+        description: "The base type for use in polymorphic collections"
+      '@schemaLocation':
+        type: "string"
+        description: "A link to the schema describing a resource (for type extension)."
+      '@type':
+        type: "string"
+        description: "The class type of the actual resource (for type extension)."
+    description: "Set of criteria to be followed by all parties."
+    example:
+      '@baseType': "@baseType"
+      '@type': "@type"
+      criteriaOperator: "criteriaOperator"
+      criteriaParameter: "criteriaParameter"
+      id: "id"
+      '@schemaLocation': "@schemaLocation"
+      criteriaValue: "criteriaValue"
+  PromotionCriteriaGroup:
+    type: "object"
+    required:
+    - "criteria"
+    properties:
+      id:
+        type: "string"
+        description: "Unique Identifier"
+      criteriaLogicalRelationship:
+        type: "string"
+        description: "Logical relation followed by all criteria."
+      groupName:
+        type: "string"
+        description: "Name of the group to be easily identified"
+      criteria:
+        type: "array"
+        items:
+          $ref: "#/definitions/PromotionCriteria"
+        minItems: 1
+      '@baseType':
+        type: "string"
+        description: "The base type for use in polymorphic collections"
+      '@schemaLocation':
+        type: "string"
+        description: "A link to the schema describing a resource (for type extension)."
+      '@type':
+        type: "string"
+        description: "The class type of the actual resource (for type extension)."
+    description: "Set of group criteria to promotion. Fulfilling these criteria, parties\
+      \ will receice benefits"
+    example:
+      groupName: "groupName"
+      '@baseType': "@baseType"
+      criteria:
+      - '@baseType': "@baseType"
+        '@type': "@type"
+        criteriaOperator: "criteriaOperator"
+        criteriaParameter: "criteriaParameter"
+        id: "id"
+        '@schemaLocation': "@schemaLocation"
+        criteriaValue: "criteriaValue"
+      - '@baseType': "@baseType"
+        '@type': "@type"
+        criteriaOperator: "criteriaOperator"
+        criteriaParameter: "criteriaParameter"
+        id: "id"
+        '@schemaLocation': "@schemaLocation"
+        criteriaValue: "criteriaValue"
+      '@type': "@type"
+      id: "id"
+      criteriaLogicalRelationship: "criteriaLogicalRelationship"
+      '@schemaLocation': "@schemaLocation"
+  PromotionPattern:
+    type: "object"
+    required:
+    - "action"
+    - "criteriaGroup"
+    properties:
+      id:
+        type: "string"
+        description: "Unique identifier of promotion pattern."
+      criteriaGroupLogicalRelationship:
+        type: "string"
+        description: "Logical relation followed by the criteria group."
+      description:
+        type: "string"
+        description: "Small description to clarify the pattern details."
+      name:
+        type: "string"
+        description: "Alias to promotion pattern. This way is easily mentioned."
+      priority:
+        type: "integer"
+        description: "Priority. Smaller number means high."
+      action:
+        type: "array"
+        items:
+          $ref: "#/definitions/PromotionAction"
+        minItems: 1
+      criteriaGroup:
+        type: "array"
+        items:
+          $ref: "#/definitions/PromotionCriteriaGroup"
+        minItems: 1
+      validFor:
+        description: "The period  for which the promotion pattern is valid."
+        $ref: "#/definitions/TimePeriod"
+      '@baseType':
+        type: "string"
+        description: "The base type for use in polymorphic collections"
+      '@schemaLocation':
+        type: "string"
+        description: "A link to the schema describing a resource (for type extension)."
+      '@type':
+        type: "string"
+        description: "The class type of the actual resource (for type extension)."
+    description: "Contains the conditions and benefits of the promotion toan eligible\
+      \ party"
+    example:
+      criteriaGroup:
+      - groupName: "groupName"
+        '@baseType': "@baseType"
+        criteria:
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          criteriaOperator: "criteriaOperator"
+          criteriaParameter: "criteriaParameter"
+          id: "id"
+          '@schemaLocation': "@schemaLocation"
+          criteriaValue: "criteriaValue"
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          criteriaOperator: "criteriaOperator"
+          criteriaParameter: "criteriaParameter"
+          id: "id"
+          '@schemaLocation': "@schemaLocation"
+          criteriaValue: "criteriaValue"
+        '@type': "@type"
+        id: "id"
+        criteriaLogicalRelationship: "criteriaLogicalRelationship"
+        '@schemaLocation': "@schemaLocation"
+      - groupName: "groupName"
+        '@baseType': "@baseType"
+        criteria:
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          criteriaOperator: "criteriaOperator"
+          criteriaParameter: "criteriaParameter"
+          id: "id"
+          '@schemaLocation': "@schemaLocation"
+          criteriaValue: "criteriaValue"
+        - '@baseType': "@baseType"
+          '@type': "@type"
+          criteriaOperator: "criteriaOperator"
+          criteriaParameter: "criteriaParameter"
+          id: "id"
+          '@schemaLocation': "@schemaLocation"
+          criteriaValue: "criteriaValue"
+        '@type': "@type"
+        id: "id"
+        criteriaLogicalRelationship: "criteriaLogicalRelationship"
+        '@schemaLocation': "@schemaLocation"
+      '@baseType': "@baseType"
+      validFor:
+        startDateTime: "1985-04-12T23:20:50.52Z"
+        endDateTime: "1985-04-12T23:20:50.52Z"
+      '@type': "@type"
+      name: "name"
+      description: "description"
+      action:
+      - actionType: "actionType"
+        actionEntityRef:
+          '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "http://example.com/aeiou"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@baseType': "@baseType"
+        actionValue: "actionValue"
+        '@type': "@type"
+        id: "id"
+        '@schemaLocation': "@schemaLocation"
+      - actionType: "actionType"
+        actionEntityRef:
+          '@referredType': "@referredType"
+          '@baseType': "@baseType"
+          '@type': "@type"
+          name: "name"
+          id: "id"
+          href: "http://example.com/aeiou"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@baseType': "@baseType"
+        actionValue: "actionValue"
+        '@type': "@type"
+        id: "id"
+        '@schemaLocation': "@schemaLocation"
+      id: "id"
+      priority: 6
+      '@schemaLocation': "@schemaLocation"
+      criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+  Quantity:
+    type: "object"
+    properties:
+      amount:
+        type: "number"
+        format: "float"
+        description: "Numeric value in a given unit"
+        default: 1.0
+      units:
+        type: "string"
+        description: "Unit"
+    description: "An amount in a given unit"
+    example:
+      amount: 0.8008282
+      units: "units"
+  TimePeriod:
+    type: "object"
+    properties:
+      endDateTime:
+        type: "string"
+        format: "date-time"
+        example: "1985-04-12T23:20:50.52Z"
+        description: "End of the time period, using IETC-RFC-3339 format"
+      startDateTime:
+        type: "string"
+        format: "date-time"
+        example: "1985-04-12T23:20:50.52Z"
+        description: "Start of the time period, using IETC-RFC-3339 format"
+    description: "A period of time, either as a deadline (endDateTime only) a startDateTime\
+      \ only, or both"
+    example:
+      startDateTime: "1985-04-12T23:20:50.52Z"
+      endDateTime: "1985-04-12T23:20:50.52Z"
+  EventSubscription:
+    type: "object"
+    required:
+    - "callback"
+    - "id"
+    properties:
+      id:
+        type: "string"
+        description: "Id of the listener"
+      callback:
+        type: "string"
+        description: "The callback being registered."
+      query:
+        type: "string"
+        description: "additional data to be passed"
+    description: "Sets the communication endpoint address the service instance must\
+      \ use to deliver notification information"
+    example:
+      query: "query"
+      callback: "callback"
+      id: "id"
+  EventSubscriptionInput:
+    type: "object"
+    required:
+    - "callback"
+    properties:
+      callback:
+        type: "string"
+        description: "The callback being registered."
+      query:
+        type: "string"
+        description: "additional data to be passed"
+    description: "Sets the communication endpoint address the service instance must\
+      \ use to deliver notification information"
+    example:
+      query: "query"
+      callback: "callback"
+  PromotionCreateEvent:
+    type: "object"
+    properties:
+      event:
+        description: "The event payload linked to the involved resource object"
+        $ref: "#/definitions/PromotionCreateEventPayload"
+      eventId:
+        type: "string"
+        description: "The identifier of the notification."
+      eventTime:
+        type: "string"
+        format: "date-time"
+        description: "Time of the event occurrence."
+      eventType:
+        type: "string"
+        description: "The type of the notification."
+      correlationId:
+        type: "string"
+        description: "The correlation id for this event."
+      domain:
+        type: "string"
+        description: "The domain of the event."
+      title:
+        type: "string"
+        description: "The title of the event."
+      description:
+        type: "string"
+        description: "An explnatory of the event."
+      priority:
+        type: "string"
+        description: "A priority."
+      timeOcurred:
+        type: "string"
+        format: "date-time"
+        description: "The time the event occured."
+    description: "The notification data structure"
+    example:
+      eventId: "eventId"
+      domain: "domain"
+      eventTime: "2000-01-23T04:56:07.000+00:00"
+      description: "description"
+      correlationId: "correlationId"
+      eventType: "eventType"
+      event:
+        promotion:
+          promotionType: "promotionType"
+          lifecycleStatus: "lifecycleStatus"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          pattern:
+          - criteriaGroup:
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            '@baseType': "@baseType"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            name: "name"
+            description: "description"
+            action:
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            id: "id"
+            priority: 6
+            '@schemaLocation': "@schemaLocation"
+            criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+          - criteriaGroup:
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            '@baseType': "@baseType"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            name: "name"
+            description: "description"
+            action:
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            id: "id"
+            priority: 6
+            '@schemaLocation': "@schemaLocation"
+            criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+          description: "description"
+          attachment:
+          - '@referredType': "@referredType"
+            attachmentType: "video"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            description: "Photograph of the Product"
+            mimeType: "mimeType"
+            content: "content"
+            url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            size:
+              amount: 0.8008282
+              units: "units"
+            '@baseType': "@baseType"
+            name: "name"
+            id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+            href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            attachmentType: "video"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            description: "Photograph of the Product"
+            mimeType: "mimeType"
+            content: "content"
+            url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            size:
+              amount: 0.8008282
+              units: "units"
+            '@baseType': "@baseType"
+            name: "name"
+            id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+            href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          lastUpdate: "2000-01-23T04:56:07.000+00:00"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+      title: "title"
+      priority: "priority"
+      timeOcurred: "2000-01-23T04:56:07.000+00:00"
+  PromotionCreateEventPayload:
+    type: "object"
+    properties:
+      promotion:
+        description: "The involved resource data for the event"
+        $ref: "#/definitions/Promotion"
+    description: "The event data structure"
+    example:
+      promotion:
+        promotionType: "promotionType"
+        lifecycleStatus: "lifecycleStatus"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        pattern:
+        - criteriaGroup:
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          '@baseType': "@baseType"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          name: "name"
+          description: "description"
+          action:
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          id: "id"
+          priority: 6
+          '@schemaLocation': "@schemaLocation"
+          criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+        - criteriaGroup:
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          '@baseType': "@baseType"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          name: "name"
+          description: "description"
+          action:
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          id: "id"
+          priority: 6
+          '@schemaLocation': "@schemaLocation"
+          criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+        description: "description"
+        attachment:
+        - '@referredType': "@referredType"
+          attachmentType: "video"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          description: "Photograph of the Product"
+          mimeType: "mimeType"
+          content: "content"
+          url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          size:
+            amount: 0.8008282
+            units: "units"
+          '@baseType': "@baseType"
+          name: "name"
+          id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+          href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          attachmentType: "video"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          description: "Photograph of the Product"
+          mimeType: "mimeType"
+          content: "content"
+          url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          size:
+            amount: 0.8008282
+            units: "units"
+          '@baseType': "@baseType"
+          name: "name"
+          id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+          href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@baseType': "@baseType"
+        lastUpdate: "2000-01-23T04:56:07.000+00:00"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "@schemaLocation"
+  PromotionDeleteEvent:
+    type: "object"
+    properties:
+      event:
+        description: "The event payload linked to the involved resource object"
+        $ref: "#/definitions/PromotionDeleteEventPayload"
+      eventId:
+        type: "string"
+        description: "The identifier of the notification."
+      eventTime:
+        type: "string"
+        format: "date-time"
+        description: "Time of the event occurrence."
+      eventType:
+        type: "string"
+        description: "The type of the notification."
+      correlationId:
+        type: "string"
+        description: "The correlation id for this event."
+      domain:
+        type: "string"
+        description: "The domain of the event."
+      title:
+        type: "string"
+        description: "The title of the event."
+      description:
+        type: "string"
+        description: "An explnatory of the event."
+      priority:
+        type: "string"
+        description: "A priority."
+      timeOcurred:
+        type: "string"
+        format: "date-time"
+        description: "The time the event occured."
+    description: "The notification data structure"
+    example:
+      eventId: "eventId"
+      domain: "domain"
+      eventTime: "2000-01-23T04:56:07.000+00:00"
+      description: "description"
+      correlationId: "correlationId"
+      eventType: "eventType"
+      event:
+        promotion:
+          promotionType: "promotionType"
+          lifecycleStatus: "lifecycleStatus"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          pattern:
+          - criteriaGroup:
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            '@baseType': "@baseType"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            name: "name"
+            description: "description"
+            action:
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            id: "id"
+            priority: 6
+            '@schemaLocation': "@schemaLocation"
+            criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+          - criteriaGroup:
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            '@baseType': "@baseType"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            name: "name"
+            description: "description"
+            action:
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            id: "id"
+            priority: 6
+            '@schemaLocation': "@schemaLocation"
+            criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+          description: "description"
+          attachment:
+          - '@referredType': "@referredType"
+            attachmentType: "video"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            description: "Photograph of the Product"
+            mimeType: "mimeType"
+            content: "content"
+            url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            size:
+              amount: 0.8008282
+              units: "units"
+            '@baseType': "@baseType"
+            name: "name"
+            id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+            href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            attachmentType: "video"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            description: "Photograph of the Product"
+            mimeType: "mimeType"
+            content: "content"
+            url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            size:
+              amount: 0.8008282
+              units: "units"
+            '@baseType': "@baseType"
+            name: "name"
+            id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+            href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          lastUpdate: "2000-01-23T04:56:07.000+00:00"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+      title: "title"
+      priority: "priority"
+      timeOcurred: "2000-01-23T04:56:07.000+00:00"
+  PromotionDeleteEventPayload:
+    type: "object"
+    properties:
+      promotion:
+        description: "The involved resource data for the event"
+        $ref: "#/definitions/Promotion"
+    description: "The event data structure"
+    example:
+      promotion:
+        promotionType: "promotionType"
+        lifecycleStatus: "lifecycleStatus"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        pattern:
+        - criteriaGroup:
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          '@baseType': "@baseType"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          name: "name"
+          description: "description"
+          action:
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          id: "id"
+          priority: 6
+          '@schemaLocation': "@schemaLocation"
+          criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+        - criteriaGroup:
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          '@baseType': "@baseType"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          name: "name"
+          description: "description"
+          action:
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          id: "id"
+          priority: 6
+          '@schemaLocation': "@schemaLocation"
+          criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+        description: "description"
+        attachment:
+        - '@referredType': "@referredType"
+          attachmentType: "video"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          description: "Photograph of the Product"
+          mimeType: "mimeType"
+          content: "content"
+          url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          size:
+            amount: 0.8008282
+            units: "units"
+          '@baseType': "@baseType"
+          name: "name"
+          id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+          href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          attachmentType: "video"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          description: "Photograph of the Product"
+          mimeType: "mimeType"
+          content: "content"
+          url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          size:
+            amount: 0.8008282
+            units: "units"
+          '@baseType': "@baseType"
+          name: "name"
+          id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+          href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@baseType': "@baseType"
+        lastUpdate: "2000-01-23T04:56:07.000+00:00"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "@schemaLocation"
+  PromotionAttributeValueChangeEvent:
+    type: "object"
+    properties:
+      eventId:
+        type: "string"
+        description: "The identifier of the notification."
+      eventTime:
+        type: "string"
+        format: "date-time"
+        description: "Time of the event occurrence."
+      eventType:
+        type: "string"
+        description: "The type of the notification."
+      correlationId:
+        type: "string"
+        description: "The correlation id for this event."
+      domain:
+        type: "string"
+        description: "The domain of the event."
+      title:
+        type: "string"
+        description: "The title of the event."
+      description:
+        type: "string"
+        description: "An explnatory of the event."
+      priority:
+        type: "string"
+        description: "A priority."
+      timeOcurred:
+        type: "string"
+        format: "date-time"
+        description: "The time the event occured."
+      fieldPath:
+        type: "string"
+        description: "The path identifying the object field concerned by this notification."
+      event:
+        description: "The event payload linked to the involved resource object"
+        $ref: "#/definitions/PromotionAttributeValueChangeEventPayload"
+    description: "The notification data structure"
+    example:
+      eventId: "eventId"
+      domain: "domain"
+      eventTime: "2000-01-23T04:56:07.000+00:00"
+      fieldPath: "fieldPath"
+      description: "description"
+      correlationId: "correlationId"
+      eventType: "eventType"
+      title: "title"
+      priority: "priority"
+      event:
+        promotion:
+          promotionType: "promotionType"
+          lifecycleStatus: "lifecycleStatus"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          pattern:
+          - criteriaGroup:
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            '@baseType': "@baseType"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            name: "name"
+            description: "description"
+            action:
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            id: "id"
+            priority: 6
+            '@schemaLocation': "@schemaLocation"
+            criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+          - criteriaGroup:
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            '@baseType': "@baseType"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            name: "name"
+            description: "description"
+            action:
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            id: "id"
+            priority: 6
+            '@schemaLocation': "@schemaLocation"
+            criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+          description: "description"
+          attachment:
+          - '@referredType': "@referredType"
+            attachmentType: "video"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            description: "Photograph of the Product"
+            mimeType: "mimeType"
+            content: "content"
+            url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            size:
+              amount: 0.8008282
+              units: "units"
+            '@baseType': "@baseType"
+            name: "name"
+            id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+            href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            attachmentType: "video"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            description: "Photograph of the Product"
+            mimeType: "mimeType"
+            content: "content"
+            url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            size:
+              amount: 0.8008282
+              units: "units"
+            '@baseType': "@baseType"
+            name: "name"
+            id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+            href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          lastUpdate: "2000-01-23T04:56:07.000+00:00"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+      timeOcurred: "2000-01-23T04:56:07.000+00:00"
+  PromotionAttributeValueChangeEventPayload:
+    type: "object"
+    properties:
+      promotion:
+        description: "The involved resource data for the event"
+        $ref: "#/definitions/Promotion"
+    description: "The event data structure"
+    example:
+      promotion:
+        promotionType: "promotionType"
+        lifecycleStatus: "lifecycleStatus"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        pattern:
+        - criteriaGroup:
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          '@baseType': "@baseType"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          name: "name"
+          description: "description"
+          action:
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          id: "id"
+          priority: 6
+          '@schemaLocation': "@schemaLocation"
+          criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+        - criteriaGroup:
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          '@baseType': "@baseType"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          name: "name"
+          description: "description"
+          action:
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          id: "id"
+          priority: 6
+          '@schemaLocation': "@schemaLocation"
+          criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+        description: "description"
+        attachment:
+        - '@referredType': "@referredType"
+          attachmentType: "video"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          description: "Photograph of the Product"
+          mimeType: "mimeType"
+          content: "content"
+          url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          size:
+            amount: 0.8008282
+            units: "units"
+          '@baseType': "@baseType"
+          name: "name"
+          id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+          href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          attachmentType: "video"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          description: "Photograph of the Product"
+          mimeType: "mimeType"
+          content: "content"
+          url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          size:
+            amount: 0.8008282
+            units: "units"
+          '@baseType': "@baseType"
+          name: "name"
+          id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+          href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@baseType': "@baseType"
+        lastUpdate: "2000-01-23T04:56:07.000+00:00"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "@schemaLocation"
+  PromotionStateChangeEvent:
+    type: "object"
+    properties:
+      event:
+        description: "The event payload linked to the involved resource object"
+        $ref: "#/definitions/PromotionStateChangeEventPayload"
+      eventId:
+        type: "string"
+        description: "The identifier of the notification."
+      eventTime:
+        type: "string"
+        format: "date-time"
+        description: "Time of the event occurrence."
+      eventType:
+        type: "string"
+        description: "The type of the notification."
+      correlationId:
+        type: "string"
+        description: "The correlation id for this event."
+      domain:
+        type: "string"
+        description: "The domain of the event."
+      title:
+        type: "string"
+        description: "The title of the event."
+      description:
+        type: "string"
+        description: "An explnatory of the event."
+      priority:
+        type: "string"
+        description: "A priority."
+      timeOcurred:
+        type: "string"
+        format: "date-time"
+        description: "The time the event occured."
+    description: "The notification data structure"
+    example:
+      eventId: "eventId"
+      domain: "domain"
+      eventTime: "2000-01-23T04:56:07.000+00:00"
+      description: "description"
+      correlationId: "correlationId"
+      eventType: "eventType"
+      event:
+        promotion:
+          promotionType: "promotionType"
+          lifecycleStatus: "lifecycleStatus"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          pattern:
+          - criteriaGroup:
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            '@baseType': "@baseType"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            name: "name"
+            description: "description"
+            action:
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            id: "id"
+            priority: 6
+            '@schemaLocation': "@schemaLocation"
+            criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+          - criteriaGroup:
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            - groupName: "groupName"
+              '@baseType': "@baseType"
+              criteria:
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              - '@baseType': "@baseType"
+                '@type': "@type"
+                criteriaOperator: "criteriaOperator"
+                criteriaParameter: "criteriaParameter"
+                id: "id"
+                '@schemaLocation': "@schemaLocation"
+                criteriaValue: "criteriaValue"
+              '@type': "@type"
+              id: "id"
+              criteriaLogicalRelationship: "criteriaLogicalRelationship"
+              '@schemaLocation': "@schemaLocation"
+            '@baseType': "@baseType"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            name: "name"
+            description: "description"
+            action:
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            - actionType: "actionType"
+              actionEntityRef:
+                '@referredType': "@referredType"
+                '@baseType': "@baseType"
+                '@type': "@type"
+                name: "name"
+                id: "id"
+                href: "http://example.com/aeiou"
+                '@schemaLocation': "http://example.com/aeiou"
+              '@baseType': "@baseType"
+              actionValue: "actionValue"
+              '@type': "@type"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+            id: "id"
+            priority: 6
+            '@schemaLocation': "@schemaLocation"
+            criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+          description: "description"
+          attachment:
+          - '@referredType': "@referredType"
+            attachmentType: "video"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            description: "Photograph of the Product"
+            mimeType: "mimeType"
+            content: "content"
+            url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            size:
+              amount: 0.8008282
+              units: "units"
+            '@baseType': "@baseType"
+            name: "name"
+            id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+            href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            '@schemaLocation': "http://example.com/aeiou"
+          - '@referredType': "@referredType"
+            attachmentType: "video"
+            validFor:
+              startDateTime: "1985-04-12T23:20:50.52Z"
+              endDateTime: "1985-04-12T23:20:50.52Z"
+            '@type': "@type"
+            description: "Photograph of the Product"
+            mimeType: "mimeType"
+            content: "content"
+            url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            size:
+              amount: 0.8008282
+              units: "units"
+            '@baseType': "@baseType"
+            name: "name"
+            id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+            href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+            '@schemaLocation': "http://example.com/aeiou"
+          '@baseType': "@baseType"
+          lastUpdate: "2000-01-23T04:56:07.000+00:00"
+          name: "name"
+          id: "id"
+          href: "href"
+          '@schemaLocation': "@schemaLocation"
+      title: "title"
+      priority: "priority"
+      timeOcurred: "2000-01-23T04:56:07.000+00:00"
+  PromotionStateChangeEventPayload:
+    type: "object"
+    properties:
+      promotion:
+        description: "The involved resource data for the event"
+        $ref: "#/definitions/Promotion"
+    description: "The event data structure"
+    example:
+      promotion:
+        promotionType: "promotionType"
+        lifecycleStatus: "lifecycleStatus"
+        validFor:
+          startDateTime: "1985-04-12T23:20:50.52Z"
+          endDateTime: "1985-04-12T23:20:50.52Z"
+        '@type': "@type"
+        pattern:
+        - criteriaGroup:
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          '@baseType': "@baseType"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          name: "name"
+          description: "description"
+          action:
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          id: "id"
+          priority: 6
+          '@schemaLocation': "@schemaLocation"
+          criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+        - criteriaGroup:
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          - groupName: "groupName"
+            '@baseType': "@baseType"
+            criteria:
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            - '@baseType': "@baseType"
+              '@type': "@type"
+              criteriaOperator: "criteriaOperator"
+              criteriaParameter: "criteriaParameter"
+              id: "id"
+              '@schemaLocation': "@schemaLocation"
+              criteriaValue: "criteriaValue"
+            '@type': "@type"
+            id: "id"
+            criteriaLogicalRelationship: "criteriaLogicalRelationship"
+            '@schemaLocation': "@schemaLocation"
+          '@baseType': "@baseType"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          name: "name"
+          description: "description"
+          action:
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          - actionType: "actionType"
+            actionEntityRef:
+              '@referredType': "@referredType"
+              '@baseType': "@baseType"
+              '@type': "@type"
+              name: "name"
+              id: "id"
+              href: "http://example.com/aeiou"
+              '@schemaLocation': "http://example.com/aeiou"
+            '@baseType': "@baseType"
+            actionValue: "actionValue"
+            '@type': "@type"
+            id: "id"
+            '@schemaLocation': "@schemaLocation"
+          id: "id"
+          priority: 6
+          '@schemaLocation': "@schemaLocation"
+          criteriaGroupLogicalRelationship: "criteriaGroupLogicalRelationship"
+        description: "description"
+        attachment:
+        - '@referredType': "@referredType"
+          attachmentType: "video"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          description: "Photograph of the Product"
+          mimeType: "mimeType"
+          content: "content"
+          url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          size:
+            amount: 0.8008282
+            units: "units"
+          '@baseType': "@baseType"
+          name: "name"
+          id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+          href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          '@schemaLocation': "http://example.com/aeiou"
+        - '@referredType': "@referredType"
+          attachmentType: "video"
+          validFor:
+            startDateTime: "1985-04-12T23:20:50.52Z"
+            endDateTime: "1985-04-12T23:20:50.52Z"
+          '@type': "@type"
+          description: "Photograph of the Product"
+          mimeType: "mimeType"
+          content: "content"
+          url: "http://host/Content/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          size:
+            amount: 0.8008282
+            units: "units"
+          '@baseType': "@baseType"
+          name: "name"
+          id: "4aafacbd-11ff-4dc8-b445-305f2215715f"
+          href: "http://host/Attachment/4aafacbd-11ff-4dc8-b445-305f2215715f"
+          '@schemaLocation': "http://example.com/aeiou"
+        '@baseType': "@baseType"
+        lastUpdate: "2000-01-23T04:56:07.000+00:00"
+        name: "name"
+        id: "id"
+        href: "href"
+        '@schemaLocation': "@schemaLocation"
+  Error:
+    type: "object"
+    required:
+    - "code"
+    - "reason"
+    properties:
+      code:
+        type: "string"
+        description: "Application relevant detail, defined in the API or a common\
+          \ list."
+      reason:
+        type: "string"
+        description: "Explanation of the reason for the error which can be shown to\
+          \ a client user."
+      message:
+        type: "string"
+        description: "More details and corrective actions related to the error which\
+          \ can be shown to a client user."
+      status:
+        type: "string"
+        description: "HTTP Error code extension"
+      referenceError:
+        type: "string"
+        format: "uri"
+        description: "URI of documentation describing the error."
+      '@baseType':
+        type: "string"
+        description: "When sub-classing, this defines the super-class."
+      '@schemaLocation':
+        type: "string"
+        format: "uri"
+        description: "A URI to a JSON-Schema file that defines additional attributes\
+          \ and relationships"
+      '@type':
+        type: "string"
+        description: "When sub-classing, this defines the sub-class entity name."
+    description: "Used when an API throws an Error, typically with a HTTP error response-code\
+      \ (3xx, 4xx, 5xx)"
