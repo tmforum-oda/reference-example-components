@@ -40,7 +40,7 @@ const swaggerDoc = swaggerUtils.getSwaggerDoc();
 // Get Component instance name from Environment variable and put it at start of API path
 let componentName = process.env.COMPONENT_NAME;
 if (!componentName) {
-  componentName = 'productcatalog'
+  componentName = 'r1-productcatalogmanagement' // for local testing, if not set
 }
 console.log('ComponentName:'+componentName);
 
