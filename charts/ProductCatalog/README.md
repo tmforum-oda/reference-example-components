@@ -1,19 +1,33 @@
-# Example Product Catalog component (including Security_role)
+# Example Product Catalog component
 
-This is an example component that implements a TM Forum Product Catalog interface.
+This is an example implementation of a [TM Forum Product Catalog Management](https://www.tmforum.org/oda/directory/components-map/core-commerce-management/TMFC001) component.
 
-As part of the component implementation, it exposes role information to the Canvas using the TM Forum PartyRole API.
 
-The component implements 4 micro-services:
+In its **core function** it implements:
+* The *mandatory* TMF620 Product Catalog Management Open API. 
+* The *optional* TMF671 Promotion Management Open API.
+* the *optional* dependency on one or more downstream TMF620 Product Catalog Management Open APIs to support federated product catalog scenarios.
 
-* productCatalogMicroservice that implements the TMF620 Product Catalog Management API (based on the NodeJs reference implementation). This is depoyed as a Kubernetes Deployment.
-* partyRoleMicroservice that implements the TMF669 Party Role Management API (based on the NodeJs reference implementation). This is depoyed as a Kubernetes Deployment.
-* roleInitializationMicroservice that bootstraps the initial Party Role interface. This is depoyed as a Kubernetes Job that runs once when the component is initialised.
-* a standard deployment of a mongoDb. This is deployed as a Kubernetes Deployment with a PersistentVolumeClaim.
+In its **management function** it implements:
+* Am *optional* metrics API supporting the open metrics standard (formerly the prometheus de-facto standard)
+* Outbound Open Telemetry events.
 
-The component envelope exposes the ProductCatalog as a CoreFunction API and the PartyRole as a Security/PartyRole API.
+In its **security function** it implements:
+* The *mandatory* TMF669 Party Role Management Open API.
 
-The Kubernetes services adopt the Istio naming convention for the Port names.
+
+The implementation consists of 7 microservices:
+* a partyRole microservice to implemnt the TMF669 Party Role Management Open API.
+* roleInitialization microservice that bootstraps the initial Party Role interface. This is depoyed as a Kubernetes Job that runs once when the component is initialised.
+* a productCatalog microservice to implement the TMF620 Product Catalog Management Open API.
+* a promotionManagement microservice to implement the TMF671 Promotion Management Open API.
+* a openMetrics microservice that implements the open metrics API.
+* a productCatalogInitialization microservice that registers the metrics microservice as a listener for product catalog create/update/delete business events.  This is depoyed as a Kubernetes Job that runs once when the component is initialised.
+* a simple deployment of a mongoDb. This is deployed as a Kubernetes Deployment with a PersistentVolumeClaim.
+
+
+This reference component is intended to be used as a showcase for the ODA Component model, and to be used for testing the ODA Canvas. It is not intended for production deployments.
+
 
 ## Installation
 
