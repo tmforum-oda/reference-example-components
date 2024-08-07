@@ -1,0 +1,42 @@
+{
+    "serviceType": "API",
+    "name": "Acme partner catalog",
+    "description": "Implementation of TMF620 Product Catalog Management Open API",
+    "state": "active",
+    "serviceCharacteristic": [
+      {
+        "name": "url",
+        "valueType": "string",
+        "value": "http://localhost/acme-productcatalogmanagement/tmf-api/productCatalogManagement/v4",
+        "@type": "StringCharacteristic"
+      },
+      {
+        "name": "OAS Specification",
+        "valueType": "string",
+        "value": "https://raw.githubusercontent.com/tmforum-apis/TMF620_ProductCatalog/master/TMF620-ProductCatalog-v4.0.0.swagger.json",
+        "@type": "StringCharacteristic"
+      }
+    ],
+    "serviceSpecification": {
+        "id": "1",
+        "name": "API",
+        "version": "1.0.0",
+      "@type": "ServiceSpecification",
+      "specCharacteristic": [
+        {
+          "name": "url",
+          "valueType": "string",
+          "description": "The url the the API root endpoint",
+          "@type": "StringCharacteristic"
+        },
+        {
+          "name": "OAS Specification",
+          "valueType": "string",
+          "description": "The url to the Open API Speciofication for this API",
+          "@type": "StringCharacteristic"
+        }
+      ]
+
+    },
+    "@type": "Service"
+  }
