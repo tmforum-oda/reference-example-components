@@ -12,6 +12,10 @@ const mongoUtils = require('../utils/mongoUtils');
 const swaggerUtils = require('../utils/swaggerUtils');
 const notificationUtils = require('../utils/notificationUtils');
 
+// for list operations (including downstream API)
+const listResource = require('../utils/listResource').listResource;
+
+
 const {sendDoc} = require('../utils/mongoUtils');
 
 const {setBaseProperties, traverse, 
@@ -142,101 +146,7 @@ exports.listProductSpecification = function(req, res, next) {
    **/
 
   console.log('listProductSpecification :: ' + req.method + ' ' + req.url + ' ' + req.headers.host);
-
-  /* matching isRestfulIndex */
- 
-  var query = mongoUtils.getMongoQuery(req);
-
-  query = swaggerUtils.updateQueryServiceType(query, req,'');
-
-  const resourceType = getResponseType(req);
-
-  const internalError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
-  
-  const generateQueryString = function(query,offset,limit) {
-    var res='';
-    var first=true;
-    if(query.options.projection) {
-      const fields=Object.keys(query.options.projection);
-      res = res + '?fields=' + fields.join(',');
-      first=false;
-    }
-    
-    const delim = first ? '?' : '&';
-    res = res + delim + "offset="+offset;
-  
-    if(query.options.limit) {
-      const delim = first ? '?' : '&';
-      res = res + delim + "limit="+limit;
-    }
-
-    return res;
-  }
-
-  const generateLink = function(query,skip,limit,type) {
-    const basePath = req.url.replace(/\?.*$/,"");
-    const hostPath = swaggerUtils.getURLScheme() + "://" + req.headers.host + basePath;
-    return '"<' + hostPath + generateQueryString(query,skip,limit) + '>; rel="' + type + '"';
-  }
-
-  const setLinks = function(res,query,skip,limit,totalSize) {
-    const links = [];
-    links.push(generateLink(query,skip,limit,"self"));
-    if(limit) {
-      if(skip+limit<totalSize) {
-        if(skip+2*limit<totalSize) {
-          links.push(generateLink(query,skip+limit,limit,"next"));
-        } else {
-          links.push(generateLink(query,skip+limit,totalSize-skip-limit,"next"));
-        }
-        links.push(generateLink(query,totalSize-limit,limit,"last"));
-      } 
-      if(skip-limit>0) {
-        links.push(generateLink(query,skip-limit,limit,"prev"));
-      } else if(skip>0) {
-        links.push(generateLink(query,0,skip,"prev"));
-      }
-    }
-    res.setHeader('Link',links.join(', '));
-  }
-
-  // Find some documents based on criteria plus attribute selection
-  mongoUtils.connect()
-  .then(db => {
-    db.collection(resourceType).stats()
-    .then(stats => {
-      const totalSize=stats.count;
-      db.collection(resourceType)
-      .find(query.criteria, query.options).toArray()
-      .then(doc => {
-        doc = cleanPayloadServiceType(doc);
-        res.setHeader('X-Total-Count',totalSize);
-        res.setHeader('X-Result-Count',doc.length);
-        var skip = query.options.skip!==undefined ? parseInt(query.options.skip) : 0;
-        var limit;
-        if(query.options.limit!==undefined) limit = parseInt(query.options.limit);        
-        if(limit || skip>0) setLinks(res,query,skip,limit,totalSize);
-
-        var code = 200;
-        if(limit && doc.length<totalSize) code=206;
-        sendDoc(res, code, doc);
-      })
-      .catch(error => {
-        console.log("listProductSpecification: error=" + error);
-        sendError(res, internalError);
-      })
-    })
-    .catch(error => {
-      console.log("listProductSpecification: error=" + error);
-      sendError(res, internalError);
-    })
-  })
-  .catch(error => {
-    console.log("listProductSpecification: error=" + error);
-    sendError(res, internalError);
-  })
-
-
+  listResource(req, res);
 
 };
 

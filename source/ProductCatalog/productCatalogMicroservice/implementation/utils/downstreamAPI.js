@@ -15,10 +15,8 @@ async function listDownstreamAPI(doc, url) {
         const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + urlResource)
         doc = doc.concat(apiResponse.data);        
     }
-
     return doc
 }
-
 
 module.exports = { listDownstreamAPI };
 
