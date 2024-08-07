@@ -14,6 +14,7 @@ const notificationUtils = require('../utils/notificationUtils');
 
 // for list operations (including downstream API)
 const listResource = require('../utils/listResource').listResource;
+const retrieveResource = require('../utils/retrieveResource').retrieveResource;
 
 
 const {sendDoc} = require('../utils/mongoUtils');
@@ -245,43 +246,7 @@ exports.retrieveProductSpecification = function(req, res, next) {
    **/
 
   console.log('retrieveProductSpecification :: ' + req.method + ' ' + req.url + ' ' + req.headers.host);
-
-  /* matching isRestfulShow */
-
-  var id = String(req.swagger.params.id.value);
-
-  var query = mongoUtils.getMongoQuery(req);
-  query.criteria.id = id
-
-  query = swaggerUtils.updateQueryServiceType(query, req,'id');
-
-  const resourceType = getResponseType(req); 
-
-  const internalError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
-
-  mongoUtils.connect().then(db => {
-    db.collection(resourceType)
-      .findOne(query.criteria, query.options)
-      .then(doc => {
-        if(doc) {
-          doc = cleanPayloadServiceType(doc);
-          sendDoc(res, 200, doc)
-        } else {
-          sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND,"No resource with given id found"));
-        }
-      })
-      .catch(error => {
-        console.log("retrieveProductSpecification: error=" + error);
-        sendError(res, internalError);
-      });
-  })
-  .catch(error => {
-    console.log("retrieveProductSpecification: error=" + error);
-    sendError(res, internalError);
-  });
-
-
-
+  retrieveResource(req, res);
 
 };
 

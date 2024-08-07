@@ -1,4 +1,4 @@
-const listDownstreamAPI = require('../utils/downstreamAPI').listDownstreamAPI;
+const listFromDownstreamAPI = require('../utils/downstreamAPI').listFromDownstreamAPI;
 
 const mongoUtils = require('../utils/mongoUtils');
 const swaggerUtils = require('../utils/swaggerUtils');
@@ -7,6 +7,17 @@ const {sendDoc} = require('../utils/mongoUtils');
 const {cleanPayloadServiceType} = require('../utils/swaggerUtils');
 const {TError, TErrorEnum, sendError} = require('../utils/errorUtils');
 
+
+/**
+ * This provides the list operation for any supported resource.
+ * It queries resources from the Mongo databasze and appends the results from downstream APIs.
+ * @param {*} req - The request object
+ * @param {*} res - The response object
+ * @returns The list of resources using the SendDoc function
+ * @throws {TError} - If an error is encountered
+ * @throws {Error} - If an error is encountered
+ */
+  
 async function listResource(req, res) {
   /* matching isRestfulIndex */
  
@@ -74,7 +85,7 @@ async function listResource(req, res) {
     totalSize=stats.count;
     doc = await db.collection(resourceType).find(query.criteria, query.options).toArray();
   } catch (error) {
-    console.log("listCatalog: error=" + error);
+    console.log("listResource: error=" + error);
     sendError(res, internalError);
   }
 
@@ -82,7 +93,7 @@ async function listResource(req, res) {
   // Call downstream product catalogs and append the results
   const apiError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal error calling downstream API");
   try {
-    doc = await listDownstreamAPI(doc, req.url)
+    doc = await listFromDownstreamAPI(doc, req.url)
     // Assuming the API response data needs to be appended to the doc
     doc = cleanPayloadServiceType(doc);
     res.setHeader('X-Total-Count',totalSize);
@@ -96,7 +107,7 @@ async function listResource(req, res) {
     if(limit && doc.length<totalSize) code=206;
     sendDoc(res, code, doc);
   } catch (error) {
-  console.log("listCatalog: downstream API error=" + error);
+  console.log("listResource: downstream API error=" + error);
     sendError(res, apiError);
   }
 }
