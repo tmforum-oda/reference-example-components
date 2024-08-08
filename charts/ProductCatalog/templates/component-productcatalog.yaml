@@ -37,7 +37,7 @@ spec:
       port: 8080      
     dependentAPIs: 
     - name: party 
-      apitype: openapi     
+      apiType: openapi     
       specification: https://open-api.tmforum.org/TMF632-Party-v4.0.0.swagger.json  
   eventNotification:
     publishedEvents: []
