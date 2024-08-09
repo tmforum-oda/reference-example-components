@@ -17,7 +17,8 @@ function connectHelper(callback) {
   const database = process.env.MONGODB_DATABASE;
   const credentials_uri = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${database}`
   let options = {
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useUnifiedTopology: true
   };
   MongoClient.connect(credentials_uri, options, function (err, db) {
     if (err) {

@@ -108,6 +108,59 @@
 			"response": []
 		},
 		{
+			"name": "GET productSpecification by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 2000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{Hostname}}/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/productSpecification/f204b10d-9a29-403b-8bdd-d21f8a3079a4",
+					"protocol": "http",
+					"host": [
+						"{{Hostname}}"
+					],
+					"path": [
+						"r1-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"productSpecification",
+						"f204b10d-9a29-403b-8bdd-d21f8a3079a4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create category 1",
 			"event": [
 				{
@@ -534,6 +587,83 @@
 							"key": "category.name",
 							"value": "Internet line of product"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET catalogs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{Hostname}}/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog",
+					"protocol": "http",
+					"host": [
+						"{{Hostname}}"
+					],
+					"path": [
+						"r1-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"catalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET catalog by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Response is an Array\", function () {\r",
+							"    pm.expect(pm.response.json()).to.be.an('array').but.not.an('object')\r",
+							"});\r",
+							"pm.test(\"Response time is less than 2000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{Hostname}}/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog/c796537e-5f7a-4bd7-a8ee-cbdc8c336a82",
+					"protocol": "http",
+					"host": [
+						"{{Hostname}}"
+					],
+					"path": [
+						"r1-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"catalog",
+						"c796537e-5f7a-4bd7-a8ee-cbdc8c336a82"
 					]
 				}
 			},

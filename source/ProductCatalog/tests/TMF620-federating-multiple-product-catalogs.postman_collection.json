@@ -1,0 +1,665 @@
+{
+	"info": {
+		"_postman_id": "c4de58cd-799f-4f6a-b21d-fdbae735cc42",
+		"name": "ComponentAutoTests - federating multiple product catalogs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "314044"
+	},
+	"item": [
+		{
+			"name": "Clean - query Retail Catalog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(pm.response.text());\r",
+							"console.log(jsonData.length + ' items found')\r",
+							"if (jsonData.length>0) {\r",
+							"  id=jsonData[0].id\r",
+							"  pm.environment.set(\"catalogId\", id);\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(jsonData.length + \" items found\")\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{canvas-host}}/cat-1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog",
+					"protocol": "http",
+					"host": [
+						"{{canvas-host}}"
+					],
+					"path": [
+						"cat-1-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"catalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clean - empty Retail Catalog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"if (pm.response.code == 204)\r",
+							"{\r",
+							"    // catalog is found, go back to previous operation to look for more\r",
+							"    pm.execution.setNextRequest(\"Clean - query Retail Catalog\"); \r",
+							"}\r",
+							"pm.test(\"Status code is 204 or 404\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([204, 404]);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{canvas-host}}/cat-1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog/{{catalogId}}",
+					"protocol": "http",
+					"host": [
+						"{{canvas-host}}"
+					],
+					"path": [
+						"cat-1-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"catalog",
+						"{{catalogId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clean - query Wholesale Catalog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(pm.response.text());\r",
+							"console.log(jsonData.length + ' items found')\r",
+							"if (jsonData.length>0) {\r",
+							"  id=jsonData[0].id\r",
+							"  pm.environment.set(\"catalogId\", id);\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(jsonData.length + \" items found\")\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{canvas-host}}/cat-2-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog",
+					"protocol": "http",
+					"host": [
+						"{{canvas-host}}"
+					],
+					"path": [
+						"cat-2-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"catalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clean - empty Wholesale Catalog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"if (pm.response.code == 204)\r",
+							"{\r",
+							"    // catalog is found, go back to previous operation to look for more\r",
+							"    pm.execution.setNextRequest(\"Clean - query Wholesale Catalog\"); \r",
+							"}\r",
+							"pm.test(\"Status code is 204 or 404\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([204, 404]);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{canvas-host}}/cat-2-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog/{{catalogId}}",
+					"protocol": "http",
+					"host": [
+						"{{canvas-host}}"
+					],
+					"path": [
+						"cat-2-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"catalog",
+						"{{catalogId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clean - query Federated Catalog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(pm.response.text());\r",
+							"console.log(jsonData.length + ' items found')\r",
+							"if (jsonData.length>0) {\r",
+							"  id=jsonData[0].id\r",
+							"  pm.environment.set(\"catalogId\", id);\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(jsonData.length + \" items found\")\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{catalog-host}}/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog",
+					"protocol": "http",
+					"host": [
+						"{{catalog-host}}"
+					],
+					"path": [
+						"r1-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"catalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clean - empty Federated Catalog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"if (pm.response.code == 204)\r",
+							"{\r",
+							"    // catalog is found, go back to previous operation to look for more\r",
+							"    pm.execution.setNextRequest(\"Clean - query Federated Catalog\"); \r",
+							"}\r",
+							"pm.test(\"Status code is 204 or 404\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([204, 404]);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{catalog-host}}/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog/{{catalogId}}",
+					"protocol": "http",
+					"host": [
+						"{{catalog-host}}"
+					],
+					"path": [
+						"r1-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"catalog",
+						"{{catalogId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clean - query Canvas.Info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(pm.response.text());\r",
+							"console.log(jsonData.length + ' items found')\r",
+							"if (jsonData.length>0) {\r",
+							"  id=jsonData[0].id\r",
+							"  pm.environment.set(\"serviceId\", id);\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(jsonData.length + \" items found\")\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{canvas-info-host}}/tmf-api/serviceInventoryManagement/v5/service",
+					"protocol": "http",
+					"host": [
+						"{{canvas-info-host}}"
+					],
+					"path": [
+						"tmf-api",
+						"serviceInventoryManagement",
+						"v5",
+						"service"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clean - empty Canvas.Info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"if (pm.response.code == 204)\r",
+							"{\r",
+							"    // catalog is found, go back to previous operation to look for more\r",
+							"    pm.execution.setNextRequest(\"Clean - query Canvas.Info\"); \r",
+							"}\r",
+							"pm.test(\"Status code is 204 or 404\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([204, 404]);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{canvas-info-host}}/tmf-api/serviceInventoryManagement/v5/service/{{serviceId}}",
+					"protocol": "http",
+					"host": [
+						"{{canvas-info-host}}"
+					],
+					"path": [
+						"tmf-api",
+						"serviceInventoryManagement",
+						"v5",
+						"service",
+						"{{serviceId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Setup - create Retail Catalog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"catalogType\": \"Retail\",\r\n    \"description\": \"Test catalog with Retail products\",\r\n    \"lastUpdate\": \"2024-08-08T09:16:07.000+00:00\",\r\n    \"lifecycleStatus\": \"live\",\r\n    \"name\": \"Retail catalog\",\r\n    \"validFor\": {\r\n        \"endDateTime\": \"2024-08-23T00:00:00.000+00:00\",\r\n        \"startDateTime\": \"2024-08-23T00:00:00.000+00:00\"\r\n    },\r\n    \"version\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{canvas-host}}/cat-1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog",
+					"protocol": "http",
+					"host": [
+						"{{canvas-host}}"
+					],
+					"path": [
+						"cat-1-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"catalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Setup - create Wholesale Catalog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"catalogType\": \"Wholesale\",\r\n    \"description\": \"Test catalog with Wholesale products\",\r\n    \"lastUpdate\": \"2024-08-08T09:16:07.000+00:00\",\r\n    \"lifecycleStatus\": \"live\",\r\n    \"name\": \"Wholesale catalog\",\r\n    \"validFor\": {\r\n        \"endDateTime\": \"2024-08-23T00:00:00.000+00:00\",\r\n        \"startDateTime\": \"2024-08-23T00:00:00.000+00:00\"\r\n    },\r\n    \"version\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{canvas-host}}/cat-2-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog",
+					"protocol": "http",
+					"host": [
+						"{{canvas-host}}"
+					],
+					"path": [
+						"cat-2-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"catalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Setup - Populate Canvas.Info service for Retail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serviceType\": \"API\",\r\n    \"name\": \"Retail catalog\",\r\n    \"description\": \"Implementation of TMF620 Product Catalog Management Open API\",\r\n    \"state\": \"active\",\r\n    \"serviceCharacteristic\": [\r\n      {\r\n        \"name\": \"url\",\r\n        \"valueType\": \"string\",\r\n        \"value\": \"http://localhost/cat-1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/\",\r\n        \"@type\": \"StringCharacteristic\"\r\n      },\r\n      {\r\n        \"name\": \"OAS Specification\",\r\n        \"valueType\": \"string\",\r\n        \"value\": \"https://raw.githubusercontent.com/tmforum-apis/TMF620_ProductCatalog/master/TMF620-ProductCatalog-v4.0.0.swagger.json\",\r\n        \"@type\": \"StringCharacteristic\"\r\n      }\r\n    ],\r\n    \"serviceSpecification\": {\r\n        \"id\": \"1\",\r\n        \"name\": \"API\",\r\n        \"version\": \"1.0.0\",\r\n      \"@type\": \"ServiceSpecification\",\r\n      \"specCharacteristic\": [\r\n        {\r\n          \"name\": \"url\",\r\n          \"valueType\": \"string\",\r\n          \"description\": \"The url the the API root endpoint\",\r\n          \"@type\": \"StringCharacteristic\"\r\n        },\r\n        {\r\n          \"name\": \"OAS Specification\",\r\n          \"valueType\": \"string\",\r\n          \"description\": \"The url to the Open API Speciofication for this API\",\r\n          \"@type\": \"StringCharacteristic\"\r\n        }\r\n      ]\r\n\r\n    },\r\n    \"@type\": \"Service\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8638/tmf-api/serviceInventoryManagement/v5/service",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8638",
+					"path": [
+						"tmf-api",
+						"serviceInventoryManagement",
+						"v5",
+						"service"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Setup - Populate Canvas.Info service for Wholesale partner",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serviceType\": \"API\",\r\n    \"name\": \"Wholesale partner catalog\",\r\n    \"description\": \"Implementation of TMF620 Product Catalog Management Open API\",\r\n    \"state\": \"active\",\r\n    \"serviceCharacteristic\": [\r\n      {\r\n        \"name\": \"url\",\r\n        \"valueType\": \"string\",\r\n        \"value\": \"http://localhost/cat-2-productcatalogmanagement/tmf-api/productCatalogManagement/v4/\",\r\n        \"@type\": \"StringCharacteristic\"\r\n      },\r\n      {\r\n        \"name\": \"OAS Specification\",\r\n        \"valueType\": \"string\",\r\n        \"value\": \"https://raw.githubusercontent.com/tmforum-apis/TMF620_ProductCatalog/master/TMF620-ProductCatalog-v4.0.0.swagger.json\",\r\n        \"@type\": \"StringCharacteristic\"\r\n      }\r\n    ],\r\n    \"serviceSpecification\": {\r\n        \"id\": \"1\",\r\n        \"name\": \"API\",\r\n        \"version\": \"1.0.0\",\r\n      \"@type\": \"ServiceSpecification\",\r\n      \"specCharacteristic\": [\r\n        {\r\n          \"name\": \"url\",\r\n          \"valueType\": \"string\",\r\n          \"description\": \"The url the the API root endpoint\",\r\n          \"@type\": \"StringCharacteristic\"\r\n        },\r\n        {\r\n          \"name\": \"OAS Specification\",\r\n          \"valueType\": \"string\",\r\n          \"description\": \"The url to the Open API Speciofication for this API\",\r\n          \"@type\": \"StringCharacteristic\"\r\n        }\r\n      ]\r\n\r\n    },\r\n    \"@type\": \"Service\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{canvas-info-host}}/tmf-api/serviceInventoryManagement/v5/service",
+					"protocol": "http",
+					"host": [
+						"{{canvas-info-host}}"
+					],
+					"path": [
+						"tmf-api",
+						"serviceInventoryManagement",
+						"v5",
+						"service"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test - GET federated catalog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Result contains two items\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array').that.has.lengthOf(2);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Result contains one Retail and one Wholesale catalogType\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    \r",
+							"    // Extract catalogType values\r",
+							"    var catalogTypes = jsonData.map(function(item) {\r",
+							"        return item.catalogType;\r",
+							"    });\r",
+							"\r",
+							"    // Check for \"Retail\" and \"Wholesale\" in the catalogType values\r",
+							"    pm.expect(catalogTypes).to.include.members(['Retail', 'Wholesale']);\r",
+							"});\r",
+							"\r",
+							"// store the first item's Id for the next test\r",
+							"var jsonData = JSON.parse(pm.response.text());\r",
+							"console.log(jsonData.length + ' items found')\r",
+							"if (jsonData.length>0) {\r",
+							"  id=jsonData[0].id\r",
+							"  pm.environment.set(\"catalogId\", id);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{catalog-host}}/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog",
+					"protocol": "http",
+					"host": [
+						"{{catalog-host}}"
+					],
+					"path": [
+						"r1-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"catalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET catalog by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Item has catalogType of Retail or Wholesale\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    // Check if the catalogType is either \"Retail\" or \"Wholesale\"\r",
+							"    var catalogType = jsonData.catalogType;\r",
+							"    \r",
+							"    // Assert that the catalogType is \"Retail\" or \"Wholesale\"\r",
+							"    pm.expect(catalogType).to.be.oneOf(['Retail', 'Wholesale']);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{catalog-host}}/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/catalog/{{catalogId}}",
+					"protocol": "http",
+					"host": [
+						"{{catalog-host}}"
+					],
+					"path": [
+						"r1-productcatalogmanagement",
+						"tmf-api",
+						"productCatalogManagement",
+						"v4",
+						"catalog",
+						"{{catalogId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
