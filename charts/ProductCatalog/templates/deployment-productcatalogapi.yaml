@@ -38,6 +38,10 @@ spec:
           value: {{.Values.mongodb.database}}
         - name: NODE_ENV
           value: production
+        - name: CANVAS_INFO_HOST_PORT
+          value: "{{.Values.canvas-info.host}}" 
+
+          
         imagePullPolicy: Always
         ports:
         - name: {{.Release.Name}}-pcapi

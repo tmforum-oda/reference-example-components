@@ -1,7 +1,7 @@
 'use strict';
 const axios = require('axios');
-
-const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://localhost:8638/tmf-api/serviceInventoryManagement/v5/' // 'http://info.canvas.svc.cluster.local/tmf-api/serviceInventoryManagement/v5/'
+const CANVAS_INFO_HOST_PORT = process.env.CANVAS_INFO_HOST_PORT || "localhost:8638";
+const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + '/tmf-api/serviceInventoryManagement/v5/' // 'http://info.canvas.svc.cluster.local/tmf-api/serviceInventoryManagement/v5/'
 /**
  * This function retrieves a list of downstream APIs that the product catalog microservice is dependent on.
  * This function calls the Canvas.Info Service Inventory API at info.canvas.svc.cluster.local to get the list
