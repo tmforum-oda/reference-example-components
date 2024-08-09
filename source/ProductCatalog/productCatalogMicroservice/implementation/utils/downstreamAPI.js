@@ -53,9 +53,15 @@ async function listFromDownstreamAPI(doc, url) {
     const downstreamAPIList = await getDownstreamAPIs();
     for (const downstreamAPI in downstreamAPIList) {
         console.log('utils/downstreamAPI/listFromDownstreamAPI :: getting data from downstream API at ' + downstreamAPIList[downstreamAPI] + urlResource);
-        const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + urlResource)
-        console.log('utils/downstreamAPI/listFromDownstreamAPI :: received ' + apiResponse.data.length + ' records');
-        doc = doc.concat(apiResponse.data);        
+        
+        try {
+            const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + urlResource)
+            console.log('utils/downstreamAPI/listFromDownstreamAPI :: received ' + apiResponse.data.length + ' records');
+            doc = doc.concat(apiResponse.data);  
+        } catch (AxiosError) {
+            console.log('utils/downstreamAPI/listFromDownstreamAPI :: error getting data from downstream API at ' + downstreamAPIList[downstreamAPI] + urlResource);
+            console.log(AxiosError.message);
+        }      
     }
     return doc
 }
