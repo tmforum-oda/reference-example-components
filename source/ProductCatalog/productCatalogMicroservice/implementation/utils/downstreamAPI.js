@@ -1,7 +1,26 @@
 'use strict';
 const axios = require('axios');
-const CANVAS_INFO_HOST_PORT = process.env.CANVAS_INFO_HOST_PORT || "localhost:8638";
+const CANVAS_INFO_HOST_PORT = process.env.CANVAS_INFO_HOST_PORT;
+
 const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + '/tmf-api/serviceInventoryManagement/v5/' // 'http://info.canvas.svc.cluster.local/tmf-api/serviceInventoryManagement/v5/'
+
+let gDownstreamAPIList = [];
+let gDownstreamAPIListLoaded = false;
+
+async function getDownstreamAPIs() {
+    if (!gDownstreamAPIListLoaded) {
+        gDownstreamAPIListLoaded = true;
+        if (CANVAS_INFO_HOST_PORT) {  // onloadly load the downstream APIs if the CANVAS_INFO_HOST_PORT is set
+            console.log('utils/downstreamAPI/getDownstreamAPIs :: loading downstream APIs');
+            gDownstreamAPIList = await loadDownstreamAPIs();
+        } else {
+            console.log('utils/downstreamAPI/getDownstreamAPIs :: downstream APIs not loaded as CANVAS_INFO_HOST_PORT is not set');
+        }
+    }
+    console.log('utils/downstreamAPI/getDownstreamAPIs :: returning ' + gDownstreamAPIList.length + ' downstream APIs');
+    return gDownstreamAPIList;
+}
+
 /**
  * This function retrieves a list of downstream APIs that the product catalog microservice is dependent on.
  * This function calls the Canvas.Info Service Inventory API at info.canvas.svc.cluster.local to get the list
@@ -9,10 +28,12 @@ const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + '/
  * have a Service Characteristic of 'url'. 
  * @returns The list of downstream APIs
  */
-async function getDownstreamAPIs() {
+async function loadDownstreamAPIs() {
     console.log('utils/downstreamAPI/getDownstreamAPIs :: getting list of downstream APIs from ' + CANVAS_INFO_SERVICE_INVENTORY_API + 'service');
     try {
-        const apiResponse = await axios.get(CANVAS_INFO_SERVICE_INVENTORY_API + 'service')
+        const apiResponse = await axios.get(CANVAS_INFO_SERVICE_INVENTORY_API + 'service', {
+            timeout: 1000 // Timeout in milliseconds
+          })
         if (apiResponse.data) {
             console.log('utils/downstreamAPI/getDownstreamAPIs :: received ' + apiResponse.data.length + ' records');
             // look for services with a service characteristic of 'url'
@@ -34,7 +55,8 @@ async function getDownstreamAPIs() {
     }
     catch (AxiosError) {
         console.log('utils/downstreamAPI/retrieveFromDownstreamAPI :: error getting data from downstream API at ' + CANVAS_INFO_SERVICE_INVENTORY_API);
-        console.log(AxiosError);
+        console.log(AxiosError.message);
+        return [];
     }
 }
 
