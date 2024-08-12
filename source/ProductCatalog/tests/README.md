@@ -40,12 +40,18 @@ npm start
 
 * Execute the Product Catalog code in nodejs:
 
+Set environment variables for your local mongo database:
+* `MONGODB_DATABASE` - typically set to 'tmf'.
+* `MONGODB_HOST` - localhost (or whatever your local MongoDb host is).
+* `MONGODB_PORT` - the default value is `27017`.
+* `CANVAS_INFO_HOST_PORT` - 'localhost:8638' for the stub testing.
+
 ```
 cd productCatalogMicroservice/implementation
 npm start
 ```
 
-* Open the ` federating multiple product catalogs` Postman collection. This includes operations for cleaning the product catalogs and Canvas.Info service inventory (ensuring they are empyty at the beginning of the test), Populting two downstream catalogs with test data, populating the Canvas.Info service inventory with references to the two downstream APIs and then testing the correct data is listed and retrieved. The test execution should look like:
+* Open the `federating multiple product catalogs` Postman collection. This includes operations for cleaning the product catalogs and Canvas.Info service inventory (ensuring they are empyty at the beginning of the test), Populting two downstream catalogs with test data, populating the Canvas.Info service inventory with references to the two downstream APIs and then testing the correct data is listed and retrieved. The test execution should look like:
 
 ![Postman](Postman.png)
 

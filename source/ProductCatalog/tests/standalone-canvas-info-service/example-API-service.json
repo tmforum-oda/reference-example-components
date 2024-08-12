@@ -5,6 +5,12 @@
     "state": "active",
     "serviceCharacteristic": [
       {
+        "name": "dependencyName",
+        "valueType": "string",
+        "value": "downstreamproductcatalog",
+        "@type": "StringCharacteristic"
+      },
+      {
         "name": "url",
         "valueType": "string",
         "value": "http://localhost/acme-productcatalogmanagement/tmf-api/productCatalogManagement/v4",
@@ -23,6 +29,12 @@
         "version": "1.0.0",
       "@type": "ServiceSpecification",
       "specCharacteristic": [
+        {
+          "name": "dependencyName",
+          "valueType": "string",
+          "description": "The dependency name that this API service matches. The dependency name is set in the Component Specification",
+          "@type": "StringCharacteristic"
+        },        
         {
           "name": "url",
           "valueType": "string",

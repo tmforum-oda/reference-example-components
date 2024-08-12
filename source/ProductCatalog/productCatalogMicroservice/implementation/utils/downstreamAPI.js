@@ -1,4 +1,5 @@
 'use strict';
+// Import the JSONPath library
 const axios = require('axios');
 const CANVAS_INFO_HOST_PORT = process.env.CANVAS_INFO_HOST_PORT;
 
@@ -36,10 +37,18 @@ async function loadDownstreamAPIs() {
           })
         if (apiResponse.data) {
             console.log('utils/downstreamAPI/getDownstreamAPIs :: received ' + apiResponse.data.length + ' records');
-            // look for services with a service characteristic of 'url'
+
+            // Filter parent services based on matching serviceCharacteristic objects
+            // We are only interested in APIs matching our declared dependency of 'downstreamproductcatalog'
+            const matchingServices = apiResponse.data.filter(service => 
+                service.serviceCharacteristic && service.serviceCharacteristic.some(characteristic => 
+                characteristic.name === 'dependencyName' && characteristic.value === 'downstreamproductcatalog'
+                )
+            );
             const downstreamAPIList = [];
+
             // for each service in the apiResponse.data, check if it has a serviceCharacteristic of 'url'
-            for (const service in apiResponse.data) {
+            for (const service in matchingServices) {
                 if (apiResponse.data[service].serviceCharacteristic) {
                     for (const serviceCharacteristic in apiResponse.data[service].serviceCharacteristic) {
                         if (apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].name === 'url') {
