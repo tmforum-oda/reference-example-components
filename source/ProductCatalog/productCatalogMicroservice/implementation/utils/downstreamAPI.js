@@ -2,18 +2,19 @@
 // Import the JSONPath library
 const axios = require('axios');
 const CANVAS_INFO_HOST_PORT = process.env.CANVAS_INFO_HOST_PORT;
-
 const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + '/tmf-api/serviceInventoryManagement/v5/' // 'http://info.canvas.svc.cluster.local/tmf-api/serviceInventoryManagement/v5/'
+const API_DEPENDENCY_NAME = 'downstreamproductcatalog'; // defined in the component specification YAML file
+let componentName = process.env.COMPONENT_NAME;
 
 let gDownstreamAPIList = [];
 let gDownstreamAPIListLoaded = false;
 
 async function getDownstreamAPIs() {
     if (!gDownstreamAPIListLoaded) {
-        gDownstreamAPIListLoaded = true;
         if (CANVAS_INFO_HOST_PORT) {  // onloadly load the downstream APIs if the CANVAS_INFO_HOST_PORT is set
             console.log('utils/downstreamAPI/getDownstreamAPIs :: loading downstream APIs');
             gDownstreamAPIList = await loadDownstreamAPIs();
+            gDownstreamAPIListLoaded = true;
         } else {
             console.log('utils/downstreamAPI/getDownstreamAPIs :: downstream APIs not loaded as CANVAS_INFO_HOST_PORT is not set');
         }
@@ -41,8 +42,12 @@ async function loadDownstreamAPIs() {
             // Filter parent services based on matching serviceCharacteristic objects
             // We are only interested in APIs matching our declared dependency of 'downstreamproductcatalog'
             const matchingServices = apiResponse.data.filter(service => 
-                service.serviceCharacteristic && service.serviceCharacteristic.some(characteristic => 
-                characteristic.name === 'dependencyName' && characteristic.value === 'downstreamproductcatalog'
+                service.serviceCharacteristic &&
+                service.serviceCharacteristic.some(characteristic => 
+                    characteristic.name === 'dependencyName' && characteristic.value === API_DEPENDENCY_NAME
+                ) &&
+                service.serviceCharacteristic.some(characteristic => 
+                    characteristic.name === 'componentName' && characteristic.value === componentName
                 )
             );
             const downstreamAPIList = [];
