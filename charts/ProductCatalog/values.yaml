@@ -8,7 +8,7 @@ component:
   id: TMFC001
   name: productcatalogmanagement
   functionalBlock: CoreCommerce
-  publicationDate: 2023-08-18T00:00:00.000Z
+  publicationDate: 2024-09-17T00:00:00.000Z
   version: "0.0.1"
   storageClassName: default
 security:
@@ -17,8 +17,8 @@ mongodb:
   port: 27017
   database: tmf
 api:
-  image: lesterthomas/productcatalogapi:0.15
-  versionlabel: productcatalogapi-0.15
+  image: lesterthomas/productcatalogapi:0.16
+  versionlabel: productcatalogapi-0.16
   otlp:
     console:
       enabled: false

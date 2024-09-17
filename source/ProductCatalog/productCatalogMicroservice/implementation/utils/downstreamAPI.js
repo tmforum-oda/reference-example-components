@@ -78,28 +78,28 @@ async function loadDownstreamAPIs() {
  * This queries a list of downstream Product Catalog APIs and concatenates the results.
  * This function is to allow the reference product catalog component to implement dependent APIs - it has
  * an optional dependency on one or more downstream product catalogs.
- * @param {*} doc - The document containing the resource data where any additional records will be appended
+ * @param {*} resourceList - The list of resources returned by the downstream API(s)
  * @param {*} url - Theoriginal URL query - we cascade the resource and any additional filters or requested fields
  * @returns The document with the additional records appended
  */
 
-async function listFromDownstreamAPI(doc, url) {
-    console.log(url);
-    const urlResource = url.split('/').pop();
+async function listFromDownstreamAPI(resourceType) {
+    console.log('utils/downstreamAPI/listFromDownstreamAPI :: resourceType =  ' + resourceType);
     const downstreamAPIList = await getDownstreamAPIs();
+    let resourceList = [];
     for (const downstreamAPI in downstreamAPIList) {
-        console.log('utils/downstreamAPI/listFromDownstreamAPI :: getting data from downstream API at ' + downstreamAPIList[downstreamAPI] + urlResource);
+        console.log('utils/downstreamAPI/listFromDownstreamAPI :: getting data from downstream API at ' + downstreamAPIList[downstreamAPI] + resourceType);
         
         try {
-            const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + urlResource)
+            const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + resourceType)
             console.log('utils/downstreamAPI/listFromDownstreamAPI :: received ' + apiResponse.data.length + ' records');
-            doc = doc.concat(apiResponse.data);  
+            resourceList = resourceList.concat(apiResponse.data);  
         } catch (AxiosError) {
-            console.log('utils/downstreamAPI/listFromDownstreamAPI :: error getting data from downstream API at ' + downstreamAPIList[downstreamAPI] + urlResource);
+            console.log('utils/downstreamAPI/listFromDownstreamAPI :: error getting data from downstream API at ' + downstreamAPIList[downstreamAPI] + resourceType);
             console.log(AxiosError.message);
         }      
     }
-    return doc
+    return resourceList
 }
 
 async function retrieveFromDownstreamAPI(resourceType, id) {

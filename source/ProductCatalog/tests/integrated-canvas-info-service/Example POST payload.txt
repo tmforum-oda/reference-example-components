@@ -23,7 +23,7 @@ curl -X 'POST' \
       {
         "name": "url",
         "valueType": "string",
-        "value": "http://192.168.86.23/cat-2-productcatalogmanagement/tmf-api/productCatalogManagement/v4/",
+        "value": "http://192.168.1.138/cat-2-productcatalogmanagement/tmf-api/productCatalogManagement/v4/",
         "@type": "StringCharacteristic"
       },
       {
