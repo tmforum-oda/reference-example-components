@@ -57,6 +57,10 @@ async function loadDownstreamAPIs() {
                 if (apiResponse.data[service].serviceCharacteristic) {
                     for (const serviceCharacteristic in apiResponse.data[service].serviceCharacteristic) {
                         if (apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].name === 'url') {
+                            // ensure url ends with a / to avoid issues with concatenation
+                            if (!apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value.endsWith('/')) {
+                                apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value += '/';
+                            }
                             downstreamAPIList.push(apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value);
                         }
                     }

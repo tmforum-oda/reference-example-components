@@ -17,8 +17,8 @@ mongodb:
   port: 27017
   database: tmf
 api:
-  image: lesterthomas/productcatalogapi:0.16
-  versionlabel: productcatalogapi-0.16
+  image: lesterthomas/productcatalogapi:0.18
+  versionlabel: productcatalogapi-0.18
   otlp:
     console:
       enabled: false
