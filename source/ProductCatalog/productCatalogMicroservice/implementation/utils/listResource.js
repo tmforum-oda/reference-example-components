@@ -93,7 +93,10 @@ async function listResource(req, res) {
   // Call downstream product catalogs and append the results
   const apiError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal error calling downstream API");
   try {
-    doc = await listFromDownstreamAPI(doc, req.url)
+    const resourceType = req.url.split('/').pop();
+    const downstreamAPIResourceList = await listFromDownstreamAPI(resourceType);
+    doc = doc.concat(downstreamAPIResourceList);  
+
     // Assuming the API response data needs to be appended to the doc
     doc = cleanPayloadServiceType(doc);
     res.setHeader('X-Total-Count',totalSize);

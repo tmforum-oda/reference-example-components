@@ -2,18 +2,20 @@
 // Import the JSONPath library
 const axios = require('axios');
 const CANVAS_INFO_HOST_PORT = process.env.CANVAS_INFO_HOST_PORT;
-
-const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + '/tmf-api/serviceInventoryManagement/v5/' // 'http://info.canvas.svc.cluster.local/tmf-api/serviceInventoryManagement/v5/'
+const CANVAS_INFO_BASEPATH = process.env.CANVAS_INFO_BASEPATH;
+const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + CANVAS_INFO_BASEPATH // 'http://info.canvas.svc.cluster.local/tmf-api/serviceInventoryManagement/v5/'
+const API_DEPENDENCY_NAME = 'downstreamproductcatalog'; // defined in the component specification YAML file
+let componentName = process.env.COMPONENT_NAME;
 
 let gDownstreamAPIList = [];
 let gDownstreamAPIListLoaded = false;
 
 async function getDownstreamAPIs() {
     if (!gDownstreamAPIListLoaded) {
-        gDownstreamAPIListLoaded = true;
         if (CANVAS_INFO_HOST_PORT) {  // onloadly load the downstream APIs if the CANVAS_INFO_HOST_PORT is set
             console.log('utils/downstreamAPI/getDownstreamAPIs :: loading downstream APIs');
             gDownstreamAPIList = await loadDownstreamAPIs();
+            gDownstreamAPIListLoaded = true;
         } else {
             console.log('utils/downstreamAPI/getDownstreamAPIs :: downstream APIs not loaded as CANVAS_INFO_HOST_PORT is not set');
         }
@@ -41,8 +43,12 @@ async function loadDownstreamAPIs() {
             // Filter parent services based on matching serviceCharacteristic objects
             // We are only interested in APIs matching our declared dependency of 'downstreamproductcatalog'
             const matchingServices = apiResponse.data.filter(service => 
-                service.serviceCharacteristic && service.serviceCharacteristic.some(characteristic => 
-                characteristic.name === 'dependencyName' && characteristic.value === 'downstreamproductcatalog'
+                service.serviceCharacteristic &&
+                service.serviceCharacteristic.some(characteristic => 
+                    characteristic.name === 'dependencyName' && characteristic.value === API_DEPENDENCY_NAME
+                ) &&
+                service.serviceCharacteristic.some(characteristic => 
+                    characteristic.name === 'componentName' && characteristic.value === componentName
                 )
             );
             const downstreamAPIList = [];
@@ -52,6 +58,10 @@ async function loadDownstreamAPIs() {
                 if (apiResponse.data[service].serviceCharacteristic) {
                     for (const serviceCharacteristic in apiResponse.data[service].serviceCharacteristic) {
                         if (apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].name === 'url') {
+                            // ensure url ends with a / to avoid issues with concatenation
+                            if (!apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value.endsWith('/')) {
+                                apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value += '/';
+                            }
                             downstreamAPIList.push(apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value);
                         }
                     }
@@ -73,28 +83,28 @@ async function loadDownstreamAPIs() {
  * This queries a list of downstream Product Catalog APIs and concatenates the results.
  * This function is to allow the reference product catalog component to implement dependent APIs - it has
  * an optional dependency on one or more downstream product catalogs.
- * @param {*} doc - The document containing the resource data where any additional records will be appended
+ * @param {*} resourceList - The list of resources returned by the downstream API(s)
  * @param {*} url - Theoriginal URL query - we cascade the resource and any additional filters or requested fields
  * @returns The document with the additional records appended
  */
 
-async function listFromDownstreamAPI(doc, url) {
-    console.log(url);
-    const urlResource = url.split('/').pop();
+async function listFromDownstreamAPI(resourceType) {
+    console.log('utils/downstreamAPI/listFromDownstreamAPI :: resourceType =  ' + resourceType);
     const downstreamAPIList = await getDownstreamAPIs();
+    let resourceList = [];
     for (const downstreamAPI in downstreamAPIList) {
-        console.log('utils/downstreamAPI/listFromDownstreamAPI :: getting data from downstream API at ' + downstreamAPIList[downstreamAPI] + urlResource);
+        console.log('utils/downstreamAPI/listFromDownstreamAPI :: getting data from downstream API at ' + downstreamAPIList[downstreamAPI] + resourceType);
         
         try {
-            const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + urlResource)
+            const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + resourceType)
             console.log('utils/downstreamAPI/listFromDownstreamAPI :: received ' + apiResponse.data.length + ' records');
-            doc = doc.concat(apiResponse.data);  
+            resourceList = resourceList.concat(apiResponse.data);  
         } catch (AxiosError) {
-            console.log('utils/downstreamAPI/listFromDownstreamAPI :: error getting data from downstream API at ' + downstreamAPIList[downstreamAPI] + urlResource);
+            console.log('utils/downstreamAPI/listFromDownstreamAPI :: error getting data from downstream API at ' + downstreamAPIList[downstreamAPI] + resourceType);
             console.log(AxiosError.message);
         }      
     }
-    return doc
+    return resourceList
 }
 
 async function retrieveFromDownstreamAPI(resourceType, id) {
