@@ -2,7 +2,8 @@
 // Import the JSONPath library
 const axios = require('axios');
 const CANVAS_INFO_HOST_PORT = process.env.CANVAS_INFO_HOST_PORT;
-const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + '/tmf-api/serviceInventoryManagement/v5/' // 'http://info.canvas.svc.cluster.local/tmf-api/serviceInventoryManagement/v5/'
+const CANVAS_INFO_BASEPATH = process.env.CANVAS_INFO_BASEPATH;
+const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + CANVAS_INFO_BASEPATH // 'http://info.canvas.svc.cluster.local/tmf-api/serviceInventoryManagement/v5/'
 const API_DEPENDENCY_NAME = 'downstreamproductcatalog'; // defined in the component specification YAML file
 let componentName = process.env.COMPONENT_NAME;
 
