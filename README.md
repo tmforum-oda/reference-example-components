@@ -22,3 +22,13 @@ To install the <chart-name> chart:
 To uninstall the chart:
 
     helm delete <release name> -n components
+
+
+## Optional API Dependency
+
+The Product Catalog component can be installed with an option API dependency (for a downstream Product Catalog API). By default, this dependency is not enabled. You can enable it with:
+
+```
+helm install <release name> oda-components/productcatalog --set component.dependentAPIs.enabled=true -n components
+```
+
