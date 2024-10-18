@@ -4,6 +4,8 @@ const axios = require('axios');
 const https = require('https');
 const CANVAS_INFO_HOST_PORT = process.env.CANVAS_INFO_HOST_PORT;
 const CANVAS_INFO_BASEPATH = process.env.CANVAS_INFO_BASEPATH;
+const DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES = process.env.DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES === 'true';
+
 const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + CANVAS_INFO_BASEPATH // 'http://info.canvas.svc.cluster.local/tmf-api/serviceInventoryManagement/v5/'
 const API_DEPENDENCY_NAME = 'downstreamproductcatalog'; // defined in the component specification YAML file
 let componentName = process.env.COMPONENT_NAME;
@@ -37,7 +39,7 @@ async function loadDownstreamAPIs() {
     try {
         const apiResponse = await axios.get(CANVAS_INFO_SERVICE_INVENTORY_API + 'service', {
             timeout: 1000, // Timeout in milliseconds
-            httpsAgent: new (https.Agent)({ rejectUnauthorized: false }) // Allow self-signed certificates
+            httpsAgent: new (https.Agent)({ rejectUnauthorized: DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES }) // Allow self-signed certificates
         })
         if (apiResponse.data) {
             console.log('utils/downstreamAPI/getDownstreamAPIs :: received ' + apiResponse.data.length + ' records');
@@ -102,7 +104,7 @@ async function listFromDownstreamAPI(resourceType) {
         try {
             const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + resourceType, {
                 timeout: 1000, // Timeout in milliseconds
-                httpsAgent: new (https.Agent)({ rejectUnauthorized: false }) // Allow self-signed certificates
+                httpsAgent: new (https.Agent)({ rejectUnauthorized: DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES }) // Allow self-signed certificates
             })
             console.log('utils/downstreamAPI/listFromDownstreamAPI :: received ' + apiResponse.data.length + ' records');
             resourceList = resourceList.concat(apiResponse.data);  
@@ -122,7 +124,7 @@ async function retrieveFromDownstreamAPI(resourceType, id) {
         try {
             const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + resourceType + '/' + id, {
                 timeout: 1000, // Timeout in milliseconds
-                httpsAgent: new (https.Agent)({ rejectUnauthorized: false }) // Allow self-signed certificates
+                httpsAgent: new (https.Agent)({ rejectUnauthorized: DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES }) // Allow self-signed certificates
             })
             if (apiResponse.data) {
                 console.log('utils/downstreamAPI/retrieveFromDownstreamAPI :: received data record');

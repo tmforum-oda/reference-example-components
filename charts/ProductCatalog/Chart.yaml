@@ -15,7 +15,8 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 1.2.4
+version: 1.2.5
+# version: 1.2.5 - Self-signed certificates is an option in the helm chart: component.dependentAPIs.rejectUnauthorizedCertificates=false
 # version: 1.2.4 - Added dev environment workaround for localhost and self-signed certificates
 # version: 1.2.3 - Made dependent APIs optional (enabled with --set component.dependentAPIs.enabled=true)
 # version: 1.2.2 - Added filter by componentName to dependent APIs
