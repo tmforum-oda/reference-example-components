@@ -20,6 +20,8 @@ spec:
       - name: {{.Release.Name}}-prodcatapi
         image: {{.Values.api.image}}
         env:
+        - name: DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES
+          value: "{{.Values.component.dependentAPIs.rejectUnauthorizedCertificates}}"
         - name: RELEASE_NAME
           value: {{.Release.Name}}
         - name: COMPONENT_NAME
