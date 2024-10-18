@@ -100,7 +100,10 @@ async function listFromDownstreamAPI(resourceType) {
         console.log('utils/downstreamAPI/listFromDownstreamAPI :: getting data from downstream API at ' + downstreamAPIList[downstreamAPI] + resourceType);
         
         try {
-            const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + resourceType)
+            const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + resourceType, {
+                timeout: 1000, // Timeout in milliseconds
+                httpsAgent: new (https.Agent)({ rejectUnauthorized: false }) // Allow self-signed certificates
+            })
             console.log('utils/downstreamAPI/listFromDownstreamAPI :: received ' + apiResponse.data.length + ' records');
             resourceList = resourceList.concat(apiResponse.data);  
         } catch (AxiosError) {
@@ -117,7 +120,10 @@ async function retrieveFromDownstreamAPI(resourceType, id) {
     for (const downstreamAPI in downstreamAPIList) {
         console.log('utils/downstreamAPI/retrieveFromDownstreamAPI :: getting data from downstream API at ' + downstreamAPIList[downstreamAPI] + resourceType + '/' + id);
         try {
-            const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + resourceType + '/' + id)
+            const apiResponse = await axios.get(downstreamAPIList[downstreamAPI] + resourceType + '/' + id, {
+                timeout: 1000, // Timeout in milliseconds
+                httpsAgent: new (https.Agent)({ rejectUnauthorized: false }) // Allow self-signed certificates
+            })
             if (apiResponse.data) {
                 console.log('utils/downstreamAPI/retrieveFromDownstreamAPI :: received data record');
                 return apiResponse.data;
