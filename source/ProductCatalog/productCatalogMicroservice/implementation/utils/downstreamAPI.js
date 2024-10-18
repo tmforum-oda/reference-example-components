@@ -1,6 +1,7 @@
 'use strict';
 // Import the JSONPath library
 const axios = require('axios');
+const https = require('https');
 const CANVAS_INFO_HOST_PORT = process.env.CANVAS_INFO_HOST_PORT;
 const CANVAS_INFO_BASEPATH = process.env.CANVAS_INFO_BASEPATH;
 const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + CANVAS_INFO_BASEPATH // 'http://info.canvas.svc.cluster.local/tmf-api/serviceInventoryManagement/v5/'
@@ -35,8 +36,9 @@ async function loadDownstreamAPIs() {
     console.log('utils/downstreamAPI/getDownstreamAPIs :: getting list of downstream APIs from ' + CANVAS_INFO_SERVICE_INVENTORY_API + 'service');
     try {
         const apiResponse = await axios.get(CANVAS_INFO_SERVICE_INVENTORY_API + 'service', {
-            timeout: 1000 // Timeout in milliseconds
-          })
+            timeout: 1000, // Timeout in milliseconds
+            httpsAgent: new (https.Agent)({ rejectUnauthorized: false }) // Allow self-signed certificates
+        })
         if (apiResponse.data) {
             console.log('utils/downstreamAPI/getDownstreamAPIs :: received ' + apiResponse.data.length + ' records');
 
@@ -62,6 +64,8 @@ async function loadDownstreamAPIs() {
                             if (!apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value.endsWith('/')) {
                                 apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value += '/';
                             }
+                            // running in a Dev environment sometimes returns urls with localhost - replace this with host.docker.internal
+                            apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value = apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value.replace('localhost', 'host.docker.internal');
                             downstreamAPIList.push(apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value);
                         }
                     }
