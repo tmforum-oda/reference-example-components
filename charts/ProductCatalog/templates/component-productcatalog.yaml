@@ -25,6 +25,12 @@ spec:
       specification: ["https://raw.githubusercontent.com/tmforum-apis/TMF620_ProductCatalog/master/TMF620-ProductCatalog-v4.0.0.swagger.json"]
       implementation: {{.Release.Name}}-prodcatapi
       apiType: openapi
+      apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 8}}
+      rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 8}}
+      quota: {{.Values.component.apipolicy.quota | toYaml | nindent 8}}
+      OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 8}}
+      CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 8}}
+      template: "{{.Values.component.apipolicy.template}}"
       path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4
       developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4/docs
       port: 8080
@@ -32,6 +38,12 @@ spec:
       specification: ["https://raw.githubusercontent.com/tmforum-apis/TMF671_Promotion/master/TMF671-Promotion-v4.0.0.swagger.json"]
       implementation: {{.Release.Name}}-promgmtapi
       apiType: openapi
+      apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 8}}
+      rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 8}}
+      quota: {{.Values.component.apipolicy.quota | toYaml | nindent 8}}
+      OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 8}}
+      CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 8}}
+      template: "{{.Values.component.apipolicy.template}}"
       path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/promotionManagement/v4
       developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/promotionManagement/v4/docs
       port: 8080      
@@ -50,6 +62,12 @@ spec:
     exposedAPIs: 
     - name: metrics
       apiType: prometheus
+      apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 8}}
+      rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 8}}
+      quota: {{.Values.component.apipolicy.quota | toYaml | nindent 8}}
+      OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 8}}
+      CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 8}}
+      template: "{{.Values.component.apipolicy.template}}"
       implementation: {{.Release.Name}}-{{.Values.component.name}}-sm
       path: /{{.Release.Name}}-{{.Values.component.name}}/metrics
       port: 4000    
@@ -60,6 +78,12 @@ spec:
       specification: ["https://raw.githubusercontent.com/tmforum-apis/TMF669_PartyRole/master/TMF669-PartyRole-v4.0.0.swagger.json"]
       implementation: {{.Release.Name}}-partyroleapi
       apiType: openapi
+      apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 8}}
+      rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 8}}
+      quota: {{.Values.component.apipolicy.quota | toYaml | nindent 8}}
+      OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 8}}
+      CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 8}}
+      template: "{{.Values.component.apipolicy.template}}"
       path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4
       developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4/docs
       port: 8080
