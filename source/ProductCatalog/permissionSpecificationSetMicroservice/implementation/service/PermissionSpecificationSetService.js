@@ -1,128 +1,181 @@
 'use strict';
 
+const util = require('util');
+const uuid = require('uuid');
+
+const mongoUtils = require('../utils/mongoUtils');
+const swaggerUtils = require('../utils/swaggerUtils');
+
+const {TError, TErrorEnum, sendError} = require('../utils/errorUtils');
+
+const resourceType = 'PermissionSpecificationSet';
 
 /**
  * Creates a PermissionSpecificationSet
- * This operation creates a PermissionSpecificationSet entity.
- *
- * body PermissionSpecificationSet_FVO The PermissionSpecificationSet to be created
- * fields String Comma-separated properties to be provided in response (optional)
- * returns PermissionSpecificationSet_RES
- **/
-exports.createPermissionSpecificationSet = function(body,fields) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
-  });
-}
+ */
+exports.createPermissionSpecificationSet = function(req, res, next) {
+  const internalError = new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
 
+  swaggerUtils.getPayload(req)
+    .then(payload => {
+      payload.id = uuid.v4();
+      
+      mongoUtils.connect().then(db => {
+        db.collection(resourceType)
+          .insertOne(payload)
+          .then(() => {
+            mongoUtils.sendDoc(res, 201, payload);
+          })
+          .catch(error => {
+            console.error("createPermissionSpecificationSet: error=" + error);
+            sendError(res, internalError);
+          });
+      })
+      .catch(error => {
+        console.error("createPermissionSpecificationSet: error=" + error);
+        sendError(res, internalError);
+      });
+    })
+    .catch(error => {
+      console.error("createPermissionSpecificationSet: error=" + error);
+      sendError(res, error);
+    });
+};
 
 /**
  * Deletes a PermissionSpecificationSet
- * This operation deletes a PermissionSpecificationSet entity.
- *
- * id String Identifier of the Resource
- * no response value expected for this operation
- **/
-exports.deletePermissionSpecificationSet = function(id) {
-  return new Promise(function(resolve, reject) {
-    resolve();
-  });
-}
+ */
+exports.deletePermissionSpecificationSet = function(req, res, next, id) {
+  const query = { id: id };
 
+ 
+  const resourceType = 'PermissionSpecificationSet';
+
+
+
+  const internalError = new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
+
+  mongoUtils.connect().then(db => {
+    db.collection(resourceType)
+      .deleteOne(query)
+      .then(doc => {
+        if (doc.result.n == 1) {
+          mongoUtils.sendDoc(res, 204, {});
+        } else {
+          sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND, "No resource with given id found"));
+        }
+      })
+      .catch(error => sendError(res, internalError));
+  })
+  .catch(error => sendError(res, internalError));
+};
 
 /**
  * List or find PermissionSpecificationSet objects
- * List or find PermissionSpecificationSet objects
- *
- * fields String Comma-separated properties to be provided in response (optional)
- * offset Integer Requested index for start of resources to be provided in response (optional)
- * limit Integer Requested number of resources to be provided in response (optional)
- * before String An opaque string value representing the page results before the cursor value (optional)
- * after String An opaque string value representing the page results after the cursor value (optional)
- * sort String The default direction is Ascending order, the use of the modifier in front of the sort field name, “-“, changes the sort order direction. (optional)
- * filter String Filter a collection using JSONPath (optional)
- * returns List
- **/
-exports.listPermissionSpecificationSet = function(fields,offset,limit,before,after,sort,filter) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ "", "" ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
-  });
-}
+ */
+exports.listPermissionSpecificationSet = function(req, res, next) {
+  console.log("listPermissionSpecificationSet");
+  console.log("req: " + req);
+  const query = mongoUtils.getMongoQuery(req);
+  
+  const internalError = new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
 
+  mongoUtils.connect().then(db => {
+    db.collection(resourceType)
+      .find(query.criteria, query.options).toArray()
+      .then(doc => {
+        mongoUtils.sendDoc(res, 200, doc);
+      })
+      .catch(error => {
+        console.error("listPermissionSpecificationSet: error=" + error);
+        sendError(res, internalError);
+      });
+  })
+  .catch(error => {
+    console.error("listPermissionSpecificationSet: error=" + error);
+    sendError(res, internalError);
+  });
+};
 
 /**
  * Updates partially a PermissionSpecificationSet
- * This operation updates partially a PermissionSpecificationSet entity.
- *
- * body PermissionSpecificationSet_MVO The PermissionSpecificationSet to be patched
- * fields String Comma-separated properties to be provided in response (optional)
- * id String Identifier of the Resource
- * returns PermissionSpecificationSet_RES
- **/
-exports.patchPermissionSpecificationSet = function(body,fields,id) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
-  });
-}
+ */
+exports.patchPermissionSpecificationSet = function(req, res, next, body, fields, id) {
+  const query = { id: id };
+  const internalError = new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
 
+  swaggerUtils.getPayload(req)
+    .then(payload => {
+      mongoUtils.connect().then(db => {
+        // First check if resource exists
+        db.collection(resourceType)
+          .findOne(query)
+          .then(old => {
+            if (old == undefined) {
+              return sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND, "No resource with given id"));
+            }
 
-/**
- * Updates partially a PermissionSpecificationSet
- * This operation updates partially a PermissionSpecificationSet entity.
- *
- * body PermissionSpecificationSet_MVO The PermissionSpecificationSet to be patched
- * fields String Comma-separated properties to be provided in response (optional)
- * id String Identifier of the Resource
- * returns PermissionSpecificationSet_RES
- **/
-exports.patchPermissionSpecificationSet = function(body,fields,id) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
-  });
-}
-
+            // Update the resource
+            db.collection(resourceType)
+              .updateOne(query, { $set: payload }, { upsert: false })
+              .then(() => {
+                db.collection(resourceType).findOne(query)
+                  .then(doc => {
+                    mongoUtils.sendDoc(res, 200, doc);
+                  })
+                  .catch(error => {
+                    console.error("patchPermissionSpecificationSet error=" + error);
+                    return sendError(res, internalError);
+                  });
+              })
+              .catch(error => {
+                console.error("patchPermissionSpecificationSet error=" + error);
+                return sendError(res, internalError);
+              });
+          })
+          .catch(error => {
+            console.error("patchPermissionSpecificationSet error=" + error);
+            return sendError(res, internalError);
+          });
+      })
+      .catch(error => {
+        console.error("patchPermissionSpecificationSet error=" + error);
+        return sendError(res, internalError);
+      });
+    })
+    .catch(error => {
+      console.error("patchPermissionSpecificationSet error=" + error);
+      return sendError(res, error);
+    });
+};
 
 /**
  * Retrieves a PermissionSpecificationSet by ID
- * This operation retrieves a PermissionSpecificationSet entity. Attribute selection enabled for all first level attributes.
- *
- * id String Identifier of the Resource
- * fields String Comma-separated properties to be provided in response (optional)
- * returns PermissionSpecificationSet_RES
- **/
-exports.retrievePermissionSpecificationSet = function(id,fields) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = "";
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
+ */
+exports.retrievePermissionSpecificationSet = function(req, res, next, fields, id) {
+  const query = mongoUtils.getMongoQuery(req);
+  query.criteria.id = id;
+
+  const internalError = new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
+
+  mongoUtils.connect().then(db => {
+    db.collection(resourceType)
+      .findOne(query.criteria, query.options)
+      .then(doc => {
+        if (doc) {
+          mongoUtils.sendDoc(res, 200, doc);
+        } else {
+          sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND, "No resource with given id found"));
+        }
+      })
+      .catch(error => {
+        console.error("retrievePermissionSpecificationSet: error=" + error);
+        sendError(res, internalError);
+      });
+  })
+  .catch(error => {
+    console.error("retrievePermissionSpecificationSet: error=" + error);
+    sendError(res, internalError);
   });
-}
+};
 
