@@ -1,71 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: productcatalog-mcp-server
+  name: {{.Release.Name}}-prodcatmcp
   labels:
-    app: productcatalog-mcp-server
-    part-of: productcatalog
+    oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: productcatalog-mcp-server
+      impl: {{.Release.Name}}-prodcatmcp
   template:
     metadata:
       labels:
-        app: productcatalog-mcp-server
+        app: {{.Release.Name}}-{{.Values.component.name}}
+        impl: {{.Release.Name}}-prodcatmcp
+        version: {{.Values.mcp.versionlabel}}
     spec:
       containers:
-      - name: mcp-server
-        image: productcatalog-mcp-server:latest
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 8000
-          name: http
-        resources:
-          limits:
-            memory: "256Mi"
-            cpu: "200m"
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
+      - name: {{.Release.Name}}-prodcatmcp
+        image: {{.Values.mcp.image}}
         env:
-        - name: API_URL
-          value: "http://productcatalogapi:8080/tmf-api/productCatalog/v4"
-        - name: MCP_TRANSPORT
-          value: "sse"
-        - name: MCP_PORT
-          value: "8000"
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 10
-          periodSeconds: 30
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 30
-          periodSeconds: 60
-        volumeMounts:
-        - name: logs
-          mountPath: /app/logs
-      volumes:
-      - name: logs
-        emptyDir: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: productcatalog-mcp-server
-  labels:
-    app: productcatalog-mcp-server
-spec:
-  selector:
-    app: productcatalog-mcp-server
-  ports:
-  - port: 8000
-    targetPort: 8000
-    name: http
-  type: ClusterIP
+        - name: RELEASE_NAME
+          value: {{.Release.Name}}
+        - name: COMPONENT_NAME
+          value: {{.Release.Name}}-{{.Values.component.name}}
+        imagePullPolicy: Always
+        ports:
+        - name: {{.Release.Name}}-pcmcp
+          containerPort: 8080
+

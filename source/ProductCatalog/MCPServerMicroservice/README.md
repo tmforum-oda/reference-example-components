@@ -44,11 +44,6 @@ docker buildx build -t "lesterthomas/productcatalogmcp:0.1"  --platform "linux/a
 
 
 
-2. Run with Docker:
-
-```bash
-docker run -p 8000:8000 -e API_URL=http://productcatalogapi:8080/tmf-api/productCatalog/v4 productcatalog-mcp-server:latest
-```
 
 
 ### Running Locally (Development)
@@ -63,8 +58,7 @@ uv run .\product_catalog_mcp_server.py
 
 Environment variables:
 
-- `API_URL`: URL of the Product Catalog API (default: http://productcatalogapi:8080/tmf-api/productCatalog/v4)
-- `MCP_PORT`: Port for SSE transport (default: 8000)
+- `MCP_PORT`: Port for SSE transport (default: 8080)
 
 ## Deployment in Kubernetes
 
@@ -79,3 +73,9 @@ helm install productcatalog ./charts/ProductCatalog
 
 You can test the MCP server using the MCP client or by making HTTP requests to the SSE endpoints. Examples are available in the `example_payloads` directory.
 
+
+
+## Issues
+
+The MCP server is working, but in dev environments we are using self-signed certificates that the MCP Clients (or proxies) are rejecting.
+The temporary workaround is to configure the MCP proxy to use http against the internal service (and ensure it is directly exposed). This workaround is suitable to demonstrate the capability of the MCP server.

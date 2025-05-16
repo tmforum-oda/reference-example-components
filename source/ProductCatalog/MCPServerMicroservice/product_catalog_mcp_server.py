@@ -18,6 +18,8 @@ from pathlib import Path
 # MCP Server imports
 from typing import Any
 from mcp.server.fastmcp import FastMCP
+from fastapi import FastAPI
+import uvicorn
 
 # Import API functionality
 from product_catalog_api import (
@@ -70,7 +72,7 @@ async def catalog_get(
     result = await get_catalog(
         catalog_id=catalog_id, fields=fields, offset=offset, limit=limit
     )
-    if not result:
+    if result == None:
         logger.warning("Failed to retrieve catalog data")
         return {"error": "Failed to retrieve catalog data"}
     return result
@@ -89,7 +91,7 @@ async def catalog_create(catalog_data: dict) -> dict:
     """
     logger.info("MCP Tool - Creating a new catalog")
     result = await create_catalog(catalog_data)
-    if not result:
+    if result == None:
         logger.warning("Failed to create catalog")
         return {"error": "Failed to create catalog"}
     return result
@@ -109,7 +111,7 @@ async def catalog_update(catalog_id: str, catalog_data: dict) -> dict:
     """
     logger.info(f"MCP Tool - Updating catalog with ID: {catalog_id}")
     result = await update_catalog(catalog_id, catalog_data)
-    if not result:
+    if result == None:
         logger.warning(f"Failed to update catalog with ID: {catalog_id}")
         return {"error": f"Failed to update catalog with ID: {catalog_id}"}
     return result
@@ -127,7 +129,7 @@ async def catalog_delete(catalog_id: str) -> dict:
     """
     logger.info(f"MCP Tool - Deleting catalog with ID: {catalog_id}")
     result = await delete_catalog(catalog_id)
-    if not result:
+    if result == None:
         logger.warning(f"Failed to delete catalog with ID: {catalog_id}")
         return {
             "success": False,
@@ -140,10 +142,9 @@ if __name__ == "__main__":
     # Set up argument parser for command-line options
     parser = argparse.ArgumentParser(description="Product Catalog MCP Server")
     parser.add_argument(
-        "--transport",
-        choices=["stdio", "sse"],
-        default=os.environ.get("MCP_TRANSPORT", "stdio"),
-        help="Transport type: stdio (default) or sse",
+        "--url",
+        default=os.environ.get("COMPONENT_NAME", "r1-productcatalogmanagement"),
+        help="URL endpoint for the MCP server (default: r1-productcatalogmanagement)",
     )
     parser.add_argument(
         "--port",
@@ -156,19 +157,24 @@ if __name__ == "__main__":
     # Get the transport from command-line argument or environment variable
     transport = "sse"
     port = args.port
+    url = args.url
 
     logger.info(
-        f"Starting Product Catalog MCP Server with {transport} transport on port {port}"
+        f"Starting Product Catalog MCP Server with {transport} transport on port {port} at endpoint {url}"
     )
+
     try:
-        # For SSE transport, we need to use the sse_app method
-        import uvicorn
+        # Create a main FastAPI app
+        main_app = FastAPI(title="Product Catalog MCP Server")
 
         # Create the SSE app using the MCP server's built-in method
-        app = mcp.sse_app()
+        mcp_app = mcp.sse_app()
+
+        # Mount the MCP server app at the url endpoint
+        main_app.mount("/" + url, mcp_app)
 
         # Run the ASGI app with uvicorn
-        uvicorn.run(app, host="0.0.0.0", port=port)
+        uvicorn.run(main_app, host="0.0.0.0", port=port)
     except KeyboardInterrupt:
         logger.info("Server shutting down")
     except Exception as e:

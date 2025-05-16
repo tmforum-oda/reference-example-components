@@ -18,6 +18,8 @@ VALIDATE_SSL = False
 # Load environment variables
 load_dotenv()
 
+RELEASE_NAME = os.environ.get("RELEASE_NAME", "local")
+
 # Configure logging
 log_dir = Path("logs")
 log_dir.mkdir(exist_ok=True)
@@ -25,7 +27,11 @@ log_dir.mkdir(exist_ok=True)
 logger = logging.getLogger("product-catalog-api")
 
 # Constants
-API_URL = os.getenv("API_URL")
+if RELEASE_NAME == "local":
+    API_URL = "https://localhost/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4"
+else:
+    API_URL = f"http://{RELEASE_NAME}-prodcatapi:8080/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4"
+logger.info(f"API URL: {API_URL}")
 
 
 async def get_catalog(
@@ -250,7 +256,7 @@ async def update_catalog(
                 logger.info(f"Response status: {response.status_code}")
                 response.raise_for_status()
 
-                if response.status_code == 200:
+                if response.status_code in (200, 201, 202, 204):
                     try:
                         response_json = response.json()
                         logger.info("Catalog updated successfully")
@@ -297,7 +303,7 @@ async def delete_catalog(catalog_id: str) -> bool:
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info(f"Deleting catalog with ID: {catalog_id}")
 
-    url = f"{API_URL}/{catalog_id}"
+    url = f"{API_URL}/catalog/{catalog_id}"
 
     headers = {
         "Accept": "application/json;charset=utf-8"
