@@ -57,8 +57,8 @@ api:
       enabled: true
       url: http://datadog-agent.default.svc.cluster.local:4318/v1/traces
 mcp:
-  image: lesterthomas/productcatalogmcp:0.8
-  versionlabel: productcatalogmcp-0.8
+  image: lesterthomas/productcatalogmcp:0.10
+  versionlabel: productcatalogmcp-0.10
 partyrole:
   image: lesterthomas/partyroleapi:1.0
   versionlabel: partyroleapi-1.0

@@ -16,7 +16,7 @@ import argparse
 from pathlib import Path
 
 # MCP Server imports
-from typing import Any
+from typing import Any, Dict, List, Optional
 from mcp.server.fastmcp import FastMCP
 from fastapi import FastAPI
 import uvicorn
@@ -64,6 +64,151 @@ logger.info("Product Catalog MCP Server")
 
 # Initialize FastMCP server
 mcp = FastMCP(name="product_catalog", version="1.0.0")
+
+
+@mcp.resource("resource://tmf620/catalog/{catalog_id}")
+async def catalog_resource(catalog_id: str = None) -> dict:
+    """Retrieve catalog information as a resource from the TM Forum Product Catalog Management API.
+
+    This resource represents a collection of Product Offerings, intended for a specific DistributionChannel,
+    enhanced with additional information such as SLA parameters, invoicing and shipping details.
+
+    Args:
+        catalog_id: Optional ID of a specific catalog to retrieve. If not provided, returns all catalogs.
+
+    Returns:
+        A structured representation of the catalog(s) following the TMF620 specification.
+    """
+    logger.info(
+        f"MCP Resource - Getting catalog with ID: {catalog_id if catalog_id else 'ALL'}"
+    )
+    result = await get_catalog(catalog_id=catalog_id)
+    if result is None:
+        logger.warning("Failed to retrieve catalog data")
+        return {"error": "Failed to retrieve catalog data"}
+    return result
+
+
+@mcp.resource("schema://tmf620/catalog")
+async def catalog_schema() -> dict:
+    """Define the TMF620 Catalog resource schema and operations.
+
+    This resource definition follows the TM Forum TMF620 specification for Product Catalog Management.
+    """
+    logger.info(f"MCP Resource - Getting catalog schema")
+    return {
+        "name": "TMF620 Catalog",
+        "description": "TM Forum Product Catalog Management API - Catalog Resource",
+        "resource": {
+            "uri": "resource://tmf620/catalog",
+            "schema": {
+                "type": "object",
+                "description": "A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details",
+                "properties": {
+                    "@baseType": {
+                        "type": "string",
+                        "description": "When sub-classing, this defines the super-class",
+                    },
+                    "@schemaLocation": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "A URI to a JSON-Schema file that defines additional attributes and relationships",
+                    },
+                    "@type": {
+                        "type": "string",
+                        "description": "When sub-classing, this defines the sub-class entity name",
+                    },
+                    "catalogType": {
+                        "type": "string",
+                        "description": "Indicates if the catalog is a product, service or resource catalog",
+                    },
+                    "category": {
+                        "type": "array",
+                        "description": "List of root categories contained in this catalog",
+                        "items": {"$ref": "#/definitions/CategoryRef"},
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Description of this catalog",
+                    },
+                    "href": {
+                        "type": "string",
+                        "description": "Unique reference of the catalog",
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier of the Catalog",
+                    },
+                    "lastUpdate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date and time of the last update",
+                    },
+                    "lifecycleStatus": {
+                        "type": "string",
+                        "description": "Used to indicate the current lifecycle status",
+                    },
+                    "name": {"type": "string", "description": "Name of the catalog"},
+                    "relatedParty": {
+                        "type": "array",
+                        "description": "List of parties involved in this catalog",
+                        "items": {"$ref": "#/definitions/RelatedParty"},
+                    },
+                    "validFor": {
+                        "$ref": "#/definitions/TimePeriod",
+                        "description": "The period for which the catalog is valid",
+                    },
+                    "version": {"type": "string", "description": "Catalog version"},
+                },
+            },
+            "operations": [
+                {
+                    "name": "get",
+                    "description": "Retrieve catalog information",
+                    "tool": "catalog_get",
+                },
+                {
+                    "name": "create",
+                    "description": "Create a new catalog",
+                    "tool": "catalog_create",
+                },
+                {
+                    "name": "update",
+                    "description": "Update an existing catalog",
+                    "tool": "catalog_update",
+                },
+                {
+                    "name": "delete",
+                    "description": "Delete a catalog",
+                    "tool": "catalog_delete",
+                },
+            ],
+            "examples": [
+                {
+                    "name": "Enterprise Service Catalog",
+                    "description": "A catalog containing enterprise telecom service offerings",
+                    "catalogType": "Product",
+                    "version": "1.0",
+                    "lifecycleStatus": "Active",
+                    "validFor": {
+                        "startDateTime": "2025-01-01T00:00:00Z",
+                        "endDateTime": "2026-01-01T00:00:00Z",
+                    },
+                },
+                {
+                    "name": "Consumer Mobile Offerings",
+                    "description": "Consumer mobile products and services",
+                    "catalogType": "Product",
+                    "version": "2.3",
+                    "lifecycleStatus": "Active",
+                    "validFor": {
+                        "startDateTime": "2025-03-15T00:00:00Z",
+                        "endDateTime": "2025-12-31T23:59:59Z",
+                    },
+                },
+            ],
+        },
+    }
 
 
 @mcp.tool()
@@ -567,6 +712,92 @@ async def product_offering_price_delete(product_offering_price_id: str) -> dict:
         "success": True,
         "message": f"Product offering price {product_offering_price_id} deleted successfully",
     }
+
+
+# ---------------------------------------------------------------------------------------------
+# MCP prompt examples
+# These prompts provide templates for common operations
+
+import datetime
+import json
+
+
+@mcp.prompt()
+def catalog_creation_prompt(
+    name: str,
+    description: str,
+    catalog_type: str = "Product",
+    version: str = "1.0",
+    lifecycle_status: str = "Active",
+) -> str:
+    """Create a prompt template for guiding a user through creating a new catalog.
+
+    Args:
+        name: Name of the catalog (required by TMF620)
+        description: Description of this catalog
+        catalog_type: Indicates if the catalog is a product, service or resource catalog
+        version: Catalog version
+        lifecycle_status: Used to indicate the current lifecycle status
+
+    Returns:
+        A prompt template string for guiding a user to create a catalog
+    """
+    # Set default dates for the validity period (1 year from now)
+    validity_start = datetime.datetime.now().isoformat()
+    validity_end = (datetime.datetime.now() + datetime.timedelta(days=365)).isoformat()
+
+    # Create the catalog JSON structure based on TMF620 schema
+    catalog_data = {
+        "name": name,
+        "description": description,
+        "catalogType": catalog_type,
+        "version": version,
+        "lifecycleStatus": lifecycle_status,
+        "validFor": {"startDateTime": validity_start, "endDateTime": validity_end},
+        # Optional fields that can be included
+        "@baseType": "Catalog",
+        "@type": "Catalog",
+        "@schemaLocation": "https://tmf-open-api.org/schema/TMF620/v4/Catalog.schema.json",
+    }
+
+    # Format the catalog data as a readable JSON string
+    formatted_json = json.dumps(catalog_data, indent=2)
+
+    # Create the prompt template
+    return f"""
+I want to create a new catalog in the Product Catalog Management system with the following details:
+
+- Name: {name}
+- Description: {description} 
+- Type: {catalog_type}
+- Version: {version}
+- Status: {lifecycle_status}
+- Valid from: {validity_start} to {validity_end}
+
+The catalog should follow the TMF620 schema with this structure:
+```json
+{formatted_json}
+```
+
+Please help me create this catalog in the system.
+"""
+
+
+@mcp.prompt()
+def list_catalogs_prompt() -> str:
+    """Create a prompt template for listing all available catalogs."""
+    return """
+Show me all the catalogs currently available in the Product Catalog Management system.
+
+I'd like to see the following information for each catalog:
+- ID and name
+- Description
+- Type (Product, Service, or Resource)
+- Current lifecycle status
+- Validity period
+
+Please organize the information in a clear, readable format.
+"""
 
 
 if __name__ == "__main__":

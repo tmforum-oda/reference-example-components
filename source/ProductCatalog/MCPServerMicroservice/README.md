@@ -13,19 +13,29 @@ Model Context Protocol (MCP) is a standard designed to enable AI agents to inter
 ## Features
 
 - Exposes Product Catalog API functionalities as MCP tools
+- Provides resource-based access to catalog data using the MCP resource standard
 - Supports both Server-Sent Events (SSE) and standard input/output transports
 - Containerized for easy deployment
 - Kubernetes-ready with health checks
 - Integration with TM Forum ODA Component standard
 
-## API Operations
+## MCP Tools
 
-The MCP server exposes the following Product Catalog operations:
+The MCP server exposes the following Product Catalog operations as tools:
 
 - `catalog_get`: Retrieve catalog information
 - `catalog_create`: Create a new catalog
 - `catalog_update`: Update an existing catalog
 - `catalog_delete`: Delete a catalog
+
+## MCP Resources
+
+The server also provides the following resource-based access:
+
+- `resource://tmf620/catalog/{catalog_id}`: Access catalog data directly as a resource
+- `resource://tmf620/catalog`: Access the catalog schema and list of catalogs
+
+Resources provide a more schema-aware way to access the TMF620 API data, with proper type definitions and relationship information.
 
 ## Getting Started
 
