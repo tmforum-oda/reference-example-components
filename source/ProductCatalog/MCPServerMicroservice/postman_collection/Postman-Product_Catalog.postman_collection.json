@@ -1,0 +1,1673 @@
+{
+    "id": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+    "name": "PM-Product_Catalogv4.0.0",
+    "description": "## TMF API Reference: TMF620 - Product Catalog Management\n\n### Release : 19.0 - June 2019\n\nProduct Catalog API is one of Catalog Management API Family. Product Catalog API goal is to provide a catalog of products. \n\n### Operations\nProduct Catalog API performs the following operations on the resources :\n- Retrieve an entity or a collection of entities depending on filter criteria\n- Partial update of an entity (including updating rules)\n- Create an entity (including default values and creation rules)\n- Delete an entity\n- Manage notification of events",
+    "order": [],
+    "folders": [
+        {
+            "id": "ee25113e-5927-4afe-8a75-1570ec603c5a",
+            "name": "catalog",
+            "description": "Folder for catalog",
+            "order": [
+                "68a8b1e6-bf61-467e-ad78-4eeeca179a61",
+                "df65bdfe-fb94-4254-8a9b-93ce8b044f50",
+                "1dd70168-c361-425c-b91c-462ac3071c04",
+                "f0dbd926-5692-46bb-871b-8745aef545db",
+                "169bbc3f-b58c-4292-9be4-7c7255d1f6d3"
+            ],
+            "collection_name": "Product Catalog Management",
+            "collection_id": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "collection": "f59a8a54-6556-4c62-a623-a3633e7e9131"
+        },
+        {
+            "id": "ad4f1c1d-a82b-4e86-8911-32503ed01879",
+            "name": "category",
+            "description": "Folder for category",
+            "order": [
+                "b8c3877f-f5ab-454b-939d-06a1477204c2",
+                "d5a94dee-abd3-4eed-8d69-0f547a9b145b",
+                "8464560b-5f11-403d-b8f1-2d3ce7950b88",
+                "4e99b023-c7a1-4e7f-9626-aaa4655ae045",
+                "f60825fc-4c9d-4f0c-9b68-82a1daddcf48"
+            ],
+            "collection_name": "Product Catalog Management",
+            "collection_id": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "collection": "f59a8a54-6556-4c62-a623-a3633e7e9131"
+        },
+        {
+            "id": "d9341fb4-3015-41c2-9296-3c85ee327cf9",
+            "name": "productOffering",
+            "description": "Folder for productOffering",
+            "order": [
+                "58f14430-3a72-420f-a0f5-ae3a20d811a3",
+                "319c8bd1-6fed-4181-b598-6820f773619d",
+                "c9f75834-df6f-4567-bb3c-9636e77dfee4",
+                "495a055f-31f7-4fba-acb1-f2c29e45d376",
+                "85341fa2-f1e2-4859-b1e9-bf8ebbd51570"
+            ],
+            "collection_name": "Product Catalog Management",
+            "collection_id": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "collection": "f59a8a54-6556-4c62-a623-a3633e7e9131"
+        },
+        {
+            "id": "04d578c7-4932-4432-b183-048e7fe99883",
+            "name": "productOfferingPrice",
+            "description": "Folder for productOfferingPrice",
+            "order": [
+                "0983e3c2-5d26-430e-9c03-68a48e5b8c57",
+                "ee7e9fc2-3c00-48af-86ec-9d4c415aee1b",
+                "fad7d44a-e371-4800-a401-a7eb903e0d48",
+                "27d05d50-09d3-4034-a604-3ea0c23f4638",
+                "fcccbebf-d7a6-4480-b56e-a03155ed8a66"
+            ],
+            "collection_name": "Product Catalog Management",
+            "collection_id": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "collection": "f59a8a54-6556-4c62-a623-a3633e7e9131"
+        },
+        {
+            "id": "852af0d4-2f72-4787-926b-a66d477bf8f0",
+            "name": "productSpecification",
+            "description": "Folder for productSpecification",
+            "order": [
+                "e20faba0-ce2a-4867-aafa-c5fbbbef3238",
+                "f827b4b8-b3de-4555-be38-3b76286594a3",
+                "8c4086b3-8b1e-4d18-8c86-9352d0d85b9b",
+                "2eec16e2-d7e2-48ee-8af4-4559ad4fcfd1",
+                "65893b61-ebd0-4874-b671-0147bd1c2d9c"
+            ],
+            "collection_name": "Product Catalog Management",
+            "collection_id": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "collection": "f59a8a54-6556-4c62-a623-a3633e7e9131"
+        },
+        {
+            "id": "fa41a0c2-d7be-4c2a-b262-739d7ff7996f",
+            "name": "importJob",
+            "description": "Folder for importJob",
+            "order": [
+                "897c6872-1ef2-4c26-bc8a-86e64aaffbb9",
+                "d592bd5e-090b-4a31-bf44-499b3554e535",
+                "333c40ad-8786-4769-b7b4-5369b2cf5430",
+                "0b1812bd-f0e1-48c1-ba31-52ee2f1cefeb"
+            ],
+            "collection_name": "Product Catalog Management",
+            "collection_id": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "collection": "f59a8a54-6556-4c62-a623-a3633e7e9131"
+        },
+        {
+            "id": "f0e89ca2-2f93-4b5e-bf06-fbba8cf20671",
+            "name": "exportJob",
+            "description": "Folder for exportJob",
+            "order": [
+                "b3457668-833d-4252-82ec-42b5a355a46d",
+                "85e2b307-292a-4e33-91d3-8a69b08f2d94",
+                "d77318a3-c23b-41e6-8cde-a3c07d8d1f61",
+                "7db35ee2-74b5-49ad-9195-4458c30e87e6"
+            ],
+            "collection_name": "Product Catalog Management",
+            "collection_id": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "collection": "f59a8a54-6556-4c62-a623-a3633e7e9131"
+        },
+        {
+            "id": "04a90dc9-560a-4114-b3e7-faf2a8fe43f0",
+            "name": "hub",
+            "description": "Folder for hub",
+            "order": [
+                "4a3ad5f3-bc1a-4727-92b4-85222c682db0",
+                "02f8c02b-d789-4d04-9cc6-5f4ec031d8b0"
+            ],
+            "collection_name": "Product Catalog Management",
+            "collection_id": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "collection": "f59a8a54-6556-4c62-a623-a3633e7e9131"
+        },
+        {
+            "id": "26c07b0b-5c78-49b3-86dd-66bd355320da",
+            "name": "listener",
+            "description": "Folder for listener",
+            "order": [
+                "dd996f48-5654-4e7c-87f6-915ec69f2c65",
+                "9f38bdaf-3e3c-4d68-8068-60841d5f492b",
+                "e0716099-a1b8-41b7-83b4-19ecfe37ecc0",
+                "d7d95a34-acb7-4f96-92f5-66b96448256e",
+                "bc15e3ba-e50c-410d-8fe2-92506957cce4",
+                "88e20b83-a80d-464d-b11e-0d3bd069959c",
+                "a751b87e-5ad8-4406-8d81-d688510c8d08",
+                "c616c962-4e65-453a-a484-576929bceb52",
+                "6103838e-c110-43ed-bbc1-9cd33e0a190e",
+                "b6dd0cea-357f-4254-a53f-b2fcd413fc4b",
+                "b6128a14-6fda-4632-a5cb-7ab5663e4e43",
+                "465e739a-b6f6-47bf-9902-af20b8cbd243",
+                "32ff2a71-6932-42a1-a01b-a8363ff83ae7",
+                "97c5969a-ac96-467a-bed0-d53f6930e4d0",
+                "45aba704-fa60-4a93-8d6f-67e7f0d5f107"
+            ],
+            "collection_name": "Product Catalog Management",
+            "collection_id": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "collection": "f59a8a54-6556-4c62-a623-a3633e7e9131"
+        }
+    ],
+    "timestamp": 1413302258635,
+    "synced": false,
+    "requests": [
+        {
+            "id": "68a8b1e6-bf61-467e-ad78-4eeeca179a61",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/catalog?fields={{fields}}&offset={{offset}}&limit={{limit}}",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation list or find Catalog entities",
+            "descriptionFormat": "html",
+            "time": 1564573993862,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "List or find Catalog objects",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "df65bdfe-fb94-4254-8a9b-93ce8b044f50",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/catalog",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "{\n    \"name\": \"Catalog Wholesale Business\", \n    \"description\": \"This catalog describes Product Offerings and technical specifications intended to address the wholesale business segment.\",\n    \"@type\": \"Catalog\"\n}",
+            "dataMode": "raw",
+            "description": "This operation creates a Catalog entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993862,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Creates a Catalog",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "1dd70168-c361-425c-b91c-462ac3071c04",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/catalog/:id?fields={{fields}}",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation retrieves a Catalog entity. Attribute selection is enabled for all first level attributes.",
+            "descriptionFormat": "html",
+            "time": 1564573993862,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Retrieves a Catalog by ID",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "f0dbd926-5692-46bb-871b-8745aef545db",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/catalog/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "PATCH",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "This operation updates partially a Catalog entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993862,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Updates partially a Catalog"
+        },
+        {
+            "id": "169bbc3f-b58c-4292-9be4-7c7255d1f6d3",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/catalog/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "DELETE",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation deletes a Catalog entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993862,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Deletes a Catalog"
+        },
+        {
+            "id": "b8c3877f-f5ab-454b-939d-06a1477204c2",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/category?fields={{fields}}&offset={{offset}}&limit={{limit}}",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation list or find Category entities",
+            "descriptionFormat": "html",
+            "time": 1564573993862,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "List or find Category objects",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "d5a94dee-abd3-4eed-8d69-0f547a9b145b",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/category",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "{\n    \"name\": \"Cloud Services\",\n    \"description\": \"A category to hold all available cloud service offers\",\n    \"@type\": \"Category\"\n}",
+            "dataMode": "raw",
+            "description": "This operation creates a Category entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Creates a Category",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "8464560b-5f11-403d-b8f1-2d3ce7950b88",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/category/:id?fields={{fields}}",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation retrieves a Category entity. Attribute selection is enabled for all first level attributes.",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Retrieves a Category by ID",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "4e99b023-c7a1-4e7f-9626-aaa4655ae045",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/category/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "PATCH",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "This operation updates partially a Category entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Updates partially a Category"
+        },
+        {
+            "id": "f60825fc-4c9d-4f0c-9b68-82a1daddcf48",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/category/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "DELETE",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation deletes a Category entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Deletes a Category"
+        },
+        {
+            "id": "58f14430-3a72-420f-a0f5-ae3a20d811a3",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productOffering?fields={{fields}}&offset={{offset}}&limit={{limit}}",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation list or find ProductOffering entities",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "List or find ProductOffering objects",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "319c8bd1-6fed-4181-b598-6820f773619d",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productOffering",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "{\n    \"name\": \"Basic Firewall for Business\",\n    \"description\": \"This product offering suggests a firewall service that can be deployed in business customer premise.\",\n    \"version\": \"1.0\",\n    \"validFor\": {\n        \"startDateTime\": \"2017-08-23T00:00\",\n        \"endDateTime\": \"2018-03-25T00:00\"\n    },\n    \"isBundle\": false,\n    \"isSellable\": true,\n    \"statusReason\": \"Released for sale\",\n    \"place\": [\n        {\n            \"id\": \"9979\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/geographicAddressManagement/v4/geographicAddress/9979\",\n            \"name\": \"San Francisco Bay Area\",\n            \"@referredType\": \"GeographicAddress\"\n        }\n    ],\n    \"serviceLevelAgreement\": {\n        \"id\": \"8082\",\n        \"href\": \"https://mycsp.com:8080/tmf-api/slaManagement/v4/sla/8082\",\n        \"name\": \"Gold SLA for Business\",\n        \"@referredType\": \"BusinessSLA\"\n    },\n    \"productSpecification\": {\n        \"id\": \"9881\",\n        \"href\": \"https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/productSpecification/9881\",\n        \"version\": \"1.1\",\n        \"name\": \"Robotics999\",\n        \"@referredType\": \"DeviceSpecification\"\n    },\n    \"channel\": [\n        {\n            \"id\": \"4406\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/salesChannelManagement/v4/channel/4406\",\n            \"name\": \"Online Channel\"\n        }\n    ],\n    \"serviceCandidate\": {\n        \"id\": \"8167\",\n        \"href\": \"https://mycsp.com:8080/tmf-api/serviceCatalogManagement/v4/serviceCandidate/8167\",\n        \"version\": \"1.1\",\n        \"name\": \"Mega Max\"\n    },\n    \"category\": [\n        {\n            \"id\": \"2646\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/category/2646\",\n            \"version\": \"2.1\",\n            \"name\": \"Cloud\"\n        }\n    ],\n    \"resourceCandidate\": {\n        \"id\": \"8937\",\n        \"href\": \"https://mycsp.com:8080/tmf-api/resourceCatalogManagement/v4/resourceCandidate/8937\",\n        \"name\": \"Mega Band\"\n    },\n    \"productOfferingTerm\": [\n        {\n            \"name\": \"New Client Condition\",\n            \"description\": \"This product offering term is for new client at fix duration of less than a year\",\n            \"duration\": {\n                \"amount\": 3,\n                \"units\": \"Month\"\n            },\n            \"validFor\": {\n                \"startDateTime\": \"2017-06-15T00:00\",\n                \"endDateTime\": \"2018-01-13T00:00\"\n            }\n        }\n    ],\n    \"productOfferingPrice\": [\n        {\n            \"id\": \"1747\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/productOfferingPrice/1747\",\n            \"name\": \"Recurring Monthly Price for Business Firewall\"\n        }\n    ],\n    \"attachment\": [\n        {\n            \"description\": \"This attachment gives a block diagram of the firewall.\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/documentManagement/v4/attachment/22\",\n            \"id\": \"22\",\n            \"url\": \"https://mycsp.com:7070/docloader?docnum=3534536\"\n        }\n    ],\n    \"marketSegment\": [\n        {\n            \"id\": \"1266\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/productOfferingReferences/v4/marketSegmentRef/1266\",\n            \"name\": \"North Region\"\n        }\n    ],\n    \"prodSpecCharValueUse\": [\n        {\n            \"name\": \"Number of Ports\",\n            \"description\": \"The total Number of Ports for this product\",\n            \"valueType\": \"number\",\n            \"minCardinality\": 1,\n            \"maxCardinality\": 1,\n            \"validFor\": {\n                \"startDateTime\": \"2017-06-17T00:00\",\n                \"endDateTime\": \"2018-01-13T00:00\"\n            },\n            \"productSpecCharacteristicValue\": [\n                {\n                    \"isDefault\": true,\n                    \"validFor\": {\n                        \"startDateTime\": \"2017-06-16T00:00\",\n                        \"endDateTime\": \"2018-01-13T00:00\"\n                    },\n                    \"value\": 8\n                },\n                {\n                    \"isDefault\": false,\n                    \"validFor\": {\n                        \"startDateTime\": \"2017-06-16T00:00\",\n                        \"endDateTime\": \"2018-01-13T00:00\"\n                    },\n                    \"value\": 16\n                }\n            ],\n            \"productSpecification\": {\n                \"id\": \"9881\",\n                \"href\": \"https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/productSpecification/9881\",\n                \"version\": \"1.1\"\n            }\n        }\n    ],\n    \"@type\": \"ProductOffering\"\n}",
+            "dataMode": "raw",
+            "description": "This operation creates a ProductOffering entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Creates a ProductOffering",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "c9f75834-df6f-4567-bb3c-9636e77dfee4",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productOffering/:id?fields={{fields}}",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation retrieves a ProductOffering entity. Attribute selection is enabled for all first level attributes.",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Retrieves a ProductOffering by ID",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "495a055f-31f7-4fba-acb1-f2c29e45d376",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productOffering/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "PATCH",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "This operation updates partially a ProductOffering entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Updates partially a ProductOffering"
+        },
+        {
+            "id": "85341fa2-f1e2-4859-b1e9-bf8ebbd51570",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productOffering/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "DELETE",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation deletes a ProductOffering entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Deletes a ProductOffering"
+        },
+        {
+            "id": "0983e3c2-5d26-430e-9c03-68a48e5b8c57",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productOfferingPrice?fields={{fields}}&offset={{offset}}&limit={{limit}}",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation list or find ProductOfferingPrice entities",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "List or find ProductOfferingPrice objects",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ee7e9fc2-3c00-48af-86ec-9d4c415aee1b",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productOfferingPrice",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "{\n    \"name\": \"Recurring Charge for Business Firewall\",\n    \"description\": \"This pricing describes the recurring charge for a firewall service that can be deployed in business customer premise.\",\n    \"version\": \"2.1\",\n    \"validFor\": {\n        \"startDateTime\": \"2017-08-23T00:00\",\n        \"endDateTime\": \"2018-03-25T00:00\"\n    },\n    \"priceType\": \"recurring\",\n    \"recurringChargePeriodType\": \"monthly\",\n    \"recurringChargePeriodLength\": 1,\n    \"isBundle\": false,\n    \"price\": {\n        \"unit\": \"EUR\",\n        \"amount\": 50\n    },\n    \"percentage\": 0.0,\n    \"productOfferingTerm\": [\n        {\n            \"name\": \"12 Month\",\n            \"description\": \"12 month contract\",\n            \"duration\": {\n                \"amount\": 12,\n                \"units\": \"Month\"\n            },\n            \"validFor\": {\n                \"startDateTime\": \"2017-04-19T16:42:23.0Z\",\n                \"endDateTime\": \"2017-06-19T00:00:00.0Z\"\n            }\n        }\n    ],\n    \"place\": [\n        {\n            \"id\": \"9979\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/geographicAddressManagement/v4/geographicAddress/9979\",\n            \"name\": \"San Francisco Bay Area\",\n            \"@referredType\": \"GeographicAddress\"\n        }\n    ],\n    \"constraint\": [\n        {\n            \"@referredType\": \"PriceConstraint\",\n            \"name\": \"PriceRuleNo1\",\n            \"id\": \"525\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/constraint/525\"\n        }\n    ],\n    \"pricingLogicAlgorithm\": {\n        \"id\": \"533\",\n        \"href\": \"https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/PricingLogicAlgorithm/533\",\n        \"@type\": \"RecurringRatingPLA\",\n        \"@baseType\": \"PricingLogicAlgorithm\",\n        \"@schemaLocation\": \"https://mycsp.com:8080/tmf-api/schema/Product/RecurringRatingPLA.schema.json\",\n        \"name\": \"PLA_rec\",\n        \"description\": \"Algorithm that rates Recurring event\",\n        \"plaSpecId\": \"525\",\n        \"validFor\": {\n            \"startDateTime\": \"2017-04-19T16:42:23.0Z\",\n            \"endDateTime\": \"2018-06-19T00:00:00.0Z\"\n        }\n    },\n    \"tax\": [\n        {\n            \"taxAmount\": {\n                \"unit\": \"EUR\",\n                \"value\": 10\n            },\n            \"taxCategory\": \"VAT\",\n            \"taxRate\": 20.0\n        }\n    ],\n    \"@type\": \"ProductOfferingPrice\"\n}",
+            "dataMode": "raw",
+            "description": "This operation creates a ProductOfferingPrice entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Creates a ProductOfferingPrice",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "fad7d44a-e371-4800-a401-a7eb903e0d48",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productOfferingPrice/:id?fields={{fields}}",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation retrieves a ProductOfferingPrice entity. Attribute selection is enabled for all first level attributes.",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Retrieves a ProductOfferingPrice by ID",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "27d05d50-09d3-4034-a604-3ea0c23f4638",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productOfferingPrice/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "PATCH",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "This operation updates partially a ProductOfferingPrice entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Updates partially a ProductOfferingPrice"
+        },
+        {
+            "id": "fcccbebf-d7a6-4480-b56e-a03155ed8a66",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productOfferingPrice/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "DELETE",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation deletes a ProductOfferingPrice entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Deletes a ProductOfferingPrice"
+        },
+        {
+            "id": "e20faba0-ce2a-4867-aafa-c5fbbbef3238",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productSpecification?fields={{fields}}&offset={{offset}}&limit={{limit}}",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation list or find ProductSpecification entities",
+            "descriptionFormat": "html",
+            "time": 1564573993863,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "List or find ProductSpecification objects",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "f827b4b8-b3de-4555-be38-3b76286594a3",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productSpecification",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "{\n    \"name\": \"Cisco Firepower NGFW\",\n    \"brand\": \"Cisco\",\n    \"productNumber\": \"CSC-340-NGFW\",\n    \"description\": \"Powerful product that integrates with a firewall, including intrusion prevention, advanced malware protection, cloud-based sandboxing, URL filtering, endpoint protection, web gateway, email security, network traffic analysis, network access control and CASB.\",\n    \"isBundle\": true,\n    \"validFor\": {\n        \"startDateTime\": \"2017-06-19T00:00:00.0Z\",\n        \"endDateTime\": \"2018-04-19T16:42:23.0Z\"\n    },\n    \"version\": \"2.1\",\n    \"relatedParty\": [\n        {\n            \"id\": \"1234\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/partyManagement/v4/partyRole/1234\",\n            \"role\": \"Owner\",\n            \"name\": \"Gustave Flaubert\",\n            \"validFor\": {\n                \"startDateTime\": \"2017-03-19T16:42:23-04:00\"\n            }\n        }\n    ],\n    \"attachment\": [\n        {\n            \"id\": \"22\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/documentManagement/v4/attachment/22\",\n            \"name\": \"Product Picture\",\n            \"mimeType\": \"image/jpeg\",\n            \"url\": \"https://mycsp.com:7070/docloader?docnum=774451234\"\n        },\n        {\n            \"id\": \"33\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/documentManagement/v4/attachment/22\",\n            \"name\": \"Product Manual\",\n            \"mimeType\": \"application/pdf\",\n            \"url\": \"https://mycsp.com:7070/docloader?docnum=774454321\"\n        }\n    ],\n    \"bundledProductSpecification\": [\n        {\n            \"id\": \"15\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/productSpecification/15\",\n            \"name\": \"URL Filter\"\n        },\n        {\n            \"id\": \"64\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/productSpecification/64\",\n            \"name\": \"Malware Protector\"\n        }\n    ],\n    \"targetProductSchema\": {\n        \"@type\": \"Firewall\",\n        \"@schemaLocation\": \"https://mycsp.com:8080/tmf-api/schema/Product/Firewall.schema.json\"\n    },\n    \"productSpecificationRelationship\": [\n        {\n            \"id\": \"23\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/productSpecification/23\",\n            \"relationshipType\": \"Dependency\",\n            \"validFor\": {\n                \"startDateTime\": \"2017-04-19T16:42:23.0Z\"\n            }\n        }\n    ],\n    \"serviceSpecification\": [\n        {\n            \"id\": \"22\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/serviceCatalogManagement/v4/serviceSpecification/22\",\n            \"name\": \"Firewall\",\n            \"version\": \"1.0\"\n        }\n    ],\n    \"resourceSpecification\": [\n        {\n            \"id\": \"63\",\n            \"href\": \"https://mycsp.com:8080/tmf-api/resourceCatalogManagement/v4/resourceSpecification/63\",\n            \"name\": \"Firewall Port\",\n            \"version\": \"1.0\"\n        }\n    ],\n    \"productSpecCharacteristic\": [\n        {\n            \"name\": \"Number of Ports\",\n            \"description\": \"The total Number of Ports for this product\",\n            \"valueType\": \"number\",\n            \"configurable\": true,\n            \"minCardinality\": 1,\n            \"maxCardinality\": 1,\n            \"isUnique\": true,\n            \"productSpecCharRelationship\": [\n                {\n                    \"id\": \"43\",\n                    \"href\": \"https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/productSpecification/43\",\n                    \"relationshipType\": \"Dependency\",\n                    \"name\": \"Bandwidth\",\n                    \"validFor\": {\n                        \"startDateTime\": \"2017-04-19T16:42:23-04:00\"\n                    }\n                }\n            ],\n            \"productSpecCharacteristicValue\": [\n                {\n                    \"isDefault\": true, \n                    \"validFor\": {\n                        \"startDateTime\": \"2017-06-16T00:00\", \n                        \"endDateTime\": \"2018-01-13T00:00\"\n                    }, \n                    \"value\": 8\n                },\n                {\n                    \"isDefault\": false, \n                    \"validFor\": {\n                        \"startDateTime\": \"2017-06-16T00:00\", \n                        \"endDateTime\": \"2018-01-13T00:00\"\n                    }, \n                    \"value\": 16\n                },\n                {\n                    \"isDefault\": false, \n                    \"validFor\": {\n                        \"startDateTime\": \"2017-06-16T00:00\", \n                        \"endDateTime\": \"2018-01-13T00:00\"\n                    }, \n                    \"value\": 24\n                }\n            ],\n            \"validFor\": {\"startDateTime\": \"2017-04-19T16:42:23.0Z\"}\n        },\n        {\n            \"name\": \"Color\",\n            \"description\": \"Color of the Firewall housing\",\n            \"valueType\": \"string\",\n            \"configurable\": true,\n            \"minCardinality\": 1,\n            \"maxCardinality\": 1,\n            \"extensible\": true,\n            \"isUnique\": true,\n            \"productSpecCharacteristicValue\": [\n                {\n                    \"isDefault\": true,\n                    \"value\": \"Black\"\n                },\n                {\n                    \"isDefault\": false,\n                    \"value\": \"White\"\n                }\n            ],\n            \"validFor\": {\n                \"startDateTime\": \"2017-04-19T16:42:23.0Z\"\n            }\n        }\n    ],\n    \"@type\": \"ProductSpecification\"\n}",
+            "dataMode": "raw",
+            "description": "This operation creates a ProductSpecification entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Creates a ProductSpecification",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "8c4086b3-8b1e-4d18-8c86-9352d0d85b9b",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productSpecification/:id?fields={{fields}}",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation retrieves a ProductSpecification entity. Attribute selection is enabled for all first level attributes.",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Retrieves a ProductSpecification by ID",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "2eec16e2-d7e2-48ee-8af4-4559ad4fcfd1",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productSpecification/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "PATCH",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "This operation updates partially a ProductSpecification entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Updates partially a ProductSpecification"
+        },
+        {
+            "id": "65893b61-ebd0-4874-b671-0147bd1c2d9c",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/productSpecification/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "DELETE",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation deletes a ProductSpecification entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Deletes a ProductSpecification"
+        },
+        {
+            "id": "897c6872-1ef2-4c26-bc8a-86e64aaffbb9",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/importJob?fields={{fields}}&offset={{offset}}&limit={{limit}}",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation list or find ImportJob entities",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "List or find ImportJob objects",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "d592bd5e-090b-4a31-bf44-499b3554e535",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/importJob",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "{\n    \"contentType\": \"application/json\",\n    \"path\": \"https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/Catalog/3830\",\n    \"url\": \"https://my-platform/daily/job/NHCFD6\",\n    \"@type\": \"ImportJob\"\n}",
+            "dataMode": "raw",
+            "description": "This operation creates a ImportJob entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Creates a ImportJob",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "333c40ad-8786-4769-b7b4-5369b2cf5430",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/importJob/:id?fields={{fields}}",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation retrieves a ImportJob entity. Attribute selection is enabled for all first level attributes.",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Retrieves a ImportJob by ID",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "0b1812bd-f0e1-48c1-ba31-52ee2f1cefeb",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/importJob/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "DELETE",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation deletes a ImportJob entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Deletes a ImportJob"
+        },
+        {
+            "id": "b3457668-833d-4252-82ec-42b5a355a46d",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/exportJob?fields={{fields}}&offset={{offset}}&limit={{limit}}",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation list or find ExportJob entities",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "List or find ExportJob objects",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "85e2b307-292a-4e33-91d3-8a69b08f2d94",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/exportJob",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "{\n    \"contentType\": \"application/json\",\n    \"path\": \"https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/Catalog/3830\",\n    \"query\": \"category.id=7757\",\n    \"url\": \"https://my-platform/daily/job/EHCFD6\",\n    \"errorLog\": \"http://my-platform/logging/errors.log\",\n    \"@type\": \"ImportJob\"\n}",
+            "dataMode": "raw",
+            "description": "This operation creates a ExportJob entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Creates a ExportJob",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "d77318a3-c23b-41e6-8cde-a3c07d8d1f61",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/exportJob/:id?fields={{fields}}",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "GET",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation retrieves a ExportJob entity. Attribute selection is enabled for all first level attributes.",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Retrieves a ExportJob by ID",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "7db35ee2-74b5-49ad-9195-4458c30e87e6",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/exportJob/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "DELETE",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "This operation deletes a ExportJob entity.",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Deletes a ExportJob"
+        },
+        {
+            "id": "4a3ad5f3-bc1a-4727-92b4-85222c682db0",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/hub",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Sets the communication endpoint address the service instance must use to deliver information about its health state, execution state, failures and metrics.",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Register a listener",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "02f8c02b-d789-4d04-9cc6-5f4ec031d8b0",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/hub/:id",
+            "pathVariables": {
+                "id": "{{id}}"
+            },
+            "preRequestScript": "",
+            "method": "DELETE",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "params",
+            "description": "Resets the communication endpoint address the service instance must use to deliver information about its health state, execution state, failures and metrics.",
+            "descriptionFormat": "html",
+            "time": 1564573993864,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Unregister a listener"
+        },
+        {
+            "id": "dd996f48-5654-4e7c-87f6-915ec69f2c65",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/catalogCreateEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification CatalogCreateEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993865,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity CatalogCreateEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "9f38bdaf-3e3c-4d68-8068-60841d5f492b",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/catalogDeleteEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification CatalogDeleteEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993865,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity CatalogDeleteEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "e0716099-a1b8-41b7-83b4-19ecfe37ecc0",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/catalogBatchEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification CatalogBatchEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993865,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity CatalogBatchEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "d7d95a34-acb7-4f96-92f5-66b96448256e",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/categoryCreateEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification CategoryCreateEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993865,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity CategoryCreateEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "bc15e3ba-e50c-410d-8fe2-92506957cce4",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/categoryDeleteEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification CategoryDeleteEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993865,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity CategoryDeleteEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "88e20b83-a80d-464d-b11e-0d3bd069959c",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/productOfferingCreateEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification ProductOfferingCreateEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993865,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity ProductOfferingCreateEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "a751b87e-5ad8-4406-8d81-d688510c8d08",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/productOfferingAttributeValueChangeEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification ProductOfferingAttributeValueChangeEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993865,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity ProductOfferingAttributeValueChangeEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "c616c962-4e65-453a-a484-576929bceb52",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/productOfferingStateChangeEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification ProductOfferingStateChangeEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993865,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity ProductOfferingStateChangeEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "6103838e-c110-43ed-bbc1-9cd33e0a190e",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/productOfferingDeleteEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification ProductOfferingDeleteEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993866,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity ProductOfferingDeleteEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "b6dd0cea-357f-4254-a53f-b2fcd413fc4b",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/productOfferingPriceCreateEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification ProductOfferingPriceCreateEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993866,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity ProductOfferingPriceCreateEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "b6128a14-6fda-4632-a5cb-7ab5663e4e43",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/productOfferingPriceAttributeValueChangeEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification ProductOfferingPriceAttributeValueChangeEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993866,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity ProductOfferingPriceAttributeValueChangeEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "465e739a-b6f6-47bf-9902-af20b8cbd243",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/productOfferingPriceStateChangeEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification ProductOfferingPriceStateChangeEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993867,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity ProductOfferingPriceStateChangeEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "32ff2a71-6932-42a1-a01b-a8363ff83ae7",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/productOfferingPriceDeleteEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification ProductOfferingPriceDeleteEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993867,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity ProductOfferingPriceDeleteEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "97c5969a-ac96-467a-bed0-d53f6930e4d0",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/productSpecificationCreateEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification ProductSpecificationCreateEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993867,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity ProductSpecificationCreateEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "45aba704-fa60-4a93-8d6f-67e7f0d5f107",
+            "headers": "Accept: application/json;charset=utf-8\nContent-Type: application/json;charset=utf-8\n",
+            "url": "{{Product_Catalog_API}}/tmf-api/productCatalogManagement/v4/listener/productSpecificationDeleteEvent",
+            "pathVariables": {},
+            "preRequestScript": "",
+            "method": "POST",
+            "data": [],
+            "rawModeData": "",
+            "dataMode": "raw",
+            "description": "Example of a client listener for receiving the notification ProductSpecificationDeleteEvent",
+            "descriptionFormat": "html",
+            "time": 1564573993867,
+            "version": 2,
+            "responses": [],
+            "tests": "",
+            "collectionId": "f59a8a54-6556-4c62-a623-a3633e7e9131",
+            "synced": false,
+            "name": "Client listener for entity ProductSpecificationDeleteEvent",
+            "events": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 201\", function () {",
+                            "    pm.response.to.have.status(201);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ]
+        }
+    ]
+}

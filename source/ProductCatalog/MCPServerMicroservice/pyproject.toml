@@ -1,0 +1,19 @@
+[project]
+name = "product-catalog-MCP-Server"
+version = "0.1.1"
+description = "MCP Server for Product Catalog Component"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.6.0",
+    "python-dotenv>=1.0.0",
+    "fastapi>=0.103.0",
+    "tiktoken>=0.9.0",
+    "uvicorn>=0.28.0",
+    "markdown2>=2.5.3",
+    "jinja2>=3.1.6",
+    "python-multipart>=0.0.20"
+]
+[project.scripts]
+product-catalog-mcp-server = "product_catalog_mcp_server.main:main"
