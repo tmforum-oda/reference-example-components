@@ -1352,17 +1352,17 @@ async def get_product_offering_price(
 ) -> dict[str, Any] | None:
     """Query the productOfferingPrice resource in the TM Forum Product Catalog Management API.
 
-        Args:
-            product_offering_price_id: Optional ID of a specific productOfferingPrice to retrieve
-            fields: Optional comma-separated list of field names to include in the response
-            offset: Optional offset for pagination
-            limit: Optional limit for pagination
+    Args:
+        product_offering_price_id: Optional ID of a specific productOfferingPrice to retrieve
+        fields: Optional comma-separated list of field names to include in the response
+        offset: Optional offset for pagination
+        limit: Optional limit for pagination
 
-        Returns:
-            Dict containing the response data or None if an error occurred
-    6
-        Raises:
-            Various httpx exceptions are caught and logged
+    Returns:
+        Dict containing the response data or None if an error occurred
+
+    Raises:
+        Various httpx exceptions are caught and logged
     """
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
