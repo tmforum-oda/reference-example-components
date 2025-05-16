@@ -357,6 +357,329 @@ async def delete_catalog(catalog_id: str) -> bool:
         return False
 
 
+async def get_category(
+    category_id: str = None, fields: str = None, offset: int = None, limit: int = None
+) -> dict[str, Any] | None:
+    """Query the category resource in the TM Forum Product Catalog Management API.
+
+    Args:
+        category_id: Optional ID of a specific category to retrieve
+        fields: Optional comma-separated list of field names to include in the response
+        offset: Optional offset for pagination
+        limit: Optional limit for pagination
+
+    Returns:
+        Dict containing the response data or None if an error occurred
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+    # Construct the URL based on whether we're getting a specific category or listing categories
+    base_url = f"{API_URL}/category"
+
+    if category_id:
+        url = f"{base_url}/{category_id}"
+        logger.info(f"Getting category with ID: {category_id}")
+    else:
+        url = base_url
+        logger.info("Listing categories")
+
+    # Add query parameters if provided
+    params = {}
+    if fields:
+        params["fields"] = fields
+    if offset is not None:
+        params["offset"] = offset
+    if limit is not None:
+        params["limit"] = limit
+
+    if params:
+        logger.info(f"With parameters: {params}")
+
+    headers = {
+        "Content-Type": "application/json;charset=utf-8",
+        "Accept": "application/json;charset=utf-8",
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending GET request to: {url}")
+                logger.info(f"Headers: {headers}")
+
+                response = await client.get(url, headers=headers, params=params)
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code == 200:
+                    try:
+                        response_json = response.json()
+                        logger.info("Response received successfully")
+                        return response_json
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Failed to decode JSON response: {e}")
+                        return None
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return None
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return None
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return None
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return None
+
+
+async def create_category(category_data: dict[str, Any]) -> dict[str, Any] | None:
+    """Create a new category in the TM Forum Product Catalog Management API.
+
+    Args:
+        category_data: Dictionary containing the category data according to the TMF620 specification
+
+    Returns:
+        Dict containing the created category data or None if an error occurred
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info("Creating a new category")
+
+    url = f"{API_URL}/category"
+
+    headers = {
+        "Content-Type": "application/json;charset=utf-8",
+        "Accept": "application/json;charset=utf-8",
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending POST request to: {url}")
+                logger.info(f"Headers: {headers}")
+                logger.info(f"Data: {category_data}")
+
+                response = await client.post(url, headers=headers, json=category_data)
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code == 201:
+                    try:
+                        response_json = response.json()
+                        logger.info("Category created successfully")
+                        return response_json
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Failed to decode JSON response: {e}")
+                        return None
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return None
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return None
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return None
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return None
+
+
+async def update_category(
+    category_id: str, category_data: dict[str, Any]
+) -> dict[str, Any] | None:
+    """Update an existing category in the TM Forum Product Catalog Management API using PATCH.
+
+    Args:
+        category_id: ID of the category to update
+        category_data: Dictionary containing the category data to update according to the TMF620 specification
+
+    Returns:
+        Dict containing the updated category data or None if an error occurred
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info(f"Updating category with ID: {category_id}")
+
+    url = f"{API_URL}/category/{category_id}"
+
+    headers = {
+        "Content-Type": "application/json;charset=utf-8",
+        "Accept": "application/json;charset=utf-8",
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending PATCH request to: {url}")
+                logger.info(f"Headers: {headers}")
+                logger.info(f"Data: {category_data}")
+
+                response = await client.patch(url, headers=headers, json=category_data)
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code in (200, 201, 202, 204):
+                    try:
+                        response_json = response.json()
+                        logger.info("Category updated successfully")
+                        return response_json
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Failed to decode JSON response: {e}")
+                        return None
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return None
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return None
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return None
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return None
+
+
+async def delete_category(category_id: str) -> bool:
+    """Delete a category from the TM Forum Product Catalog Management API.
+
+    Args:
+        category_id: ID of the category to delete
+
+    Returns:
+        True if deletion was successful, False otherwise
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info(f"Deleting category with ID: {category_id}")
+
+    url = f"{API_URL}/category/{category_id}"
+
+    headers = {
+        "Accept": "application/json;charset=utf-8"
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending DELETE request to: {url}")
+                logger.info(f"Headers: {headers}")
+
+                response = await client.delete(url, headers=headers)
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code == 204:
+                    logger.info("Category deleted successfully")
+                    return True
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return False
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return False
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return False
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return False
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return False
+
+
 async def get_access_token() -> str:
     """Placeholder for getting an access token for authenticated API calls.
     Currently returns a dummy token since authentication is not required.
@@ -368,25 +691,41 @@ async def get_access_token() -> str:
 
 
 async def main():
-    """Main function to demonstrate creating a catalog using the example payload."""
+    """Main function to demonstrate creating a catalog and category using example payloads."""
     try:
+        # Catalog Demo
         logger.info("Starting catalog creation demo")
 
         # Load the example catalog payload
-        example_path = Path("example_payloads/catalog.json")
+        catalog_example_path = Path("example_payloads/catalog.json")
 
-        if not example_path.exists():
-            logger.error(f"Example file not found: {example_path}")
+        if not catalog_example_path.exists():
+            logger.error(f"Example file not found: {catalog_example_path}")
             return
 
-        logger.info(f"Loading example payload from {example_path}")
-        with open(example_path, "r") as f:
+        logger.info(f"Loading example payload from {catalog_example_path}")
+        with open(catalog_example_path, "r") as f:
             catalog_data = json.load(f)
 
         logger.info("Example catalog data loaded successfully")
         logger.info(f"Catalog data: {catalog_data}")
 
-        # Create the catalog
+        # Category Demo
+        logger.info("Starting category creation demo")
+
+        # Load the example category payload
+        category_example_path = Path("example_payloads/category.json")
+
+        if not category_example_path.exists():
+            logger.error(f"Example file not found: {category_example_path}")
+            return
+
+        logger.info(f"Loading example payload from {category_example_path}")
+        with open(category_example_path, "r") as f:
+            category_data = json.load(f)
+
+        logger.info("Example category data loaded successfully")
+        logger.info(f"Category data: {category_data}")  # Create the catalog
         logger.info("Creating catalog...")
         new_catalog = await create_catalog(catalog_data)
 
@@ -411,6 +750,56 @@ async def main():
                 logger.warning("Created catalog does not have an ID")
         else:
             logger.error("Failed to create catalog")
+
+        # Create the category
+        logger.info("Creating category...")
+        new_category = await create_category(category_data)
+
+        if new_category:
+            logger.info("Category created successfully!")
+            logger.info(f"New category: {json.dumps(new_category, indent=2)}")
+
+            # Get the newly created category
+            if "id" in new_category:
+                category_id = new_category["id"]
+                logger.info(f"Retrieving created category with ID: {category_id}")
+                retrieved_category = await get_category(category_id=category_id)
+
+                if retrieved_category:
+                    logger.info("Category retrieved successfully!")
+                    logger.info(
+                        f"Retrieved category: {json.dumps(retrieved_category, indent=2)}"
+                    )
+
+                    # Update the category
+                    logger.info("Updating category...")
+                    update_data = {
+                        "description": "Updated description for cloud service category"
+                    }
+                    updated_category = await update_category(category_id, update_data)
+
+                    if updated_category:
+                        logger.info("Category updated successfully!")
+                        logger.info(
+                            f"Updated category: {json.dumps(updated_category, indent=2)}"
+                        )
+
+                        # Delete the category
+                        logger.info("Deleting category...")
+                        deleted = await delete_category(category_id)
+
+                        if deleted:
+                            logger.info(f"Category {category_id} deleted successfully!")
+                        else:
+                            logger.error(f"Failed to delete category {category_id}")
+                    else:
+                        logger.error("Failed to update the category")
+                else:
+                    logger.error("Failed to retrieve the category")
+            else:
+                logger.warning("Created category does not have an ID")
+        else:
+            logger.error("Failed to create category")
 
     except Exception as e:
         logger.error(f"Error in main function: {e}")

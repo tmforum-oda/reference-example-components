@@ -27,6 +27,10 @@ from product_catalog_api import (
     create_catalog,
     update_catalog,
     delete_catalog,
+    get_category,
+    create_category,
+    update_category,
+    delete_category,
 )
 
 # ---------------------------------------------------------------------------------------------
@@ -136,6 +140,94 @@ async def catalog_delete(catalog_id: str) -> dict:
             "error": f"Failed to delete catalog with ID: {catalog_id}",
         }
     return {"success": True, "message": f"Catalog {catalog_id} deleted successfully"}
+
+
+@mcp.tool()
+async def category_get(
+    category_id: str = None, fields: str = None, offset: int = None, limit: int = None
+) -> dict:
+    """Retrieve category information from the TM Forum Product Catalog Management API.
+
+    Args:
+        category_id: Optional ID of a specific category to retrieve.
+        fields: Optional comma-separated list of field names to include in the response.
+        offset: Optional offset for pagination.
+        limit: Optional limit for pagination.
+
+    Returns:
+        A dictionary containing the category data or a list of categories.
+        Returns an error dictionary if an error occurs.
+    """
+    logger.info(
+        f"MCP Tool - Getting category with ID: {category_id if category_id else 'ALL'}"
+    )
+    result = await get_category(
+        category_id=category_id, fields=fields, offset=offset, limit=limit
+    )
+    if result == None:
+        logger.warning("Failed to retrieve category data")
+        return {"error": "Failed to retrieve category data"}
+    return result
+
+
+@mcp.tool()
+async def category_create(category_data: dict) -> dict:
+    """Create a new category in the TM Forum Product Catalog Management API.
+
+    Args:
+        category_data: Dictionary containing the category data according to the TMF620 specification.
+
+    Returns:
+        A dictionary containing the created category data.
+        Returns an error dictionary if an error occurs.
+    """
+    logger.info("MCP Tool - Creating a new category")
+    result = await create_category(category_data)
+    if result == None:
+        logger.warning("Failed to create category")
+        return {"error": "Failed to create category"}
+    return result
+
+
+@mcp.tool()
+async def category_update(category_id: str, category_data: dict) -> dict:
+    """Update an existing category in the TM Forum Product Catalog Management API.
+
+    Args:
+        category_id: ID of the category to update.
+        category_data: Dictionary containing the category data to update.
+
+    Returns:
+        A dictionary containing the updated category data.
+        Returns an error dictionary if an error occurs.
+    """
+    logger.info(f"MCP Tool - Updating category with ID: {category_id}")
+    result = await update_category(category_id, category_data)
+    if result == None:
+        logger.warning(f"Failed to update category with ID: {category_id}")
+        return {"error": f"Failed to update category with ID: {category_id}"}
+    return result
+
+
+@mcp.tool()
+async def category_delete(category_id: str) -> dict:
+    """Delete a category from the TM Forum Product Catalog Management API.
+
+    Args:
+        category_id: ID of the category to delete.
+
+    Returns:
+        A dictionary with success status.
+    """
+    logger.info(f"MCP Tool - Deleting category with ID: {category_id}")
+    result = await delete_category(category_id)
+    if result == None:
+        logger.warning(f"Failed to delete category with ID: {category_id}")
+        return {
+            "success": False,
+            "error": f"Failed to delete category with ID: {category_id}",
+        }
+    return {"success": True, "message": f"Category {category_id} deleted successfully"}
 
 
 if __name__ == "__main__":
