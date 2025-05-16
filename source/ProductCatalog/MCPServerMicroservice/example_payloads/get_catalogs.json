@@ -1,8 +1,0 @@
-{
-  "version": "mcp1",
-  "context": {
-    "role": "user",
-    "content": "Find all available catalogs"
-  },
-  "request_id": "example_get_catalogs_request"
-}

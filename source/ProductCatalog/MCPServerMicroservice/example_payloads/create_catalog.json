@@ -1,8 +1,0 @@
-{
-  "version": "mcp1",
-  "context": {
-    "role": "user",
-    "content": "Create a new product catalog for 5G services"
-  },
-  "request_id": "example_create_catalog_request"
-}

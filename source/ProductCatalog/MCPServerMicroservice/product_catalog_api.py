@@ -680,6 +680,1004 @@ async def delete_category(category_id: str) -> bool:
         return False
 
 
+async def get_product_specification(
+    product_specification_id: str = None,
+    fields: str = None,
+    offset: int = None,
+    limit: int = None,
+) -> dict[str, Any] | None:
+    """Query the productSpecification resource in the TM Forum Product Catalog Management API.
+
+    Args:
+        product_specification_id: Optional ID of a specific productSpecification to retrieve
+        fields: Optional comma-separated list of field names to include in the response
+        offset: Optional offset for pagination
+        limit: Optional limit for pagination
+
+    Returns:
+        Dict containing the response data or None if an error occurred
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+    # Construct the URL based on whether we're getting a specific productSpecification or listing productSpecifications
+    base_url = f"{API_URL}/productSpecification"
+
+    if product_specification_id:
+        url = f"{base_url}/{product_specification_id}"
+        logger.info(f"Getting productSpecification with ID: {product_specification_id}")
+    else:
+        url = base_url
+        logger.info("Listing productSpecifications")
+
+    # Add query parameters if provided
+    params = {}
+    if fields:
+        params["fields"] = fields
+    if offset is not None:
+        params["offset"] = offset
+    if limit is not None:
+        params["limit"] = limit
+
+    if params:
+        logger.info(f"With parameters: {params}")
+
+    headers = {
+        "Content-Type": "application/json;charset=utf-8",
+        "Accept": "application/json;charset=utf-8",
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending GET request to: {url}")
+                logger.info(f"Headers: {headers}")
+
+                response = await client.get(url, headers=headers, params=params)
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code == 200:
+                    try:
+                        response_json = response.json()
+                        logger.info("Response received successfully")
+                        return response_json
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Failed to decode JSON response: {e}")
+                        return None
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return None
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return None
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return None
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return None
+
+
+async def create_product_specification(
+    product_specification_data: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Create a new productSpecification in the TM Forum Product Catalog Management API.
+
+    Args:
+        product_specification_data: Dictionary containing the productSpecification data according to the TMF620 specification
+
+    Returns:
+        Dict containing the created productSpecification data or None if an error occurred
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info("Creating a new productSpecification")
+
+    url = f"{API_URL}/productSpecification"
+
+    headers = {
+        "Content-Type": "application/json;charset=utf-8",
+        "Accept": "application/json;charset=utf-8",
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending POST request to: {url}")
+                logger.info(f"Headers: {headers}")
+                logger.info(f"Data: {product_specification_data}")
+
+                response = await client.post(
+                    url, headers=headers, json=product_specification_data
+                )
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code == 201:
+                    try:
+                        response_json = response.json()
+                        logger.info("ProductSpecification created successfully")
+                        return response_json
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Failed to decode JSON response: {e}")
+                        return None
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return None
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return None
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return None
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return None
+
+
+async def update_product_specification(
+    product_specification_id: str, product_specification_data: dict[str, Any]
+) -> dict[str, Any] | None:
+    """Update an existing productSpecification in the TM Forum Product Catalog Management API using PATCH.
+
+    Args:
+        product_specification_id: ID of the productSpecification to update
+        product_specification_data: Dictionary containing the productSpecification data to update according to the TMF620 specification
+
+    Returns:
+        Dict containing the updated productSpecification data or None if an error occurred
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info(f"Updating productSpecification with ID: {product_specification_id}")
+
+    url = f"{API_URL}/productSpecification/{product_specification_id}"
+
+    headers = {
+        "Content-Type": "application/json;charset=utf-8",
+        "Accept": "application/json;charset=utf-8",
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending PATCH request to: {url}")
+                logger.info(f"Headers: {headers}")
+                logger.info(f"Data: {product_specification_data}")
+
+                response = await client.patch(
+                    url, headers=headers, json=product_specification_data
+                )
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code in (200, 201, 202, 204):
+                    try:
+                        response_json = response.json()
+                        logger.info("ProductSpecification updated successfully")
+                        return response_json
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Failed to decode JSON response: {e}")
+                        return None
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return None
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return None
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return None
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return None
+
+
+async def delete_product_specification(product_specification_id: str) -> bool:
+    """Delete a productSpecification from the TM Forum Product Catalog Management API.
+
+    Args:
+        product_specification_id: ID of the productSpecification to delete
+
+    Returns:
+        True if deletion was successful, False otherwise
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info(f"Deleting productSpecification with ID: {product_specification_id}")
+
+    url = f"{API_URL}/productSpecification/{product_specification_id}"
+
+    headers = {
+        "Accept": "application/json;charset=utf-8"
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending DELETE request to: {url}")
+                logger.info(f"Headers: {headers}")
+
+                response = await client.delete(url, headers=headers)
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code == 204:
+                    logger.info("ProductSpecification deleted successfully")
+                    return True
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return False
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return False
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return False
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return False
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return False
+
+
+async def get_product_offering(
+    product_offering_id: str = None,
+    fields: str = None,
+    offset: int = None,
+    limit: int = None,
+) -> dict[str, Any] | None:
+    """Query the productOffering resource in the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_id: Optional ID of a specific productOffering to retrieve
+        fields: Optional comma-separated list of field names to include in the response
+        offset: Optional offset for pagination
+        limit: Optional limit for pagination
+
+    Returns:
+        Dict containing the response data or None if an error occurred
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+    # Construct the URL based on whether we're getting a specific productOffering or listing productOfferings
+    base_url = f"{API_URL}/productOffering"
+
+    if product_offering_id:
+        url = f"{base_url}/{product_offering_id}"
+        logger.info(f"Getting productOffering with ID: {product_offering_id}")
+    else:
+        url = base_url
+        logger.info("Listing productOfferings")
+
+    # Add query parameters if provided
+    params = {}
+    if fields:
+        params["fields"] = fields
+    if offset is not None:
+        params["offset"] = offset
+    if limit is not None:
+        params["limit"] = limit
+
+    if params:
+        logger.info(f"With parameters: {params}")
+
+    headers = {
+        "Content-Type": "application/json;charset=utf-8",
+        "Accept": "application/json;charset=utf-8",
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending GET request to: {url}")
+                logger.info(f"Headers: {headers}")
+
+                response = await client.get(url, headers=headers, params=params)
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code == 200:
+                    try:
+                        response_json = response.json()
+                        logger.info("Response received successfully")
+                        return response_json
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Failed to decode JSON response: {e}")
+                        return None
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return None
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return None
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return None
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return None
+
+
+async def create_product_offering(
+    product_offering_data: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Create a new productOffering in the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_data: Dictionary containing the productOffering data according to the TMF620 specification
+
+    Returns:
+        Dict containing the created productOffering data or None if an error occurred
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info("Creating a new productOffering")
+
+    url = f"{API_URL}/productOffering"
+
+    headers = {
+        "Content-Type": "application/json;charset=utf-8",
+        "Accept": "application/json;charset=utf-8",
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending POST request to: {url}")
+                logger.info(f"Headers: {headers}")
+                logger.info(f"Data: {product_offering_data}")
+
+                response = await client.post(
+                    url, headers=headers, json=product_offering_data
+                )
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code == 201:
+                    try:
+                        response_json = response.json()
+                        logger.info("ProductOffering created successfully")
+                        return response_json
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Failed to decode JSON response: {e}")
+                        return None
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return None
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return None
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return None
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return None
+
+
+async def update_product_offering(
+    product_offering_id: str, product_offering_data: dict[str, Any]
+) -> dict[str, Any] | None:
+    """Update an existing productOffering in the TM Forum Product Catalog Management API using PATCH.
+
+    Args:
+        product_offering_id: ID of the productOffering to update
+        product_offering_data: Dictionary containing the productOffering data to update according to the TMF620 specification
+
+    Returns:
+        Dict containing the updated productOffering data or None if an error occurred
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info(f"Updating productOffering with ID: {product_offering_id}")
+
+    url = f"{API_URL}/productOffering/{product_offering_id}"
+
+    headers = {
+        "Content-Type": "application/json;charset=utf-8",
+        "Accept": "application/json;charset=utf-8",
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending PATCH request to: {url}")
+                logger.info(f"Headers: {headers}")
+                logger.info(f"Data: {product_offering_data}")
+
+                response = await client.patch(
+                    url, headers=headers, json=product_offering_data
+                )
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code in (200, 201, 202, 204):
+                    try:
+                        response_json = response.json()
+                        logger.info("ProductOffering updated successfully")
+                        return response_json
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Failed to decode JSON response: {e}")
+                        return None
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return None
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return None
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return None
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return None
+
+
+async def delete_product_offering(product_offering_id: str) -> bool:
+    """Delete a productOffering from the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_id: ID of the productOffering to delete
+
+    Returns:
+        True if deletion was successful, False otherwise
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info(f"Deleting productOffering with ID: {product_offering_id}")
+
+    url = f"{API_URL}/productOffering/{product_offering_id}"
+
+    headers = {
+        "Accept": "application/json;charset=utf-8"
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending DELETE request to: {url}")
+                logger.info(f"Headers: {headers}")
+
+                response = await client.delete(url, headers=headers)
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code == 204:
+                    logger.info("ProductOffering deleted successfully")
+                    return True
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return False
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return False
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return False
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return False
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return False
+
+
+async def get_product_offering_price(
+    product_offering_price_id: str = None,
+    fields: str = None,
+    offset: int = None,
+    limit: int = None,
+) -> dict[str, Any] | None:
+    """Query the productOfferingPrice resource in the TM Forum Product Catalog Management API.
+
+        Args:
+            product_offering_price_id: Optional ID of a specific productOfferingPrice to retrieve
+            fields: Optional comma-separated list of field names to include in the response
+            offset: Optional offset for pagination
+            limit: Optional limit for pagination
+
+        Returns:
+            Dict containing the response data or None if an error occurred
+    6
+        Raises:
+            Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+    # Construct the URL based on whether we're getting a specific productOfferingPrice or listing productOfferingPrices
+    base_url = f"{API_URL}/productOfferingPrice"
+
+    if product_offering_price_id:
+        url = f"{base_url}/{product_offering_price_id}"
+        logger.info(
+            f"Getting productOfferingPrice with ID: {product_offering_price_id}"
+        )
+    else:
+        url = base_url
+        logger.info("Listing productOfferingPrices")
+
+    # Add query parameters if provided
+    params = {}
+    if fields:
+        params["fields"] = fields
+    if offset is not None:
+        params["offset"] = offset
+    if limit is not None:
+        params["limit"] = limit
+
+    if params:
+        logger.info(f"With parameters: {params}")
+
+    headers = {
+        "Content-Type": "application/json;charset=utf-8",
+        "Accept": "application/json;charset=utf-8",
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending GET request to: {url}")
+                logger.info(f"Headers: {headers}")
+
+                response = await client.get(url, headers=headers, params=params)
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code == 200:
+                    try:
+                        response_json = response.json()
+                        logger.info("Response received successfully")
+                        return response_json
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Failed to decode JSON response: {e}")
+                        return None
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return None
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return None
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return None
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return None
+
+
+async def create_product_offering_price(
+    product_offering_price_data: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Create a new productOfferingPrice in the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_price_data: Dictionary containing the productOfferingPrice data according to the TMF620 specification
+
+    Returns:
+        Dict containing the created productOfferingPrice data or None if an error occurred
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info("Creating a new productOfferingPrice")
+
+    url = f"{API_URL}/productOfferingPrice"
+
+    headers = {
+        "Content-Type": "application/json;charset=utf-8",
+        "Accept": "application/json;charset=utf-8",
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending POST request to: {url}")
+                logger.info(f"Headers: {headers}")
+                logger.info(f"Data: {product_offering_price_data}")
+
+                response = await client.post(
+                    url, headers=headers, json=product_offering_price_data
+                )
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code == 201:
+                    try:
+                        response_json = response.json()
+                        logger.info("ProductOfferingPrice created successfully")
+                        return response_json
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Failed to decode JSON response: {e}")
+                        return None
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return None
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return None
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return None
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return None
+
+
+async def update_product_offering_price(
+    product_offering_price_id: str, product_offering_price_data: dict[str, Any]
+) -> dict[str, Any] | None:
+    """Update an existing productOfferingPrice in the TM Forum Product Catalog Management API using PATCH.
+
+    Args:
+        product_offering_price_id: ID of the productOfferingPrice to update
+        product_offering_price_data: Dictionary containing the productOfferingPrice data to update according to the TMF620 specification
+
+    Returns:
+        Dict containing the updated productOfferingPrice data or None if an error occurred
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info(f"Updating productOfferingPrice with ID: {product_offering_price_id}")
+
+    url = f"{API_URL}/productOfferingPrice/{product_offering_price_id}"
+
+    headers = {
+        "Content-Type": "application/json;charset=utf-8",
+        "Accept": "application/json;charset=utf-8",
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending PATCH request to: {url}")
+                logger.info(f"Headers: {headers}")
+                logger.info(f"Data: {product_offering_price_data}")
+
+                response = await client.patch(
+                    url, headers=headers, json=product_offering_price_data
+                )
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code in (200, 201, 202, 204):
+                    try:
+                        response_json = response.json()
+                        logger.info("ProductOfferingPrice updated successfully")
+                        return response_json
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Failed to decode JSON response: {e}")
+                        return None
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return None
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return None
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return None
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return None
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return None
+
+
+async def delete_product_offering_price(product_offering_price_id: str) -> bool:
+    """Delete a productOfferingPrice from the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_price_id: ID of the productOfferingPrice to delete
+
+    Returns:
+        True if deletion was successful, False otherwise
+
+    Raises:
+        Various httpx exceptions are caught and logged
+    """
+    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    logger.info(f"Deleting productOfferingPrice with ID: {product_offering_price_id}")
+
+    url = f"{API_URL}/productOfferingPrice/{product_offering_price_id}"
+
+    headers = {
+        "Accept": "application/json;charset=utf-8"
+    }  # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    # Make the request
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending DELETE request to: {url}")
+                logger.info(f"Headers: {headers}")
+
+                response = await client.delete(url, headers=headers)
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                if response.status_code == 204:
+                    logger.info("ProductOfferingPrice deleted successfully")
+                    return True
+                else:
+                    logger.warning(f"Unexpected status code: {response.status_code}")
+                    return False
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return False
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return False
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return False
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return False
+
+
 async def get_access_token() -> str:
     """Placeholder for getting an access token for authenticated API calls.
     Currently returns a dummy token since authentication is not required.
@@ -725,7 +1723,26 @@ async def main():
             category_data = json.load(f)
 
         logger.info("Example category data loaded successfully")
-        logger.info(f"Category data: {category_data}")  # Create the catalog
+        logger.info(f"Category data: {category_data}")
+
+        # ProductSpecification Demo
+        logger.info("Starting productSpecification creation demo")
+
+        # Load the example productSpecification payload
+        product_spec_example_path = Path("example_payloads/productSpecification.json")
+
+        if not product_spec_example_path.exists():
+            logger.error(f"Example file not found: {product_spec_example_path}")
+            return
+
+        logger.info(f"Loading example payload from {product_spec_example_path}")
+        with open(product_spec_example_path, "r") as f:
+            product_spec_data = json.load(f)
+
+        logger.info("Example productSpecification data loaded successfully")
+        logger.info(f"ProductSpecification data: {product_spec_data}")
+
+        # Create the catalog
         logger.info("Creating catalog...")
         new_catalog = await create_catalog(catalog_data)
 
@@ -800,6 +1817,238 @@ async def main():
                 logger.warning("Created category does not have an ID")
         else:
             logger.error("Failed to create category")
+
+        # ProductSpecification Demo
+        logger.info("Creating productSpecification...")
+        new_product_spec = await create_product_specification(product_spec_data)
+
+        if new_product_spec:
+            logger.info("ProductSpecification created successfully!")
+            logger.info(
+                f"New productSpecification: {json.dumps(new_product_spec, indent=2)}"
+            )
+
+            # Get the newly created productSpecification
+            if "id" in new_product_spec:
+                product_spec_id = new_product_spec["id"]
+                logger.info(
+                    f"Retrieving created productSpecification with ID: {product_spec_id}"
+                )
+                retrieved_product_spec = await get_product_specification(
+                    product_specification_id=product_spec_id
+                )
+
+                if retrieved_product_spec:
+                    logger.info("ProductSpecification retrieved successfully!")
+                    logger.info(
+                        f"Retrieved productSpecification: {json.dumps(retrieved_product_spec, indent=2)}"
+                    )
+
+                    # Update the productSpecification
+                    logger.info("Updating productSpecification...")
+                    update_data = {
+                        "description": "Updated description for Cisco Firepower NGFW"
+                    }
+                    updated_product_spec = await update_product_specification(
+                        product_spec_id, update_data
+                    )
+
+                    if updated_product_spec:
+                        logger.info("ProductSpecification updated successfully!")
+                        logger.info(
+                            f"Updated productSpecification: {json.dumps(updated_product_spec, indent=2)}"
+                        )
+
+                        # Delete the productSpecification
+                        logger.info("Deleting productSpecification...")
+                        deleted = await delete_product_specification(product_spec_id)
+
+                        if deleted:
+                            logger.info(
+                                f"ProductSpecification {product_spec_id} deleted successfully!"
+                            )
+                        else:
+                            logger.error(
+                                f"Failed to delete productSpecification {product_spec_id}"
+                            )
+                    else:
+                        logger.error("Failed to update the productSpecification")
+                else:
+                    logger.error("Failed to retrieve the productSpecification")
+            else:
+                logger.warning("Created productSpecification does not have an ID")
+        else:
+            logger.error("Failed to create productSpecification")
+
+        # ProductOffering Demo
+        logger.info("Starting productOffering creation demo")
+
+        # Load the example productOffering payload
+        product_offering_example_path = Path("example_payloads/productOffering.json")
+
+        if not product_offering_example_path.exists():
+            logger.error(f"Example file not found: {product_offering_example_path}")
+            return
+
+        logger.info(f"Loading example payload from {product_offering_example_path}")
+        with open(product_offering_example_path, "r") as f:
+            product_offering_data = json.load(f)
+
+        logger.info("Example productOffering data loaded successfully")
+        logger.info(f"ProductOffering data: {product_offering_data}")
+
+        # Create the productOffering
+        logger.info("Creating productOffering...")
+        new_product_offering = await create_product_offering(product_offering_data)
+
+        if new_product_offering:
+            logger.info("ProductOffering created successfully!")
+            logger.info(
+                f"New productOffering: {json.dumps(new_product_offering, indent=2)}"
+            )
+
+            # Get the newly created productOffering
+            if "id" in new_product_offering:
+                product_offering_id = new_product_offering["id"]
+                logger.info(
+                    f"Retrieving created productOffering with ID: {product_offering_id}"
+                )
+                retrieved_product_offering = await get_product_offering(
+                    product_offering_id=product_offering_id
+                )
+
+                if retrieved_product_offering:
+                    logger.info("ProductOffering retrieved successfully!")
+                    logger.info(
+                        f"Retrieved productOffering: {json.dumps(retrieved_product_offering, indent=2)}"
+                    )
+
+                    # Update the productOffering
+                    logger.info("Updating productOffering...")
+                    update_data = {
+                        "description": "Updated description for Basic Firewall for Business"
+                    }
+                    updated_product_offering = await update_product_offering(
+                        product_offering_id, update_data
+                    )
+
+                    if updated_product_offering:
+                        logger.info("ProductOffering updated successfully!")
+                        logger.info(
+                            f"Updated productOffering: {json.dumps(updated_product_offering, indent=2)}"
+                        )
+
+                        # Delete the productOffering
+                        logger.info("Deleting productOffering...")
+                        deleted = await delete_product_offering(product_offering_id)
+
+                        if deleted:
+                            logger.info(
+                                f"ProductOffering {product_offering_id} deleted successfully!"
+                            )
+                        else:
+                            logger.error(
+                                f"Failed to delete productOffering {product_offering_id}"
+                            )
+                    else:
+                        logger.error("Failed to update the productOffering")
+                else:
+                    logger.error("Failed to retrieve the productOffering")
+            else:
+                logger.warning("Created productOffering does not have an ID")
+        else:
+            logger.error("Failed to create productOffering")
+
+        # ProductOfferingPrice Demo
+        logger.info("Starting productOfferingPrice creation demo")
+
+        # Load the example productOfferingPrice payload
+        product_offering_price_example_path = Path(
+            "example_payloads/productOfferingPrice.json"
+        )
+
+        if not product_offering_price_example_path.exists():
+            logger.error(
+                f"Example file not found: {product_offering_price_example_path}"
+            )
+            return
+
+        logger.info(
+            f"Loading example payload from {product_offering_price_example_path}"
+        )
+        with open(product_offering_price_example_path, "r") as f:
+            product_offering_price_data = json.load(f)
+
+        logger.info("Example productOfferingPrice data loaded successfully")
+        logger.info(f"ProductOfferingPrice data: {product_offering_price_data}")
+
+        # Create the productOfferingPrice
+        logger.info("Creating productOfferingPrice...")
+        new_product_offering_price = await create_product_offering_price(
+            product_offering_price_data
+        )
+
+        if new_product_offering_price:
+            logger.info("ProductOfferingPrice created successfully!")
+            logger.info(
+                f"New productOfferingPrice: {json.dumps(new_product_offering_price, indent=2)}"
+            )
+
+            # Get the newly created productOfferingPrice
+            if "id" in new_product_offering_price:
+                product_offering_price_id = new_product_offering_price["id"]
+                logger.info(
+                    f"Retrieving created productOfferingPrice with ID: {product_offering_price_id}"
+                )
+                retrieved_product_offering_price = await get_product_offering_price(
+                    product_offering_price_id=product_offering_price_id
+                )
+
+                if retrieved_product_offering_price:
+                    logger.info("ProductOfferingPrice retrieved successfully!")
+                    logger.info(
+                        f"Retrieved productOfferingPrice: {json.dumps(retrieved_product_offering_price, indent=2)}"
+                    )
+
+                    # Update the productOfferingPrice
+                    logger.info("Updating productOfferingPrice...")
+                    update_data = {
+                        "description": "Updated description for Firewall Service Price"
+                    }
+                    updated_product_offering_price = (
+                        await update_product_offering_price(
+                            product_offering_price_id, update_data
+                        )
+                    )
+
+                    if updated_product_offering_price:
+                        logger.info("ProductOfferingPrice updated successfully!")
+                        logger.info(
+                            f"Updated productOfferingPrice: {json.dumps(updated_product_offering_price, indent=2)}"
+                        )
+
+                        # Delete the productOfferingPrice
+                        logger.info("Deleting productOfferingPrice...")
+                        deleted = await delete_product_offering_price(
+                            product_offering_price_id
+                        )
+
+                        if deleted:
+                            logger.info(
+                                f"ProductOfferingPrice {product_offering_price_id} deleted successfully!"
+                            )
+                        else:
+                            logger.error(
+                                f"Failed to delete productOfferingPrice {product_offering_price_id}"
+                            )
+                    else:
+                        logger.error("Failed to update the productOfferingPrice")
+                else:
+                    logger.error("Failed to retrieve the productOfferingPrice")
+            else:
+                logger.warning("Created productOfferingPrice does not have an ID")
+        else:
+            logger.error("Failed to create productOfferingPrice")
 
     except Exception as e:
         logger.error(f"Error in main function: {e}")

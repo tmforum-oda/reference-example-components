@@ -31,6 +31,18 @@ from product_catalog_api import (
     create_category,
     update_category,
     delete_category,
+    get_product_specification,
+    create_product_specification,
+    update_product_specification,
+    delete_product_specification,
+    get_product_offering,
+    create_product_offering,
+    update_product_offering,
+    delete_product_offering,
+    get_product_offering_price,
+    create_product_offering_price,
+    update_product_offering_price,
+    delete_product_offering_price,
 )
 
 # ---------------------------------------------------------------------------------------------
@@ -228,6 +240,333 @@ async def category_delete(category_id: str) -> dict:
             "error": f"Failed to delete category with ID: {category_id}",
         }
     return {"success": True, "message": f"Category {category_id} deleted successfully"}
+
+
+@mcp.tool()
+async def product_specification_get(
+    product_specification_id: str = None,
+    fields: str = None,
+    offset: int = None,
+    limit: int = None,
+) -> dict:
+    """Retrieve product specification information from the TM Forum Product Catalog Management API.
+
+    Args:
+        product_specification_id: Optional ID of a specific product specification to retrieve.
+        fields: Optional comma-separated list of field names to include in the response.
+        offset: Optional offset for pagination.
+        limit: Optional limit for pagination.
+
+    Returns:
+        A dictionary containing the product specification data or a list of product specifications.
+        Returns an error dictionary if an error occurs.
+    """
+    logger.info(
+        f"MCP Tool - Getting product specification with ID: {product_specification_id if product_specification_id else 'ALL'}"
+    )
+    result = await get_product_specification(
+        product_specification_id=product_specification_id,
+        fields=fields,
+        offset=offset,
+        limit=limit,
+    )
+    if result == None:
+        logger.warning("Failed to retrieve product specification data")
+        return {"error": "Failed to retrieve product specification data"}
+    return result
+
+
+@mcp.tool()
+async def product_specification_create(product_specification_data: dict) -> dict:
+    """Create a new product specification in the TM Forum Product Catalog Management API.
+
+    Args:
+        product_specification_data: Dictionary containing the product specification data according to the TMF620 specification.
+
+    Returns:
+        A dictionary containing the created product specification data.
+        Returns an error dictionary if an error occurs.
+    """
+    logger.info("MCP Tool - Creating a new product specification")
+    result = await create_product_specification(product_specification_data)
+    if result == None:
+        logger.warning("Failed to create product specification")
+        return {"error": "Failed to create product specification"}
+    return result
+
+
+@mcp.tool()
+async def product_specification_update(
+    product_specification_id: str, product_specification_data: dict
+) -> dict:
+    """Update an existing product specification in the TM Forum Product Catalog Management API.
+
+    Args:
+        product_specification_id: ID of the product specification to update.
+        product_specification_data: Dictionary containing the product specification data to update.
+
+    Returns:
+        A dictionary containing the updated product specification data.
+        Returns an error dictionary if an error occurs.
+    """
+    logger.info(
+        f"MCP Tool - Updating product specification with ID: {product_specification_id}"
+    )
+    result = await update_product_specification(
+        product_specification_id, product_specification_data
+    )
+    if result == None:
+        logger.warning(
+            f"Failed to update product specification with ID: {product_specification_id}"
+        )
+        return {
+            "error": f"Failed to update product specification with ID: {product_specification_id}"
+        }
+    return result
+
+
+@mcp.tool()
+async def product_specification_delete(product_specification_id: str) -> dict:
+    """Delete a product specification from the TM Forum Product Catalog Management API.
+
+    Args:
+        product_specification_id: ID of the product specification to delete.
+
+    Returns:
+        A dictionary with success status.
+    """
+    logger.info(
+        f"MCP Tool - Deleting product specification with ID: {product_specification_id}"
+    )
+    result = await delete_product_specification(product_specification_id)
+    if result == None:
+        logger.warning(
+            f"Failed to delete product specification with ID: {product_specification_id}"
+        )
+        return {
+            "success": False,
+            "error": f"Failed to delete product specification with ID: {product_specification_id}",
+        }
+    return {
+        "success": True,
+        "message": f"Product specification {product_specification_id} deleted successfully",
+    }
+
+
+@mcp.tool()
+async def product_offering_get(
+    product_offering_id: str = None,
+    fields: str = None,
+    offset: int = None,
+    limit: int = None,
+) -> dict:
+    """Retrieve product offering information from the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_id: Optional ID of a specific product offering to retrieve.
+        fields: Optional comma-separated list of field names to include in the response.
+        offset: Optional offset for pagination.
+        limit: Optional limit for pagination.
+
+    Returns:
+        A dictionary containing the product offering data or a list of product offerings.
+        Returns an error dictionary if an error occurs.
+    """
+    logger.info(
+        f"MCP Tool - Getting product offering with ID: {product_offering_id if product_offering_id else 'ALL'}"
+    )
+    result = await get_product_offering(
+        product_offering_id=product_offering_id,
+        fields=fields,
+        offset=offset,
+        limit=limit,
+    )
+    if result == None:
+        logger.warning("Failed to retrieve product offering data")
+        return {"error": "Failed to retrieve product offering data"}
+    return result
+
+
+@mcp.tool()
+async def product_offering_create(product_offering_data: dict) -> dict:
+    """Create a new product offering in the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_data: Dictionary containing the product offering data according to the TMF620 specification.
+
+    Returns:
+        A dictionary containing the created product offering data.
+        Returns an error dictionary if an error occurs.
+    """
+    logger.info("MCP Tool - Creating a new product offering")
+    result = await create_product_offering(product_offering_data)
+    if result == None:
+        logger.warning("Failed to create product offering")
+        return {"error": "Failed to create product offering"}
+    return result
+
+
+@mcp.tool()
+async def product_offering_update(
+    product_offering_id: str, product_offering_data: dict
+) -> dict:
+    """Update an existing product offering in the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_id: ID of the product offering to update.
+        product_offering_data: Dictionary containing the product offering data to update.
+
+    Returns:
+        A dictionary containing the updated product offering data.
+        Returns an error dictionary if an error occurs.
+    """
+    logger.info(f"MCP Tool - Updating product offering with ID: {product_offering_id}")
+    result = await update_product_offering(product_offering_id, product_offering_data)
+    if result == None:
+        logger.warning(
+            f"Failed to update product offering with ID: {product_offering_id}"
+        )
+        return {
+            "error": f"Failed to update product offering with ID: {product_offering_id}"
+        }
+    return result
+
+
+@mcp.tool()
+async def product_offering_delete(product_offering_id: str) -> dict:
+    """Delete a product offering from the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_id: ID of the product offering to delete.
+
+    Returns:
+        A dictionary with success status.
+    """
+    logger.info(f"MCP Tool - Deleting product offering with ID: {product_offering_id}")
+    result = await delete_product_offering(product_offering_id)
+    if result == None:
+        logger.warning(
+            f"Failed to delete product offering with ID: {product_offering_id}"
+        )
+        return {
+            "success": False,
+            "error": f"Failed to delete product offering with ID: {product_offering_id}",
+        }
+    return {
+        "success": True,
+        "message": f"Product offering {product_offering_id} deleted successfully",
+    }
+
+
+@mcp.tool()
+async def product_offering_price_get(
+    product_offering_price_id: str = None,
+    fields: str = None,
+    offset: int = None,
+    limit: int = None,
+) -> dict:
+    """Retrieve product offering price information from the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_price_id: Optional ID of a specific product offering price to retrieve.
+        fields: Optional comma-separated list of field names to include in the response.
+        offset: Optional offset for pagination.
+        limit: Optional limit for pagination.
+
+    Returns:
+        A dictionary containing the product offering price data or a list of product offering prices.
+        Returns an error dictionary if an error occurs.
+    """
+    logger.info(
+        f"MCP Tool - Getting product offering price with ID: {product_offering_price_id if product_offering_price_id else 'ALL'}"
+    )
+    result = await get_product_offering_price(
+        product_offering_price_id=product_offering_price_id,
+        fields=fields,
+        offset=offset,
+        limit=limit,
+    )
+    if result == None:
+        logger.warning("Failed to retrieve product offering price data")
+        return {"error": "Failed to retrieve product offering price data"}
+    return result
+
+
+@mcp.tool()
+async def product_offering_price_create(product_offering_price_data: dict) -> dict:
+    """Create a new product offering price in the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_price_data: Dictionary containing the product offering price data according to the TMF620 specification.
+
+    Returns:
+        A dictionary containing the created product offering price data.
+        Returns an error dictionary if an error occurs.
+    """
+    logger.info("MCP Tool - Creating a new product offering price")
+    result = await create_product_offering_price(product_offering_price_data)
+    if result == None:
+        logger.warning("Failed to create product offering price")
+        return {"error": "Failed to create product offering price"}
+    return result
+
+
+@mcp.tool()
+async def product_offering_price_update(
+    product_offering_price_id: str, product_offering_price_data: dict
+) -> dict:
+    """Update an existing product offering price in the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_price_id: ID of the product offering price to update.
+        product_offering_price_data: Dictionary containing the product offering price data to update.
+
+    Returns:
+        A dictionary containing the updated product offering price data.
+        Returns an error dictionary if an error occurs.
+    """
+    logger.info(
+        f"MCP Tool - Updating product offering price with ID: {product_offering_price_id}"
+    )
+    result = await update_product_offering_price(
+        product_offering_price_id, product_offering_price_data
+    )
+    if result == None:
+        logger.warning(
+            f"Failed to update product offering price with ID: {product_offering_price_id}"
+        )
+        return {
+            "error": f"Failed to update product offering price with ID: {product_offering_price_id}"
+        }
+    return result
+
+
+@mcp.tool()
+async def product_offering_price_delete(product_offering_price_id: str) -> dict:
+    """Delete a product offering price from the TM Forum Product Catalog Management API.
+
+    Args:
+        product_offering_price_id: ID of the product offering price to delete.
+
+    Returns:
+        A dictionary with success status.
+    """
+    logger.info(
+        f"MCP Tool - Deleting product offering price with ID: {product_offering_price_id}"
+    )
+    result = await delete_product_offering_price(product_offering_price_id)
+    if result == None:
+        logger.warning(
+            f"Failed to delete product offering price with ID: {product_offering_price_id}"
+        )
+        return {
+            "success": False,
+            "error": f"Failed to delete product offering price with ID: {product_offering_price_id}",
+        }
+    return {
+        "success": True,
+        "message": f"Product offering price {product_offering_price_id} deleted successfully",
+    }
 
 
 if __name__ == "__main__":
