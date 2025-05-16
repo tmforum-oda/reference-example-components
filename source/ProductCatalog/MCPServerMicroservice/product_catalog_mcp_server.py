@@ -29,14 +29,12 @@ from product_catalog_api import (
 
 # ---------------------------------------------------------------------------------------------
 # Configure logging
-log_dir = Path("logs")
-log_dir.mkdir(exist_ok=True)
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler(log_dir / "product-catalog-mcp-server.log"),
+        logging.StreamHandler(sys.stdout),
     ],
 )
 
@@ -156,40 +154,23 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Get the transport from command-line argument or environment variable
-    transport = args.transport
+    transport = "sse"
     port = args.port
 
-    # Validate transport type
-    valid_transports = ["stdio", "sse"]
-    if transport not in valid_transports:
-        logger.warning(
-            f"Invalid transport '{transport}'. Using default transport 'stdio'."
-        )
-        transport = "stdio"
-    if transport == "sse":
-        logger.info(
-            f"Starting Product Catalog MCP Server with {transport} transport on port {port}"
-        )
-        try:
-            # For SSE transport, we need to use the sse_app method
-            import uvicorn
+    logger.info(
+        f"Starting Product Catalog MCP Server with {transport} transport on port {port}"
+    )
+    try:
+        # For SSE transport, we need to use the sse_app method
+        import uvicorn
 
-            # Create the SSE app using the MCP server's built-in method
-            app = mcp.sse_app()
+        # Create the SSE app using the MCP server's built-in method
+        app = mcp.sse_app()
 
-            # Run the ASGI app with uvicorn
-            uvicorn.run(app, host="0.0.0.0", port=port)
-        except KeyboardInterrupt:
-            logger.info("Server shutting down")
-        except Exception as e:
-            logger.exception("Server error")
-            sys.exit(1)
-    else:
-        logger.info(f"Starting Product Catalog MCP Server with {transport} transport")
-        try:
-            mcp.run(transport=transport)
-        except KeyboardInterrupt:
-            logger.info("Server shutting down")
-        except Exception as e:
-            logger.exception("Server error")
-            sys.exit(1)
+        # Run the ASGI app with uvicorn
+        uvicorn.run(app, host="0.0.0.0", port=port)
+    except KeyboardInterrupt:
+        logger.info("Server shutting down")
+    except Exception as e:
+        logger.exception("Server error")
+        sys.exit(1)
