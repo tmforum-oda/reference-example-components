@@ -248,13 +248,26 @@ async def catalog_create(catalog_data: dict) -> dict:
 
     Returns:
         A dictionary containing the created catalog data.
-        Returns null if an error occurs.
+        If an error occurs, returns an error object with status code and detailed message.
     """
     logger.info("MCP Tool - Creating a new catalog")
     result = await create_catalog(catalog_data)
-    if result == None:
-        logger.warning("Failed to create catalog")
-        return {"error": "Failed to create catalog"}
+
+    # Check if the result contains an error object
+    if result and "error" in result:
+        logger.warning(f"Failed to create catalog: {result['error']['detail']}")
+        # Return the error with HTTP status code to the MCP client
+        return result
+    elif result is None:
+        logger.warning("Failed to create catalog - no response received")
+        return {
+            "error": {
+                "status": 500,
+                "detail": "Failed to create catalog - no response received",
+            }
+        }
+
+    # Success case
     return result
 
 
@@ -336,13 +349,26 @@ async def category_create(category_data: dict) -> dict:
 
     Returns:
         A dictionary containing the created category data.
-        Returns an error dictionary if an error occurs.
+        If an error occurs, returns an error object with status code and detailed message.
     """
     logger.info("MCP Tool - Creating a new category")
     result = await create_category(category_data)
-    if result == None:
-        logger.warning("Failed to create category")
-        return {"error": "Failed to create category"}
+
+    # Check if the result contains an error object
+    if result and "error" in result:
+        logger.warning(f"Failed to create category: {result['error']['detail']}")
+        # Return the error with HTTP status code to the MCP client
+        return result
+    elif result is None:
+        logger.warning("Failed to create category - no response received")
+        return {
+            "error": {
+                "status": 500,
+                "detail": "Failed to create category - no response received",
+            }
+        }
+
+    # Success case
     return result
 
 
@@ -745,6 +771,12 @@ def create_catalog_prompt(
     # Set default dates for the validity period (1 year from now)
     validity_start = datetime.datetime.now().isoformat()
     validity_end = (datetime.datetime.now() + datetime.timedelta(days=365)).isoformat()
+    validity_start = datetime.datetime.now(datetime.timezone.utc).strftime(
+        "%Y-%m-%dT%H:%M:%S.000+00:00"
+    )
+    validity_end = (
+        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=365)
+    ).strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
 
     # Default categories if none provided
     categories = []
@@ -819,6 +851,119 @@ Here's my complete catalog definition:
 ```
 
 Please help me create this catalog in the system.
+"""
+
+
+@mcp.prompt()
+def create_category_prompt(
+    name: str,
+    description: str,
+    is_root: bool = False,
+    lifecycle_status: str = "Active",
+    version: str = "1.0",
+    parent_id: str = None,
+) -> str:
+    """Create a prompt template for guiding a user through creating a new category.
+
+    Args:
+        name: Name of the category (required by TMF620)
+        description: Description of this category
+        is_root: If true, this Boolean indicates that the category is a root of categories
+        lifecycle_status: Used to indicate the current lifecycle status
+        version: Category version
+        parent_id: Unique identifier of the parent category (optional)
+
+    Returns:
+        A prompt template string for guiding a user to create a category
+    """
+    # Set default dates for the validity period (1 year from now)
+    validity_start = datetime.datetime.now(datetime.timezone.utc).strftime(
+        "%Y-%m-%dT%H:%M:%S.000+00:00"
+    )
+    validity_end = (
+        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=365)
+    ).strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
+
+    # Default product offerings if none provided
+    product_offerings = []
+
+    # Default subcategories if none provided
+    sub_categories = []
+
+    # Create the category JSON structure based on TMF620 schema
+    category_data = {
+        "name": name,
+        "description": description,
+        "isRoot": is_root,
+        "lifecycleStatus": lifecycle_status,
+        "version": version,
+        "validFor": {"startDateTime": validity_start, "endDateTime": validity_end},
+        "productOffering": product_offerings,
+        "subCategory": sub_categories,
+    }
+
+    # Add parent ID if provided
+    if parent_id:
+        category_data["parentId"] = parent_id
+
+    # Format the category data as a readable JSON string
+    formatted_json = json.dumps(category_data, indent=2)
+
+    # Example product offering structure for documentation
+    product_offering_example = {
+        "id": "offering-id",
+        "href": "https://api-url/productOffering/offering-id",
+        "name": "Example Product Offering",
+        "@referredType": "ProductOffering",
+    }
+
+    # Example subcategory structure for documentation
+    subcategory_example = {
+        "id": "subcategory-id",
+        "href": "https://api-url/category/subcategory-id",
+        "name": "Example Subcategory",
+        "@referredType": "Category",
+    }
+
+    # Create the prompt template with all TM Forum TMF620 category attributes
+    return f"""
+I want to create a new category in the Product Catalog Management system with the following details:
+
+- Name: {name}
+- Description: {description}
+- Is Root Category: {"Yes" if is_root else "No"}
+- Lifecycle Status: {lifecycle_status}
+- Version: {version}
+{"- Parent Category ID: " + parent_id if parent_id else "- No parent category (top-level category)"}
+- Valid from: {validity_start} to {validity_end}
+
+The category follows the TMF620 schema with these attributes:
+* name - Name of the category (required)
+* description - Description of this category
+* isRoot - If true, this indicates that the category is a root of categories
+* lifecycleStatus - Used to indicate the current lifecycle status (e.g., Active, Deprecated)
+* version - Category version
+* validFor - The period for which the category is valid (startDateTime and endDateTime)
+* parentId - Unique identifier of the parent category (optional, only for non-root categories)
+* productOffering - A list of product offerings contained in this category (can be empty)
+* subCategory - A list of subcategories contained in this category (can be empty)
+
+To add product offerings to this category, you can use structures like:
+```json
+{json.dumps(product_offering_example, indent=2)}
+```
+
+To add subcategories, you can use structures like:
+```json
+{json.dumps(subcategory_example, indent=2)}
+```
+
+Here's my complete category definition:
+```json
+{formatted_json}
+```
+
+Please help me create this category in the system.
 """
 
 

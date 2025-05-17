@@ -13,7 +13,8 @@ This guide demonstrates how to use the TM Forum TMF620 Product Catalog Managemen
    - [Product Offering Operations](#product-offering-operations)
    - [Product Offering Price Operations](#product-offering-price-operations)
 4. [Example Prompts](#example-prompts)
-5. [Advanced Usage](#advanced-usage)
+5. [Error Handling](#error-handling)
+6. [Advanced Usage](#advanced-usage)
 
 ## Introduction
 
@@ -822,6 +823,83 @@ Here are some example prompts that an MCP client can use to interact with the Pr
    ```
    Add the Premium Firewall for Enterprise product offering (ID: 302) to the Enterprise Solutions Catalog (ID: 44).
    ```
+
+## Error Handling
+
+The Product Catalog MCP API now provides standardized error responses with HTTP status codes when operations fail. This allows clients to handle errors more effectively.
+
+### Error Response Structure
+
+When an operation fails, the API returns an error object with the following structure:
+
+```json
+{
+  "error": {
+    "status": 400,  // HTTP status code
+    "detail": "Detailed error message"
+  }
+}
+```
+
+### Common Error Status Codes
+
+- **400 Bad Request** - Invalid input, validation errors, or malformed request syntax
+- **401 Unauthorized** - Authentication required or failed
+- **403 Forbidden** - Authenticated user lacks access rights
+- **404 Not Found** - Requested resource doesn't exist
+- **409 Conflict** - Resource state conflict (e.g., duplicate entry)
+- **500 Internal Server Error** - Unexpected server-side errors
+
+### Error Handling Example
+
+Here's an example of how to handle errors when using the MCP client:
+
+```python
+from mcp.client import MCPClient
+
+# Initialize the client
+client = MCPClient("http://localhost:8000/r1-productcatalogmanagement")
+
+# Try to create a catalog
+result = client.call_tool(
+    "catalog_create",
+    {
+        "catalog_data": {
+            "name": "My Test Catalog",
+            "description": "This is a test catalog"
+            # Missing required fields may cause a 400 error
+        }
+    }
+)
+
+# Check for errors
+if isinstance(result, dict) and "error" in result:
+    status = result["error"]["status"]
+    detail = result["error"]["detail"]
+    
+    print(f"Error {status}: {detail}")
+    
+    # Handle specific error codes
+    if status == 400:
+        print("Validation error - check your request data")
+    elif status == 404:
+        print("Resource not found - check your IDs")
+    elif status >= 500:
+        print("Server error - try again later")
+else:
+    print("Success! Catalog created.")
+    print(result)
+```
+
+### Best Practices for Error Handling
+
+1. **Always check for errors**: Before processing responses, check if they contain an error object
+2. **Handle different status codes appropriately**: Different error types require different responses
+3. **Log detailed error information**: Include status codes and details in your logs
+4. **Provide meaningful feedback**: Convert API error messages to user-friendly messages
+5. **Implement retries**: For 5xx errors, implement backoff retry logic
+
+For more detailed examples of error responses, see [MCP_REQUEST_RESPONSE_EXAMPLES.md](./MCP_REQUEST_RESPONSE_EXAMPLES.md).
 
 ## Advanced Usage
 

@@ -1080,5 +1080,199 @@ This example demonstrates how an MCP client might perform multiple operations in
 }
 ```
 
+## Error Handling Examples
 
-These examples demonstrate how to use the Model Context Protocol to interact with the TM Forum Product Catalog Management API, showing the exact JSON format for requests and responses according to the MCP specification.
+The MCP Server now provides detailed error responses with HTTP status codes when operations fail. This section shows examples of error scenarios and their responses.
+
+### Invalid Catalog Creation Example (400 Bad Request)
+
+**MCP Request:**
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Create a new catalog with invalid data"
+    },
+    {
+      "role": "agent",
+      "content": "I'll create a new catalog with the details you provided.",
+      "tool_calls": [
+        {
+          "id": "call_error_001",
+          "type": "function",
+          "function": {
+            "name": "catalog_create",
+            "arguments": {
+              "catalog_data": {
+                "name": "Invalid Catalog",
+                "invalidField": "This field doesn't exist in TMF620 schema"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+**MCP Response with Error:**
+```json
+{
+  "tool_responses": [
+    {
+      "tool_call_id": "call_error_001",
+      "role": "tool",
+      "content": {
+        "error": {
+          "status": 400,
+          "detail": "Invalid field: 'invalidField' is not recognized. Request body doesn't conform to the TMF620 schema."
+        }
+      }
+    }
+  ]
+}
+```
+
+### Catalog Not Found Example (404 Not Found)
+
+**MCP Request:**
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Get details for catalog with ID 999999"
+    },
+    {
+      "role": "agent",
+      "content": "I'll retrieve information about catalog 999999 for you.",
+      "tool_calls": [
+        {
+          "id": "call_error_002",
+          "type": "function",
+          "function": {
+            "name": "catalog_get",
+            "arguments": {
+              "catalog_id": "999999"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+**MCP Response with Error:**
+```json
+{
+  "tool_responses": [
+    {
+      "tool_call_id": "call_error_002",
+      "role": "tool",
+      "content": {
+        "error": {
+          "status": 404,
+          "detail": "Catalog with ID '999999' not found."
+        }
+      }
+    }
+  ]
+}
+```
+
+### Server Error Example (500 Internal Server Error)
+
+**MCP Request:**
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Create a new catalog"
+    },
+    {
+      "role": "agent",
+      "content": "I'll create a new catalog for you.",
+      "tool_calls": [
+        {
+          "id": "call_error_003",
+          "type": "function",
+          "function": {
+            "name": "catalog_create",
+            "arguments": {
+              "catalog_data": {
+                "name": "Test Catalog",
+                "description": "This is a test catalog",
+                "version": "1.0"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+**MCP Response with Server Error:**
+```json
+{
+  "tool_responses": [
+    {
+      "tool_call_id": "call_error_003",
+      "role": "tool",
+      "content": {
+        "error": {
+          "status": 500,
+          "detail": "Unexpected server error: Database connection failed."
+        }
+      }
+    }
+  ]
+}
+```
+
+### Error Handling in Client Applications
+
+Client applications should check for the presence of an `error` object in the response and handle different status codes appropriately:
+
+```python
+from mcp.client import MCPClient
+
+# Connect to the MCP server
+client = MCPClient("http://localhost:8000/r1-productcatalogmanagement")
+
+# Attempt to create a catalog
+response = client.call_tool(
+    "catalog_create", 
+    {
+        "catalog_data": {
+            "name": "Test Catalog",
+            "description": "This is a test catalog"
+        }
+    }
+)
+
+# Error handling
+if "error" in response:
+    status_code = response["error"]["status"]
+    error_detail = response["error"]["detail"]
+    
+    if status_code == 400:
+        print(f"Bad request: {error_detail}")
+        # Handle validation errors
+    elif status_code == 401 or status_code == 403:
+        print(f"Authentication error: {error_detail}")
+        # Handle auth errors
+    elif status_code == 404:
+        print(f"Not found: {error_detail}")
+        # Handle not found errors
+    elif status_code >= 500:
+        print(f"Server error: {error_detail}")
+        # Handle server errors
+else:
+    print("Catalog created successfully:", response)
+```

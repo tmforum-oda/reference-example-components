@@ -145,6 +145,52 @@ AI: I'll create the IoT Solutions Catalog for you. I'll set it up as follows:
     You can now start adding product offerings to this catalog.
 ```
 
+## Error Handling
+
+When creating catalogs using the MCP tools, it's important to understand how errors are handled. The `catalog_create` tool now returns proper error responses with HTTP status codes when issues occur, allowing clients to respond appropriately.
+
+### Error Response Structure
+
+If an error occurs during catalog creation, the response will include an `error` object with the following properties:
+
+- `status`: The HTTP status code (e.g., 400, 404, 500)
+- `detail`: A detailed error message describing what went wrong
+
+### Example Error Handling
+
+```python
+from mcp.client import MCPClient
+
+# Connect to the MCP server
+client = MCPClient("http://localhost:8000/r1-productcatalogmanagement")
+
+# Attempt to create a catalog with invalid data
+response = client.call_tool(
+    "catalog_create", 
+    {
+        "catalog_data": {
+            "name": "Invalid Catalog",
+            "invalidField": "This field doesn't exist in TMF620 schema"
+        }
+    }
+)
+
+# Check for errors in the response
+if "error" in response:
+    print(f"Error creating catalog: {response['error']['status']} - {response['error']['detail']}")
+else:
+    print("Catalog created successfully:", response)
+```
+
+### Common Error Scenarios
+
+1. **Bad Request (400)** - The request doesn't conform to the TMF620 schema (missing required fields, invalid data types, etc.)
+2. **Unauthorized (401)** - Authentication credentials are missing or invalid
+3. **Not Found (404)** - When referencing resources that don't exist
+4. **Internal Server Error (500)** - Unexpected server-side errors
+
+When handling errors in your application, be sure to check for the presence of an `error` object in the response and take appropriate actions based on the status code.
+
 ## Additional Resources
 
 For more information on working with the Product Catalog API through MCP, see:

@@ -133,14 +133,15 @@ async def get_catalog(
         return None
 
 
-async def create_catalog(catalog_data: dict[str, Any]) -> dict[str, Any] | None:
+async def create_catalog(catalog_data: dict[str, Any]) -> dict[str, Any]:
     """Create a new catalog in the TM Forum Product Catalog Management API.
 
     Args:
         catalog_data: Dictionary containing the catalog data according to the TMF620 specification
 
     Returns:
-        Dict containing the created catalog data or None if an error occurred
+        Dict containing the created catalog data,
+        or a dict with error details containing 'error.status' (HTTP status code) and 'error.detail' (error message)
 
     Raises:
         Various httpx exceptions are caught and logged
@@ -184,29 +185,49 @@ async def create_catalog(catalog_data: dict[str, Any]) -> dict[str, Any] | None:
                         return response_json
                     except json.JSONDecodeError as e:
                         logger.error(f"Failed to decode JSON response: {e}")
-                        return None
+                        return {
+                            "error": {
+                                "status": 500,
+                                "detail": f"Failed to decode JSON response: {str(e)}",
+                            }
+                        }
                 else:
                     logger.warning(f"Unexpected status code: {response.status_code}")
-                    return None
+                    return {
+                        "error": {
+                            "status": response.status_code,
+                            "detail": f"Unexpected status code: {response.status_code}",
+                        }
+                    }
 
             except httpx.TimeoutException as e:
                 logger.error(
                     f"Timeout Error: Request timed out after {timeout.read} seconds"
                 )
-                return None
+                return {
+                    "error": {
+                        "status": 408,
+                        "detail": f"Request timed out after {timeout.read} seconds",
+                    }
+                }
             except httpx.HTTPStatusError as e:
                 logger.error(
                     f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
                 )
-                return None
+                return {
+                    "error": {
+                        "status": e.response.status_code,
+                        "detail": e.response.text,
+                    }
+                }
             except httpx.HTTPError as e:
                 logger.error(f"HTTP Error: {e}")
-                return None
+                return {"error": {"status": 500, "detail": str(e)}}
 
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         logger.exception("Stack trace:")
-        return None
+        return {"error": {"status": 500, "detail": f"Unexpected error: {str(e)}"}}
 
 
 async def update_catalog(
@@ -456,14 +477,15 @@ async def get_category(
         return None
 
 
-async def create_category(category_data: dict[str, Any]) -> dict[str, Any] | None:
+async def create_category(category_data: dict[str, Any]) -> dict[str, Any]:
     """Create a new category in the TM Forum Product Catalog Management API.
 
     Args:
         category_data: Dictionary containing the category data according to the TMF620 specification
 
     Returns:
-        Dict containing the created category data or None if an error occurred
+        Dict containing the created category data,
+        or a dict with error details containing 'error.status' (HTTP status code) and 'error.detail' (error message)
 
     Raises:
         Various httpx exceptions are caught and logged
@@ -507,29 +529,49 @@ async def create_category(category_data: dict[str, Any]) -> dict[str, Any] | Non
                         return response_json
                     except json.JSONDecodeError as e:
                         logger.error(f"Failed to decode JSON response: {e}")
-                        return None
+                        return {
+                            "error": {
+                                "status": 500,
+                                "detail": f"Failed to decode JSON response: {str(e)}",
+                            }
+                        }
                 else:
                     logger.warning(f"Unexpected status code: {response.status_code}")
-                    return None
+                    return {
+                        "error": {
+                            "status": response.status_code,
+                            "detail": f"Unexpected status code: {response.status_code}",
+                        }
+                    }
 
             except httpx.TimeoutException as e:
                 logger.error(
                     f"Timeout Error: Request timed out after {timeout.read} seconds"
                 )
-                return None
+                return {
+                    "error": {
+                        "status": 408,
+                        "detail": f"Request timed out after {timeout.read} seconds",
+                    }
+                }
             except httpx.HTTPStatusError as e:
                 logger.error(
                     f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
                 )
-                return None
+                return {
+                    "error": {
+                        "status": e.response.status_code,
+                        "detail": e.response.text,
+                    }
+                }
             except httpx.HTTPError as e:
                 logger.error(f"HTTP Error: {e}")
-                return None
+                return {"error": {"status": 500, "detail": str(e)}}
 
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         logger.exception("Stack trace:")
-        return None
+        return {"error": {"status": 500, "detail": f"Unexpected error: {str(e)}"}}
 
 
 async def update_category(
