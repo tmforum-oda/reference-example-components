@@ -723,7 +723,7 @@ import json
 
 
 @mcp.prompt()
-def catalog_creation_prompt(
+def create_catalog_prompt(
     name: str,
     description: str,
     catalog_type: str = "Product",
@@ -746,6 +746,12 @@ def catalog_creation_prompt(
     validity_start = datetime.datetime.now().isoformat()
     validity_end = (datetime.datetime.now() + datetime.timedelta(days=365)).isoformat()
 
+    # Default categories if none provided
+    categories = []
+
+    # Default related parties if none provided
+    related_parties = []
+
     # Create the catalog JSON structure based on TMF620 schema
     catalog_data = {
         "name": name,
@@ -754,27 +760,60 @@ def catalog_creation_prompt(
         "version": version,
         "lifecycleStatus": lifecycle_status,
         "validFor": {"startDateTime": validity_start, "endDateTime": validity_end},
-        # Optional fields that can be included
-        "@baseType": "Catalog",
-        "@type": "Catalog",
-        "@schemaLocation": "https://tmf-open-api.org/schema/TMF620/v4/Catalog.schema.json",
-    }
-
-    # Format the catalog data as a readable JSON string
+        "category": categories,
+        "relatedParty": related_parties,
+    }  # Format the catalog data as a readable JSON string
     formatted_json = json.dumps(catalog_data, indent=2)
 
-    # Create the prompt template
+    # Example category structure for documentation
+    category_example = {
+        "id": "category-id",
+        "href": "https://api-url/category/category-id",
+        "name": "Example Category",
+        "@referredType": "Category",
+    }
+
+    # Example related party structure for documentation
+    related_party_example = {
+        "id": "party-id",
+        "href": "https://api-url/party/party-id",
+        "name": "Example Organization",
+        "role": "Owner",
+        "@referredType": "Organization",
+    }
+
+    # Create the prompt template with all TM Forum TMF620 catalog attributes
     return f"""
 I want to create a new catalog in the Product Catalog Management system with the following details:
 
 - Name: {name}
-- Description: {description} 
+- Description: {description}
 - Type: {catalog_type}
 - Version: {version}
 - Status: {lifecycle_status}
 - Valid from: {validity_start} to {validity_end}
 
-The catalog should follow the TMF620 schema with this structure:
+The catalog follows the TMF620 schema with these attributes:
+* name - Name of the catalog (required)
+* description - Description of this catalog
+* catalogType - Indicates if the catalog is a product, service or resource catalog
+* version - Catalog version
+* lifecycleStatus - Used to indicate the current lifecycle status (e.g., Active, Deprecated)
+* validFor - The period for which the catalog is valid (startDateTime and endDateTime)
+* category - List of root categories contained in this catalog (can be empty)
+* relatedParty - List of parties involved in this catalog (can be empty)
+
+To add categories, you can use structures like:
+```json
+{json.dumps(category_example, indent=2)}
+```
+
+To add related parties, you can use structures like:
+```json
+{json.dumps(related_party_example, indent=2)}
+```
+
+Here's my complete catalog definition:
 ```json
 {formatted_json}
 ```
