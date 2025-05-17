@@ -313,7 +313,123 @@ async def product_specification_create(product_specification_data: dict) -> dict
     """Create a new product specification in the TM Forum Product Catalog Management API.
 
     Args:
-        product_specification_data: Dictionary containing the product specification data according to the TMF620 specification.
+        product_specification_data: Dictionary containing the product specification data according to the TMF620 specification - see properties below.
+        properties:
+        '@baseType':
+            description: When sub-classing, this defines the super-class
+            type: string
+        '@schemaLocation':
+            description: A URI to a JSON-Schema file that defines additional attributes
+            and relationships
+            format: uri
+            type: string
+        '@type':
+            description: When sub-classing, this defines the sub-class entity name
+            type: string
+        attachment:
+            description: Complements the description of an element (for instance a product)
+            through video, pictures...
+            items:
+            $ref: '#/definitions/AttachmentRefOrValue'
+            type: array
+        brand:
+            description: The manufacturer or trademark of the specification
+            type: string
+        bundledProductSpecification:
+            description: A type of ProductSpecification that belongs to a grouping of
+            ProductSpecifications made available to the market. It inherits of all attributes
+            of ProductSpecification.
+            items:
+            $ref: '#/definitions/BundledProductSpecification'
+            type: array
+        description:
+            description: A narrative that explains in detail what the product specification
+            is
+            type: string
+        href:
+            description: Reference of the product specification
+            type: string
+        id:
+            description: Unique identifier of the product specification
+            type: string
+        isBundle:
+            description: isBundle determines whether a productSpecification represents
+            a single productSpecification (false), or a bundle of productSpecification
+            (true).
+            type: boolean
+        lastUpdate:
+            description: Date and time of the last update
+            format: date-time
+            type: string
+        lifecycleStatus:
+            description: Used to indicate the current lifecycle status
+            type: string
+        name:
+            description: Name of the product specification
+            type: string
+        productNumber:
+            description: An identification number assigned to uniquely identity the specification
+            type: string
+        productSpecCharacteristic:
+            description: A characteristic quality or distinctive feature of a ProductSpecification.  The
+            characteristic can be take on a discrete value, such as color, can take
+            on a range of values, (for example, sensitivity of 100-240 mV), or can be
+            derived from a formula (for example, usage time (hrs) = 30 - talk time *3).
+            Certain characteristics, such as color, may be configured during the ordering
+            or some other process.
+            items:
+            $ref: '#/definitions/ProductSpecificationCharacteristic'
+            type: array
+        productSpecificationRelationship:
+            description: A migration, substitution, dependency or exclusivity relationship
+            between/among product specifications.
+            items:
+            $ref: '#/definitions/ProductSpecificationRelationship'
+            type: array
+        relatedParty:
+            description: A related party defines party or party role linked to a specific
+            entity.
+            items:
+            $ref: '#/definitions/RelatedParty'
+            type: array
+        resourceSpecification:
+            description: The ResourceSpecification is required to realize a ProductSpecification.
+            items:
+            $ref: '#/definitions/ResourceSpecificationRef'
+            type: array
+        serviceSpecification:
+            description: ServiceSpecification(s) required to realize a ProductSpecification.
+            items:
+            $ref: '#/definitions/ServiceSpecificationRef'
+            type: array
+        targetProductSchema:
+            $ref: '#/definitions/TargetProductSchema'
+            description: A target product schema reference. The reference object to the
+            schema and type of target product which is described by product specification.
+            type: object
+            properties:
+                id:
+                    type: string
+                href:
+                    type: string
+                name:
+                    type: string
+        validFor:
+            description: The period for which the product specification is valid
+            type: object
+            properties:
+                endDateTime:
+                    description: End of the time period, using IETC-RFC-3339 format
+                    format: date-time
+                    type: string
+                startDateTime:
+                    description: Start of the time period, using IETC-RFC-3339 format. If you
+                    define a start, you must also define an end
+                    format: date-time
+                    type: string
+        version:
+            description: Product specification version
+            type: string
 
     Returns:
         A dictionary containing the created product specification data.
@@ -439,7 +555,195 @@ async def product_offering_create(product_offering_data: dict) -> dict:
     """Create a new product offering in the TM Forum Product Catalog Management API.
 
     Args:
-        product_offering_data: Dictionary containing the product offering data according to the TMF620 specification.
+        product_offering_data: Dictionary containing the product offering data according to the TMF620 specification - see properties below.
+        properties:
+            '@baseType':
+                description: When sub-classing, this defines the super-class
+                type: string
+            '@schemaLocation':
+                description: A URI to a JSON-Schema file that defines additional attributes
+                and relationships
+                format: uri
+                type: string
+            '@type':
+                description: When sub-classing, this defines the sub-class entity name
+                type: string
+            agreement:
+                description: An agreement represents a contract or arrangement, either written
+                or verbal and sometimes enforceable by law, such as a service level agreement
+                or a customer price agreement. An agreement involves a number of other business
+                entities, such as products, services, and resources and/or their specifications.
+                items:
+                $ref: '#/definitions/AgreementRef'
+                type: array
+            attachment:
+                description: Complements the description of an element (for instance a product)
+                through video, pictures...
+                items:
+                $ref: '#/definitions/AttachmentRefOrValue'
+                type: array
+            bundledProductOffering:
+                description: A type of ProductOffering that belongs to a grouping of ProductOfferings
+                made available to the market. It inherits of all attributes of ProductOffering.
+                items:
+                $ref: '#/definitions/BundledProductOffering'
+                type: array
+            category:
+                description: The category resource is used to group product offerings, service
+                and resource candidates in logical containers. Categories can contain other
+                categories and/or product offerings, resource or service candidates.
+                items:
+                $ref: '#/definitions/CategoryRef'
+                type: array
+            channel:
+                description: The channel defines the channel for selling product offerings.
+                items:
+                $ref: '#/definitions/ChannelRef'
+                type: array
+            description:
+                description: Description of the productOffering
+                type: string
+            href:
+                description: Reference of the ProductOffering
+                type: string
+            id:
+                description: Unique identifier of the productOffering
+                type: string
+            isBundle:
+                description: isBundle determines whether a productOffering represents a single
+                productOffering (false), or a bundle of productOfferings (true).
+                type: boolean
+            isSellable:
+                description: A flag indicating if this product offer can be sold stand-alone
+                for sale or not. If this flag is false it indicates that the offer can only
+                be sold within a bundle.
+                type: boolean
+            lastUpdate:
+                description: Date and time of the last update
+                format: date-time
+                type: string
+            lifecycleStatus:
+                description: Used to indicate the current lifecycle status
+                type: string
+            marketSegment:
+                description: provides references to the corresponding market segment as target
+                of product offerings. A market segment is grouping of Parties, GeographicAreas,
+                SalesChannels, and so forth.
+                items:
+                $ref: '#/definitions/MarketSegmentRef'
+                type: array
+            name:
+                description: Name of the productOffering
+                type: string
+            place:
+                description: Place defines the places where the products are sold or delivered.
+                items:
+                $ref: '#/definitions/PlaceRef'
+                type: array
+            prodSpecCharValueUse:
+                description: A use of the ProductSpecificationCharacteristicValue by a ProductOffering
+                to which additional properties (attributes) apply or override the properties
+                of similar properties contained in ProductSpecificationCharacteristicValue.
+                It should be noted that characteristics which their value(s) addressed by
+                this object must exist in corresponding product specification. The available
+                characteristic values for a ProductSpecificationCharacteristic in a Product
+                specification can be modified at the ProductOffering level. For example,
+                a characteristic 'Color' might have values White, Blue, Green, and Red.
+                But, the list of values can be restricted to e.g. White and Blue in an associated
+                product offering. It should be noted that the list of values in 'ProductSpecificationCharacteristicValueUse'
+                is a strict subset of the list of values as defined in the corresponding
+                product specification characteristics.
+                items:
+                $ref: '#/definitions/ProductSpecificationCharacteristicValueUse'
+                type: array
+            productOfferingPrice:
+                description: An amount, usually of money, that is asked for or allowed when
+                a ProductOffering is bought, rented, or leased. The price is valid for a
+                defined period of time and may not represent the actual price paid by a
+                customer.
+                items:
+                $ref: '#/definitions/ProductOfferingPriceRef'
+                type: array
+            productOfferingTerm:
+                description: A condition under which a ProductOffering is made available to
+                Customers. For instance, a productOffering can be offered with multiple
+                commitment periods.
+                items:
+                $ref: '#/definitions/ProductOfferingTerm'
+                type: array
+            productSpecification:
+                $ref: '#/definitions/ProductSpecificationRef'
+                description: A ProductSpecification is a detailed description of a tangible
+                or intangible object made available externally in the form of a ProductOffering
+                to customers or other parties playing a party role.
+                type: object
+                properties:
+                    id:
+                        type: string
+                    href:
+                        type: string
+                    name:
+                        type: string
+            resourceCandidate:
+                $ref: '#/definitions/ResourceCandidateRef'
+                description: A resource candidate is an entity that makes a ResourceSpecification
+                available to a catalog.
+                type: object
+                properties:
+                    id:
+                        type: string
+                    href:
+                        type: string
+                    name:
+                        type: string
+            serviceCandidate:
+                $ref: '#/definitions/ServiceCandidateRef'
+                description: ServiceCandidate is an entity that makes a ServiceSpecification
+                available to a catalog.
+                type: object
+                properties:
+                    id:
+                        type: string
+                    href:
+                        type: string
+                    name:
+                        type: string
+            serviceLevelAgreement:
+                $ref: '#/definitions/SLARef'
+                description: A service level agreement (SLA) is a type of agreement that represents
+                a formal negotiated agreement between two parties designed to create a common
+                understanding about products, services, priorities, responsibilities, and
+                so forth. The SLA is a set of appropriate procedures and targets formally
+                or informally agreed between parties in order to achieve and maintain specified
+                Quality of Service.
+                type: object
+                properties:
+                    id:
+                        type: string
+                    href:
+                        type: string
+                    name:
+                        type: string
+            statusReason:
+                description: A string providing a complementary information on the value of
+                the lifecycle status attribute.
+                type: string
+            validFor:
+                description: The period for which the productOffering is valid
+                type: object
+                properties:
+                    endDateTime:
+                        description: End of the time period, using IETC-RFC-3339 format
+                        format: date-time
+                        type: string
+                    startDateTime:
+                        description: Start of the time period, using IETC-RFC-3339 format. If you
+                        define a start, you must also define an end
+                        format: date-time
+                        type: string
+            version:
+                description: ProductOffering version
+                type: string
 
     Returns:
         A dictionary containing the created product offering data.
@@ -678,8 +982,18 @@ async def product_offering_price_create(product_offering_price_data: dict) -> di
                 of an ProductOffering is available at the offered price. Its meaning depends
                 on the priceType. It could be a price, a rate, or a discount.
             validFor:
-                $ref: '#/definitions/TimePeriod'
                 description: The period for which the productOfferingPrice is valid
+                type: object
+                properties:
+                    endDateTime:
+                        description: End of the time period, using IETC-RFC-3339 format
+                        format: date-time
+                        type: string
+                    startDateTime:
+                        description: Start of the time period, using IETC-RFC-3339 format. If you
+                        define a start, you must also define an end
+                        format: date-time
+                        type: string
             version:
                 description: ProductOffering version
                 type: string
