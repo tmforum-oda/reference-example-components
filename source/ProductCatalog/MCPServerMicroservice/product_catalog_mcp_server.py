@@ -559,7 +559,130 @@ async def product_offering_price_create(product_offering_price_data: dict) -> di
     """Create a new product offering price in the TM Forum Product Catalog Management API.
 
     Args:
-        product_offering_price_data: Dictionary containing the product offering price data according to the TMF620 specification.
+        product_offering_price_data: Dictionary containing the product offering price data according to the TMF620 specification - see properties below.
+        properties:
+            '@baseType':
+                description: the immediate base class type of this product offering
+                type: string
+            '@schemaLocation':
+                description: hyperlink reference to the schema describing this resource
+                type: string
+            '@type':
+                description: The class type of this Product offering
+                type: string
+            bundledPopRelationship:
+                description: this object represents a bundle relationship from a bundle product
+                offering price (parent) to a simple product offering price (child). A simple
+                product offering price may participate in more than one bundle relationship.
+                items:
+                $ref: '#/definitions/BundledProductOfferingPriceRelationship'
+                type: array
+            constraint:
+                description: The Constraint resource represents a policy/rule applied to ProductOfferingPrice.
+                items:
+                $ref: '#/definitions/ConstraintRef'
+                type: array
+            description:
+                description: Description of the productOfferingPrice
+                type: string
+            href:
+                description: Reference of the ProductOfferingPrice
+                type: string
+            id:
+                description: unique id of this resource
+                type: string
+            isBundle:
+                description: A flag indicating if this ProductOfferingPrice is composite (bundle)
+                or not
+                type: boolean
+            lastUpdate:
+                description: the last update time of this ProductOfferingPrice
+                format: date-time
+                type: string
+            lifecycleStatus:
+                description: the lifecycle status of this ProductOfferingPrice
+                type: string
+            name:
+                description: Name of the productOfferingPrice
+                type: string
+            percentage:
+                description: Percentage to apply for ProductOfferPriceAlteration (Discount)
+                format: float
+                type: number
+            place:
+                description: Place defines the places where the products are sold or delivered.
+                items:
+                $ref: '#/definitions/PlaceRef'
+                type: array
+            popRelationship:
+                description: Product Offering Prices related to this Product Offering Price,
+                for example a price alteration such as allowance or discount
+                items:
+                $ref: '#/definitions/ProductOfferingPriceRelationship'
+                type: array
+            price:
+                $ref: '#/definitions/Money'
+                description: The amount of money that characterizes the price.
+            priceType:
+                description: A category that describes the price, such as recurring, discount,
+                allowance, penalty, and so forth.
+                type: string
+            pricingLogicAlgorithm:
+                description: The PricingLogicAlgorithm entity represents an instantiation
+                of an interface specification to external rating function (without a modeled
+                behavior in SID). Some of the parameters of the interface definition may
+                be already set (such as price per unit) and some may be gathered during
+                the rating process from the event (such as call duration) or from ProductCharacteristicValues
+                (such as assigned bandwidth).
+                items:
+                $ref: '#/definitions/PricingLogicAlgorithm'
+                type: array
+            prodSpecCharValueUse:
+                description: A use of the ProductSpecificationCharacteristicValue by a ProductOfferingPrice
+                to which additional properties (attributes) apply or override the properties
+                of similar properties contained in ProductSpecificationCharacteristicValue.
+                It should be noted that characteristics which their value(s) addressed by
+                this object must exist in corresponding product specification. The available
+                characteristic values for a ProductSpecificationCharacteristic in a Product
+                specification can be modified at the ProductOffering and ProcuctOfferingPrice
+                level. The list of values in ProductSpecificationCharacteristicValueUse
+                is a strict subset of the list of values as defined in the corresponding
+                product specification characteristics.
+                items:
+                $ref: '#/definitions/ProductSpecificationCharacteristicValueUse'
+                type: array
+            productOfferingTerm:
+                description: A list of conditions under which a ProductOfferingPrice is made
+                available to Customers. For instance, a Product Offering Price can be offered
+                with multiple commitment periods.
+                items:
+                $ref: '#/definitions/ProductOfferingTerm'
+                type: array
+            recurringChargePeriodLength:
+                description: 'the period of the recurring charge:  1, 2, ... .It sets to zero
+                if it is not applicable'
+                type: integer
+            recurringChargePeriodType:
+                description: 'The period to repeat the application of the price
+                Could be month, week...'
+                type: string
+            tax:
+                description: An amount of money levied on the price of a Product by a legislative
+                body.
+                items:
+                $ref: '#/definitions/TaxItem'
+                type: array
+            unitOfMeasure:
+                $ref: '#/definitions/Quantity'
+                description: A number and unit representing how many (for instance 1 dozen)
+                of an ProductOffering is available at the offered price. Its meaning depends
+                on the priceType. It could be a price, a rate, or a discount.
+            validFor:
+                $ref: '#/definitions/TimePeriod'
+                description: The period for which the productOfferingPrice is valid
+            version:
+                description: ProductOffering version
+                type: string
 
     Returns:
         A dictionary containing the created product offering price data.
@@ -1339,127 +1462,125 @@ async def product_offering_price_schema() -> dict:
                 "description": "An amount, usually of money, that represents the actual price paid by a Customer for a purchase, a rent or a lease of a Product. The price is valid for a defined period of time.",
                 "properties": {
                     "@baseType": {
+                        "description": "the immediate base class type of this product offering",
                         "type": "string",
-                        "description": "When sub-classing, this defines the super-class",
                     },
                     "@schemaLocation": {
+                        "description": "hyperlink reference to the schema describing this resource",
                         "type": "string",
-                        "format": "uri",
-                        "description": "A URI to a JSON-Schema file that defines additional attributes and relationships",
                     },
                     "@type": {
+                        "description": "The class type of this Product offering",
                         "type": "string",
-                        "description": "When sub-classing, this defines the sub-class entity name",
                     },
-                    "name": {
-                        "type": "string",
-                        "description": "Name of the product offering price",
+                    "bundledPopRelationship": {
+                        "description": "this object represents a bundle relationship from a bundle product offering price (parent) to a simple product offering price (child). A simple product offering price may participate in more than one bundle relationship.' items: $ref: ",
+                        "type": "array",
+                    },
+                    "constraint": {
+                        "description": "The Constraint resource represents a policy/rule applied to ProductOfferingPrice.",
+                        "items": {
+                            "$ref": "#/definitions/ConstraintRef",
+                            "type": "array",
+                        },
                     },
                     "description": {
+                        "description": "Description of the productOfferingPrice",
                         "type": "string",
-                        "description": "Description of the product offering price",
                     },
-                    "version": {
+                    "href": {
+                        "description": "Reference of the ProductOfferingPrice",
                         "type": "string",
-                        "description": "Product offering price version",
                     },
-                    "validFor": {
-                        "$ref": "#/definitions/TimePeriod",
-                        "description": "The period for which the product offering price is valid",
-                    },
-                    "priceType": {
+                    "id": {
+                        "description": "unique id of this resource",
                         "type": "string",
-                        "description": "A category that describes the price, such as recurring, discount, allowance, penalty, and so forth",
-                    },
-                    "recurringChargePeriodType": {
-                        "type": "string",
-                        "description": "The period type to repeat the application of the price, such as monthly, yearly",
-                    },
-                    "recurringChargePeriodLength": {
-                        "type": "integer",
-                        "description": "The period of the recurring charge:  1, 2, etc. for a recurring charge of every 1 or 2 months for instance",
                     },
                     "isBundle": {
+                        "description": "A flag indicating if this ProductOfferingPrice is composite (bundle) or not",
                         "type": "boolean",
-                        "description": "A flag indicating if this product offering price is a bundle of other product offering prices",
+                    },
+                    "lastUpdate": {
+                        "description": "the last update time of this ProductOfferingPrice",
+                        "format": "date-time",
+                        "type": "string",
+                    },
+                    "lifecycleStatus": {
+                        "description": "the lifecycle status of this ProductOfferingPrice",
+                        "type": "string",
+                    },
+                    "name": {
+                        "description": "Name of the productOfferingPrice",
+                        "type": "string",
+                    },
+                    "percentage": {
+                        "description": "Percentage to apply for ProductOfferPriceAlteration (Discount)",
+                        "format": "float",
+                        "type": "number",
+                    },
+                    "place": {
+                        "description": "Place defines the places where the products are sold or delivered.",
+                        "items": {"$ref": "#/definitions/PlaceRef", "type": "array"},
+                    },
+                    "popRelationship": {
+                        "description": "Product Offering Prices related to this Product Offering Price, for example a price alteration such as allowance or discount",
+                        "items": {
+                            "$ref": "#/definitions/ProductOfferingPriceRelationship",
+                            "type": "array",
+                        },
                     },
                     "price": {
                         "$ref": "#/definitions/Money",
-                        "description": "The amount of money that characterizes the price",
+                        "description": "The amount of money that characterizes the price.",
                     },
-                    "percentage": {
-                        "type": "number",
-                        "format": "float",
-                        "description": "Percentage to apply for a discount or surcharge",
-                    },
-                    "productOfferingTerm": {
-                        "type": "array",
-                        "description": "Terms for this product offering price",
-                        "items": {"$ref": "#/definitions/ProductOfferingTerm"},
-                    },
-                    "place": {
-                        "type": "array",
-                        "description": "Places where this product offering price is applicable",
-                        "items": {"$ref": "#/definitions/PlaceRef"},
-                    },
-                    "constraint": {
-                        "type": "array",
-                        "description": "The Constraint resource represents a policy/rule applied to an entity or entity spec.",
-                        "items": {"$ref": "#/definitions/ConstraintRef"},
+                    "priceType": {
+                        "description": "A category that describes the price, such as recurring, discount, allowance, penalty, and so forth.",
+                        "type": "string",
                     },
                     "pricingLogicAlgorithm": {
-                        "type": "array",
-                        "description": "The PricingLogicAlgorithm entity represents an instantiation of an interface specification to external rating function (without a modeled behavior in SID)",
-                        "items": {"$ref": "#/definitions/PricingLogicAlgorithm"},
+                        "description": "The PricingLogicAlgorithm entity represents an instantiation of an interface specification to external rating function (without a modeled behavior in SID). Some of the parameters of the interface definition may be already set (such as price per unit) and some may be gathered during the rating process from the event (such as call duration) or from ProductCharacteristicValues (such as assigned bandwidth).",
+                        "items": {
+                            "$ref": "#/definitions/PricingLogicAlgorithm",
+                            "type": "array",
+                        },
+                    },
+                    "prodSpecCharValueUse": {
+                        "description": "A use of the ProductSpecificationCharacteristicValue by a ProductOfferingPrice to which additional properties (attributes) apply or override the properties of similar properties contained in ProductSpecificationCharacteristicValue. It should be noted that characteristics which their value(s) addressed by this object must exist in corresponding product specification. The available characteristic values for a ProductSpecificationCharacteristic in a Product specification can be modified at the ProductOffering and ProcuctOfferingPrice level. The list of values in ProductSpecificationCharacteristicValueUse is a strict subset of the list of values as defined in the corresponding product specification characteristics.",
+                        "items": {
+                            "$ref": "#/definitions/ProductSpecificationCharacteristicValueUse",
+                            "type": "array",
+                        },
+                    },
+                    "productOfferingTerm": {
+                        "description": "A list of conditions under which a ProductOfferingPrice is made available to Customers. For instance, a Product Offering Price can be offered with multiple commitment periods.",
+                        "items": {
+                            "$ref": "#/definitions/ProductOfferingTerm",
+                            "type": "array",
+                        },
+                    },
+                    "recurringChargePeriodLength": {
+                        "description": "the period of the recurring charge:  1, 2, ... .It sets to zero if it is not applicable",
+                        "type": "integer",
+                    },
+                    "recurringChargePeriodType": {
+                        "description": "The period to repeat the application of the price Could be month, week...",
+                        "type": "string",
                     },
                     "tax": {
-                        "type": "array",
-                        "description": "An amount of money levied on the price of a Product by a legislative body",
-                        "items": {"$ref": "#/definitions/TaxItem"},
+                        "description": "An amount of money levied on the price of a Product by a legislative body.",
+                        "items": {"$ref": "#/definitions/TaxItem", "type": "array"},
                     },
-                    "productOfferingPrice": {
-                        "type": "array",
-                        "description": "Product offering prices that are part of this bundle if this is a bundled price",
-                        "items": {"$ref": "#/definitions/ProductOfferingPriceRef"},
+                    "unitOfMeasure": {
+                        "$ref": "#/definitions/Quantity",
+                        "description": "A number and unit representing how many (for instance 1 dozen) of an ProductOffering is available at the offered price. Its meaning depends on the priceType. It could be a price, a rate, or a discount.",
                     },
-                    "bundledPopRelationship": {
-                        "type": "array",
-                        "description": "This represents a bundling relationship for product offering prices",
-                        "items": {
-                            "$ref": "#/definitions/BundledProductOfferingPriceRelationship"
-                        },
+                    "validFor": {
+                        "$ref": "#/definitions/TimePeriod",
+                        "description": "The period for which the productOfferingPrice is valid",
                     },
-                    "productOfferingPriceAlteration": {
-                        "type": "array",
-                        "description": "A list of alterations for this product offering price",
-                        "items": {
-                            "$ref": "#/definitions/ProductOfferingPriceAlteration"
-                        },
-                    },
-                    "productSpecification": {
-                        "$ref": "#/definitions/ProductSpecificationRef",
-                        "description": "Product specification associated with this offering price",
-                    },
-                    "productOffering": {
-                        "$ref": "#/definitions/ProductOfferingRef",
-                        "description": "Product offering associated with this offering price",
-                    },
-                    "id": {
+                    "version": {
+                        "description": "ProductOffering version",
                         "type": "string",
-                        "description": "Unique identifier of the product offering price",
-                    },
-                    "href": {
-                        "type": "string",
-                        "description": "Reference of the product offering price",
-                    },
-                    "lastUpdate": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "Date and time of the last update",
-                    },
-                    "lifecycleStatus": {
-                        "type": "string",
-                        "description": "Used to indicate the current lifecycle status",
                     },
                 },
             },
