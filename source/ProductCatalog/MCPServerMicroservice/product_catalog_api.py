@@ -487,10 +487,9 @@ async def create_category(category_data: dict[str, Any]) -> dict[str, Any]:
         Dict containing the created category data,
         or a dict with error details containing 'error.status' (HTTP status code) and 'error.detail' (error message)
 
-    Raises:
-        Various httpx exceptions are caught and logged
+    Notes:
+        All exceptions are caught and returned as structured error objects with appropriate HTTP status codes
     """
-    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Creating a new category")
 
     url = f"{API_URL}/category"
@@ -498,7 +497,9 @@ async def create_category(category_data: dict[str, Any]) -> dict[str, Any]:
     headers = {
         "Content-Type": "application/json;charset=utf-8",
         "Accept": "application/json;charset=utf-8",
-    }  # Configure timeouts (in seconds)
+    }
+
+    # Configure timeouts (in seconds)
     timeout = Timeout(
         connect=10.0,  # connection timeout
         read=30.0,  # read timeout
@@ -576,20 +577,17 @@ async def create_category(category_data: dict[str, Any]) -> dict[str, Any]:
 
 async def update_category(
     category_id: str, category_data: dict[str, Any]
-) -> dict[str, Any] | None:
-    """Update an existing category in the TM Forum Product Catalog Management API using PATCH.
+) -> dict[str, Any]:
+    """Update an existing category in the TM Forum Product Catalog Management API.
 
     Args:
-        category_id: ID of the category to update
-        category_data: Dictionary containing the category data to update according to the TMF620 specification
+        category_id: The unique identifier of the category to update
+        category_data: Dictionary containing the updated category data
 
     Returns:
-        Dict containing the updated category data or None if an error occurred
-
-    Raises:
-        Various httpx exceptions are caught and logged
+        Dict containing the updated category data,
+        or a dict with error details containing 'error.status' (HTTP status code) and 'error.detail' (error message)
     """
-    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info(f"Updating category with ID: {category_id}")
 
     url = f"{API_URL}/category/{category_id}"
@@ -597,7 +595,9 @@ async def update_category(
     headers = {
         "Content-Type": "application/json;charset=utf-8",
         "Accept": "application/json;charset=utf-8",
-    }  # Configure timeouts (in seconds)
+    }
+
+    # Configure timeouts (in seconds)
     timeout = Timeout(
         connect=10.0,  # connection timeout
         read=30.0,  # read timeout
@@ -605,7 +605,6 @@ async def update_category(
         pool=5.0,  # pool timeout
     )
 
-    # Make the request
     try:
         async with httpx.AsyncClient(
             timeout=timeout,
@@ -621,58 +620,68 @@ async def update_category(
                 logger.info(f"Response status: {response.status_code}")
                 response.raise_for_status()
 
-                if response.status_code in (200, 201, 202, 204):
-                    try:
-                        response_json = response.json()
-                        logger.info("Category updated successfully")
-                        return response_json
-                    except json.JSONDecodeError as e:
-                        logger.error(f"Failed to decode JSON response: {e}")
-                        return None
-                else:
-                    logger.warning(f"Unexpected status code: {response.status_code}")
-                    return None
+                try:
+                    response_json = response.json()
+                    logger.info("Category updated successfully")
+                    return response_json
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to decode JSON response: {e}")
+                    return {
+                        "error": {
+                            "status": 500,
+                            "detail": f"Failed to decode JSON response: {str(e)}",
+                        }
+                    }
 
             except httpx.TimeoutException as e:
                 logger.error(
                     f"Timeout Error: Request timed out after {timeout.read} seconds"
                 )
-                return None
+                return {
+                    "error": {
+                        "status": 408,
+                        "detail": f"Request timed out after {timeout.read} seconds",
+                    }
+                }
             except httpx.HTTPStatusError as e:
                 logger.error(
                     f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
                 )
-                return None
+                return {
+                    "error": {
+                        "status": e.response.status_code,
+                        "detail": e.response.text,
+                    }
+                }
             except httpx.HTTPError as e:
                 logger.error(f"HTTP Error: {e}")
-                return None
+                return {"error": {"status": 500, "detail": str(e)}}
 
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         logger.exception("Stack trace:")
-        return None
+        return {"error": {"status": 500, "detail": f"Unexpected error: {str(e)}"}}
 
 
-async def delete_category(category_id: str) -> bool:
+async def delete_category(category_id: str) -> dict[str, Any]:
     """Delete a category from the TM Forum Product Catalog Management API.
 
     Args:
-        category_id: ID of the category to delete
+        category_id: The unique identifier of the category to delete
 
     Returns:
-        True if deletion was successful, False otherwise
-
-    Raises:
-        Various httpx exceptions are caught and logged
+        Dict containing the result of the delete operation,
+        or a dict with error details containing 'error.status' (HTTP status code) and 'error.detail' (error message)
     """
-    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info(f"Deleting category with ID: {category_id}")
 
     url = f"{API_URL}/category/{category_id}"
 
     headers = {
-        "Accept": "application/json;charset=utf-8"
-    }  # Configure timeouts (in seconds)
+        "Accept": "application/json;charset=utf-8",
+    }
+
+    # Configure timeouts (in seconds)
     timeout = Timeout(
         connect=10.0,  # connection timeout
         read=30.0,  # read timeout
@@ -680,7 +689,6 @@ async def delete_category(category_id: str) -> bool:
         pool=5.0,  # pool timeout
     )
 
-    # Make the request
     try:
         async with httpx.AsyncClient(
             timeout=timeout,
@@ -695,145 +703,75 @@ async def delete_category(category_id: str) -> bool:
                 logger.info(f"Response status: {response.status_code}")
                 response.raise_for_status()
 
+                # For DELETE operations, a 204 No Content response is common
                 if response.status_code == 204:
                     logger.info("Category deleted successfully")
-                    return True
-                else:
-                    logger.warning(f"Unexpected status code: {response.status_code}")
-                    return False
+                    return {
+                        "status": "success",
+                        "detail": "Category deleted successfully",
+                    }
+
+                try:
+                    response_json = response.json()
+                    logger.info("Category deleted successfully")
+                    return response_json
+                except json.JSONDecodeError as e:
+                    # If we get here with a successful status code but no JSON, it's still a success
+                    if response.status_code in (200, 202, 204):
+                        return {
+                            "status": "success",
+                            "detail": "Category deleted successfully",
+                        }
+
+                    logger.error(f"Failed to decode JSON response: {e}")
+                    return {
+                        "error": {
+                            "status": 500,
+                            "detail": f"Failed to decode JSON response: {str(e)}",
+                        }
+                    }
 
             except httpx.TimeoutException as e:
                 logger.error(
                     f"Timeout Error: Request timed out after {timeout.read} seconds"
                 )
-                return False
+                return {
+                    "error": {
+                        "status": 408,
+                        "detail": f"Request timed out after {timeout.read} seconds",
+                    }
+                }
             except httpx.HTTPStatusError as e:
                 logger.error(
                     f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
                 )
-                return False
+                return {
+                    "error": {
+                        "status": e.response.status_code,
+                        "detail": e.response.text,
+                    }
+                }
             except httpx.HTTPError as e:
                 logger.error(f"HTTP Error: {e}")
-                return False
+                return {"error": {"status": 500, "detail": str(e)}}
 
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         logger.exception("Stack trace:")
-        return False
-
-
-async def get_product_specification(
-    product_specification_id: str = None,
-    fields: str = None,
-    offset: int = None,
-    limit: int = None,
-) -> dict[str, Any] | None:
-    """Query the productSpecification resource in the TM Forum Product Catalog Management API.
-
-    Args:
-        product_specification_id: Optional ID of a specific productSpecification to retrieve
-        fields: Optional comma-separated list of field names to include in the response
-        offset: Optional offset for pagination
-        limit: Optional limit for pagination
-
-    Returns:
-        Dict containing the response data or None if an error occurred
-
-    Raises:
-        Various httpx exceptions are caught and logged
-    """
-    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
-    # Construct the URL based on whether we're getting a specific productSpecification or listing productSpecifications
-    base_url = f"{API_URL}/productSpecification"
-
-    if product_specification_id:
-        url = f"{base_url}/{product_specification_id}"
-        logger.info(f"Getting productSpecification with ID: {product_specification_id}")
-    else:
-        url = base_url
-        logger.info("Listing productSpecifications")
-
-    # Add query parameters if provided
-    params = {}
-    if fields:
-        params["fields"] = fields
-    if offset is not None:
-        params["offset"] = offset
-    if limit is not None:
-        params["limit"] = limit
-
-    if params:
-        logger.info(f"With parameters: {params}")
-
-    headers = {
-        "Content-Type": "application/json;charset=utf-8",
-        "Accept": "application/json;charset=utf-8",
-    }  # Configure timeouts (in seconds)
-    timeout = Timeout(
-        connect=10.0,  # connection timeout
-        read=30.0,  # read timeout
-        write=10.0,  # write timeout
-        pool=5.0,  # pool timeout
-    )
-
-    # Make the request
-    try:
-        async with httpx.AsyncClient(
-            timeout=timeout,
-            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
-            verify=VALIDATE_SSL,  # SSL certificate verification
-        ) as client:
-            try:
-                logger.info(f"Sending GET request to: {url}")
-                logger.info(f"Headers: {headers}")
-
-                response = await client.get(url, headers=headers, params=params)
-                logger.info(f"Response status: {response.status_code}")
-                response.raise_for_status()
-
-                if response.status_code == 200:
-                    try:
-                        response_json = response.json()
-                        logger.info("Response received successfully")
-                        return response_json
-                    except json.JSONDecodeError as e:
-                        logger.error(f"Failed to decode JSON response: {e}")
-                        return None
-                else:
-                    logger.warning(f"Unexpected status code: {response.status_code}")
-                    return None
-
-            except httpx.TimeoutException as e:
-                logger.error(
-                    f"Timeout Error: Request timed out after {timeout.read} seconds"
-                )
-                return None
-            except httpx.HTTPStatusError as e:
-                logger.error(
-                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
-                )
-                return None
-            except httpx.HTTPError as e:
-                logger.error(f"HTTP Error: {e}")
-                return None
-
-    except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}")
-        logger.exception("Stack trace:")
-        return None
+        return {"error": {"status": 500, "detail": f"Unexpected error: {str(e)}"}}
 
 
 async def create_product_specification(
     product_specification_data: dict[str, Any],
-) -> dict[str, Any] | None:
+) -> dict[str, Any]:
     """Create a new productSpecification in the TM Forum Product Catalog Management API.
 
     Args:
         product_specification_data: Dictionary containing the productSpecification data according to the TMF620 specification
 
     Returns:
-        Dict containing the created productSpecification data or None if an error occurred
+        Dict containing the created productSpecification data,
+        or a dict with error details containing 'error.status' (HTTP status code) and 'error.detail' (error message)
 
     Raises:
         Various httpx exceptions are caught and logged
@@ -879,29 +817,49 @@ async def create_product_specification(
                         return response_json
                     except json.JSONDecodeError as e:
                         logger.error(f"Failed to decode JSON response: {e}")
-                        return None
+                        return {
+                            "error": {
+                                "status": 500,
+                                "detail": f"Failed to decode JSON response: {str(e)}",
+                            }
+                        }
                 else:
                     logger.warning(f"Unexpected status code: {response.status_code}")
-                    return None
+                    return {
+                        "error": {
+                            "status": response.status_code,
+                            "detail": f"Unexpected status code: {response.status_code}",
+                        }
+                    }
 
             except httpx.TimeoutException as e:
                 logger.error(
                     f"Timeout Error: Request timed out after {timeout.read} seconds"
                 )
-                return None
+                return {
+                    "error": {
+                        "status": 408,
+                        "detail": f"Request timed out after {timeout.read} seconds",
+                    }
+                }
             except httpx.HTTPStatusError as e:
                 logger.error(
                     f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
                 )
-                return None
+                return {
+                    "error": {
+                        "status": e.response.status_code,
+                        "detail": e.response.text,
+                    }
+                }
             except httpx.HTTPError as e:
                 logger.error(f"HTTP Error: {e}")
-                return None
+                return {"error": {"status": 500, "detail": str(e)}}
 
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         logger.exception("Stack trace:")
-        return None
+        return {"error": {"status": 500, "detail": f"Unexpected error: {str(e)}"}}
 
 
 async def update_product_specification(
@@ -1054,6 +1012,102 @@ async def delete_product_specification(product_specification_id: str) -> bool:
         return False
 
 
+async def get_product_specification(
+    product_specification_id: str = None,
+    fields: str = None,
+    offset: int = None,
+    limit: int = None,
+) -> dict[str, Any]:
+    """Get a product specification by ID from the TM Forum Product Catalog Management API.
+
+    Args:
+        product_specification_id: The unique identifier of the product specification to retrieve
+
+    Returns:
+        Dict containing the product specification data,
+        or a dict with error details containing 'error.status' (HTTP status code) and 'error.detail' (error message)
+    """
+    logger.info(f"Getting product specification with ID: {product_specification_id}")
+
+    # Construct the URL based on whether we're getting a specific productSpecification or listing productSpecifications
+    base_url = f"{API_URL}/productSpecification"
+
+    if product_specification_id:
+        url = f"{base_url}/{product_specification_id}"
+        logger.info(f"Getting productSpecification with ID: {product_specification_id}")
+    else:
+        url = base_url
+        logger.info("Listing categories")
+
+    headers = {
+        "Accept": "application/json;charset=utf-8",
+    }
+
+    # Configure timeouts (in seconds)
+    timeout = Timeout(
+        connect=10.0,  # connection timeout
+        read=30.0,  # read timeout
+        write=10.0,  # write timeout
+        pool=5.0,  # pool timeout
+    )
+
+    try:
+        async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+            verify=VALIDATE_SSL,  # SSL certificate verification
+        ) as client:
+            try:
+                logger.info(f"Sending GET request to: {url}")
+                logger.info(f"Headers: {headers}")
+
+                response = await client.get(url, headers=headers)
+                logger.info(f"Response status: {response.status_code}")
+                response.raise_for_status()
+
+                try:
+                    response_json = response.json()
+                    logger.info("Product specification retrieved successfully")
+                    return response_json
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to decode JSON response: {e}")
+                    return {
+                        "error": {
+                            "status": 500,
+                            "detail": f"Failed to decode JSON response: {str(e)}",
+                        }
+                    }
+
+            except httpx.TimeoutException as e:
+                logger.error(
+                    f"Timeout Error: Request timed out after {timeout.read} seconds"
+                )
+                return {
+                    "error": {
+                        "status": 408,
+                        "detail": f"Request timed out after {timeout.read} seconds",
+                    }
+                }
+            except httpx.HTTPStatusError as e:
+                logger.error(
+                    f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
+                )
+                return {
+                    "error": {
+                        "status": e.response.status_code,
+                        "detail": e.response.text,
+                    }
+                }
+            except httpx.HTTPError as e:
+                logger.error(f"HTTP Error: {e}")
+                return {"error": {"status": 500, "detail": str(e)}}
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.exception("Stack trace:")
+        return {"error": {"status": 500, "detail": f"Unexpected error: {str(e)}"}}
+
+
 async def get_product_offering(
     product_offering_id: str = None,
     fields: str = None,
@@ -1158,14 +1212,15 @@ async def get_product_offering(
 
 async def create_product_offering(
     product_offering_data: dict[str, Any],
-) -> dict[str, Any] | None:
+) -> dict[str, Any]:
     """Create a new productOffering in the TM Forum Product Catalog Management API.
 
     Args:
         product_offering_data: Dictionary containing the productOffering data according to the TMF620 specification
 
     Returns:
-        Dict containing the created productOffering data or None if an error occurred
+        Dict containing the created productOffering data,
+        or a dict with error details containing 'error.status' (HTTP status code) and 'error.detail' (error message)
 
     Raises:
         Various httpx exceptions are caught and logged
@@ -1211,29 +1266,49 @@ async def create_product_offering(
                         return response_json
                     except json.JSONDecodeError as e:
                         logger.error(f"Failed to decode JSON response: {e}")
-                        return None
+                        return {
+                            "error": {
+                                "status": 500,
+                                "detail": f"Failed to decode JSON response: {str(e)}",
+                            }
+                        }
                 else:
                     logger.warning(f"Unexpected status code: {response.status_code}")
-                    return None
+                    return {
+                        "error": {
+                            "status": response.status_code,
+                            "detail": f"Unexpected status code: {response.status_code}",
+                        }
+                    }
 
             except httpx.TimeoutException as e:
                 logger.error(
                     f"Timeout Error: Request timed out after {timeout.read} seconds"
                 )
-                return None
+                return {
+                    "error": {
+                        "status": 408,
+                        "detail": f"Request timed out after {timeout.read} seconds",
+                    }
+                }
             except httpx.HTTPStatusError as e:
                 logger.error(
                     f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
                 )
-                return None
+                return {
+                    "error": {
+                        "status": e.response.status_code,
+                        "detail": e.response.text,
+                    }
+                }
             except httpx.HTTPError as e:
                 logger.error(f"HTTP Error: {e}")
-                return None
+                return {"error": {"status": 500, "detail": str(e)}}
 
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         logger.exception("Stack trace:")
-        return None
+        return {"error": {"status": 500, "detail": f"Unexpected error: {str(e)}"}}
 
 
 async def update_product_offering(
@@ -1492,17 +1567,18 @@ async def get_product_offering_price(
 
 async def create_product_offering_price(
     product_offering_price_data: dict[str, Any],
-) -> dict[str, Any] | None:
+) -> dict[str, Any]:
     """Create a new productOfferingPrice in the TM Forum Product Catalog Management API.
 
     Args:
         product_offering_price_data: Dictionary containing the productOfferingPrice data according to the TMF620 specification
 
     Returns:
-        Dict containing the created productOfferingPrice data or None if an error occurred
+        Dict containing the created productOfferingPrice data,
+        or a dict with error details containing 'error.status' (HTTP status code) and 'error.detail' (error message)
 
-    Raises:
-        Various httpx exceptions are caught and logged
+    Notes:
+        All exceptions are caught and returned as structured error objects with appropriate HTTP status codes
     """
     logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     logger.info("Creating a new productOfferingPrice")
@@ -1545,29 +1621,49 @@ async def create_product_offering_price(
                         return response_json
                     except json.JSONDecodeError as e:
                         logger.error(f"Failed to decode JSON response: {e}")
-                        return None
+                        return {
+                            "error": {
+                                "status": 500,
+                                "detail": f"Failed to decode JSON response: {str(e)}",
+                            }
+                        }
                 else:
                     logger.warning(f"Unexpected status code: {response.status_code}")
-                    return None
+                    return {
+                        "error": {
+                            "status": response.status_code,
+                            "detail": f"Unexpected status code: {response.status_code}",
+                        }
+                    }
 
             except httpx.TimeoutException as e:
                 logger.error(
                     f"Timeout Error: Request timed out after {timeout.read} seconds"
                 )
-                return None
+                return {
+                    "error": {
+                        "status": 408,
+                        "detail": f"Request timed out after {timeout.read} seconds",
+                    }
+                }
             except httpx.HTTPStatusError as e:
                 logger.error(
                     f"HTTP Status Error: {e.response.status_code} - {e.response.text}"
                 )
-                return None
+                return {
+                    "error": {
+                        "status": e.response.status_code,
+                        "detail": e.response.text,
+                    }
+                }
             except httpx.HTTPError as e:
                 logger.error(f"HTTP Error: {e}")
-                return None
+                return {"error": {"status": 500, "detail": str(e)}}
 
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         logger.exception("Stack trace:")
-        return None
+        return {"error": {"status": 500, "detail": f"Unexpected error: {str(e)}"}}
 
 
 async def update_product_offering_price(

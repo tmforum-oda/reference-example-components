@@ -21,6 +21,7 @@ from mcp.server.fastmcp import FastMCP
 from fastapi import FastAPI
 import uvicorn
 
+
 # Import API functionality
 from product_catalog_api import (
     get_catalog,
@@ -66,149 +67,9 @@ logger.info("Product Catalog MCP Server")
 mcp = FastMCP(name="product_catalog", version="1.0.0")
 
 
-@mcp.resource("resource://tmf620/catalog/{catalog_id}")
-async def catalog_resource(catalog_id: str = None) -> dict:
-    """Retrieve catalog information as a resource from the TM Forum Product Catalog Management API.
-
-    This resource represents a collection of Product Offerings, intended for a specific DistributionChannel,
-    enhanced with additional information such as SLA parameters, invoicing and shipping details.
-
-    Args:
-        catalog_id: Optional ID of a specific catalog to retrieve. If not provided, returns all catalogs.
-
-    Returns:
-        A structured representation of the catalog(s) following the TMF620 specification.
-    """
-    logger.info(
-        f"MCP Resource - Getting catalog with ID: {catalog_id if catalog_id else 'ALL'}"
-    )
-    result = await get_catalog(catalog_id=catalog_id)
-    if result is None:
-        logger.warning("Failed to retrieve catalog data")
-        return {"error": "Failed to retrieve catalog data"}
-    return result
-
-
-@mcp.resource("schema://tmf620/catalog")
-async def catalog_schema() -> dict:
-    """Define the TMF620 Catalog resource schema and operations.
-
-    This resource definition follows the TM Forum TMF620 specification for Product Catalog Management.
-    """
-    logger.info(f"MCP Resource - Getting catalog schema")
-    return {
-        "name": "TMF620 Catalog",
-        "description": "TM Forum Product Catalog Management API - Catalog Resource",
-        "resource": {
-            "uri": "resource://tmf620/catalog",
-            "schema": {
-                "type": "object",
-                "description": "A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details",
-                "properties": {
-                    "@baseType": {
-                        "type": "string",
-                        "description": "When sub-classing, this defines the super-class",
-                    },
-                    "@schemaLocation": {
-                        "type": "string",
-                        "format": "uri",
-                        "description": "A URI to a JSON-Schema file that defines additional attributes and relationships",
-                    },
-                    "@type": {
-                        "type": "string",
-                        "description": "When sub-classing, this defines the sub-class entity name",
-                    },
-                    "catalogType": {
-                        "type": "string",
-                        "description": "Indicates if the catalog is a product, service or resource catalog",
-                    },
-                    "category": {
-                        "type": "array",
-                        "description": "List of root categories contained in this catalog",
-                        "items": {"$ref": "#/definitions/CategoryRef"},
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "Description of this catalog",
-                    },
-                    "href": {
-                        "type": "string",
-                        "description": "Unique reference of the catalog",
-                    },
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier of the Catalog",
-                    },
-                    "lastUpdate": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "Date and time of the last update",
-                    },
-                    "lifecycleStatus": {
-                        "type": "string",
-                        "description": "Used to indicate the current lifecycle status",
-                    },
-                    "name": {"type": "string", "description": "Name of the catalog"},
-                    "relatedParty": {
-                        "type": "array",
-                        "description": "List of parties involved in this catalog",
-                        "items": {"$ref": "#/definitions/RelatedParty"},
-                    },
-                    "validFor": {
-                        "$ref": "#/definitions/TimePeriod",
-                        "description": "The period for which the catalog is valid",
-                    },
-                    "version": {"type": "string", "description": "Catalog version"},
-                },
-            },
-            "operations": [
-                {
-                    "name": "get",
-                    "description": "Retrieve catalog information",
-                    "tool": "catalog_get",
-                },
-                {
-                    "name": "create",
-                    "description": "Create a new catalog",
-                    "tool": "catalog_create",
-                },
-                {
-                    "name": "update",
-                    "description": "Update an existing catalog",
-                    "tool": "catalog_update",
-                },
-                {
-                    "name": "delete",
-                    "description": "Delete a catalog",
-                    "tool": "catalog_delete",
-                },
-            ],
-            "examples": [
-                {
-                    "name": "Enterprise Service Catalog",
-                    "description": "A catalog containing enterprise telecom service offerings",
-                    "catalogType": "Product",
-                    "version": "1.0",
-                    "lifecycleStatus": "Active",
-                    "validFor": {
-                        "startDateTime": "2025-01-01T00:00:00Z",
-                        "endDateTime": "2026-01-01T00:00:00Z",
-                    },
-                },
-                {
-                    "name": "Consumer Mobile Offerings",
-                    "description": "Consumer mobile products and services",
-                    "catalogType": "Product",
-                    "version": "2.3",
-                    "lifecycleStatus": "Active",
-                    "validFor": {
-                        "startDateTime": "2025-03-15T00:00:00Z",
-                        "endDateTime": "2025-12-31T23:59:59Z",
-                    },
-                },
-            ],
-        },
-    }
+# ---------------------------------------------------------------------------------------------
+# MCP tools
+# This section defines the tools for the MCP server to interact with the TM Forum Product Catalog Management API.
 
 
 @mcp.tool()
@@ -456,13 +317,28 @@ async def product_specification_create(product_specification_data: dict) -> dict
 
     Returns:
         A dictionary containing the created product specification data.
-        Returns an error dictionary if an error occurs.
+        If an error occurs, returns an error object with status code and detailed message.
     """
     logger.info("MCP Tool - Creating a new product specification")
     result = await create_product_specification(product_specification_data)
-    if result == None:
-        logger.warning("Failed to create product specification")
-        return {"error": "Failed to create product specification"}
+
+    # Check if the result contains an error object
+    if result and "error" in result:
+        logger.warning(
+            f"Failed to create product specification: {result['error']['detail']}"
+        )
+        # Return the error with HTTP status code to the MCP client
+        return result
+    elif result is None:
+        logger.warning("Failed to create product specification - no response received")
+        return {
+            "error": {
+                "status": 500,
+                "detail": "Failed to create product specification - no response received",
+            }
+        }
+
+    # Success case
     return result
 
 
@@ -567,13 +443,28 @@ async def product_offering_create(product_offering_data: dict) -> dict:
 
     Returns:
         A dictionary containing the created product offering data.
-        Returns an error dictionary if an error occurs.
+        If an error occurs, returns an error object with status code and detailed message.
     """
     logger.info("MCP Tool - Creating a new product offering")
     result = await create_product_offering(product_offering_data)
-    if result == None:
-        logger.warning("Failed to create product offering")
-        return {"error": "Failed to create product offering"}
+
+    # Check if the result contains an error object
+    if result and "error" in result:
+        logger.warning(
+            f"Failed to create product offering: {result['error']['detail']}"
+        )
+        # Return the error with HTTP status code to the MCP client
+        return result
+    elif result is None:
+        logger.warning("Failed to create product offering - no response received")
+        return {
+            "error": {
+                "status": 500,
+                "detail": "Failed to create product offering - no response received",
+            }
+        }
+
+    # Success case
     return result
 
 
@@ -672,13 +563,18 @@ async def product_offering_price_create(product_offering_price_data: dict) -> di
 
     Returns:
         A dictionary containing the created product offering price data.
-        Returns an error dictionary if an error occurs.
+        If an error occurs, returns an error object with status code and detailed message.
     """
     logger.info("MCP Tool - Creating a new product offering price")
     result = await create_product_offering_price(product_offering_price_data)
-    if result == None:
-        logger.warning("Failed to create product offering price")
-        return {"error": "Failed to create product offering price"}
+
+    # Check if the result contains an error object
+    if result and "error" in result:
+        logger.warning(
+            f"Failed to create product offering price: {result['error']['detail']}"
+        )
+        # Return the error with HTTP status code to the MCP client
+        return result
     return result
 
 
@@ -737,6 +633,886 @@ async def product_offering_price_delete(product_offering_price_id: str) -> dict:
     return {
         "success": True,
         "message": f"Product offering price {product_offering_price_id} deleted successfully",
+    }
+
+
+# ---------------------------------------------------------------------------------------------
+# MCP resource examples
+# These provides examples of how to define resources and their schemas for the TM Forum Product Catalog Management API.
+
+
+@mcp.resource("resource://tmf620/catalog/{catalog_id}")
+async def catalog_resource(catalog_id: str = None) -> dict:
+    """Retrieve catalog information as a resource from the TM Forum Product Catalog Management API.
+
+    This resource represents a collection of Product Offerings, intended for a specific DistributionChannel,
+    enhanced with additional information such as SLA parameters, invoicing and shipping details.
+
+    Args:
+        catalog_id: Optional ID of a specific catalog to retrieve. If not provided, returns all catalogs.
+
+    Returns:
+        A structured representation of the catalog(s) following the TMF620 specification.
+    """
+    logger.info(
+        f"MCP Resource - Getting catalog with ID: {catalog_id if catalog_id else 'ALL'}"
+    )
+    result = await get_catalog(catalog_id=catalog_id)
+    if result is None:
+        logger.warning("Failed to retrieve catalog data")
+        return {"error": "Failed to retrieve catalog data"}
+    return result
+
+
+@mcp.resource("schema://tmf620/catalog")
+async def catalog_schema() -> dict:
+    """Define the TMF620 Catalog resource schema and operations.
+
+    This resource definition follows the TM Forum TMF620 specification for Product Catalog Management.
+    """
+    logger.info(f"MCP Resource - Getting catalog schema")
+    return {
+        "name": "TMF620 Catalog",
+        "description": "TM Forum Product Catalog Management API - Catalog Resource",
+        "resource": {
+            "uri": "resource://tmf620/catalog",
+            "schema": {
+                "type": "object",
+                "description": "A collection of Product Offerings, intended for a specific DistributionChannel, enhanced with additional information such as SLA parameters, invoicing and shipping details",
+                "properties": {
+                    "@baseType": {
+                        "type": "string",
+                        "description": "When sub-classing, this defines the super-class",
+                    },
+                    "@schemaLocation": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "A URI to a JSON-Schema file that defines additional attributes and relationships",
+                    },
+                    "@type": {
+                        "type": "string",
+                        "description": "When sub-classing, this defines the sub-class entity name",
+                    },
+                    "catalogType": {
+                        "type": "string",
+                        "description": "Indicates if the catalog is a product, service or resource catalog",
+                    },
+                    "category": {
+                        "type": "array",
+                        "description": "List of root categories contained in this catalog",
+                        "items": {"$ref": "#/definitions/CategoryRef"},
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Description of this catalog",
+                    },
+                    "href": {
+                        "type": "string",
+                        "description": "Unique reference of the catalog",
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier of the Catalog",
+                    },
+                    "lastUpdate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date and time of the last update",
+                    },
+                    "lifecycleStatus": {
+                        "type": "string",
+                        "description": "Used to indicate the current lifecycle status",
+                    },
+                    "name": {"type": "string", "description": "Name of the catalog"},
+                    "relatedParty": {
+                        "type": "array",
+                        "description": "List of parties involved in this catalog",
+                        "items": {"$ref": "#/definitions/RelatedParty"},
+                    },
+                    "validFor": {
+                        "$ref": "#/definitions/TimePeriod",
+                        "description": "The period for which the catalog is valid",
+                    },
+                    "version": {"type": "string", "description": "Catalog version"},
+                },
+            },
+            "operations": [
+                {
+                    "name": "get",
+                    "description": "Retrieve catalog information",
+                    "tool": "catalog_get",
+                },
+                {
+                    "name": "create",
+                    "description": "Create a new catalog",
+                    "tool": "catalog_create",
+                },
+                {
+                    "name": "update",
+                    "description": "Update an existing catalog",
+                    "tool": "catalog_update",
+                },
+                {
+                    "name": "delete",
+                    "description": "Delete a catalog",
+                    "tool": "catalog_delete",
+                },
+            ],
+            "examples": [
+                {
+                    "name": "Enterprise Service Catalog",
+                    "description": "A catalog containing enterprise telecom service offerings",
+                    "catalogType": "Product",
+                    "version": "1.0",
+                    "lifecycleStatus": "Active",
+                    "validFor": {
+                        "startDateTime": "2025-01-01T00:00:00Z",
+                        "endDateTime": "2026-01-01T00:00:00Z",
+                    },
+                },
+                {
+                    "name": "Consumer Mobile Offerings",
+                    "description": "Consumer mobile products and services",
+                    "catalogType": "Product",
+                    "version": "2.3",
+                    "lifecycleStatus": "Active",
+                    "validFor": {
+                        "startDateTime": "2025-03-15T00:00:00Z",
+                        "endDateTime": "2025-12-31T23:59:59Z",
+                    },
+                },
+            ],
+        },
+    }
+
+
+@mcp.resource("schema://tmf620/category")
+async def category_schema() -> dict:
+    """Define the TMF620 Category resource schema and operations.
+
+    This resource definition follows the TM Forum TMF620 specification for Product Catalog Management.
+    """
+    logger.info(f"MCP Resource - Getting category schema")
+    return {
+        "name": "TMF620 Category",
+        "description": "TM Forum Product Catalog Management API - Category Resource",
+        "resource": {
+            "uri": "resource://tmf620/category",
+            "schema": {
+                "type": "object",
+                "description": "The category resource is used to group product offerings, service and resource candidates in logical containers. Categories can contain other categories and/or product offerings, resource or service candidates.",
+                "properties": {
+                    "@baseType": {
+                        "type": "string",
+                        "description": "When sub-classing, this defines the super-class",
+                    },
+                    "@schemaLocation": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "A URI to a JSON-Schema file that defines additional attributes and relationships",
+                    },
+                    "@type": {
+                        "type": "string",
+                        "description": "When sub-classing, this defines the sub-class entity name",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Description of the category",
+                    },
+                    "href": {
+                        "type": "string",
+                        "description": "Reference of the category",
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier of the category",
+                    },
+                    "isRoot": {
+                        "type": "boolean",
+                        "description": "If true, this Boolean indicates that the category is a root of categories",
+                    },
+                    "lastUpdate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date and time of the last update",
+                    },
+                    "lifecycleStatus": {
+                        "type": "string",
+                        "description": "Used to indicate the current lifecycle status",
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the category",
+                    },
+                    "parentId": {
+                        "type": "string",
+                        "description": "Unique identifier of the parent category",
+                    },
+                    "productOffering": {
+                        "type": "array",
+                        "description": "A product offering represents entities that are orderable from the provider of the catalog, this resource includes pricing information.",
+                        "items": {"$ref": "#/definitions/ProductOfferingRef"},
+                    },
+                    "subCategory": {
+                        "type": "array",
+                        "description": "The category resource is used to group product offerings, service and resource candidates in logical containers. Categories can contain other (sub-)categories and/or product offerings.",
+                        "items": {"$ref": "#/definitions/CategoryRef"},
+                    },
+                    "validFor": {
+                        "$ref": "#/definitions/TimePeriod",
+                        "description": "The period for which the category is valid",
+                    },
+                    "version": {"type": "string", "description": "Category version"},
+                },
+            },
+            "operations": [
+                {
+                    "name": "get",
+                    "description": "Retrieve category information",
+                    "tool": "category_get",
+                },
+                {
+                    "name": "create",
+                    "description": "Create a new category",
+                    "tool": "category_create",
+                },
+                {
+                    "name": "update",
+                    "description": "Update an existing category",
+                    "tool": "category_update",
+                },
+                {
+                    "name": "delete",
+                    "description": "Delete a category",
+                    "tool": "category_delete",
+                },
+            ],
+            "examples": [
+                {
+                    "name": "Mobile Devices",
+                    "description": "Category containing mobile device offerings",
+                    "isRoot": True,
+                    "version": "1.0",
+                    "lifecycleStatus": "Active",
+                    "validFor": {
+                        "startDateTime": "2025-01-01T00:00:00Z",
+                        "endDateTime": "2026-01-01T00:00:00Z",
+                    },
+                },
+                {
+                    "name": "Premium Smartphones",
+                    "description": "High-end smartphone offerings",
+                    "isRoot": False,
+                    "parentId": "mobile-devices-category-id",
+                    "version": "1.0",
+                    "lifecycleStatus": "Active",
+                    "validFor": {
+                        "startDateTime": "2025-01-15T00:00:00Z",
+                        "endDateTime": "2025-12-31T23:59:59Z",
+                    },
+                },
+            ],
+        },
+    }
+
+
+@mcp.resource("schema://tmf620/productSpecification")
+async def product_specification_schema() -> dict:
+    """Define the TMF620 ProductSpecification resource schema and operations.
+
+    This resource definition follows the TM Forum TMF620 specification for Product Catalog Management.
+    """
+    logger.info(f"MCP Resource - Getting product specification schema")
+    return {
+        "name": "TMF620 Product Specification",
+        "description": "TM Forum Product Catalog Management API - Product Specification Resource",
+        "resource": {
+            "uri": "resource://tmf620/productSpecification",
+            "schema": {
+                "type": "object",
+                "description": "A detailed description of a tangible or intangible object made available externally in the form of a ProductOffering to customers or other parties playing a party role.",
+                "properties": {
+                    "@baseType": {
+                        "type": "string",
+                        "description": "When sub-classing, this defines the super-class",
+                    },
+                    "@schemaLocation": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "A URI to a JSON-Schema file that defines additional attributes and relationships",
+                    },
+                    "@type": {
+                        "type": "string",
+                        "description": "When sub-classing, this defines the sub-class entity name",
+                    },
+                    "brand": {
+                        "type": "string",
+                        "description": "The manufacturer or trademark of the specification",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Description of the product specification",
+                    },
+                    "href": {
+                        "type": "string",
+                        "description": "Reference of the product specification",
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier of the product specification",
+                    },
+                    "isBundle": {
+                        "type": "boolean",
+                        "description": "Indicates if the specification refers to a product bundle (true) or to a single product (false)",
+                    },
+                    "lastUpdate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date and time of the last update",
+                    },
+                    "lifecycleStatus": {
+                        "type": "string",
+                        "description": "Used to indicate the current lifecycle status of the product specification",
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the product specification",
+                    },
+                    "productNumber": {
+                        "type": "string",
+                        "description": "An identification number assigned to uniquely identify the specification",
+                    },
+                    "version": {
+                        "type": "string",
+                        "description": "Product specification version",
+                    },
+                    "attachment": {
+                        "type": "array",
+                        "description": "Complements the description of an element (for instance a product) through video, pictures",
+                        "items": {"$ref": "#/definitions/AttachmentRef"},
+                    },
+                    "bundledProductSpecification": {
+                        "type": "array",
+                        "description": "A list of product specifications for product bundles",
+                        "items": {"$ref": "#/definitions/BundledProductSpecification"},
+                    },
+                    "productSpecCharacteristic": {
+                        "type": "array",
+                        "description": "A characteristic that defines a product specification or product offering for management or product selection purposes",
+                        "items": {
+                            "$ref": "#/definitions/ProductSpecificationCharacteristic"
+                        },
+                    },
+                    "productSpecificationRelationship": {
+                        "type": "array",
+                        "description": "A relationship between this product specification and another product specification",
+                        "items": {
+                            "$ref": "#/definitions/ProductSpecificationRelationship"
+                        },
+                    },
+                    "relatedParty": {
+                        "type": "array",
+                        "description": "A related party defines party or party role linked to a specific entity",
+                        "items": {"$ref": "#/definitions/RelatedParty"},
+                    },
+                    "resourceSpecification": {
+                        "type": "array",
+                        "description": "The ResourceSpecification is required to realize a ProductSpecification.",
+                        "items": {"$ref": "#/definitions/ResourceSpecificationRef"},
+                    },
+                    "serviceSpecification": {
+                        "type": "array",
+                        "description": "The service specification is required to realize a product specification.",
+                        "items": {"$ref": "#/definitions/ServiceSpecificationRef"},
+                    },
+                    "targetProductSchema": {
+                        "$ref": "#/definitions/TargetProductSchema",
+                        "description": "A target product schema reference. The reference object to the schema and type of target product which is described by product specification.",
+                    },
+                    "validFor": {
+                        "$ref": "#/definitions/TimePeriod",
+                        "description": "The period for which the product specification is valid",
+                    },
+                },
+            },
+            "operations": [
+                {
+                    "name": "get",
+                    "description": "Retrieve product specification information",
+                    "tool": "product_specification_get",
+                },
+                {
+                    "name": "create",
+                    "description": "Create a new product specification",
+                    "tool": "product_specification_create",
+                },
+                {
+                    "name": "update",
+                    "description": "Update an existing product specification",
+                    "tool": "product_specification_update",
+                },
+                {
+                    "name": "delete",
+                    "description": "Delete a product specification",
+                    "tool": "product_specification_delete",
+                },
+            ],
+            "examples": [
+                {
+                    "name": "5G Unlimited Plan",
+                    "description": "High-speed unlimited 5G data plan for mobile devices",
+                    "isBundle": False,
+                    "version": "1.0",
+                    "brand": "TelcoNet",
+                    "productNumber": "5G-UNL-100",
+                    "lifecycleStatus": "Active",
+                    "validFor": {
+                        "startDateTime": "2025-01-01T00:00:00Z",
+                        "endDateTime": "2026-01-01T00:00:00Z",
+                    },
+                    "productSpecCharacteristic": [
+                        {
+                            "name": "Data Limit",
+                            "description": "Monthly data allowance",
+                            "valueType": "string",
+                            "productSpecCharacteristicValue": [
+                                {"isDefault": True, "value": "Unlimited"}
+                            ],
+                        },
+                        {
+                            "name": "Speed Cap",
+                            "description": "Maximum download speed",
+                            "valueType": "string",
+                            "productSpecCharacteristicValue": [
+                                {"isDefault": True, "value": "No Cap"}
+                            ],
+                        },
+                    ],
+                },
+                {
+                    "name": "Enterprise Network Security Suite",
+                    "description": "Comprehensive network security solution for enterprise customers",
+                    "isBundle": True,
+                    "brand": "SecureWorks",
+                    "productNumber": "ENT-SEC-500",
+                    "version": "2.5",
+                    "lifecycleStatus": "Active",
+                    "validFor": {
+                        "startDateTime": "2025-02-15T00:00:00Z",
+                        "endDateTime": "2026-02-15T00:00:00Z",
+                    },
+                    "bundledProductSpecification": [
+                        {"name": "Firewall Protection", "id": "FW-100"},
+                        {"name": "Intrusion Detection System", "id": "IDS-200"},
+                        {"name": "Malware Protection", "id": "MP-300"},
+                    ],
+                },
+            ],
+        },
+    }
+
+
+@mcp.resource("schema://tmf620/productOffering")
+async def product_offering_schema() -> dict:
+    """Define the TMF620 ProductOffering resource schema and operations.
+
+    This resource definition follows the TM Forum TMF620 specification for Product Catalog Management.
+    """
+    logger.info(f"MCP Resource - Getting productOffering schema")
+    return {
+        "name": "TMF620 ProductOffering",
+        "description": "TM Forum Product Catalog Management API - ProductOffering Resource",
+        "resource": {
+            "uri": "resource://tmf620/productOffering",
+            "schema": {
+                "type": "object",
+                "description": "A sellable item defined by its production specification, commercial terms, and additional services",
+                "properties": {
+                    "@baseType": {
+                        "type": "string",
+                        "description": "When sub-classing, this defines the super-class",
+                    },
+                    "@schemaLocation": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "A URI to a JSON-Schema file that defines additional attributes and relationships",
+                    },
+                    "@type": {
+                        "type": "string",
+                        "description": "When sub-classing, this defines the sub-class entity name",
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the product offering",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Description of the product offering",
+                    },
+                    "version": {
+                        "type": "string",
+                        "description": "Product offering version",
+                    },
+                    "validFor": {
+                        "$ref": "#/definitions/TimePeriod",
+                        "description": "The period for which the product offering is valid",
+                    },
+                    "isBundle": {
+                        "type": "boolean",
+                        "description": "Indicates if the offering is a bundle of other offerings",
+                    },
+                    "isSellable": {
+                        "type": "boolean",
+                        "description": "Indicates if this product offering can be sold separately",
+                    },
+                    "statusReason": {
+                        "type": "string",
+                        "description": "Reason for the current status",
+                    },
+                    "place": {
+                        "type": "array",
+                        "description": "Geographic areas where this product offering is available",
+                        "items": {"$ref": "#/definitions/PlaceRef"},
+                    },
+                    "serviceLevelAgreement": {
+                        "$ref": "#/definitions/ServiceLevelAgreementRef",
+                        "description": "The SLA applicable for this product offering",
+                    },
+                    "productSpecification": {
+                        "$ref": "#/definitions/ProductSpecificationRef",
+                        "description": "The specification of the product that is the basis of this offering",
+                    },
+                    "channel": {
+                        "type": "array",
+                        "description": "Sales channels for this product offering",
+                        "items": {"$ref": "#/definitions/ChannelRef"},
+                    },
+                    "serviceCandidate": {
+                        "$ref": "#/definitions/ServiceCandidateRef",
+                        "description": "Service candidate associated with this offering",
+                    },
+                    "category": {
+                        "type": "array",
+                        "description": "Categories for this product offering",
+                        "items": {"$ref": "#/definitions/CategoryRef"},
+                    },
+                    "resourceCandidate": {
+                        "$ref": "#/definitions/ResourceCandidateRef",
+                        "description": "Resource candidate associated with this offering",
+                    },
+                    "productOfferingTerm": {
+                        "type": "array",
+                        "description": "Terms for this product offering",
+                        "items": {"$ref": "#/definitions/ProductOfferingTerm"},
+                    },
+                    "productOfferingPrice": {
+                        "type": "array",
+                        "description": "Pricing for this product offering",
+                        "items": {"$ref": "#/definitions/ProductOfferingPriceRef"},
+                    },
+                    "attachment": {
+                        "type": "array",
+                        "description": "Complements the description through video, pictures, etc.",
+                        "items": {"$ref": "#/definitions/AttachmentRef"},
+                    },
+                    "marketSegment": {
+                        "type": "array",
+                        "description": "Target market segments for this product offering",
+                        "items": {"$ref": "#/definitions/MarketSegmentRef"},
+                    },
+                    "prodSpecCharValueUse": {
+                        "type": "array",
+                        "description": "Characteristic values available for this product offering",
+                        "items": {
+                            "$ref": "#/definitions/ProductSpecificationCharacteristicValueUse"
+                        },
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier of the product offering",
+                    },
+                    "href": {
+                        "type": "string",
+                        "description": "Reference of the product offering",
+                    },
+                    "lastUpdate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date and time of the last update",
+                    },
+                    "lifecycleStatus": {
+                        "type": "string",
+                        "description": "Used to indicate the current lifecycle status",
+                    },
+                },
+            },
+            "operations": [
+                {
+                    "name": "get",
+                    "description": "Retrieve product offering information",
+                    "tool": "product_offering_get",
+                },
+                {
+                    "name": "create",
+                    "description": "Create a new product offering",
+                    "tool": "product_offering_create",
+                },
+                {
+                    "name": "update",
+                    "description": "Update an existing product offering",
+                    "tool": "product_offering_update",
+                },
+                {
+                    "name": "delete",
+                    "description": "Delete a product offering",
+                    "tool": "product_offering_delete",
+                },
+            ],
+            "examples": [
+                {
+                    "name": "Basic Firewall for Business",
+                    "description": "This product offering suggests a firewall service that can be deployed in business customer premise.",
+                    "version": "1.0",
+                    "validFor": {
+                        "startDateTime": "2017-08-23T00:00",
+                        "endDateTime": "2018-03-25T00:00",
+                    },
+                    "isBundle": False,
+                    "isSellable": True,
+                    "statusReason": "Released for sale",
+                    "productSpecification": {
+                        "id": "9881",
+                        "href": "https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/productSpecification/9881",
+                        "version": "1.1",
+                        "name": "Robotics999",
+                        "@referredType": "DeviceSpecification",
+                    },
+                    "@type": "ProductOffering",
+                },
+                {
+                    "name": "Premium Enterprise Firewall Suite",
+                    "description": "High-performance firewall service for enterprise customers with 24/7 support",
+                    "version": "1.0",
+                    "validFor": {
+                        "startDateTime": "2025-01-01T00:00:00Z",
+                        "endDateTime": "2026-01-01T00:00:00Z",
+                    },
+                    "isBundle": True,
+                    "isSellable": True,
+                    "statusReason": "New Release",
+                    "lifecycleStatus": "Active",
+                    "@type": "ProductOffering",
+                },
+                {
+                    "name": "Enterprise Cloud Storage Solution",
+                    "description": "Scalable enterprise cloud storage offering with 99.999% uptime SLA",
+                    "version": "1.0",
+                    "isBundle": False,
+                    "isSellable": True,
+                    "statusReason": "New Release",
+                    "productSpecification": {
+                        "id": "206",
+                        "href": "/productCatalogManagement/v4/productSpecification/206",
+                        "name": "Enterprise Cloud Storage",
+                    },
+                    "lifecycleStatus": "Active",
+                },
+            ],
+        },
+    }
+
+
+@mcp.resource("schema://tmf620/productOfferingPrice")
+async def product_offering_price_schema() -> dict:
+    """Define the TMF620 ProductOfferingPrice resource schema and operations.
+
+    This resource definition follows the TM Forum TMF620 specification for Product Catalog Management.
+    """
+    logger.info(f"MCP Resource - Getting productOfferingPrice schema")
+    return {
+        "name": "TMF620 ProductOfferingPrice",
+        "description": "TM Forum Product Catalog Management API - ProductOfferingPrice Resource",
+        "resource": {
+            "uri": "resource://tmf620/productOfferingPrice",
+            "schema": {
+                "type": "object",
+                "description": "An amount, usually of money, that represents the actual price paid by a Customer for a purchase, a rent or a lease of a Product. The price is valid for a defined period of time.",
+                "properties": {
+                    "@baseType": {
+                        "type": "string",
+                        "description": "When sub-classing, this defines the super-class",
+                    },
+                    "@schemaLocation": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "A URI to a JSON-Schema file that defines additional attributes and relationships",
+                    },
+                    "@type": {
+                        "type": "string",
+                        "description": "When sub-classing, this defines the sub-class entity name",
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the product offering price",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Description of the product offering price",
+                    },
+                    "version": {
+                        "type": "string",
+                        "description": "Product offering price version",
+                    },
+                    "validFor": {
+                        "$ref": "#/definitions/TimePeriod",
+                        "description": "The period for which the product offering price is valid",
+                    },
+                    "priceType": {
+                        "type": "string",
+                        "description": "A category that describes the price, such as recurring, discount, allowance, penalty, and so forth",
+                    },
+                    "recurringChargePeriodType": {
+                        "type": "string",
+                        "description": "The period type to repeat the application of the price, such as monthly, yearly",
+                    },
+                    "recurringChargePeriodLength": {
+                        "type": "integer",
+                        "description": "The period of the recurring charge:  1, 2, etc. for a recurring charge of every 1 or 2 months for instance",
+                    },
+                    "isBundle": {
+                        "type": "boolean",
+                        "description": "A flag indicating if this product offering price is a bundle of other product offering prices",
+                    },
+                    "price": {
+                        "$ref": "#/definitions/Money",
+                        "description": "The amount of money that characterizes the price",
+                    },
+                    "percentage": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Percentage to apply for a discount or surcharge",
+                    },
+                    "productOfferingTerm": {
+                        "type": "array",
+                        "description": "Terms for this product offering price",
+                        "items": {"$ref": "#/definitions/ProductOfferingTerm"},
+                    },
+                    "place": {
+                        "type": "array",
+                        "description": "Places where this product offering price is applicable",
+                        "items": {"$ref": "#/definitions/PlaceRef"},
+                    },
+                    "constraint": {
+                        "type": "array",
+                        "description": "The Constraint resource represents a policy/rule applied to an entity or entity spec.",
+                        "items": {"$ref": "#/definitions/ConstraintRef"},
+                    },
+                    "pricingLogicAlgorithm": {
+                        "type": "array",
+                        "description": "The PricingLogicAlgorithm entity represents an instantiation of an interface specification to external rating function (without a modeled behavior in SID)",
+                        "items": {"$ref": "#/definitions/PricingLogicAlgorithm"},
+                    },
+                    "tax": {
+                        "type": "array",
+                        "description": "An amount of money levied on the price of a Product by a legislative body",
+                        "items": {"$ref": "#/definitions/TaxItem"},
+                    },
+                    "productOfferingPrice": {
+                        "type": "array",
+                        "description": "Product offering prices that are part of this bundle if this is a bundled price",
+                        "items": {"$ref": "#/definitions/ProductOfferingPriceRef"},
+                    },
+                    "bundledPopRelationship": {
+                        "type": "array",
+                        "description": "This represents a bundling relationship for product offering prices",
+                        "items": {
+                            "$ref": "#/definitions/BundledProductOfferingPriceRelationship"
+                        },
+                    },
+                    "productOfferingPriceAlteration": {
+                        "type": "array",
+                        "description": "A list of alterations for this product offering price",
+                        "items": {
+                            "$ref": "#/definitions/ProductOfferingPriceAlteration"
+                        },
+                    },
+                    "productSpecification": {
+                        "$ref": "#/definitions/ProductSpecificationRef",
+                        "description": "Product specification associated with this offering price",
+                    },
+                    "productOffering": {
+                        "$ref": "#/definitions/ProductOfferingRef",
+                        "description": "Product offering associated with this offering price",
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier of the product offering price",
+                    },
+                    "href": {
+                        "type": "string",
+                        "description": "Reference of the product offering price",
+                    },
+                    "lastUpdate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Date and time of the last update",
+                    },
+                    "lifecycleStatus": {
+                        "type": "string",
+                        "description": "Used to indicate the current lifecycle status",
+                    },
+                },
+            },
+            "operations": [
+                {
+                    "name": "get",
+                    "description": "Retrieve product offering price information",
+                    "tool": "product_offering_price_get",
+                },
+                {
+                    "name": "create",
+                    "description": "Create a new product offering price",
+                    "tool": "product_offering_price_create",
+                },
+                {
+                    "name": "update",
+                    "description": "Update an existing product offering price",
+                    "tool": "product_offering_price_update",
+                },
+                {
+                    "name": "delete",
+                    "description": "Delete a product offering price",
+                    "tool": "product_offering_price_delete",
+                },
+            ],
+            "examples": [
+                {
+                    "name": "Recurring Charge for Business Firewall",
+                    "description": "This pricing describes the recurring charge for a firewall service that can be deployed in business customer premise.",
+                    "version": "2.1",
+                    "validFor": {
+                        "startDateTime": "2017-08-23T00:00",
+                        "endDateTime": "2018-03-25T00:00",
+                    },
+                    "priceType": "recurring",
+                    "recurringChargePeriodType": "monthly",
+                    "recurringChargePeriodLength": 1,
+                    "isBundle": False,
+                    "price": {"unit": "EUR", "amount": 50},
+                    "percentage": 0.0,
+                    "@type": "ProductOfferingPrice",
+                },
+                {
+                    "name": "One-time Installation Fee",
+                    "description": "One-time installation and configuration fee for enterprise firewall solution",
+                    "version": "1.0",
+                    "priceType": "one time",
+                    "isBundle": False,
+                    "price": {"unit": "USD", "amount": 499},
+                    "lifecycleStatus": "Active",
+                },
+            ],
+        },
     }
 
 
@@ -968,6 +1744,476 @@ Please help me create this category in the system.
 
 
 @mcp.prompt()
+def create_product_specification_prompt(
+    name: str,
+    description: str,
+    is_bundle: bool = False,
+    brand: str = None,
+    product_number: str = None,
+    lifecycle_status: str = "Active",
+    version: str = "1.0",
+) -> str:
+    """Create a prompt template for guiding a user through creating a new product specification.
+
+    Args:
+        name: Name of the product specification (required by TMF620)
+        description: A narrative that explains in detail what the product specification is
+        is_bundle: Indicates if this is a bundle of product specifications (default: False)
+        brand: The manufacturer or trademark of the specification (optional)
+        product_number: An identification number assigned to uniquely identify the specification (optional)
+        lifecycle_status: Used to indicate the current lifecycle status (default: Active)
+        version: Product specification version (default: 1.0)
+
+    Returns:
+        A prompt template string for guiding a user to create a product specification
+    """
+    # Set default dates for the validity period (1 year from now)
+    validity_start = datetime.datetime.now(datetime.timezone.utc).strftime(
+        "%Y-%m-%dT%H:%M:%S.000+00:00"
+    )
+    validity_end = (
+        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=365)
+    ).strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
+
+    # Initialize empty arrays for optional complex attributes
+    attachments = []
+    bundled_product_specifications = []
+    product_spec_characteristics = []
+    product_specification_relationships = []
+    related_parties = []
+    resource_specifications = []
+    service_specifications = []
+
+    # Create the product specification JSON structure based on TMF620 schema
+    product_spec_data = {
+        "name": name,
+        "description": description,
+        "isBundle": is_bundle,
+        "lifecycleStatus": lifecycle_status,
+        "version": version,
+        "validFor": {"startDateTime": validity_start, "endDateTime": validity_end},
+    }
+
+    # Add optional attributes if provided
+    if brand:
+        product_spec_data["brand"] = brand
+    if product_number:
+        product_spec_data["productNumber"] = product_number
+
+    # Add empty arrays for complex attributes
+    product_spec_data["attachment"] = attachments
+    product_spec_data["productSpecCharacteristic"] = product_spec_characteristics
+    product_spec_data["relatedParty"] = related_parties
+
+    # Add bundle-specific attributes if it's a bundle
+    if is_bundle:
+        product_spec_data["bundledProductSpecification"] = (
+            bundled_product_specifications
+        )
+
+    # Format the product specification data as a readable JSON string
+    formatted_json = json.dumps(product_spec_data, indent=2)
+
+    # Example characteristic structure for documentation
+    characteristic_example = {
+        "name": "Color",
+        "description": "Color of the product",
+        "valueType": "String",
+        "configurable": True,
+        "productSpecCharacteristicValue": [
+            {"valueType": "String", "value": "Black", "isDefault": True},
+            {"valueType": "String", "value": "White", "isDefault": False},
+        ],
+    }
+
+    # Example attachment structure for documentation
+    attachment_example = {
+        "description": "Product Manual",
+        "mimeType": "application/pdf",
+        "url": "https://example.com/manual.pdf",
+        "name": "User Manual",
+    }
+
+    # Example related party structure for documentation
+    related_party_example = {
+        "id": "party-id",
+        "href": "https://api-url/party/party-id",
+        "name": "Acme Inc",
+        "role": "Manufacturer",
+        "@referredType": "Organization",
+    }
+
+    # Example bundled product spec structure for documentation
+    bundled_product_spec_example = {
+        "id": "product-spec-id",
+        "href": "https://api-url/productSpecification/product-spec-id",
+        "name": "Component Product",
+        "lifecycleStatus": "Active",
+    }
+
+    # Create the prompt template with all TM Forum TMF620 product specification attributes
+    return f"""
+I want to create a new product specification in the Product Catalog Management system with the following details:
+
+- Name: {name}
+- Description: {description}
+- Bundle: {"Yes" if is_bundle else "No"}
+{"- Brand: " + brand if brand else ""}
+{"- Product Number: " + product_number if product_number else ""}
+- Lifecycle Status: {lifecycle_status}
+- Version: {version}
+- Valid from: {validity_start} to {validity_end}
+
+The product specification follows the TMF620 schema with these attributes:
+* name - Name of the product specification (required)
+* description - A narrative that explains in detail what the product specification is
+* isBundle - Determines whether this represents a single product specification (false) or a bundle (true)
+* brand - The manufacturer or trademark of the specification
+* productNumber - An identification number assigned to uniquely identify the specification
+* lifecycleStatus - Used to indicate the current lifecycle status (e.g., Active, Deprecated)
+* version - Product specification version
+* validFor - The period for which the product specification is valid (startDateTime and endDateTime)
+* attachment - Complements the description through video, pictures, etc. (can be empty)
+* productSpecCharacteristic - Characteristics and features of the product specification (can be empty)
+* productSpecificationRelationship - Relationships with other product specifications (can be empty)
+* relatedParty - Parties involved in the product specification (can be empty)
+* resourceSpecification - Required resources to realize this product specification (can be empty)
+* serviceSpecification - Required services to realize this product specification (can be empty)
+
+To add characteristics to this product specification, you can use structures like:
+```json
+{json.dumps(characteristic_example, indent=2)}
+```
+
+To add attachments, you can use structures like:
+```json
+{json.dumps(attachment_example, indent=2)}
+```
+
+To add related parties, you can use structures like:
+```json
+{json.dumps(related_party_example, indent=2)}
+```
+
+{"To add bundled product specifications, you can use structures like:\n```json\n" + json.dumps(bundled_product_spec_example, indent=2) + "\n```\n" if is_bundle else ""}
+
+Here's my complete product specification definition:
+```json
+{formatted_json}
+```
+
+Please help me create this product specification in the system.
+"""
+
+
+@mcp.prompt()
+def create_product_offering_prompt(
+    name: str,
+    description: str,
+    is_bundle: bool = False,
+    is_sellable: bool = True,
+    lifecycle_status: str = "Active",
+    version: str = "1.0",
+    product_specification_id: str = None,
+    product_specification_name: str = None,
+) -> str:
+    """Create a prompt template for guiding a user through creating a new product offering.
+
+    Args:
+        name: Name of the product offering (required by TMF620)
+        description: A narrative that explains the product offering
+        is_bundle: If true, the product offering is a bundle of other offerings
+        is_sellable: If true, this product offering can be sold separately
+        lifecycle_status: Used to indicate the current lifecycle status
+        version: Product offering version
+        product_specification_id: Optional ID of a product specification to link
+        product_specification_name: Optional name of the product specification to link
+
+    Returns:
+        A prompt template string for guiding a user to create a product offering
+    """
+    # Set default dates for the validity period (1 year from now)
+    validity_start = datetime.datetime.now(datetime.timezone.utc).strftime(
+        "%Y-%m-%dT%H:%M:%S.000+00:00"
+    )
+    validity_end = (
+        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=365)
+    ).strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
+
+    # Initialize empty arrays for optional complex attributes
+    attachments = []
+    channels = []
+    market_segments = []
+    places = []
+    prod_spec_char_value_uses = []
+
+    # Create the product offering JSON structure based on TMF620 schema
+    product_offering_data = {
+        "name": name,
+        "description": description,
+        "isBundle": is_bundle,
+        "isSellable": is_sellable,
+        "lifecycleStatus": lifecycle_status,
+        "version": version,
+        "validFor": {"startDateTime": validity_start, "endDateTime": validity_end},
+    }
+
+    # Add product specification reference if provided
+    if product_specification_id and product_specification_name:
+        product_offering_data["productSpecification"] = {
+            "id": product_specification_id,
+            "href": f"https://api-url/productSpecification/{product_specification_id}",
+            "name": product_specification_name,
+            "version": "1.0",
+            "@referredType": "ProductSpecification",
+        }
+
+    # Add empty arrays for complex attributes
+    product_offering_data["attachment"] = attachments
+    product_offering_data["channel"] = channels
+    product_offering_data["marketSegment"] = market_segments
+    product_offering_data["place"] = places
+    product_offering_data["prodSpecCharValueUse"] = prod_spec_char_value_uses
+
+    # Format the product offering data as a readable JSON string
+    formatted_json = json.dumps(product_offering_data, indent=2)
+
+    # Example attachment structure for documentation
+    attachment_example = {
+        "description": "Product Brochure",
+        "url": "https://example.com/brochures/product123.pdf",
+        "name": "Product Brochure",
+    }
+
+    # Example channel structure for documentation
+    channel_example = {
+        "id": "channel-id",
+        "href": "https://api-url/channel/channel-id",
+        "name": "Online Store",
+        "@referredType": "Channel",
+    }
+
+    # Example market segment structure for documentation
+    market_segment_example = {
+        "id": "segment-id",
+        "href": "https://api-url/marketSegment/segment-id",
+        "name": "Enterprise",
+        "@referredType": "MarketSegment",
+    }
+
+    # Example place structure for documentation
+    place_example = {
+        "id": "place-id",
+        "href": "https://api-url/geographicAddress/place-id",
+        "name": "North America",
+        "@referredType": "GeographicAddress",
+    }
+
+    # Example characteristic value use structure
+    characteristic_value_example = {
+        "name": "Storage",
+        "description": "Storage capacity",
+        "valueType": "number",
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "productSpecCharacteristicValue": [
+            {
+                "valueType": "number",
+                "value": "500",
+                "unitOfMeasure": "GB",
+                "isDefault": True,
+            }
+        ],
+    }
+
+    # Create the prompt template with all TM Forum TMF620 product offering attributes
+    return f"""
+I want to create a new product offering in the Product Catalog Management system with the following details:
+
+- Name: {name}
+- Description: {description}
+- Bundle: {"Yes" if is_bundle else "No"}
+- Sellable: {"Yes" if is_sellable else "No"}
+- Lifecycle Status: {lifecycle_status}
+- Version: {version}
+- Valid from: {validity_start} to {validity_end}
+{"- Linked to Product Specification: " + product_specification_name + " (ID: " + product_specification_id + ")" if product_specification_id and product_specification_name else ""}
+
+The product offering follows the TMF620 schema with these attributes:
+* name - Name of the product offering (required)
+* description - A narrative that explains the product offering
+* isBundle - Indicates if the offering is a bundle of other offerings
+* isSellable - Indicates if this product offering can be sold separately
+* lifecycleStatus - Used to indicate the current lifecycle status
+* version - Product offering version
+* validFor - The period for which the offering is valid (startDateTime and endDateTime)
+* productSpecification - The specification of the product that is the basis of this offering
+* attachment - Complements the description through video, pictures, etc. (can be empty)
+* channel - Sales channel for this product offering (can be empty)
+* marketSegment - Target market segments for this product offering (can be empty)
+* place - Geographic areas where this product offering is available (can be empty)
+* prodSpecCharValueUse - Characteristic values available for this product offering (can be empty)
+
+To add attachments, you can use structures like:
+```json
+{json.dumps(attachment_example, indent=2)}
+```
+
+To add sales channels, you can use structures like:
+```json
+{json.dumps(channel_example, indent=2)}
+```
+
+To add market segments, you can use structures like:
+```json
+{json.dumps(market_segment_example, indent=2)}
+```
+
+To add places (geographic availability), you can use structures like:
+```json
+{json.dumps(place_example, indent=2)}
+```
+
+To add characteristic values, you can use structures like:
+```json
+{json.dumps(characteristic_value_example, indent=2)}
+```
+
+Here's my complete product offering definition:
+```json
+{formatted_json}
+```
+
+Please help me create this product offering in the system.
+"""
+
+
+@mcp.prompt()
+def create_product_offering_price_prompt(
+    name: str,
+    description: str,
+    price_type: str = "recurring",
+    price_unit: str = "USD",
+    price_value: float = 0.0,
+    recurring_charge_period: str = None,
+    percentage: float = None,
+    product_offering_id: str = None,
+    product_offering_name: str = None,
+    lifecycle_status: str = "Active",
+) -> str:
+    """Create a prompt template for guiding a user through creating a new product offering price.
+
+    Args:
+        name: Name of the product offering price
+        description: A narrative that explains the product offering price
+        price_type: Type of price (recurring, one time, usage, etc)
+        price_unit: Currency unit for the price (USD, EUR, etc)
+        price_value: The value of the price
+        recurring_charge_period: Required for recurring prices (month, year, etc)
+        percentage: Percentage value if this is a discount or fee
+        product_offering_id: Optional ID of the product offering this price applies to
+        product_offering_name: Optional name of the product offering this price applies to
+        lifecycle_status: Used to indicate the current lifecycle status
+
+    Returns:
+        A prompt template string for guiding a user to create a product offering price
+    """
+    # Set default dates for the validity period (1 year from now)
+    validity_start = datetime.datetime.now(datetime.timezone.utc).strftime(
+        "%Y-%m-%dT%H:%M:%S.000+00:00"
+    )
+    validity_end = (
+        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=365)
+    ).strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
+
+    # Initialize the price object based on the price type
+    price = {
+        "unit": price_unit,
+        "value": price_value,
+    }
+
+    # Add recurring charge period if applicable
+    if price_type == "recurring" and recurring_charge_period:
+        price["recurringChargePeriod"] = recurring_charge_period
+
+    # Add percentage if provided
+    if percentage is not None:
+        price["percentage"] = percentage
+
+    # Create the product offering price JSON structure based on TMF620 schema
+    price_data = {
+        "name": name,
+        "description": description,
+        "priceType": price_type,
+        "lifecycleStatus": lifecycle_status,
+        "validFor": {"startDateTime": validity_start, "endDateTime": validity_end},
+        "price": price,
+    }
+
+    # Add product offering reference if provided
+    if product_offering_id and product_offering_name:
+        price_data["productOffering"] = {
+            "id": product_offering_id,
+            "href": f"https://api-url/productOffering/{product_offering_id}",
+            "name": product_offering_name,
+        }
+
+    # Format the product offering price data as a readable JSON string
+    formatted_json = json.dumps(price_data, indent=2)
+
+    # Example price alterations structure for documentation
+    price_alteration_example = {
+        "name": "Winter Promotion Discount",
+        "description": "10% discount for the winter season",
+        "priceType": "discount",
+        "priority": 1,
+        "price": {"percentage": 10.0},
+        "validFor": {
+            "startDateTime": "2023-12-01T00:00:00.000+00:00",
+            "endDateTime": "2024-02-29T23:59:59.000+00:00",
+        },
+    }
+
+    # Use triple quotes for the JSON code blocks to avoid f-string issues
+    price_alteration_json = json.dumps(price_alteration_example, indent=2)
+
+    # Create the prompt template
+    return f"""
+I want to create a new product offering price in the Product Catalog Management system with the following details:
+
+- Name: {name}
+- Description: {description}
+- Price Type: {price_type.title()}
+- Price: {price_value} {price_unit}
+{"- Recurring Charge Period: " + recurring_charge_period if price_type == "recurring" and recurring_charge_period else ""}
+{"- Percentage: " + str(percentage) + "%" if percentage is not None else ""}
+{"- For Product Offering: " + product_offering_name + " (ID: " + product_offering_id + ")" if product_offering_id and product_offering_name else ""}
+- Lifecycle Status: {lifecycle_status}
+- Valid from: {validity_start} to {validity_end}
+
+The product offering price follows the TMF620 schema with these attributes:
+* name - Name of the product offering price (required)
+* description - A narrative that explains the product offering price
+* priceType - Indicates the price type (recurring, one time, usage, etc.)
+* lifecycleStatus - Used to indicate the current lifecycle status
+* validFor - The period for which the price is valid (startDateTime and endDateTime)
+* price - The price details including unit, value, and optional percentage or recurring charge period
+* productOffering - The product offering this price applies to (optional)
+* priceAlteration - Any alterations to the price such as discounts or fees (optional)
+
+To add price alterations, you can use structures like:
+
+{price_alteration_json}
+
+Here's my complete product offering price definition:
+
+{formatted_json}
+
+Please help me create this product offering price in the system.
+"""
+
+
+@mcp.prompt()
 def list_catalogs_prompt() -> str:
     """Create a prompt template for listing all available catalogs."""
     return """
@@ -981,6 +2227,143 @@ I'd like to see the following information for each catalog:
 - Validity period
 
 Please organize the information in a clear, readable format.
+"""
+
+
+@mcp.prompt()
+def list_product_offerings_prompt() -> str:
+    """Create a prompt template for listing all available product offerings."""
+    return """
+I need to see all product offerings currently available in the catalog.
+
+Please provide a list with the following details for each offering:
+- ID and name
+- Description
+- Status and version
+- Associated prices
+- Related product specifications
+
+This will help me understand what offerings are already defined in the system.
+"""
+
+
+@mcp.prompt()
+def list_product_specifications_prompt() -> str:
+    """Create a prompt template for listing all available product specifications."""
+    return """
+I need to see all product specifications currently defined in the catalog.
+
+Please provide a complete list with the following details:
+- ID and name
+- Description
+- Key characteristics and their values
+- Lifecycle status and version
+- Related product specifications (if any)
+
+This will help me understand what specifications are available for creating new offerings.
+"""
+
+
+@mcp.prompt()
+def search_offerings_by_name_prompt(name_pattern: str) -> str:
+    """Create a prompt template for searching product offerings by name pattern.
+
+    Args:
+        name_pattern: A string pattern to match against product offering names
+
+    Returns:
+        A prompt template string for searching product offerings by name
+    """
+    return f"""
+I want to find all product offerings with names matching the pattern: {name_pattern}
+
+Please provide a list of matching offerings with:
+- ID and name
+- Description
+- Status and version
+- Price summary
+
+This will help me locate specific offerings I need to work with.
+"""
+
+
+@mcp.prompt()
+def find_product_specification_for_offering_prompt() -> str:
+    """Create a prompt template for finding a product specification to link to a product offering."""
+    return """
+I need to find an appropriate product specification to link to my new product offering.
+
+Please show me a list of available product specifications with the following details:
+- ID and name
+- Description
+- Key characteristics
+- Version and lifecycle status
+
+I'll select one from the list to use when creating my product offering.
+"""
+
+
+@mcp.prompt()
+def get_usage_help_prompt() -> str:
+    """Create a prompt template for getting help using the TMF620 Product Catalog MCP server."""
+    return """
+I need help using the TMF620 Product Catalog Management API. Can you please explain:
+
+1. The main resource types available (Catalog, Category, ProductSpecification, ProductOffering, ProductOfferingPrice)
+2. The hierarchical relationships between these resources
+3. Common operations I can perform
+4. Example workflows for creating a complete product catalog structure
+
+Please provide both explanations and example commands I can use with this MCP server.
+"""
+
+
+@mcp.prompt()
+def search_product_specifications_by_characteristics_prompt() -> str:
+    """Create a prompt template for searching product specifications by characteristics."""
+    return """
+I want to find product specifications based on specific characteristics.
+
+Please search for product specifications that match the following criteria:
+- Characteristic name: [provide characteristic name, e.g., "Data Limit"]
+- Characteristic value: [provide value to search for, e.g., "Unlimited"]
+
+Additional filters (optional):
+- Brand: [specify brand if needed]
+- Lifecycle status: [specify status if needed, e.g., "Active"]
+- Is bundle: [yes/no/either]
+- Valid as of date: [specify a date if needed, default is current date]
+
+Please provide a list of matching product specifications with:
+- ID and name
+- Description
+- Key characteristics and their values
+- Version and lifecycle status
+"""
+
+
+@mcp.prompt()
+def compare_product_specifications_prompt() -> str:
+    """Create a prompt template for comparing multiple product specifications."""
+    return """
+I need to compare multiple product specifications to understand their differences.
+
+Please compare the following product specifications:
+- [First product specification ID or name]
+- [Second product specification ID or name]
+- [Add more if needed]
+
+For each product specification, please provide:
+1. Basic information (name, description, brand, version, lifecycle status)
+2. All characteristics with their values
+3. Any bundled product specifications (if applicable)
+
+Then please create a comparison table showing:
+- Key differences in characteristics and their values
+- Advantages and disadvantages of each product specification
+- Recommendations based on typical use cases
+
+This will help me understand the differences between these product specifications.
 """
 
 
