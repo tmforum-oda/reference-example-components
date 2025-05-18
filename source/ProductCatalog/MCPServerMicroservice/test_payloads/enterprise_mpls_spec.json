@@ -1,0 +1,50 @@
+{
+    "name": "MPLS Network Service",
+    "description": "Enterprise-grade MPLS network solution",
+    "brand": "TelcoNet Enterprise",
+    "productNumber": "MPLS-E-1000",
+    "isBundle": false,
+    "version": "3.0",
+    "lifecycleStatus": "Active",
+    "validFor": {
+        "startDateTime": "2025-03-15T00:00:00Z",
+        "endDateTime": "2026-12-31T23:59:59Z"
+    },
+    "productSpecCharacteristic": [
+        {
+            "name": "Service Level",
+            "description": "SLA tier",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": false,
+                    "value": "Silver"
+                },
+                {
+                    "isDefault": true,
+                    "value": "Gold"
+                },
+                {
+                    "isDefault": false,
+                    "value": "Platinum"
+                }
+            ]
+        },
+        {
+            "name": "Traffic Classes",
+            "description": "Number of traffic classes",
+            "valueType": "number",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": false,
+                    "value": 3
+                },
+                {
+                    "isDefault": true,
+                    "value": 5
+                }
+            ]
+        }
+    ],
+    "@type": "ProductSpecification"
+}

@@ -1,0 +1,52 @@
+{
+    "name": "High Performance Virtual Server Infrastructure",
+    "description": "High performance wholesale virtual server infrastructure",
+    "version": "2.0",
+    "validFor": {
+        "startDateTime": "2025-05-01T00:00:00Z",
+        "endDateTime": "2027-05-01T00:00:00Z"
+    },
+    "isBundle": false,
+    "isSellable": true,
+    "statusReason": "Released for sale",
+    "lifecycleStatus": "Active",
+    "productSpecification": {
+        "id": "VI-W-4000",
+        "href": "/productCatalogManagement/v4/productSpecification/VI-W-4000",
+        "name": "Virtual Infrastructure",
+        "@referredType": "ProductSpecification"
+    },
+    "category": [
+        {
+            "id": "WI001",
+            "href": "/productCatalogManagement/v4/category/WI001",
+            "name": "Wholesale Infrastructure",
+            "@referredType": "Category"
+        }
+    ],
+    "prodSpecCharValueUse": [
+        {
+            "name": "CPU Cores",
+            "description": "Number of virtual CPU cores",
+            "valueType": "number",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": 64
+                }
+            ]
+        },
+        {
+            "name": "RAM",
+            "description": "Amount of RAM",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "256GB"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductOffering"
+}

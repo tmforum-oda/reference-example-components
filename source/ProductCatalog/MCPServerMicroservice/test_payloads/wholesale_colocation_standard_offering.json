@@ -1,0 +1,52 @@
+{
+    "name": "Standard Colocation Rack",
+    "description": "Standard wholesale data center colocation rack service",
+    "version": "1.0",
+    "validFor": {
+        "startDateTime": "2025-05-01T00:00:00Z",
+        "endDateTime": "2027-05-01T00:00:00Z"
+    },
+    "isBundle": false,
+    "isSellable": true,
+    "statusReason": "Released for sale",
+    "lifecycleStatus": "Active",
+    "productSpecification": {
+        "id": "DC-W-3000",
+        "href": "/productCatalogManagement/v4/productSpecification/DC-W-3000",
+        "name": "Data Center Colocation",
+        "@referredType": "ProductSpecification"
+    },
+    "category": [
+        {
+            "id": "WI001",
+            "href": "/productCatalogManagement/v4/category/WI001",
+            "name": "Wholesale Infrastructure",
+            "@referredType": "Category"
+        }
+    ],
+    "prodSpecCharValueUse": [
+        {
+            "name": "Rack Units",
+            "description": "Number of rack units available",
+            "valueType": "number",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": 42
+                }
+            ]
+        },
+        {
+            "name": "Power Capacity",
+            "description": "Power capacity per rack",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "5kW"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductOffering"
+}

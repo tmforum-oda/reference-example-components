@@ -1,0 +1,54 @@
+{
+    "name": "Virtual Infrastructure",
+    "description": "Wholesale virtual infrastructure services",
+    "brand": "TelcoNet",
+    "productNumber": "VI-W-4000",
+    "isBundle": false,
+    "version": "2.0",
+    "lifecycleStatus": "Active",
+    "validFor": {
+        "startDateTime": "2025-05-01T00:00:00Z",
+        "endDateTime": "2027-05-01T00:00:00Z"
+    },
+    "productSpecCharacteristic": [
+        {
+            "name": "CPU Cores",
+            "description": "Number of virtual CPU cores",
+            "valueType": "number",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": false,
+                    "value": 16
+                },
+                {
+                    "isDefault": true,
+                    "value": 32
+                },
+                {
+                    "isDefault": false,
+                    "value": 64
+                }
+            ]
+        },
+        {
+            "name": "RAM",
+            "description": "Amount of RAM",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": false,
+                    "value": "64GB"
+                },
+                {
+                    "isDefault": true,
+                    "value": "128GB"
+                },
+                {
+                    "isDefault": false,
+                    "value": "256GB"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductSpecification"
+}

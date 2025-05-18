@@ -1,0 +1,54 @@
+{
+    "name": "DDoS Protection Service",
+    "description": "Enterprise-grade DDoS attack protection and mitigation",
+    "brand": "SecureNet",
+    "productNumber": "DDOS-E-4000",
+    "isBundle": false,
+    "version": "3.2",
+    "lifecycleStatus": "Active",
+    "validFor": {
+        "startDateTime": "2025-03-15T00:00:00Z",
+        "endDateTime": "2026-12-31T23:59:59Z"
+    },
+    "productSpecCharacteristic": [
+        {
+            "name": "Protection Level",
+            "description": "Level of DDoS protection",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": false,
+                    "value": "Standard"
+                },
+                {
+                    "isDefault": true,
+                    "value": "Advanced"
+                },
+                {
+                    "isDefault": false,
+                    "value": "Premium"
+                }
+            ]
+        },
+        {
+            "name": "Traffic Scrubbing Capacity",
+            "description": "Maximum traffic scrubbing capacity",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": false,
+                    "value": "10 Gbps"
+                },
+                {
+                    "isDefault": true,
+                    "value": "40 Gbps"
+                },
+                {
+                    "isDefault": false,
+                    "value": "100 Gbps"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductSpecification"
+}

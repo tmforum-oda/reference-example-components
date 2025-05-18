@@ -1,0 +1,25 @@
+{
+    "name": "Standard Virtual Server - Monthly Fee",
+    "description": "Monthly recurring charge for Standard Virtual Server Infrastructure",
+    "version": "2.0",
+    "validFor": {
+        "startDateTime": "2025-05-01T00:00:00Z",
+        "endDateTime": "2027-05-01T00:00:00Z"
+    },
+    "priceType": "recurring",
+    "recurringChargePeriodType": "monthly",
+    "recurringChargePeriodLength": 1,
+    "isBundle": false,
+    "price": {
+        "unit": "USD",
+        "amount": 2500
+    },
+    "percentage": 0.0,
+    "productOffering": {
+        "id": "WVI-STD-01",
+        "href": "/productCatalogManagement/v4/productOffering/WVI-STD-01",
+        "name": "Standard Virtual Server Infrastructure"
+    },
+    "lifecycleStatus": "Active",
+    "@type": "ProductOfferingPrice"
+}

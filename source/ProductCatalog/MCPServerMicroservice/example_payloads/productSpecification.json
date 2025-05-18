@@ -1,6 +1,6 @@
 {
-    "name": "Cisco Firepower NGFW",
-    "brand": "Cisco",
+    "name": "Acme Firepower NGFW",
+    "brand": "Acme",
     "productNumber": "CSC-340-NGFW",
     "description": "Powerful product that integrates with a firewall, including intrusion prevention, advanced malware protection, cloud-based sandboxing, URL filtering, endpoint protection, web gateway, email security, network traffic analysis, network access control and CASB.",
     "isBundle": true,

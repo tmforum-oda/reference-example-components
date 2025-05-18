@@ -1,0 +1,42 @@
+{
+    "name": "Fiber Optic Backbone",
+    "description": "High-capacity fiber optic backbone connectivity",
+    "brand": "TelcoNet",
+    "productNumber": "FB-W-1000",
+    "isBundle": false,
+    "version": "1.0",
+    "lifecycleStatus": "Active",
+    "validFor": {
+        "startDateTime": "2025-05-01T00:00:00Z",
+        "endDateTime": "2027-05-01T00:00:00Z"
+    },
+    "productSpecCharacteristic": [
+        {
+            "name": "Bandwidth",
+            "description": "Maximum bandwidth capacity",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "100 Gbps"
+                },
+                {
+                    "isDefault": false,
+                    "value": "400 Gbps"
+                }
+            ]
+        },
+        {
+            "name": "Redundancy",
+            "description": "Level of path redundancy",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "Dual Path"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductSpecification"
+}
