@@ -89,3 +89,37 @@ You can test the MCP server using the MCP client or by making HTTP requests to t
 
 The MCP server is working, but in dev environments we are using self-signed certificates that the MCP Clients (or proxies) are rejecting.
 The temporary workaround is to configure the MCP proxy to use http against the internal service (and ensure it is directly exposed). This workaround is suitable to demonstrate the capability of the MCP server.
+
+
+
+## example demo script
+
+```
+list all the product offerings and their corresponding prices. Show the output as a table artefact.
+```
+
+```
+Add a one-time price of 100 USD to the Standard Virtual Server.
+```
+
+```
+Add a setup fee of 100 dollars to the Business Firewall Solution.
+```
+
+```
+Show the categories with an Active lifecycle status.
+```
+
+```
+Show a diagram of all the resources in the catalog.
+```
+
+```
+Show a diagram of all the products in the Metro Ethernet Services category, including their specification and price.
+```
+(Metro Ethernet Services is actually a specification - Agent should handle this).
+
+
+```
+Remove all one-time fees from all products.
+```

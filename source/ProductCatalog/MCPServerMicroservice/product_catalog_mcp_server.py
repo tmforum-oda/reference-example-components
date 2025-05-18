@@ -74,7 +74,11 @@ mcp = FastMCP(name="product_catalog", version="1.0.0")
 
 @mcp.tool()
 async def catalog_get(
-    catalog_id: str = None, fields: str = None, offset: int = None, limit: int = None
+    catalog_id: str = None,
+    fields: str = None,
+    offset: int = None,
+    limit: int = None,
+    filter: dict = None,
 ) -> dict:
     """Retrieve catalog information from the TM Forum Product Catalog Management API.
 
@@ -83,16 +87,24 @@ async def catalog_get(
         fields: Optional comma-separated list of field names to include in the response.
         offset: Optional offset for pagination.
         limit: Optional limit for pagination.
+        filter: Optional dictionary of filter criteria to narrow down the results.
+               Examples:
+               - {"name": "Wholesale"} - Find catalogs with name containing "Wholesale"
+               - {"lifecycleStatus": "Active"} - Find active catalogs
+               - {"name": "Retail", "lifecycleStatus": "Active"} - Find active catalogs with name containing "Retail"
 
     Returns:
         A dictionary containing the catalog data or a list of catalogs.
         Returns null if an error occurs.
     """
-    logger.info(
-        f"MCP Tool - Getting catalog with ID: {catalog_id if catalog_id else 'ALL'}"
-    )
+    if filter:
+        logger.info(f"MCP Tool - Getting catalogs with filter: {filter}")
+    else:
+        logger.info(
+            f"MCP Tool - Getting catalog with ID: {catalog_id if catalog_id else 'ALL'}"
+        )
     result = await get_catalog(
-        catalog_id=catalog_id, fields=fields, offset=offset, limit=limit
+        catalog_id=catalog_id, fields=fields, offset=offset, limit=limit, filter=filter
     )
     if result == None:
         logger.warning("Failed to retrieve catalog data")
@@ -296,6 +308,7 @@ async def product_specification_get(
     fields: str = None,
     offset: int = None,
     limit: int = None,
+    filter: dict = None,
 ) -> dict:
     """Retrieve product specification information from the TM Forum Product Catalog Management API.
 
@@ -304,19 +317,28 @@ async def product_specification_get(
         fields: Optional comma-separated list of field names to include in the response.
         offset: Optional offset for pagination.
         limit: Optional limit for pagination.
+        filter: Optional dictionary of filter criteria to narrow down the results.
+               Examples:
+               - {"name": "Fiber"} - Find product specifications with name containing "Fiber"
+               - {"lifecycleStatus": "Active"} - Find active product specifications
+               - {"name": "Internet", "lifecycleStatus": "Active"} - Find active product specifications with name containing "Internet"
 
     Returns:
         A dictionary containing the product specification data or a list of product specifications.
         Returns an error dictionary if an error occurs.
     """
-    logger.info(
-        f"MCP Tool - Getting product specification with ID: {product_specification_id if product_specification_id else 'ALL'}"
-    )
+    if filter:
+        logger.info(f"MCP Tool - Getting product specifications with filter: {filter}")
+    else:
+        logger.info(
+            f"MCP Tool - Getting product specification with ID: {product_specification_id if product_specification_id else 'ALL'}"
+        )
     result = await get_product_specification(
         product_specification_id=product_specification_id,
         fields=fields,
         offset=offset,
         limit=limit,
+        filter=filter,
     )
     if result == None:
         logger.warning("Failed to retrieve product specification data")
@@ -538,6 +560,7 @@ async def product_offering_get(
     fields: str = None,
     offset: int = None,
     limit: int = None,
+    filter: dict = None,
 ) -> dict:
     """Retrieve product offering information from the TM Forum Product Catalog Management API.
 
@@ -546,19 +569,28 @@ async def product_offering_get(
         fields: Optional comma-separated list of field names to include in the response.
         offset: Optional offset for pagination.
         limit: Optional limit for pagination.
+        filter: Optional dictionary of filter criteria to narrow down the results.
+               Examples:
+               - {"name": "Basic Internet"} - Find product offerings with name containing "Basic Internet"
+               - {"lifecycleStatus": "Active"} - Find active product offerings
+               - {"name": "Fiber", "lifecycleStatus": "Active"} - Find active product offerings with name containing "Fiber"
 
     Returns:
         A dictionary containing the product offering data or a list of product offerings.
         Returns an error dictionary if an error occurs.
     """
-    logger.info(
-        f"MCP Tool - Getting product offering with ID: {product_offering_id if product_offering_id else 'ALL'}"
-    )
+    if filter:
+        logger.info(f"MCP Tool - Getting product offerings with filter: {filter}")
+    else:
+        logger.info(
+            f"MCP Tool - Getting product offering with ID: {product_offering_id if product_offering_id else 'ALL'}"
+        )
     result = await get_product_offering(
         product_offering_id=product_offering_id,
         fields=fields,
         offset=offset,
         limit=limit,
+        filter=filter,
     )
     if result == None:
         logger.warning("Failed to retrieve product offering data")
@@ -846,6 +878,7 @@ async def product_offering_price_get(
     fields: str = None,
     offset: int = None,
     limit: int = None,
+    filter: dict = None,
 ) -> dict:
     """Retrieve product offering price information from the TM Forum Product Catalog Management API.
 
@@ -854,19 +887,28 @@ async def product_offering_price_get(
         fields: Optional comma-separated list of field names to include in the response.
         offset: Optional offset for pagination.
         limit: Optional limit for pagination.
+        filter: Optional dictionary of filter criteria to narrow down the results.
+               Examples:
+               - {"name": "Monthly Fee"} - Find product offering prices with name containing "Monthly Fee"
+               - {"priceType": "recurring"} - Find recurring product offering prices
+               - {"name": "Installation", "priceType": "one time"} - Find one-time installation fees
 
     Returns:
         A dictionary containing the product offering price data or a list of product offering prices.
         Returns an error dictionary if an error occurs.
     """
-    logger.info(
-        f"MCP Tool - Getting product offering price with ID: {product_offering_price_id if product_offering_price_id else 'ALL'}"
-    )
+    if filter:
+        logger.info(f"MCP Tool - Getting product offering prices with filter: {filter}")
+    else:
+        logger.info(
+            f"MCP Tool - Getting product offering price with ID: {product_offering_price_id if product_offering_price_id else 'ALL'}"
+        )
     result = await get_product_offering_price(
         product_offering_price_id=product_offering_price_id,
         fields=fields,
         offset=offset,
         limit=limit,
+        filter=filter,
     )
     if result == None:
         logger.warning("Failed to retrieve product offering price data")

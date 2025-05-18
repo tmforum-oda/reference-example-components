@@ -35,7 +35,11 @@ logger.info(f"API URL: {API_URL}")
 
 
 async def get_catalog(
-    catalog_id: str = None, fields: str = None, offset: int = None, limit: int = None
+    catalog_id: str = None,
+    fields: str = None,
+    offset: int = None,
+    limit: int = None,
+    filter: dict = None,
 ) -> dict[str, Any] | None:
     """Query the catalog resource in the TM Forum Product Catalog Management API.
 
@@ -44,6 +48,7 @@ async def get_catalog(
         fields: Optional comma-separated list of field names to include in the response
         offset: Optional offset for pagination
         limit: Optional limit for pagination
+        filter: Optional dictionary of filter criteria to narrow down the results (e.g., {"name": "Wholesale"})
 
     Returns:
         Dict containing the response data or None if an error occurred
@@ -51,9 +56,9 @@ async def get_catalog(
     Raises:
         Various httpx exceptions are caught and logged
     """
-    logger.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
-    # Construct the URL based on whether we're getting a specific catalog or listing catalogs
+    logger.info(
+        "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    )  # Construct the URL based on whether we're getting a specific catalog or listing catalogs
     base_url = f"{API_URL}/catalog"
 
     if catalog_id:
@@ -71,6 +76,13 @@ async def get_catalog(
         params["offset"] = offset
     if limit is not None:
         params["limit"] = limit
+
+    # Apply filters if provided
+    if filter:
+        for key, value in filter.items():
+            # Format as per TMF API filtering convention
+            params[key] = value
+        logger.info(f"Applied filters: {filter}")
 
     if params:
         logger.info(f"With parameters: {params}")
@@ -1029,11 +1041,16 @@ async def get_product_specification(
     fields: str = None,
     offset: int = None,
     limit: int = None,
+    filter: dict = None,
 ) -> dict[str, Any]:
     """Get a product specification by ID from the TM Forum Product Catalog Management API.
 
     Args:
         product_specification_id: The unique identifier of the product specification to retrieve
+        fields: Optional comma-separated list of field names to include in the response
+        offset: Optional offset for pagination
+        limit: Optional limit for pagination
+        filter: Optional dictionary of filter criteria to narrow down the results (e.g., {"name": "Fiber"})
 
     Returns:
         Dict containing the product specification data,
@@ -1049,13 +1066,30 @@ async def get_product_specification(
         logger.info(f"Getting productSpecification with ID: {product_specification_id}")
     else:
         url = base_url
-        logger.info("Listing categories")
+        logger.info("Listing product specifications")
+
+    # Add query parameters if provided
+    params = {}
+    if fields:
+        params["fields"] = fields
+    if offset is not None:
+        params["offset"] = offset
+    if limit is not None:
+        params["limit"] = limit
+
+    # Apply filters if provided
+    if filter:
+        for key, value in filter.items():
+            # Format as per TMF API filtering convention
+            params[key] = value
+        logger.info(f"Applied filters: {filter}")
+
+    if params:
+        logger.info(f"With parameters: {params}")
 
     headers = {
         "Accept": "application/json;charset=utf-8",
-    }
-
-    # Configure timeouts (in seconds)
+    }  # Configure timeouts (in seconds)
     timeout = Timeout(
         connect=10.0,  # connection timeout
         read=30.0,  # read timeout
@@ -1073,7 +1107,7 @@ async def get_product_specification(
                 logger.info(f"Sending GET request to: {url}")
                 logger.info(f"Headers: {headers}")
 
-                response = await client.get(url, headers=headers)
+                response = await client.get(url, headers=headers, params=params)
                 logger.info(f"Response status: {response.status_code}")
                 response.raise_for_status()
 
@@ -1125,6 +1159,7 @@ async def get_product_offering(
     fields: str = None,
     offset: int = None,
     limit: int = None,
+    filter: dict = None,
 ) -> dict[str, Any] | None:
     """Query the productOffering resource in the TM Forum Product Catalog Management API.
 
@@ -1133,6 +1168,7 @@ async def get_product_offering(
         fields: Optional comma-separated list of field names to include in the response
         offset: Optional offset for pagination
         limit: Optional limit for pagination
+        filter: Optional dictionary of filter criteria to narrow down the results (e.g., {"name": "Basic Internet"})
 
     Returns:
         Dict containing the response data or None if an error occurred
@@ -1160,6 +1196,13 @@ async def get_product_offering(
         params["offset"] = offset
     if limit is not None:
         params["limit"] = limit
+
+    # Apply filters if provided
+    if filter:
+        for key, value in filter.items():
+            # Format as per TMF API filtering convention
+            params[key] = value
+        logger.info(f"Applied filters: {filter}")
 
     if params:
         logger.info(f"With parameters: {params}")
@@ -1478,6 +1521,7 @@ async def get_product_offering_price(
     fields: str = None,
     offset: int = None,
     limit: int = None,
+    filter: dict = None,
 ) -> dict[str, Any] | None:
     """Query the productOfferingPrice resource in the TM Forum Product Catalog Management API.
 
@@ -1486,6 +1530,7 @@ async def get_product_offering_price(
         fields: Optional comma-separated list of field names to include in the response
         offset: Optional offset for pagination
         limit: Optional limit for pagination
+        filter: Optional dictionary of filter criteria to narrow down the results (e.g., {"name": "Monthly Fee"})
 
     Returns:
         Dict containing the response data or None if an error occurred
@@ -1515,6 +1560,13 @@ async def get_product_offering_price(
         params["offset"] = offset
     if limit is not None:
         params["limit"] = limit
+
+    # Apply filters if provided
+    if filter:
+        for key, value in filter.items():
+            # Format as per TMF API filtering convention
+            params[key] = value
+        logger.info(f"Applied filters: {filter}")
 
     if params:
         logger.info(f"With parameters: {params}")
