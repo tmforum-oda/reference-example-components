@@ -175,7 +175,11 @@ async def catalog_delete(catalog_id: str) -> dict:
 
 @mcp.tool()
 async def category_get(
-    category_id: str = None, fields: str = None, offset: int = None, limit: int = None
+    category_id: str = None,
+    fields: str = None,
+    offset: int = None,
+    limit: int = None,
+    filter: dict = None,
 ) -> dict:
     """Retrieve category information from the TM Forum Product Catalog Management API.
 
@@ -184,16 +188,28 @@ async def category_get(
         fields: Optional comma-separated list of field names to include in the response.
         offset: Optional offset for pagination.
         limit: Optional limit for pagination.
+        filter: Optional dictionary of filter criteria to narrow down the results.
+               Examples:
+               - {"name": "Wholesale"} - Find categories with name containing "Wholesale"
+               - {"lifecycleStatus": "Active"} - Find active categories
+               - {"name": "Fiber", "lifecycleStatus": "Active"} - Find active categories with name containing "Fiber"
 
     Returns:
         A dictionary containing the category data or a list of categories.
         Returns an error dictionary if an error occurs.
     """
-    logger.info(
-        f"MCP Tool - Getting category with ID: {category_id if category_id else 'ALL'}"
-    )
+    if filter:
+        logger.info(f"MCP Tool - Getting categories with filter: {filter}")
+    else:
+        logger.info(
+            f"MCP Tool - Getting category with ID: {category_id if category_id else 'ALL'}"
+        )
     result = await get_category(
-        category_id=category_id, fields=fields, offset=offset, limit=limit
+        category_id=category_id,
+        fields=fields,
+        offset=offset,
+        limit=limit,
+        filter=filter,
     )
     if result == None:
         logger.warning("Failed to retrieve category data")

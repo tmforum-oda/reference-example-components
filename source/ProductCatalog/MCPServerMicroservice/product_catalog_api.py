@@ -379,7 +379,11 @@ async def delete_catalog(catalog_id: str) -> bool:
 
 
 async def get_category(
-    category_id: str = None, fields: str = None, offset: int = None, limit: int = None
+    category_id: str = None,
+    fields: str = None,
+    offset: int = None,
+    limit: int = None,
+    filter: dict = None,
 ) -> dict[str, Any] | None:
     """Query the category resource in the TM Forum Product Catalog Management API.
 
@@ -388,6 +392,7 @@ async def get_category(
         fields: Optional comma-separated list of field names to include in the response
         offset: Optional offset for pagination
         limit: Optional limit for pagination
+        filter: Optional dictionary of filter criteria to narrow down the results (e.g., {"name": "Wholesale"})
 
     Returns:
         Dict containing the response data or None if an error occurred
@@ -415,6 +420,13 @@ async def get_category(
         params["offset"] = offset
     if limit is not None:
         params["limit"] = limit
+
+    # Apply filters if provided
+    if filter:
+        for key, value in filter.items():
+            # Format as per TMF API filtering convention
+            params[key] = value
+        logger.info(f"Applied filters: {filter}")
 
     if params:
         logger.info(f"With parameters: {params}")
