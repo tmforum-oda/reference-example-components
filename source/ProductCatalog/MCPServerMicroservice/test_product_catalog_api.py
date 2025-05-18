@@ -355,28 +355,20 @@ async def populate_all_test_data() -> Tuple[bool, Dict[str, Dict[str, str]]]:
             logger.info(
                 f"Created product offering '{name}' with ID: {created_offering.get('id')}"
             )
-            await asyncio.sleep(0.5)
-
-        # Step 5: Create product offering prices (update references to offerings)
+            await asyncio.sleep(
+                0.5
+            )  # Step 5: Create product offering prices (without reference back to offerings)
         logger.info("Creating product offering prices...")
+        # Track mapping of price names to price IDs for later use
+        price_name_to_id_map = {}
+
         for price_data in all_data["productOfferingPrices"]:
             name = price_data.get("name", "Unnamed price")
 
-            # Update product offering reference if present
-            if "productOffering" in price_data and price_data["productOffering"]:
-                offering_name = price_data["productOffering"].get("name", "")
-                offering_id = None
-
-                # Find the offering ID by name
-                for offering_full_name, offering_id_value in created_resources[
-                    "productOfferings"
-                ].items():
-                    if offering_name in offering_full_name:
-                        offering_id = offering_id_value
-                        break
-
-                if offering_id:
-                    price_data["productOffering"]["id"] = offering_id
+            # Remove any product offering references from the price data
+            # Since we're implementing one-directional references (offering to price)
+            if "productOffering" in price_data:
+                del price_data["productOffering"]
 
             created_price = await create_product_offering_price(price_data)
             if "error" in created_price:
@@ -384,11 +376,116 @@ async def populate_all_test_data() -> Tuple[bool, Dict[str, Dict[str, str]]]:
                     f"Failed to create product offering price '{name}': {created_price['error']}"
                 )
                 return False, created_resources
-            created_resources["productOfferingPrices"][name] = created_price.get("id")
-            logger.info(
-                f"Created product offering price '{name}' with ID: {created_price.get('id')}"
-            )
+
+            price_id = created_price.get("id")
+            created_resources["productOfferingPrices"][name] = price_id
+            price_name_to_id_map[name] = price_id  # Store for later reference
+            logger.info(f"Created product offering price '{name}' with ID: {price_id}")
             await asyncio.sleep(0.5)
+
+        # Step 6: Update product offerings with links to their prices
+        logger.info("Updating product offerings with links to their prices...")
+        # We need to map which prices belong to which offerings based on naming conventions
+        price_pattern = re.compile(r"(.+?)_price\.json$")
+        offering_pattern = re.compile(r"(.+?)_offering\.json$")
+
+        # Extract base names from offering files to match with price files
+        offering_base_names = {}
+        for offering_file in [
+            f for f in os.listdir(test_data_dir) if f.endswith("_offering.json")
+        ]:
+            match = offering_pattern.match(offering_file)
+            if match:
+                base_name = match.group(1)
+                offering_data = await load_json_file(offering_file)
+                offering_name = offering_data.get("name", "")
+                offering_id = None
+
+                # Find the offering ID by name
+                for full_name, id_value in created_resources[
+                    "productOfferings"
+                ].items():
+                    if offering_name in full_name:
+                        offering_id = id_value
+                        offering_base_names[base_name] = offering_id
+                        break
+
+        # Now iterate through price files and find matching offerings
+        for price_file in [
+            f for f in os.listdir(test_data_dir) if f.endswith("_price.json")
+        ]:
+            match = price_pattern.match(price_file)
+            if match:
+                price_base_name = match.group(1)
+
+                # Find matching offering
+                offering_id = offering_base_names.get(price_base_name)
+                if offering_id:
+                    # Get price details
+                    price_data = await load_json_file(price_file)
+                    price_name = price_data.get("name", "")
+                    price_id = None
+
+                    # Find price ID by name
+                    for full_name, id_value in created_resources[
+                        "productOfferingPrices"
+                    ].items():
+                        if price_name in full_name:
+                            price_id = id_value
+                            break
+
+                    if price_id:
+                        # Get the current offering to update it
+                        current_offering = await get_product_offering(offering_id)
+                        if not current_offering:
+                            logger.warning(
+                                f"Could not retrieve product offering {offering_id} for updating"
+                            )
+                            continue
+
+                        # Initialize or update productOfferingPrice array
+                        if "productOfferingPrice" not in current_offering:
+                            current_offering["productOfferingPrice"] = []
+
+                        # Check if the price reference is already there
+                        price_already_linked = False
+                        for existing_price in current_offering.get(
+                            "productOfferingPrice", []
+                        ):
+                            if existing_price.get("id") == price_id:
+                                price_already_linked = True
+                                break
+
+                        if not price_already_linked:
+                            # Add the price reference to the offering
+                            current_offering["productOfferingPrice"].append(
+                                {
+                                    "id": price_id,
+                                    "name": price_name,
+                                    "@referredType": "ProductOfferingPrice",
+                                }
+                            )
+
+                            # Update the offering
+                            updated_offering = await update_product_offering(
+                                offering_id,
+                                {
+                                    "productOfferingPrice": current_offering[
+                                        "productOfferingPrice"
+                                    ]
+                                },
+                            )
+
+                            if "error" in updated_offering:
+                                logger.error(
+                                    f"Failed to update product offering with price: {updated_offering['error']}"
+                                )
+                            else:
+                                logger.info(
+                                    f"Linked price {price_id} to product offering {offering_id}"
+                                )
+
+                        await asyncio.sleep(0.5)
 
         logger.info("Successfully populated catalog with all test data.")
         return True, created_resources
@@ -618,7 +715,7 @@ async def run_product_offering_price_tests():
             "==================== PRODUCT OFFERING PRICE TESTS ===================="
         )
 
-        # First, create a product offering to reference
+        # First, create a product offering
         # Create product specification
         spec_data = await load_json_file("enterprise_mpls_spec.json")
         created_spec = await create_product_specification(spec_data)
@@ -642,13 +739,13 @@ async def run_product_offering_price_tests():
         created_offering = await create_product_offering(offering_data)
         offering_id = created_offering.get("id")
 
-        # Now test product offering price operations
+        # Now test product offering price operations (without referring back to offering)
         logger.info("Testing create_product_offering_price...")
         price_data = await load_json_file("enterprise_mpls_gold_price.json")
 
-        # Update reference to product offering
+        # Remove any product offering references as we're using one-directional references
         if "productOffering" in price_data:
-            price_data["productOffering"]["id"] = offering_id
+            del price_data["productOffering"]
 
         created_price = await create_product_offering_price(price_data)
         if "error" in created_price:
@@ -680,6 +777,43 @@ async def run_product_offering_price_tests():
             logger.error("Failed to update product offering price")
             return False
         logger.info(f"Successfully updated product offering price with ID: {price_id}")
+
+        # Update the product offering to reference this price (one-directional link)
+        logger.info("Testing linking product offering to price...")
+        current_offering = await get_product_offering(offering_id)
+        if not current_offering:
+            logger.error(
+                f"Could not retrieve product offering {offering_id} for updating"
+            )
+            return False
+
+        # Initialize productOfferingPrice array if not present
+        if "productOfferingPrice" not in current_offering:
+            current_offering["productOfferingPrice"] = []
+
+        # Add the price reference to the offering
+        current_offering["productOfferingPrice"].append(
+            {
+                "id": price_id,
+                "name": retrieved_price.get("name", ""),
+                "@referredType": "ProductOfferingPrice",
+            }
+        )
+
+        # Update the offering with price reference
+        updated_offering = await update_product_offering(
+            offering_id,
+            {"productOfferingPrice": current_offering["productOfferingPrice"]},
+        )
+
+        if "error" in updated_offering:
+            logger.error(
+                f"Failed to update product offering with price: {updated_offering['error']}"
+            )
+            return False
+        logger.info(
+            f"Successfully linked price {price_id} to product offering {offering_id}"
+        )
 
         # Test delete product offering price (will be done in cleanup)
 

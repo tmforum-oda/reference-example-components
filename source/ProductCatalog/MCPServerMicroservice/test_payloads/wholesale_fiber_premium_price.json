@@ -12,7 +12,7 @@
     "isBundle": false,
     "price": {
         "unit": "USD",
-        "amount": 12000
+        "value": 12000
     },
     "percentage": 0.0,
     "productOffering": {
