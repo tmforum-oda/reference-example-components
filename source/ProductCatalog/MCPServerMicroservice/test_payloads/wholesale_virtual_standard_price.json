@@ -15,9 +15,8 @@
         "value": 2500
     },
     "percentage": 0.0,
-    "productOffering": {
-        "id": "WVI-STD-01",
-        "href": "/productCatalogManagement/v4/productOffering/WVI-STD-01",
+    "productOffering": {        "id": "WVI-STD-01",
+        "href": "https://localhost/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4/productOffering/WVI-STD-01",
         "name": "Standard Virtual Server Infrastructure"
     },
     "lifecycleStatus": "Active",

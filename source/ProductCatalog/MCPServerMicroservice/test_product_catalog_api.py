@@ -103,10 +103,69 @@ async def load_json_file(filename: str) -> dict:
     filepath = os.path.join(test_data_dir, filename)
     try:
         with open(filepath, "r") as f:
-            return json.load(f)
+            data = json.load(f)
+            # Make sure all href properties start with the correct base URL
+            data = update_hrefs_in_data(data)
+            return data
     except Exception as e:
         logger.error(f"Error loading {filepath}: {str(e)}")
         return {}
+
+
+def update_hrefs_in_data(data):
+    """
+    Update all href properties in data to start with the base URL if they don't already.
+    """
+    BASE_URL = "https://localhost/r1-productcatalogmanagement/tmf-api"
+
+    def _update_hrefs(obj):
+        if isinstance(obj, dict):
+            for key, value in obj.items():
+                if key == "href" and isinstance(value, str) and value.startswith("/"):
+                    obj[key] = f"{BASE_URL}{value}"
+                elif isinstance(value, (dict, list)):
+                    _update_hrefs(value)
+        elif isinstance(obj, list):
+            for item in obj:
+                if isinstance(item, (dict, list)):
+                    _update_hrefs(item)
+        return obj
+
+    return _update_hrefs(data)
+
+
+def create_entity_reference(entity_type, entity_id, entity_name):
+    """
+    Create a properly formatted entity reference with correctly formed href URL.
+
+    Args:
+        entity_type: Type of entity (e.g., "ProductOffering", "ProductOfferingPrice", "Category", "ProductSpecification")
+        entity_id: The entity ID
+        entity_name: The entity name
+
+    Returns:
+        Dict containing a properly formatted entity reference with id, href, name, and referredType
+    """
+    BASE_URL = "https://localhost/r1-productcatalogmanagement/tmf-api"
+
+    # Map entity types to their API path segments
+    type_to_path = {
+        "ProductOffering": "productOffering",
+        "ProductOfferingPrice": "productOfferingPrice",
+        "Category": "category",
+        "ProductSpecification": "productSpecification",
+        "Catalog": "catalog",
+    }
+
+    path_segment = type_to_path.get(entity_type, entity_type.lower())
+    href = f"{BASE_URL}/productCatalogManagement/v4/{path_segment}/{entity_id}"
+
+    return {
+        "id": entity_id,
+        "href": href,
+        "name": entity_name,
+        "@referredType": entity_type,
+    }
 
 
 async def load_all_test_data() -> Dict[str, List[Dict]]:
@@ -183,7 +242,7 @@ async def cleanup_all_resources():
             if price_id:
                 logger.info(f"Deleting product offering price with ID: {price_id}")
                 await delete_product_offering_price(price_id)
-                await asyncio.sleep(0.5)  # Small delay to avoid overwhelming the API
+                await asyncio.sleep(0.1)  # Small delay to avoid overwhelming the API
 
     # Clean up product offerings
     logger.info("Cleaning up product offerings...")
@@ -194,7 +253,7 @@ async def cleanup_all_resources():
             if offering_id:
                 logger.info(f"Deleting product offering with ID: {offering_id}")
                 await delete_product_offering(offering_id)
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.1)
 
     # Clean up product specifications
     logger.info("Cleaning up product specifications...")
@@ -205,7 +264,7 @@ async def cleanup_all_resources():
             if spec_id:
                 logger.info(f"Deleting product specification with ID: {spec_id}")
                 await delete_product_specification(spec_id)
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.1)
 
     # Clean up categories
     logger.info("Cleaning up categories...")
@@ -216,7 +275,7 @@ async def cleanup_all_resources():
             if category_id:
                 logger.info(f"Deleting category with ID: {category_id}")
                 await delete_category(category_id)
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.1)
 
     # Clean up catalogs
     logger.info("Cleaning up catalogs...")
@@ -227,7 +286,7 @@ async def cleanup_all_resources():
             if catalog_id:
                 logger.info(f"Deleting catalog with ID: {catalog_id}")
                 await delete_catalog(catalog_id)
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.1)
 
     logger.info("Cleanup completed")
 
@@ -270,7 +329,7 @@ async def populate_all_test_data() -> Tuple[bool, Dict[str, Dict[str, str]]]:
             logger.info(
                 f"Created catalog '{name}' with ID: {created_catalog.get('id')}"
             )
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.1)
 
         # Step 2: Create categories
         logger.info("Creating categories...")
@@ -286,7 +345,7 @@ async def populate_all_test_data() -> Tuple[bool, Dict[str, Dict[str, str]]]:
             logger.info(
                 f"Created category '{name}' with ID: {created_category.get('id')}"
             )
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.1)
 
         # Step 3: Create product specifications
         logger.info("Creating product specifications...")
@@ -302,7 +361,7 @@ async def populate_all_test_data() -> Tuple[bool, Dict[str, Dict[str, str]]]:
             logger.info(
                 f"Created product specification '{name}' with ID: {created_spec.get('id')}"
             )
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.1)
 
         # Step 4: Create product offerings (update references to specs and categories)
         logger.info("Creating product offerings...")
@@ -326,10 +385,14 @@ async def populate_all_test_data() -> Tuple[bool, Dict[str, Dict[str, str]]]:
                         break
 
                 if spec_id:
-                    offering_data["productSpecification"]["id"] = spec_id
+                    # Create a proper reference with updated href
+                    offering_data["productSpecification"] = create_entity_reference(
+                        "ProductSpecification", spec_id, spec_name
+                    )
 
             # Update category references if present
             if "category" in offering_data and offering_data["category"]:
+                updated_categories = []
                 for i in range(len(offering_data["category"])):
                     cat_name = offering_data["category"][i].get("name", "")
                     cat_id = None
@@ -343,7 +406,14 @@ async def populate_all_test_data() -> Tuple[bool, Dict[str, Dict[str, str]]]:
                             break
 
                     if cat_id:
-                        offering_data["category"][i]["id"] = cat_id
+                        # Create a proper reference with updated href
+                        updated_categories.append(
+                            create_entity_reference("Category", cat_id, cat_name)
+                        )
+
+                # Replace the category array with updated references
+                if updated_categories:
+                    offering_data["category"] = updated_categories
 
             created_offering = await create_product_offering(offering_data)
             if "error" in created_offering:
@@ -381,7 +451,7 @@ async def populate_all_test_data() -> Tuple[bool, Dict[str, Dict[str, str]]]:
             created_resources["productOfferingPrices"][name] = price_id
             price_name_to_id_map[name] = price_id  # Store for later reference
             logger.info(f"Created product offering price '{name}' with ID: {price_id}")
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.1)
 
         # Step 6: Update product offerings with links to their prices
         logger.info("Updating product offerings with links to their prices...")
@@ -457,13 +527,11 @@ async def populate_all_test_data() -> Tuple[bool, Dict[str, Dict[str, str]]]:
                                 break
 
                         if not price_already_linked:
-                            # Add the price reference to the offering
+                            # Add the price reference to the offering with proper href
                             current_offering["productOfferingPrice"].append(
-                                {
-                                    "id": price_id,
-                                    "name": price_name,
-                                    "@referredType": "ProductOfferingPrice",
-                                }
+                                create_entity_reference(
+                                    "ProductOfferingPrice", price_id, price_name
+                                )
                             )
 
                             # Update the offering
@@ -485,7 +553,7 @@ async def populate_all_test_data() -> Tuple[bool, Dict[str, Dict[str, str]]]:
                                     f"Linked price {price_id} to product offering {offering_id}"
                                 )
 
-                        await asyncio.sleep(0.5)
+                        await asyncio.sleep(0.1)
 
         logger.info("Successfully populated catalog with all test data.")
         return True, created_resources
@@ -657,18 +725,27 @@ async def run_product_offering_tests():
             logger.error(f"Failed to create category: {created_category['error']}")
             return False
 
-        category_id = created_category.get("id")
-
-        # Load product offering data and update references
+        category_id = created_category.get(
+            "id"
+        )  # Load product offering data and update references
         logger.info("Testing create_product_offering...")
         offering_data = await load_json_file("wholesale_metro_eline_offering.json")
 
-        # Update references with actual IDs
+        # Update references with actual IDs and proper hrefs
         if "productSpecification" in offering_data:
-            offering_data["productSpecification"]["id"] = spec_id
+            spec_name = offering_data["productSpecification"].get("name", "")
+            offering_data["productSpecification"] = create_entity_reference(
+                "ProductSpecification", spec_id, spec_name
+            )
+
         if "category" in offering_data and offering_data["category"]:
-            for i in range(len(offering_data["category"])):
-                offering_data["category"][i]["id"] = category_id
+            updated_categories = []
+            for category_ref in offering_data["category"]:
+                cat_name = category_ref.get("name", "")
+                updated_categories.append(
+                    create_entity_reference("Category", category_id, cat_name)
+                )
+            offering_data["category"] = updated_categories
 
         created_offering = await create_product_offering(offering_data)
         if "error" in created_offering:
@@ -727,14 +804,23 @@ async def run_product_offering_price_tests():
         category_id = created_category.get("id")
 
         # Create product offering
-        offering_data = await load_json_file("enterprise_mpls_gold_offering.json")
-
-        # Update references with actual IDs
+        offering_data = await load_json_file(
+            "enterprise_mpls_gold_offering.json"
+        )  # Update references with actual IDs and proper hrefs
         if "productSpecification" in offering_data:
-            offering_data["productSpecification"]["id"] = spec_id
+            spec_name = offering_data["productSpecification"].get("name", "")
+            offering_data["productSpecification"] = create_entity_reference(
+                "ProductSpecification", spec_id, spec_name
+            )
+
         if "category" in offering_data and offering_data["category"]:
-            for i in range(len(offering_data["category"])):
-                offering_data["category"][i]["id"] = category_id
+            updated_categories = []
+            for category_ref in offering_data["category"]:
+                cat_name = category_ref.get("name", "")
+                updated_categories.append(
+                    create_entity_reference("Category", category_id, cat_name)
+                )
+            offering_data["category"] = updated_categories
 
         created_offering = await create_product_offering(offering_data)
         offering_id = created_offering.get("id")
@@ -785,19 +871,15 @@ async def run_product_offering_price_tests():
             logger.error(
                 f"Could not retrieve product offering {offering_id} for updating"
             )
-            return False
-
-        # Initialize productOfferingPrice array if not present
+            return False  # Initialize productOfferingPrice array if not present
         if "productOfferingPrice" not in current_offering:
             current_offering["productOfferingPrice"] = []
 
-        # Add the price reference to the offering
+        # Add the price reference to the offering with proper href
         current_offering["productOfferingPrice"].append(
-            {
-                "id": price_id,
-                "name": retrieved_price.get("name", ""),
-                "@referredType": "ProductOfferingPrice",
-            }
+            create_entity_reference(
+                "ProductOfferingPrice", price_id, retrieved_price.get("name", "")
+            )
         )
 
         # Update the offering with price reference
