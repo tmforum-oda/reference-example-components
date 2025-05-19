@@ -26,7 +26,7 @@ The Model Context Protocol uses JSON objects for communication between clients a
 
 ### Client discovery
 
-Clients connecting to the MCP Server can discover the tools, resources and example prompts. Using the pPython MCP Server from [https://modelcontextprotocol.io/quickstart/server](https://modelcontextprotocol.io/quickstart/server), you use python decrators to expose the tools, resources and example prompts.
+Clients connecting to the MCP Server can discover the tools, resources and example prompts. Using the Python MCP Server from [https://modelcontextprotocol.io/quickstart/server](https://modelcontextprotocol.io/quickstart/server), you use Python decorators to expose the tools, resources and example prompts.
 
 Tools are the most important feature of the MCP server. They are what gives the client Agent *agency* to perform operations. You create a tool for every API operation you want the client to be able to use. There is an example of the `catalog_delete` tool.:
 
