@@ -170,7 +170,10 @@ Remove all one-time fees from all products.
 add a property of color to the Enterprise Solution Catalog 
 ```
 
-
+Question in French (list all the product offerings and their corresponding prices. Show the output as a table artefact.)
+```
+Énumérez toutes les offres de produits ainsi que leurs prix respectifs. Présentez le résultat sous forme d’un tableau.
+```
 
 
 ## TO make work
