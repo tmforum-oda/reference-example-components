@@ -38,7 +38,7 @@ spec:
       port: 8080
     - name: productcatalogmcp
       implementation: {{.Release.Name}}-prodcatmcp
-      apiType: openapi # this should be mcp
+      apiType: mcp
       path: /{{.Release.Name}}-{{.Values.component.name}}/sse
       port: 8080      
     - name: promotionmanagement
