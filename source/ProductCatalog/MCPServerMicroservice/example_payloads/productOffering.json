@@ -61,7 +61,7 @@
             "name": "New Client Condition",
             "description": "This product offering term is for new client at fix duration of less than a year",
             "duration": {
-                "amount": 3,
+                "value": 3,
                 "units": "Month"
             },
             "validFor": {
