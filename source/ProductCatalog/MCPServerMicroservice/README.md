@@ -10,14 +10,44 @@ Model Context Protocol (MCP) is a standard designed to enable AI agents to inter
 - [MCP Specification](https://modelcontextprotocol.io/quickstart/server)
 - [Python MCP SDK](https://github.com/modelcontextprotocol/python-sdk)
 
-## Features
 
-- Exposes Product Catalog API functionalities as MCP tools
-- Provides resource-based access to catalog data using the MCP resource standard
-- Supports both Server-Sent Events (SSE) and standard input/output transports
-- Containerized for easy deployment
-- Kubernetes-ready with health checks
-- Integration with TM Forum ODA Component standard
+## Basic MCP Structure
+
+The Model Context Protocol uses JSON objects for communication between clients and servers. The basic structure includes:
+
+- **Agent Messages**: Messages from the client (AI agent) to the server
+- **Tool Calls**: Requests from the agent to execute specific functions on the server
+- **Tool Responses**: Responses from the server with the results of tool execution
+
+## Client discovery
+
+Clients connecting to the MCP Server can discover the tools, resources and example prompts. Using the pPython MCP Server from [https://modelcontextprotocol.io/quickstart/server](https://modelcontextprotocol.io/quickstart/server), you use python decrators to expose the tools, resources and example prompts.
+
+Tools are the most important feature of the MCP server. They are what gives the client Agent *agency* to perform operations. You create a tool for every API operation you want the client to be able to use. There is an example of the `catalog_delete` tool.:
+
+```python
+@mcp.tool()
+async def catalog_delete(catalog_id: str) -> dict:
+    """Delete a catalog from the TM Forum Product Catalog Management API.
+
+    Args:
+        catalog_id: ID of the catalog to delete.
+
+    Returns:
+        A dictionary with success status.
+    """
+    logger.info(f"MCP Tool - Deleting catalog with ID: {catalog_id}")
+    result = await delete_catalog(catalog_id)
+    if result == None:
+        logger.warning(f"Failed to delete catalog with ID: {catalog_id}")
+        return {
+            "success": False,
+            "error": f"Failed to delete catalog with ID: {catalog_id}",
+        }
+    return {"success": True, "message": f"Catalog {catalog_id} deleted successfully"}
+```
+
+
 
 ## MCP Tools
 
@@ -121,5 +151,36 @@ Show a diagram of all the products in the Metro Ethernet Services category, incl
 
 
 ```
+I need to create pricing for our new Business MPLS Network product offering. It should have tiered pricing as follows:
+- A one-time setup fee of $99
+- Monthly recurring charges of:
+    - $299/month for "Basic" tier (50 Mbps bandwidth, 5 sites)
+    - $599/month for "Professional" tier (200 Mbps bandwidth, 10 sites)
+    - $999/month for "Enterprise" tier (500 Mbps bandwidth, 25 sites)
+
+Please set these up in the system.
+```
+
+```
 Remove all one-time fees from all products.
 ```
+
+
+```
+add a property of color to the Enterprise Solution Catalog 
+```
+
+
+
+
+## TO make work
+
+'''
+Show me all the product offerings under 2000 dollars
+'''
+At present doesn't use filtering (it get's all and then filters on the client)
+
+
+## No Rollback
+
+Add compensating undo transactions
