@@ -2893,7 +2893,7 @@ if __name__ == "__main__":
         mcp_app = mcp.sse_app()
 
         # Mount the MCP server app at the url endpoint
-        main_app.mount("/" + url, mcp_app)
+        main_app.mount("/" + url + "/mcp", mcp_app)
 
         # Run the ASGI app with uvicorn
         uvicorn.run(main_app, host="0.0.0.0", port=port)

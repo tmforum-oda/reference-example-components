@@ -14,7 +14,7 @@ spec:
       labels:
         app: {{.Release.Name}}-{{.Values.component.name}}
         impl: {{.Release.Name}}-prodcatmcp
-        version: {{.Values.mcp.versionlabel}}
+        version: {{.Values.mcp.versionLabel}}
     spec:
       containers:
       - name: {{.Release.Name}}-prodcatmcp
