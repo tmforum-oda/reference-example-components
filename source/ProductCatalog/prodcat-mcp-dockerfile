@@ -1,0 +1,47 @@
+# MCP Server Dockerfile for Product Catalog Component
+# This Dockerfile builds an image that runs the Product Catalog MCP server
+# exposing it as an API endpoint using the SSE transport method
+
+# Use Python 3.13 as the base image for compatibility with dependencies
+FROM python:3.13-slim-bookworm
+
+# The installer requires curl (and certificates) to download the release archive
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
+
+# Download the latest installer
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
+
+# Run the installer then remove it
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+
+# Ensure the installed binary is on the `PATH`
+ENV PATH="/root/.local/bin/:$PATH"
+
+# Set working directory
+WORKDIR /app
+
+# Set environment variables
+ENV MCP_TRANSPORT=sse \
+    MCP_PORT=8080 
+
+# Install system dependencies
+# RUN apt-get update && \
+#    apt-get install -y --no-install-recommends gcc curl && \
+#    apt-get clean && \
+#    rm -rf /var/lib/apt/lists/*
+
+# Copy requirements files
+COPY MCPServerMicroservice/pyproject.toml MCPServerMicroservice/uv.lock /app/
+
+# Install Python dependencies using uv
+RUN uv pip install -e . --system
+
+# Copy source code
+COPY MCPServerMicroservice/product_catalog_api.py /app/
+COPY MCPServerMicroservice/product_catalog_mcp_server.py /app/
+
+# Expose the port for the SSE server
+EXPOSE 8080
+
+# Command to run the server with SSE transport
+CMD ["python", "product_catalog_mcp_server.py", "--port", "8080"]

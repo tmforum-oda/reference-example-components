@@ -1,0 +1,52 @@
+{
+    "name": "Business Firewall Solution",
+    "description": "Business-grade next-generation firewall solution",
+    "version": "4.1",
+    "validFor": {
+        "startDateTime": "2025-03-15T00:00:00Z",
+        "endDateTime": "2026-12-31T23:59:59Z"
+    },
+    "isBundle": false,
+    "isSellable": true,
+    "statusReason": "Released for sale",
+    "lifecycleStatus": "Active",
+    "productSpecification": {
+        "id": "FW-E-3000",
+        "href": "/productCatalogManagement/v4/productSpecification/FW-E-3000",
+        "name": "Enterprise Firewall Solution",
+        "@referredType": "ProductSpecification"
+    },
+    "category": [
+        {
+            "id": "ES001",
+            "href": "/productCatalogManagement/v4/category/ES001",
+            "name": "Enterprise Security",
+            "@referredType": "Category"
+        }
+    ],
+    "prodSpecCharValueUse": [
+        {
+            "name": "Throughput",
+            "description": "Maximum firewall throughput",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "10 Gbps"
+                }
+            ]
+        },
+        {
+            "name": "Concurrent Sessions",
+            "description": "Maximum concurrent sessions",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "1 Million"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductOffering"
+}

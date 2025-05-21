@@ -1,0 +1,20 @@
+{
+    "name": "Enterprise Solution Catalog",
+    "description": "Business-focused solutions for enterprise customers",
+    "catalogType": "Product",
+    "version": "2.1",
+    "lifecycleStatus": "Active",
+    "validFor": {
+        "startDateTime": "2025-03-15T00:00:00Z",
+        "endDateTime": "2026-12-31T23:59:59Z"
+    },
+    "relatedParty": [
+        {
+            "id": "ENT002",
+            "name": "Enterprise Solutions Division",
+            "role": "Owner",
+            "@referredType": "Organization"
+        }
+    ],
+    "@type": "Catalog"
+}

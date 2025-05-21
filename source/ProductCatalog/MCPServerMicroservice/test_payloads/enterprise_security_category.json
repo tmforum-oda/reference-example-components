@@ -1,0 +1,12 @@
+{
+    "name": "Enterprise Security",
+    "description": "Security solutions for enterprise customers",
+    "isRoot": true,
+    "version": "2.2",
+    "lifecycleStatus": "Active",
+    "validFor": {
+        "startDateTime": "2025-03-15T00:00:00Z",
+        "endDateTime": "2026-12-31T23:59:59Z"
+    },
+    "@type": "Category"
+}

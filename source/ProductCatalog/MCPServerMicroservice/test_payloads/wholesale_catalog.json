@@ -1,0 +1,20 @@
+{
+    "name": "Wholesale Service Catalog",
+    "description": "A comprehensive catalog of wholesale telecom services for service providers",
+    "catalogType": "Product",
+    "version": "1.0",
+    "lifecycleStatus": "Active",
+    "validFor": {
+        "startDateTime": "2025-05-01T00:00:00Z",
+        "endDateTime": "2027-05-01T00:00:00Z"
+    },
+    "relatedParty": [
+        {
+            "id": "WS001",
+            "name": "Wholesale Division",
+            "role": "Owner",
+            "@referredType": "Organization"
+        }
+    ],
+    "@type": "Catalog"
+}

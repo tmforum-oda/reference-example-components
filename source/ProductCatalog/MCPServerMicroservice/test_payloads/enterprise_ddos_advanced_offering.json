@@ -1,0 +1,52 @@
+{
+    "name": "Advanced DDoS Protection",
+    "description": "Advanced DDoS protection with high traffic scrubbing capacity",
+    "version": "3.2",
+    "validFor": {
+        "startDateTime": "2025-03-15T00:00:00Z",
+        "endDateTime": "2026-12-31T23:59:59Z"
+    },
+    "isBundle": false,
+    "isSellable": true,
+    "statusReason": "Released for sale",
+    "lifecycleStatus": "Active",
+    "productSpecification": {
+        "id": "DDOS-E-4000",
+        "href": "/productCatalogManagement/v4/productSpecification/DDOS-E-4000",
+        "name": "DDoS Protection Service",
+        "@referredType": "ProductSpecification"
+    },
+    "category": [
+        {
+            "id": "ES001",
+            "href": "/productCatalogManagement/v4/category/ES001",
+            "name": "Enterprise Security",
+            "@referredType": "Category"
+        }
+    ],
+    "prodSpecCharValueUse": [
+        {
+            "name": "Protection Level",
+            "description": "Level of DDoS protection",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "Advanced"
+                }
+            ]
+        },
+        {
+            "name": "Traffic Scrubbing Capacity",
+            "description": "Maximum traffic scrubbing capacity",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "40 Gbps"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductOffering"
+}

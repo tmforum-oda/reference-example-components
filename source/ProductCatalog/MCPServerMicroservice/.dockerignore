@@ -1,0 +1,48 @@
+# Python-related
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+
+# Logs
+logs/
+*.log
+
+# Environment files (will be set inside the container)
+.env
+
+# Git-related
+.git/
+.gitignore
+
+# Editor-related
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Documentation
+README.md
+docs/
+
+# Docker-related
+Dockerfile
+docker-compose.yml
+.dockerignore

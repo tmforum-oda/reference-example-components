@@ -1,0 +1,20 @@
+{
+    "name": "Advanced DDoS Protection - Monthly Fee",
+    "description": "Monthly recurring charge for Advanced DDoS Protection",
+    "version": "3.2",
+    "validFor": {
+        "startDateTime": "2025-03-15T00:00:00Z",
+        "endDateTime": "2026-12-31T23:59:59Z"
+    },
+    "priceType": "recurring",
+    "recurringChargePeriodType": "monthly",
+    "recurringChargePeriodLength": 1,
+    "isBundle": false,
+    "price": {
+        "unit": "USD",
+        "value": 3500
+    },
+    "percentage": 0.0,
+    "lifecycleStatus": "Active",
+    "@type": "ProductOfferingPrice"
+}

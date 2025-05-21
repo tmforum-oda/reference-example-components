@@ -1,0 +1,132 @@
+{
+    "name": "Basic Firewall for Business",
+    "description": "This product offering suggests a firewall service that can be deployed in business customer premise.",
+    "version": "1.0",
+    "validFor": {
+        "startDateTime": "2017-08-23T00:00",
+        "endDateTime": "2018-03-25T00:00"
+    },
+    "isBundle": false,
+    "isSellable": true,
+    "statusReason": "Released for sale",
+    "place": [
+        {
+            "id": "9979",
+            "href": "https://mycsp.com:8080/tmf-api/geographicAddressManagement/v4/geographicAddress/9979",
+            "name": "San Francisco Bay Area",
+            "@referredType": "GeographicAddress"
+        }
+    ],
+    "serviceLevelAgreement": {
+        "id": "8082",
+        "href": "https://mycsp.com:8080/tmf-api/slaManagement/v4/sla/8082",
+        "name": "Gold SLA for Business",
+        "@referredType": "BusinessSLA"
+    },
+    "productSpecification": {
+        "id": "9881",
+        "href": "https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/productSpecification/9881",
+        "version": "1.1",
+        "name": "Robotics999",
+        "@referredType": "DeviceSpecification"
+    },
+    "channel": [
+        {
+            "id": "4406",
+            "href": "https://mycsp.com:8080/tmf-api/salesChannelManagement/v4/channel/4406",
+            "name": "Online Channel"
+        }
+    ],
+    "serviceCandidate": {
+        "id": "8167",
+        "href": "https://mycsp.com:8080/tmf-api/serviceCatalogManagement/v4/serviceCandidate/8167",
+        "version": "1.1",
+        "name": "Mega Max"
+    },
+    "category": [
+        {
+            "id": "2646",
+            "href": "https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/category/2646",
+            "version": "2.1",
+            "name": "Cloud"
+        }
+    ],
+    "resourceCandidate": {
+        "id": "8937",
+        "href": "https://mycsp.com:8080/tmf-api/resourceCatalogManagement/v4/resourceCandidate/8937",
+        "name": "Mega Band"
+    },
+    "productOfferingTerm": [
+        {
+            "name": "New Client Condition",
+            "description": "This product offering term is for new client at fix duration of less than a year",
+            "duration": {
+                "value": 3,
+                "units": "Month"
+            },
+            "validFor": {
+                "startDateTime": "2017-06-15T00:00",
+                "endDateTime": "2018-01-13T00:00"
+            }
+        }
+    ],
+    "productOfferingPrice": [
+        {
+            "id": "1747",
+            "href": "https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/productOfferingPrice/1747",
+            "name": "Recurring Monthly Price for Business Firewall"
+        }
+    ],
+    "attachment": [
+        {
+            "description": "This attachment gives a block diagram of the firewall.",
+            "href": "https://mycsp.com:8080/tmf-api/documentManagement/v4/attachment/22",
+            "id": "22",
+            "url": "https://mycsp.com:7070/docloader?docnum=3534536"
+        }
+    ],
+    "marketSegment": [
+        {
+            "id": "1266",
+            "href": "https://mycsp.com:8080/tmf-api/productOfferingReferences/v4/marketSegmentRef/1266",
+            "name": "North Region"
+        }
+    ],
+    "prodSpecCharValueUse": [
+        {
+            "name": "Number of Ports",
+            "description": "The total Number of Ports for this product",
+            "valueType": "number",
+            "minCardinality": 1,
+            "maxCardinality": 1,
+            "validFor": {
+                "startDateTime": "2017-06-17T00:00",
+                "endDateTime": "2018-01-13T00:00"
+            },
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "validFor": {
+                        "startDateTime": "2017-06-16T00:00",
+                        "endDateTime": "2018-01-13T00:00"
+                    },
+                    "value": 8
+                },
+                {
+                    "isDefault": false,
+                    "validFor": {
+                        "startDateTime": "2017-06-16T00:00",
+                        "endDateTime": "2018-01-13T00:00"
+                    },
+                    "value": 16
+                }
+            ],
+            "productSpecification": {
+                "id": "9881",
+                "href": "https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/productSpecification/9881",
+                "version": "1.1"
+            }
+        }
+    ],
+    "@type": "ProductOffering"
+}

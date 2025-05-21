@@ -1,0 +1,50 @@
+{
+    "name": "Metro Ethernet Services",
+    "description": "Carrier-grade ethernet services for metropolitan areas",
+    "brand": "TelcoNet",
+    "productNumber": "ME-W-2000",
+    "isBundle": false,
+    "version": "1.1",
+    "lifecycleStatus": "Active",
+    "validFor": {
+        "startDateTime": "2025-05-01T00:00:00Z",
+        "endDateTime": "2027-05-01T00:00:00Z"
+    },
+    "productSpecCharacteristic": [
+        {
+            "name": "Service Type",
+            "description": "Type of Metro Ethernet service",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "E-Line"
+                },
+                {
+                    "isDefault": false,
+                    "value": "E-LAN"
+                },
+                {
+                    "isDefault": false,
+                    "value": "E-Tree"
+                }
+            ]
+        },
+        {
+            "name": "Bandwidth",
+            "description": "Available bandwidth options",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "1 Gbps"
+                },
+                {
+                    "isDefault": false,
+                    "value": "10 Gbps"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductSpecification"
+}

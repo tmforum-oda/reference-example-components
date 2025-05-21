@@ -1,0 +1,25 @@
+{
+    "name": "Premium Fiber Backbone - Monthly Fee",
+    "description": "Monthly recurring charge for Premium Fiber Backbone service",
+    "version": "1.0",
+    "validFor": {
+        "startDateTime": "2025-05-01T00:00:00Z",
+        "endDateTime": "2027-05-01T00:00:00Z"
+    },
+    "priceType": "recurring",
+    "recurringChargePeriodType": "monthly",
+    "recurringChargePeriodLength": 1,
+    "isBundle": false,
+    "price": {
+        "unit": "USD",
+        "value": 12000
+    },
+    "percentage": 0.0,
+    "productOffering": {
+        "id": "WFB-PREM-01",
+        "href": "/productCatalogManagement/v4/productOffering/WFB-PREM-01",
+        "name": "Premium Fiber Backbone"
+    },
+    "lifecycleStatus": "Active",
+    "@type": "ProductOfferingPrice"
+}

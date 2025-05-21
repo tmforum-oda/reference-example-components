@@ -1,0 +1,50 @@
+{
+    "name": "SD-WAN Solution",
+    "description": "Software-defined WAN solution for enterprises",
+    "brand": "TelcoNet Enterprise",
+    "productNumber": "SDWAN-E-2000",
+    "isBundle": false,
+    "version": "2.5",
+    "lifecycleStatus": "Active",
+    "validFor": {
+        "startDateTime": "2025-03-15T00:00:00Z",
+        "endDateTime": "2026-12-31T23:59:59Z"
+    },
+    "productSpecCharacteristic": [
+        {
+            "name": "Branch Locations",
+            "description": "Number of supported branch locations",
+            "valueType": "number",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": 10
+                },
+                {
+                    "isDefault": false,
+                    "value": 25
+                },
+                {
+                    "isDefault": false,
+                    "value": 50
+                }
+            ]
+        },
+        {
+            "name": "Analytics",
+            "description": "Level of analytics insights",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": false,
+                    "value": "Basic"
+                },
+                {
+                    "isDefault": true,
+                    "value": "Advanced"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductSpecification"
+}

@@ -1,0 +1,52 @@
+{
+    "name": "Standard Fiber Backbone",
+    "description": "Standard wholesale fiber optic backbone connectivity for network providers",
+    "version": "1.0",
+    "validFor": {
+        "startDateTime": "2025-05-01T00:00:00Z",
+        "endDateTime": "2027-05-01T00:00:00Z"
+    },
+    "isBundle": false,
+    "isSellable": true,
+    "statusReason": "Released for sale",
+    "lifecycleStatus": "Active",
+    "productSpecification": {
+        "id": "FB-W-1000",
+        "href": "/productCatalogManagement/v4/productSpecification/FB-W-1000",
+        "name": "Fiber Optic Backbone",
+        "@referredType": "ProductSpecification"
+    },
+    "category": [
+        {
+            "id": "WC001",
+            "href": "/productCatalogManagement/v4/category/WC001",
+            "name": "Wholesale Connectivity",
+            "@referredType": "Category"
+        }
+    ],
+    "prodSpecCharValueUse": [
+        {
+            "name": "Bandwidth",
+            "description": "Maximum bandwidth capacity",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "100 Gbps"
+                }
+            ]
+        },
+        {
+            "name": "Redundancy",
+            "description": "Level of path redundancy",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "Dual Path"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductOffering"
+}

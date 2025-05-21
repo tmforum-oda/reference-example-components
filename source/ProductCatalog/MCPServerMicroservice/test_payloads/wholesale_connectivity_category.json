@@ -1,0 +1,12 @@
+{
+    "name": "Wholesale Connectivity",
+    "description": "Wholesale connectivity services for service providers",
+    "isRoot": true,
+    "version": "1.0",
+    "lifecycleStatus": "Active",
+    "validFor": {
+        "startDateTime": "2025-05-01T00:00:00Z",
+        "endDateTime": "2027-05-01T00:00:00Z"
+    },
+    "@type": "Category"
+}
