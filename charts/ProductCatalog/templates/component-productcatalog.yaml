@@ -36,11 +36,13 @@ spec:
       path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4
       developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4/docs
       port: 8080
+    {{- if .Values.component.MCPServer.enabled }}
     - name: productcatalogmcp
       implementation: {{.Release.Name}}-prodcatmcp
       apiType: mcp
       path: /{{.Release.Name}}-{{.Values.component.name}}/mcp
-      port: 8080      
+      port: 8080
+    {{- end }}      
     - name: promotionmanagement
       specification:
       - url: "https://raw.githubusercontent.com/tmforum-apis/TMF671_Promotion/master/TMF671-Promotion-v4.0.0.swagger.json"

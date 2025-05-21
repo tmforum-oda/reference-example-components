@@ -1,3 +1,4 @@
+{{- if .Values.component.MCPServer.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23,9 +24,10 @@ spec:
         - name: RELEASE_NAME
           value: {{.Release.Name}}
         - name: COMPONENT_NAME
-          value: {{.Release.Name}}-{{.Values.component.name}}
+          value: {{.Release.Name}}-{{.Values.component.name}}        
         imagePullPolicy: Always
         ports:
         - name: {{.Release.Name}}-pcmcp
           containerPort: 8080
+{{- end }}
 

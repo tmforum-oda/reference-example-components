@@ -2,7 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-
 component:
   # Specifies whether a service account should be created
   id: TMFC001
@@ -32,7 +31,7 @@ component:
     CORS:
       enabled: false
       allowCredentials: false
-      allowOrigins: "https://allowed-origin.com, https://allowed-origin2.com"
+      allowOrigins: "https://allowed-origin.com, https://allowed-origin2.com"    
       handlePreflightRequests:
         enabled: false
         allowHeaders: "Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
@@ -42,6 +41,8 @@ component:
   dependentAPIs:
     enabled: false
     rejectUnauthorizedCertificates: false
+  MCPServer:
+    enabled: false
 security:
   canvasSystemRole: Admin
 mongodb:

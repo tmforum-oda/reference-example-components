@@ -1,3 +1,4 @@
+{{- if .Values.component.MCPServer.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,4 +14,5 @@ spec:
   type: NodePort
   selector:
     impl: {{.Release.Name}}-prodcatmcp
+{{- end }}
 
