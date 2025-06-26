@@ -63,6 +63,11 @@ mcp:
 partyrole:
   image: lesterthomas/partyroleapi:1.0
   versionLabel: partyroleapi-1.0
+permissionspec:
+  image: lesterthomas/permissionspecapi:1.0
+  versionLabel: permissionspecapi-1.0
+  # Set to true to use permissionspec API instead of partyrole API
+  enabled: true
 promotionmgmt:
   image: lesterthomas/promotionmgmtapi:0.5
   versionLabel: promotionmgmtapi-0.5
