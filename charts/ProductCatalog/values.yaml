@@ -44,7 +44,7 @@ component:
   MCPServer:
     enabled: false
 security:
-  canvasSystemRole: Admin
+  canvasSystemRole: canvasRole
 mongodb:
   port: 27017
   database: tmf
@@ -64,8 +64,8 @@ partyrole:
   image: lesterthomas/partyroleapi:1.0
   versionLabel: partyroleapi-1.0
 permissionspec:
-  image: lesterthomas/permissionspecapi:0.5
-  versionLabel: permissionspecapi-0.5
+  image: lesterthomas/permissionspecapi:0.7
+  versionLabel: permissionspecapi-0.7
   # Set to true to use permissionspec API instead of partyrole API
   enabled: true
 promotionmgmt:

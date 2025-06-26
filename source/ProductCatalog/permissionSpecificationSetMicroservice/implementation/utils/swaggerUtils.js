@@ -11,7 +11,14 @@ var swaggerDoc = null;
 
 function getSwaggerDoc() {
   if(swaggerDoc==null) {
-    spec = fs.readFileSync(path.join(__dirname,'../api/TMF672-Roles_And_Permissions-v5.0.0.oas.yaml'), 'utf8');
+    // First try to load the modified spec with component name
+    const modifiedSpecPath = path.join(__dirname,'../api/TMF672-Roles_And_Permissions-v5.0.0-modified.oas.yaml');
+    if(fs.existsSync(modifiedSpecPath)) {
+      spec = fs.readFileSync(modifiedSpecPath, 'utf8');
+    } else {
+      // Fallback to original spec
+      spec = fs.readFileSync(path.join(__dirname,'../api/TMF672-Roles_And_Permissions-v5.0.0.oas.yaml'), 'utf8');
+    }
     swaggerDoc = jsyaml.safeLoad(spec);
   };
   return swaggerDoc;
@@ -112,6 +119,51 @@ function getHost() {
   return swaggerDoc.host || 'localhost';
 }
 
+function getBasePath() {
+  const swaggerDoc = getSwaggerDoc();
+  // OAS3 uses servers array with apiRoot variable
+  if (swaggerDoc.servers && swaggerDoc.servers.length > 0) {
+    const server = swaggerDoc.servers[0];
+    if (server.variables && server.variables.apiRoot) {
+      return '/' + server.variables.apiRoot.default;
+    }
+  }
+  return swaggerDoc.basePath || '';
+}
+
+function getComponentName() {
+  // Extract component name from environment variable or default naming
+  const componentName = process.env.COMPONENT_NAME || 'r1-productcatalogmanagement';
+  return componentName;
+}
+
+function buildComponentAwareURL(req, resourcePath = '') {
+  // Use relative path const scheme = getURLScheme();
+  // Use relative path const host = getHost();
+  const basePath = getBasePath();
+  
+  // Clean up the resource path
+  const cleanResourcePath = resourcePath.startsWith('/') ? resourcePath : `/${resourcePath}`;
+  
+  // Build the full URL with component-aware base path
+  const fullPath = `${basePath}${cleanResourcePath}`.replace(/\/+/g, '/');
+  console.log(`Building component-aware relative URL: ${fullPath}`);
+  return `${fullPath}`;
+}
+
+function updateHrefWithComponentName(href, req) {
+  if (!href || typeof href !== 'string') {
+    return href;
+  }
+  
+  // If href is a relative path, convert to component-aware URL
+  if (href.startsWith('/')) {
+    return buildComponentAwareURL(req, href);
+  }
+  
+  return href;
+}
+
 function hasProperty (obj, path) {
   var arr = path.split('.');
   while (arr.length && (obj = obj[arr.shift()]));
@@ -151,6 +203,10 @@ module.exports = {
 				   				 getPayload, 
 				   				 getURLScheme,
 				   				 getHost,
+				   				 getBasePath,
+				   				 getComponentName,
+				   				 buildComponentAwareURL,
+				   				 updateHrefWithComponentName,
 
 									 getRequestServiceType,
                    updateQueryServiceType,

@@ -20,6 +20,10 @@ exports.createPermissionSpecificationSet = function(req, res, next, body, fields
     .then(payload => {
       payload.id = uuid.v4();
       
+      // Generate component-aware href
+      const resourcePath = `/permissionSpecificationSet/${payload.id}`;
+      payload.href = swaggerUtils.buildComponentAwareURL(req, resourcePath);
+      
       mongoUtils.connect().then(db => {
         db.collection(resourceType)
           .insertOne(payload)
@@ -75,15 +79,29 @@ exports.deletePermissionSpecificationSet = function(req, res, next, id) {
  */
 exports.listPermissionSpecificationSet = function(req, res, next) {
   console.log("listPermissionSpecificationSet");
-  console.log("req: " + req);
+  console.log("req body: " + JSON.stringify(req.body));
   const query = mongoUtils.getMongoQuery(req);
   
   const internalError = new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
+  console.log("listPermissionSpecificationSet: query=" + util.inspect(query, {depth: null}));
+  console.log("resourceType=" + resourceType);
 
   mongoUtils.connect().then(db => {
     db.collection(resourceType)
       .find(query.criteria, query.options).toArray()
       .then(doc => {
+        // Add component-aware href to each document if not present
+        console.log("listPermissionSpecificationSet: found " + doc.length + " documents");
+
+        if (Array.isArray(doc)) {
+          doc.forEach(item => {
+            console.log("listPermissionSpecificationSet: item=" + JSON.stringify(item));
+            if (item.id && !item.href) {
+              const resourcePath = `/permissionSpecificationSet/${item.id}`;
+              item.href = swaggerUtils.buildComponentAwareURL(req, resourcePath);
+            }
+          });
+        }
         mongoUtils.sendDoc(res, 200, doc);
       })
       .catch(error => {
@@ -121,6 +139,11 @@ exports.patchPermissionSpecificationSet = function(req, res, next, body, fields,
               .then(() => {
                 db.collection(resourceType).findOne(query)
                   .then(doc => {
+                    // Add component-aware href if not present
+                    if (doc && doc.id && !doc.href) {
+                      const resourcePath = `/permissionSpecificationSet/${doc.id}`;
+                      doc.href = swaggerUtils.buildComponentAwareURL(req, resourcePath);
+                    }
                     mongoUtils.sendDoc(res, 200, doc);
                   })
                   .catch(error => {
@@ -163,6 +186,11 @@ exports.retrievePermissionSpecificationSet = function(req, res, next, fields, id
       .findOne(query.criteria, query.options)
       .then(doc => {
         if (doc) {
+          // Add component-aware href if not present
+          if (doc.id && !doc.href) {
+            const resourcePath = `/permissionSpecificationSet/${doc.id}`;
+            doc.href = swaggerUtils.buildComponentAwareURL(req, resourcePath);
+          }
           mongoUtils.sendDoc(res, 200, doc);
         } else {
           sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND, "No resource with given id found"));

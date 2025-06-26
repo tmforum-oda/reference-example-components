@@ -2,20 +2,20 @@ const axios = require('axios');
 
 // Configuration for different API types
 const initialPartyRole = {
-  name: "Admin"
+  name: "canvasRole"
 }
 
 const initialPermissionSpecificationSet = {
   "@type": "PermissionSpecificationSet",
-  name: "Admin",
-  involvementRole: "Admin",
-  description: "Administrator permission specification set with full access rights",
+  name: "canvasRole",
+  involvementRole: "canvasRole",
+  description: "canvasRole permission specification set with read-only access rights",
   permissionSpecification: [
     {
       "@type": "PermissionSpecification",
-      name: "admin:all",
-      description: "Full administrative access to all resources",
-      function: "admin",
+      name: "canvasRole:read-only",
+      description: "Read-only access to all resources",
+      function: "canvasRole",
       action: "all"
     }
   ]
