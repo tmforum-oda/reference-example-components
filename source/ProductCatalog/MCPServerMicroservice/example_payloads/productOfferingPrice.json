@@ -1,0 +1,73 @@
+{
+    "name": "Recurring Charge for Business Firewall",
+    "description": "This pricing describes the recurring charge for a firewall service that can be deployed in business customer premise.",
+    "version": "2.1",
+    "validFor": {
+        "startDateTime": "2017-08-23T00:00",
+        "endDateTime": "2018-03-25T00:00"
+    },
+    "priceType": "recurring",
+    "recurringChargePeriodType": "monthly",
+    "recurringChargePeriodLength": 1,
+    "isBundle": false,
+    "price": {
+        "unit": "EUR",
+        "value": 50
+    },
+    "percentage": 0.0,
+    "productOfferingTerm": [
+        {
+            "name": "12 Month",
+            "description": "12 month contract",
+            "duration": {
+                "value": 12,
+                "units": "Month"
+            },
+            "validFor": {
+                "startDateTime": "2017-04-19T16:42:23.0Z",
+                "endDateTime": "2017-06-19T00:00:00.0Z"
+            }
+        }
+    ],
+    "place": [
+        {
+            "id": "9979",
+            "href": "https://mycsp.com:8080/tmf-api/geographicAddressManagement/v4/geographicAddress/9979",
+            "name": "San Francisco Bay Area",
+            "@referredType": "GeographicAddress"
+        }
+    ],
+    "constraint": [
+        {
+            "@referredType": "PriceConstraint",
+            "name": "PriceRuleNo1",
+            "id": "525",
+            "href": "https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/constraint/525"
+        }
+    ],
+    "pricingLogicAlgorithm": {
+        "id": "533",
+        "href": "https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/PricingLogicAlgorithm/533",
+        "@type": "RecurringRatingPLA",
+        "@baseType": "PricingLogicAlgorithm",
+        "@schemaLocation": "https://mycsp.com:8080/tmf-api/schema/Product/RecurringRatingPLA.schema.json",
+        "name": "PLA_rec",
+        "description": "Algorithm that rates Recurring event",
+        "plaSpecId": "525",
+        "validFor": {
+            "startDateTime": "2017-04-19T16:42:23.0Z",
+            "endDateTime": "2018-06-19T00:00:00.0Z"
+        }
+    },
+    "tax": [
+        {
+            "taxAmount": {
+                "unit": "EUR",
+                "value": 10
+            },
+            "taxCategory": "VAT",
+            "taxRate": 20.0
+        }
+    ],
+    "@type": "ProductOfferingPrice"
+}

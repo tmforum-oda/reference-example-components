@@ -1,0 +1,50 @@
+{
+    "name": "Enterprise Firewall Solution",
+    "description": "Next-generation firewall solution for enterprises",
+    "brand": "SecureNet",
+    "productNumber": "FW-E-3000",
+    "isBundle": false,
+    "version": "4.1",
+    "lifecycleStatus": "Active",
+    "validFor": {
+        "startDateTime": "2025-03-15T00:00:00Z",
+        "endDateTime": "2026-12-31T23:59:59Z"
+    },
+    "productSpecCharacteristic": [
+        {
+            "name": "Throughput",
+            "description": "Maximum firewall throughput",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": false,
+                    "value": "5 Gbps"
+                },
+                {
+                    "isDefault": true,
+                    "value": "10 Gbps"
+                },
+                {
+                    "isDefault": false,
+                    "value": "20 Gbps"
+                }
+            ]
+        },
+        {
+            "name": "Concurrent Sessions",
+            "description": "Maximum concurrent sessions",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": false,
+                    "value": "1 Million"
+                },
+                {
+                    "isDefault": true,
+                    "value": "5 Million"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductSpecification"
+}

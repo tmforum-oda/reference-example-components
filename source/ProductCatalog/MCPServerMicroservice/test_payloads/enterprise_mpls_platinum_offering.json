@@ -1,0 +1,52 @@
+{
+    "name": "Enterprise Premium MPLS Network",
+    "description": "Premium enterprise-grade MPLS network with platinum SLA",
+    "version": "3.0",
+    "validFor": {
+        "startDateTime": "2025-03-15T00:00:00Z",
+        "endDateTime": "2026-12-31T23:59:59Z"
+    },
+    "isBundle": false,
+    "isSellable": true,
+    "statusReason": "Released for sale",
+    "lifecycleStatus": "Active",
+    "productSpecification": {
+        "id": "MPLS-E-1000",
+        "href": "/productCatalogManagement/v4/productSpecification/MPLS-E-1000",
+        "name": "MPLS Network Service",
+        "@referredType": "ProductSpecification"
+    },
+    "category": [
+        {
+            "id": "EN001",
+            "href": "/productCatalogManagement/v4/category/EN001",
+            "name": "Enterprise Networking",
+            "@referredType": "Category"
+        }
+    ],
+    "prodSpecCharValueUse": [
+        {
+            "name": "Service Level",
+            "description": "SLA tier",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "Platinum"
+                }
+            ]
+        },
+        {
+            "name": "Traffic Classes",
+            "description": "Number of traffic classes",
+            "valueType": "number",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": 5
+                }
+            ]
+        }
+    ],
+    "@type": "ProductOffering"
+}

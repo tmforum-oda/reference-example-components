@@ -1,0 +1,52 @@
+{
+    "name": "SD-WAN Business",
+    "description": "Business-grade SD-WAN solution with basic analytics",
+    "version": "2.5",
+    "validFor": {
+        "startDateTime": "2025-03-15T00:00:00Z",
+        "endDateTime": "2026-12-31T23:59:59Z"
+    },
+    "isBundle": false,
+    "isSellable": true,
+    "statusReason": "Released for sale",
+    "lifecycleStatus": "Active",
+    "productSpecification": {
+        "id": "SDWAN-E-2000",
+        "href": "/productCatalogManagement/v4/productSpecification/SDWAN-E-2000",
+        "name": "SD-WAN Solution",
+        "@referredType": "ProductSpecification"
+    },
+    "category": [
+        {
+            "id": "EN001",
+            "href": "/productCatalogManagement/v4/category/EN001",
+            "name": "Enterprise Networking",
+            "@referredType": "Category"
+        }
+    ],
+    "prodSpecCharValueUse": [
+        {
+            "name": "Branch Locations",
+            "description": "Number of supported branch locations",
+            "valueType": "number",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": 10
+                }
+            ]
+        },
+        {
+            "name": "Analytics",
+            "description": "Level of analytics insights",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "Basic"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductOffering"
+}

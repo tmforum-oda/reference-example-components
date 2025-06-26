@@ -24,11 +24,27 @@ To uninstall the chart:
     helm delete <release name> -n components
 
 
-## Optional API Dependency
+## Optional Features
+
+### Optional API Dependency
 
 The Product Catalog component can be installed with an option API dependency (for a downstream Product Catalog API). By default, this dependency is not enabled. You can enable it with:
 
 ```
 helm install <release name> oda-components/productcatalog --set component.dependentAPIs.enabled=true -n components
+```
+
+### Optional MCP Server
+
+The Product Catalog component includes a Model Context Protocol (MCP) server that provides AI agent capabilities. By default, this feature is not enabled. You can enable it with:
+
+```
+helm install <release name> oda-components/productcatalog --set component.MCPServer.enabled=true -n components
+```
+
+Or when upgrading:
+
+```
+helm upgrade <release name> oda-components/productcatalog --set component.MCPServer.enabled=true -n components
 ```
 

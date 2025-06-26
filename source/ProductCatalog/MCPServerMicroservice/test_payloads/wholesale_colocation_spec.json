@@ -1,0 +1,46 @@
+{
+    "name": "Data Center Colocation",
+    "description": "Wholesale data center colocation services",
+    "brand": "TelcoNet",
+    "productNumber": "DC-W-3000",
+    "isBundle": false,
+    "version": "1.0",
+    "lifecycleStatus": "Active",
+    "validFor": {
+        "startDateTime": "2025-05-01T00:00:00Z",
+        "endDateTime": "2027-05-01T00:00:00Z"
+    },
+    "productSpecCharacteristic": [
+        {
+            "name": "Rack Units",
+            "description": "Number of rack units available",
+            "valueType": "number",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": 42
+                },
+                {
+                    "isDefault": false,
+                    "value": 21
+                }
+            ]
+        },
+        {
+            "name": "Power Capacity",
+            "description": "Power capacity per rack",
+            "valueType": "string",
+            "productSpecCharacteristicValue": [
+                {
+                    "isDefault": true,
+                    "value": "5kW"
+                },
+                {
+                    "isDefault": false,
+                    "value": "10kW"
+                }
+            ]
+        }
+    ],
+    "@type": "ProductSpecification"
+}
