@@ -24,7 +24,7 @@ servers:
         default: '8080'
         description: Server port
       apiRoot:
-        default: r1-productcatalogmanagement/rolesAndPermissionsManagement/v5
+        default: productcatalog/rolesAndPermissionsManagement/v5
         description: API root path
 tags:
   - name: permissionSpecificationSet

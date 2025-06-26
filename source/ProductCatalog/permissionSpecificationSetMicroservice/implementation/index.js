@@ -7,6 +7,8 @@ var fs = require('fs');
 var jsyaml = require('js-yaml');
 
 var oas3Tools = require('oas3-tools');
+const entrypointUtils = require('./utils/entrypoint');
+const express = require('express');
 var serverPort = process.env.PORT || 8080;
 
 // Get Component instance name from Environment variable and put it at start of API path
@@ -38,8 +40,22 @@ var options = {
     },
 };
 
+// Create Express app first to add custom middleware
+const app = express();
+
+// Add entrypoint route before OAS3 tools configuration
+const basePath = `/${oasSpec.servers[0].variables.apiRoot.default}`;
+console.log('Adding entrypoint at:', basePath);
+
+// Create routes for entrypoint
+app.get(basePath, entrypointUtils.entrypoint);
+app.get(basePath + '/', entrypointUtils.entrypoint);
+
 var expressAppConfig = oas3Tools.expressAppConfig(modifiedOasPath, options);
-var app = expressAppConfig.getApp();
+var oasApp = expressAppConfig.getApp();
+
+// Mount OAS3 routes on the same app
+app.use('/', oasApp);
 
 // Initialize the Swagger middleware
 http.createServer(app).listen(serverPort, function () {
