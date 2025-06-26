@@ -13,10 +13,10 @@ const resourceType = 'PermissionSpecificationSet';
 /**
  * Creates a PermissionSpecificationSet
  */
-exports.createPermissionSpecificationSet = function(req, res, next) {
+exports.createPermissionSpecificationSet = function(req, res, next, body, fields) {
   const internalError = new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
 
-  swaggerUtils.getPayload(req)
+  swaggerUtils.getPayload(req, body)
     .then(payload => {
       payload.id = uuid.v4();
       
@@ -104,7 +104,7 @@ exports.patchPermissionSpecificationSet = function(req, res, next, body, fields,
   const query = { id: id };
   const internalError = new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
 
-  swaggerUtils.getPayload(req)
+  swaggerUtils.getPayload(req, body)
     .then(payload => {
       mongoUtils.connect().then(db => {
         // First check if resource exists

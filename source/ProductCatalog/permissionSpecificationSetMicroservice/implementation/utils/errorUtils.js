@@ -3,7 +3,8 @@
 const TErrorEnum = {
   INTERNAL_SERVER_ERROR: { "code": "500", "message": "Internal Server Error" },
   RESOURCE_NOT_FOUND: { "code": "404", "message": "Resource not found" },
-  INVALID_REQUEST: { "code": "400", "message": "Invalid Request" }
+  INVALID_REQUEST: { "code": "400", "message": "Invalid Request" },
+  INVALID_BODY: { "code": "400", "message": "Invalid Body" }
 };
 
 class TError extends Error {
@@ -18,13 +19,16 @@ class TError extends Error {
 
 function sendError(res, error) {
   console.error('Error occurred:', error);
-  console.error('Res: ', res);
-  res.statusCode = error.status;
+  
+  const statusCode = error.status || error.code || 500;
+  const errorResponse = {
+    code: error.code || '500',
+    message: error.message || 'Internal Server Error'
+  };
+  
+  res.statusCode = statusCode;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({
-    code: error.code,
-    message: error.message
-  }));
+  res.end(JSON.stringify(errorResponse));
 }
 
 module.exports = { TError, TErrorEnum, sendError };

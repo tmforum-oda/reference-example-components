@@ -43,13 +43,6 @@ spec:
         ports:
         - name: {{.Release.Name}}-psapi
           containerPort: 8080
-        startupProbe:
-          httpGet:
-            path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/rolesAndPermissionsManagement/v5/permissionSpecificationSet
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          failureThreshold: 30
 {{- else }}
 apiVersion: apps/v1
 kind: Deployment

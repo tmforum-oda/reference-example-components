@@ -11,15 +11,16 @@
     "swagger"
   ],
   "license": "Unlicense",
-  "private": true,
-  "dependencies": {
+  "private": true,  "dependencies": {
     "connect": "^3.2.0",
     "js-yaml": "^3.3.0",
     "oas3-tools": "^2.2.3",
+    "swagger-ui-dist": "^3.25.0",
     "mongodb": "^3.1.1",
     "query-to-mongo": "^0.9.0",
     "uuid": "^3.3.2",
     "request": "^2.88.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "dotenv": "^8.2.0"
   }
 }
