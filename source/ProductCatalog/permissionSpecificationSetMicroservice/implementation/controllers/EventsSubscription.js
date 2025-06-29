@@ -4,7 +4,7 @@ var utils = require('../utils/writer.js');
 var EventsSubscription = require('../service/EventsSubscriptionService');
 
 module.exports.createHub = function createHub (req, res, next, body) {
-  EventsSubscription.createHub(body)
+  EventsSubscription.createHub(req, body)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -14,7 +14,7 @@ module.exports.createHub = function createHub (req, res, next, body) {
 };
 
 module.exports.hubDelete = function hubDelete (req, res, next, id) {
-  EventsSubscription.hubDelete(id)
+  EventsSubscription.hubDelete(req, id)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -24,7 +24,7 @@ module.exports.hubDelete = function hubDelete (req, res, next, id) {
 };
 
 module.exports.hubGet = function hubGet (req, res, next, id) {
-  EventsSubscription.hubGet(id)
+  EventsSubscription.hubGet(req, id)
     .then(function (response) {
       utils.writeJson(res, response);
     })

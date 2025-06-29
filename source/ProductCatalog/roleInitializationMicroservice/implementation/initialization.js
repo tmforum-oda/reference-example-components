@@ -6,12 +6,14 @@ const initialPartyRole = {
 }
 
 const initialPermissionSpecificationSet = {
+  "@baseType": "PermissionSpecificationSet",
   "@type": "PermissionSpecificationSet",
   name: "canvasRole",
   involvementRole: "canvasRole",
   description: "canvasRole permission specification set with read-only access rights",
   permissionSpecification: [
     {
+      "@baseType": "PermissionSpecification",
       "@type": "PermissionSpecification",
       name: "canvasRole:read-only",
       description: "Read-only access to all resources",

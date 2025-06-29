@@ -5,6 +5,7 @@ const uuid = require('uuid');
 
 const mongoUtils = require('../utils/mongoUtils');
 const swaggerUtils = require('../utils/swaggerUtils');
+const notificationUtils = require('../utils/notificationUtils');
 
 const {TError, TErrorEnum, sendError} = require('../utils/errorUtils');
 
@@ -24,11 +25,19 @@ exports.createPermissionSpecificationSet = function(req, res, next, body, fields
       const resourcePath = `/permissionSpecificationSet/${payload.id}`;
       payload.href = swaggerUtils.buildComponentAwareURL(req, resourcePath);
       
+      // Add @baseType if not present
+      if (!payload['@baseType']) {
+        payload['@baseType'] = 'permissionSpecificationSet';
+      }
+      
       mongoUtils.connect().then(db => {
         db.collection(resourceType)
           .insertOne(payload)
           .then(() => {
+            console.log(`[SERVICE] Successfully created PermissionSpecificationSet with ID: ${payload.id}`);
+            console.log(`[SERVICE] Triggering notification for CREATE operation`);
             mongoUtils.sendDoc(res, 201, payload);
+            notificationUtils.publish(req, payload);
           })
           .catch(error => {
             console.error("createPermissionSpecificationSet: error=" + error);
@@ -60,16 +69,36 @@ exports.deletePermissionSpecificationSet = function(req, res, next, id) {
   const internalError = new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
 
   mongoUtils.connect().then(db => {
+
+    //need to query for the document before we delete it (so we can add it to event)
     db.collection(resourceType)
-      .deleteOne(query)
+      .findOne(query)
       .then(doc => {
-        if (doc.result.n == 1) {
-          mongoUtils.sendDoc(res, 204, {});
+        if(doc) {
+          console.log(`[SERVICE] Found PermissionSpecificationSet to delete with ID: ${doc.id}`);
+          console.log(`[SERVICE] Triggering notification for DELETE operation`);
+          notificationUtils.publish(req, doc);
         } else {
-          sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND, "No resource with given id found"));
+          sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND,"deletePermissionSpecificationSet: No resource with given id found"));
+          return;
         }
+ 
+        db.collection(resourceType)
+        .deleteOne(query)
+        .then(doc => {
+          if (doc.result.n == 1) {
+            mongoUtils.sendDoc(res, 204, {});
+          } else { 
+            sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND, "No resource with given id found"));
+          }
+        }).catch(error => sendError(res, internalError));        
+
       })
-      .catch(error => sendError(res, internalError));
+      .catch(error => {
+        console.error("deletePermissionSpecificationSet: error=" + error);
+        sendError(res, internalError);
+      });
+
   })
   .catch(error => sendError(res, internalError));
 };
@@ -99,6 +128,10 @@ exports.listPermissionSpecificationSet = function(req, res, next) {
             if (item.id && !item.href) {
               const resourcePath = `/permissionSpecificationSet/${item.id}`;
               item.href = swaggerUtils.buildComponentAwareURL(req, resourcePath);
+            }
+            // Add @baseType if not present
+            if (!item['@baseType']) {
+              item['@baseType'] = 'permissionSpecificationSet';
             }
           });
         }
@@ -144,7 +177,14 @@ exports.patchPermissionSpecificationSet = function(req, res, next, body, fields,
                       const resourcePath = `/permissionSpecificationSet/${doc.id}`;
                       doc.href = swaggerUtils.buildComponentAwareURL(req, resourcePath);
                     }
+                    // Add @baseType if not present
+                    if (doc && !doc['@baseType']) {
+                      doc['@baseType'] = 'permissionSpecificationSet';
+                    }
+                    console.log(`[SERVICE] Successfully updated PermissionSpecificationSet with ID: ${doc.id}`);
+                    console.log(`[SERVICE] Triggering notification for PATCH operation`);
                     mongoUtils.sendDoc(res, 200, doc);
+                    notificationUtils.publish(req, doc, old);
                   })
                   .catch(error => {
                     console.error("patchPermissionSpecificationSet error=" + error);
@@ -190,6 +230,10 @@ exports.retrievePermissionSpecificationSet = function(req, res, next, fields, id
           if (doc.id && !doc.href) {
             const resourcePath = `/permissionSpecificationSet/${doc.id}`;
             doc.href = swaggerUtils.buildComponentAwareURL(req, resourcePath);
+          }
+          // Add @baseType if not present
+          if (!doc['@baseType']) {
+            doc['@baseType'] = 'permissionSpecificationSet';
           }
           mongoUtils.sendDoc(res, 200, doc);
         } else {

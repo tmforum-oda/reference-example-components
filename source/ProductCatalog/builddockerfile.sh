@@ -7,7 +7,7 @@ docker buildx build -t "lesterthomas/promotionmgmtapi:0.2"  --platform "linux/am
 
 docker buildx build -t "lesterthomas/partyroleapi:0.2"  -t "lesterthomas/partyroleapi:latest" --platform "linux/amd64,linux/arm64" -f partyrole-dockerfile . --push
 
-docker buildx build -t "lesterthomas/permissionspecapi:0.4"  --platform "linux/amd64,linux/arm64" -f permissionspec-dockerfile . --push
+docker buildx build -t "lesterthomas/permissionspecapi:0.10"  --platform "linux/amd64,linux/arm64" -f permissionspec-dockerfile . --push
 
 docker buildx build -t "lesterthomas/roleinitialization:0.5"  --platform "linux/amd64,linux/arm64" -f roleinitialization-dockerfile . --push
 

@@ -193,6 +193,18 @@ function cleanPayloadServiceType(payload) {
   return payload;
 }
 
+function getPayload(req, body) {
+  return new Promise(function(resolve, reject) {
+    if (body) {
+      resolve(body);
+    } else if (req.body) {
+      resolve(req.body);
+    } else {
+      reject(new Error("No payload found"));
+    }
+  });
+}
+
 
 module.exports = { 
                    getSwaggerDoc, 
