@@ -27,7 +27,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
 var releaseName = process.env.RELEASE_NAME; 
 var componentName = process.env.COMPONENT_NAME;
-var usePermissionSpec = process.env.USE_PERMISSION_SPEC === 'true'; // Environment variable to determine which API to use
+const usePermissionSpec = process.env.USE_PERMISSION_SPEC === 'true'; // Environment variable to determine which API to use
 
 const createRole = async () => {
   var complete = false;
