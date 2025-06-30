@@ -77,18 +77,6 @@ function getResponseType(req) {
   return type;
 }
 
-// For OAS3 tools, the payload is passed directly to the controller function
-// This function now works with the body parameter passed to controllers
-function getPayload(req, body) {
-  return new Promise(function(resolve, reject) {
-    if(body !== undefined && body !== null) {
-      resolve(body);
-    } else {
-      reject(new TError(TErrorEnum.INVALID_BODY, "Payload not found"));
-    }
-  });
-}
-
 // Simplified functions for OAS3 compatibility
 function getPayloadType(req) {
   // In OAS3 tools, payload type is not needed as body is passed directly

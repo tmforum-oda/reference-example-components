@@ -25,26 +25,21 @@ function publish(req, doc, old) {
     
   console.log(`[HUB] Searching for subscribers with serviceGroup: ${query._serviceGroup}`);
   
-  // Debug: List all hub registrations to see what's actually stored
+  // Connect to database and handle both debug and subscriber notifications
   mongoUtils.connect()
-  .then(debugDb => {
-    debugDb.collection(HUB)
+  .then(db => {
+    // Debug: List all hub registrations to see what's actually stored
+    db.collection(HUB)
     .find({}).toArray()
     .then(allHubEntries => {
       console.log(`[HUB] DEBUG: Total hub registrations in database: ${allHubEntries.length}`);
       allHubEntries.forEach((entry, index) => {
         console.log(`[HUB] DEBUG: Registration ${index + 1}: serviceGroup="${entry._serviceGroup}", callback="${entry.callback}", id="${entry.id}"`);
       });
+      
+      // Find subscribers for the serviceGroup
+      return db.collection(HUB).find(query).toArray();
     })
-    .catch(error => console.error("[HUB] DEBUG: Error listing all hub entries: " + error));
-  })
-  .catch(error => console.error("[HUB] DEBUG: Database connection error: " + error));
-  
-  // Find subscribers for the serviceGroup
-  mongoUtils.connect()
-  .then(db => {
-    db.collection(HUB)
-    .find(query).toArray()
     .then(clients => {
       console.log(`[HUB] Found ${clients.length} registered listeners/subscribers:`);
       clients.forEach((client, index) => {
@@ -57,7 +52,7 @@ function publish(req, doc, old) {
       
       notify(db, clients, message);
     })
-    .catch(error => console.error("[HUB] Error finding subscribers: " + error))
+    .catch(error => console.error("[HUB] Error in subscription processing: " + error));
   })
   .catch(error => console.error("[HUB] Database connection error: " + error));
 }
