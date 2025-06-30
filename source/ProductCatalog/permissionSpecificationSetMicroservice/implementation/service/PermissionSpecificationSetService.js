@@ -106,13 +106,17 @@ exports.deletePermissionSpecificationSet = function(req, res, next, id) {
 /**
  * List or find PermissionSpecificationSet objects
  */
-exports.listPermissionSpecificationSet = function(req, res, next) {
+exports.listPermissionSpecificationSet = function(req, res, next, fields, offset, limit, before, after, name, description, involvementRole, sort, filter) {
   console.log("listPermissionSpecificationSet");
-  console.log("req body: " + JSON.stringify(req.body));
+  console.log("req.url: " + req.url);
+  console.log("req.query: " + JSON.stringify(req.query));
+  console.log("req._parsedUrl.query: " + req._parsedUrl.query);
+  console.log("Parameters - fields:", fields, "offset:", offset, "limit:", limit, "before:", before, "after:", after, "name:", name, "description:", description, "involvementRole:", involvementRole, "sort:", sort, "filter:", filter);
+  
   const query = mongoUtils.getMongoQuery(req);
   
   const internalError = new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
-  console.log("listPermissionSpecificationSet: query=" + util.inspect(query, {depth: null}));
+  console.log("listPermissionSpecificationSet: MongoDB query=" + util.inspect(query, {depth: null}));
   console.log("resourceType=" + resourceType);
 
   mongoUtils.connect().then(db => {

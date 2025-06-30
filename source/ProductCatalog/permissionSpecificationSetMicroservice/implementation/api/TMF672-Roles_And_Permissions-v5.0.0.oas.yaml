@@ -279,6 +279,30 @@ paths:
         explode: true
         schema:
           type: string
+      - name: name
+        in: query
+        description: Filter by permission specification set name
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: description
+        in: query
+        description: Filter by permission specification set description
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: involvementRole
+        in: query
+        description: Filter by involvement role
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
       - name: sort
         in: query
         description: "The default direction is Ascending order, the use of the modifier\

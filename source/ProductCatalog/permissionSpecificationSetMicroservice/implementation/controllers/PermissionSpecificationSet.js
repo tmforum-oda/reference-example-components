@@ -11,8 +11,8 @@ module.exports.deletePermissionSpecificationSet = function deletePermissionSpeci
   PermissionSpecificationSet.deletePermissionSpecificationSet(req, res, next, id)
 };
 
-module.exports.listPermissionSpecificationSet = function listPermissionSpecificationSet (req, res, next, fields, offset, limit, before, after, sort, filter) {
-  PermissionSpecificationSet.listPermissionSpecificationSet(req, res, next, fields, offset, limit, before, after, sort, filter)
+module.exports.listPermissionSpecificationSet = function listPermissionSpecificationSet (req, res, next, fields, offset, limit, before, after, name, description, involvementRole, sort, filter) {
+  PermissionSpecificationSet.listPermissionSpecificationSet(req, res, next, fields, offset, limit, before, after, name, description, involvementRole, sort, filter)
 };
 
 module.exports.patchPermissionSpecificationSet = function patchPermissionSpecificationSet (req, res, next, body, fields, id) {
