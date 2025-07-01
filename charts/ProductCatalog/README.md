@@ -13,7 +13,7 @@ In its **management function** it implements:
 * Outbound Open Telemetry events.
 
 In its **security function** it implements:
-* The *mandatory* TMF669 Party Role Management Open API.
+* The *optional* TMF672 User Roles and Permissions or the TMF669 Party Role Management Open API for dynamically managed roles. The default is to use TMF672 (TMF669 will be deprecated in the future). The API to use is set in the values file `permissionspec.enabled=true`.
 
 
 The implementation consists of 7 microservices:
