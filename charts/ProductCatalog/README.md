@@ -16,14 +16,15 @@ In its **security function** it implements:
 * The *optional* TMF672 User Roles and Permissions or the TMF669 Party Role Management Open API for dynamically managed roles. The default is to use TMF672 (TMF669 will be deprecated in the future). The API to use is set in the values file `permissionspec.enabled=true`.
 
 
-The implementation consists of 7 microservices:
-* a partyRole microservice to implemnt the TMF669 Party Role Management Open API.
-* roleInitialization microservice that bootstraps the initial Party Role interface. This is depoyed as a Kubernetes Job that runs once when the component is initialised.
+The implementation consists of 8 microservices:
+* a role management microservice that implements either the TMF672 User Roles and Permissions API (default) or the TMF669 Party Role Management Open API (to be deprecated).
+* roleInitialization microservice that bootstraps the initial PermissionSpecificationSet/PartyRole. This is deployed as a Kubernetes Job that runs once when the component is initialised.
 * a productCatalog microservice to implement the TMF620 Product Catalog Management Open API.
 * a promotionManagement microservice to implement the TMF671 Promotion Management Open API.
 * a openMetrics microservice that implements the open metrics API.
 * a productCatalogInitialization microservice that registers the metrics microservice as a listener for product catalog create/update/delete business events.  This is depoyed as a Kubernetes Job that runs once when the component is initialised.
 * a simple deployment of a mongoDb. This is deployed as a Kubernetes Deployment with a PersistentVolumeClaim.
+* a ProductCatalog MCP microservice that provides a Model Context Protocol (MCP) wrapper on top of the TMF620 Product Catalog Management API.
 
 
 This reference component is intended to be used as a showcase for the ODA Component model, and to be used for testing the ODA Canvas. It is not intended for production deployments.
