@@ -1,7 +1,7 @@
 {
-  "name": "party-role-initialization",
+  "name": "role-initialization",
   "version": "0.0.1",
-  "description": "Initialize roles in Party Role Mongo Database",
+  "description": "Initialize roles in either Party Role or Permission Specification databases",
   "main": "index.js",
   "scripts": {
     "prestart": "npm install",

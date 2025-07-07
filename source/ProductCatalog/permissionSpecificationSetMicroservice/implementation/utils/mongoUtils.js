@@ -15,8 +15,9 @@ var mongodb = null;
 /* connection helper for running MongoDb from url */
 function connectHelper(callback) {
   const database = process.env.MONGODB_DATABASE;
-  var credentials_uri = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${database}`
-  credentials_uri = "mongodb://127.0.0.1:27017/tmf";
+  var credentials_uri = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${database}`;
+  // credentials_uri = "mongodb://127.0.0.1:27017/tmf"; // for local testing
+
   let options = {
     useNewUrlParser: true
   };
@@ -25,7 +26,7 @@ function connectHelper(callback) {
       mongodb = null;
       callback(err,null);
     } else {
-      mongodb = db.db("tmf");
+      mongodb = db.db(database);
       callback(null,mongodb);
     }
   });
@@ -44,9 +45,7 @@ function getMongoQuery(req) {
     res.options.fields.id = true;
   }
 
-  //
-  // test for date-time in query and allow partial equality matching, e.g. ="2018-08-21"
-  //
+  //test for date-time in query and allow partial equality matching
   try {
     const requestType = getPayloadType(req);
     const properties = Object.keys(res.criteria);
@@ -60,7 +59,6 @@ function getMongoQuery(req) {
       var paramDef = typeDefinition[prop];
       if(paramDef!==undefined && paramDef.type === "string" && paramDef.format === "date-time") {
         const propVal = res.criteria[prop];
-        // equality test if not the value is an object
         if(!(propVal instanceof Object)) {
           if(!isNaN(Date.parse(propVal))) {
             res.criteria[prop] = {$regex: '^' + propVal + '.*' };
@@ -77,12 +75,7 @@ function getMongoQuery(req) {
   delete res.options.fields;
 
   return(res);
-
-};
-
-function quotedString(s) {
-  return s;
-};
+}
 
 function connectDb(callback) {
   if(mongodb) {
@@ -96,7 +89,7 @@ function connectDb(callback) {
   } else {
     connectHelper(callback);
   }
-};
+}
 
 function connect() {
   return new Promise(function(resolve,reject) {
@@ -108,12 +101,11 @@ function connect() {
         };
       });
     });
-};
+}
 
 function sendDoc(res,code,doc) {
   // delete internal mongo _id from all documents
   if(Array.isArray(doc)) {
-    // remove _id from all documents
     doc.forEach(x => {
       delete x._id;
     });
@@ -122,7 +114,7 @@ function sendDoc(res,code,doc) {
   }
 
   if(doc.href) {
-    res.setHeader('Location',  doc.href);
+    res.setHeader('Location', doc.href);
   }
 
   res.statusCode = code;
@@ -130,6 +122,4 @@ function sendDoc(res,code,doc) {
   res.end(JSON.stringify(doc));
 }
 
-
 module.exports = { connect, connectDb, getMongoQuery, sendDoc };
-
