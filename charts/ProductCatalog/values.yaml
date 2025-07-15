@@ -53,9 +53,9 @@ api:
   versionLabel: productcatalogapi-0.21
   otlp:
     console:
-      enabled: false
-    protobuffCollector:
       enabled: true
+    protobuffCollector:
+      enabled: false
       url: http://otel-collector.monitoring.svc.cluster.local:4318/v1/traces
       # url for Datadog OTLP collector       url: http://datadog-agent.default.svc.cluster.local:4318/v1/traces
 metrics:

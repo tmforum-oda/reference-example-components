@@ -2,15 +2,56 @@
 
 This is an example implementation of a [TM Forum Product Catalog Management](https://www.tmforum.org/oda/directory/components-map/core-commerce-management/TMFC001) component.
 
+This folder is the Helm Chart package which you distribute or host in a Helm Chart Repository. This README describes the functionality of the Product Catalog component. The source code is available at [../source/ProductCatalog](/source/ProductCatalog/). The source file readme contains all the implementation documentation.
+
+## Functionality
+
+### Core function
 
 In its **core function** it implements:
 * The *mandatory* TMF620 Product Catalog Management Open API. 
 * The *optional* TMF671 Promotion Management Open API.
 * the *optional* dependency on one or more downstream TMF620 Product Catalog Management Open APIs to support federated product catalog scenarios.
 
+The dependency is not installed by default. To install it, set `component.dependentAPIs.enabled=true`:
+
+```
+helm install <release name> oda-components/productcatalog --set component.dependentAPIs.enabled=true -n components
+```
+
+The Product Catalog component includes an experimental Model Context Protocol (MCP) server that exposes the Product Catalog API as a *tool* towards an AI Agent. 
+
+By default, this feature is not enabled. You can enable it by setting `component.MCPServer.enabled=true`:
+
+```
+helm install <release name> oda-components/productcatalog --set component.MCPServer.enabled=true -n components
+```
+
+### Management function
+
 In its **management function** it implements:
-* Am *optional* metrics API supporting the open metrics standard (formerly the prometheus de-facto standard)
-* Outbound Open Telemetry events.
+* Am *optional* metrics API supporting the open metrics standard (formerly the prometheus de-facto standard). This metrics endpoint provides business metrics about all the Create/Update/Delete events for all the Product Catalog resources (Catalog, Category, Product Offering, Product Offering Price, Product Specification).
+
+The reference Canvas includes a Prometheus observability service that can scrape the metrics API and report on these business events. For example the screenshot below shows a graph of the rate of Catalog Create events with the query `rate(product_catalog_api_counter{NotificationEvent="CatalogCreationNotification"}[5m])`. 
+
+![alt text](image.png)
+
+
+
+* Outbound Open Telemetry events. The component also generates Open-Telemetry events that can either be logged to the console using `otlp.console.enabled:true` or sent to an Open-Telemetry protobuffCollector. You can set this in the `values.yaml` file as follows:
+
+```
+  otlp:
+    console:
+      enabled: false
+    protobuffCollector:
+      enabled: true
+      url: http://otel-collector.monitoring.svc.cluster.local:4318/v1/traces
+```
+
+
+
+## Security function
 
 In its **security function** it implements:
 * The *optional* TMF672 User Roles and Permissions or the TMF669 Party Role Management Open API for dynamically managed roles. The default is to use TMF672 (TMF669 will be deprecated in the future). The API to use is set in the values file `permissionspec.enabled=true`.
@@ -55,7 +96,7 @@ If the deployment fails, refer to the [Troubleshooting-Guide](https://github.com
 ## Configuration
 You can configure the following aspects of the component:
 - OpenTelemetry tracing and metrics
-  - Any OTL endpoint with HTTP traces will do. By default, the component is configured to send traces to the Datadog agent.
+  - Any OTL endpoint with HTTP traces will do. This has been tested using Prometheus and DataDog.
 - MongoDB Database connection
 
 You can do that  by changing the values in the values.yaml file, or by setting the values on the command line when you install the component using the --set parameter.
