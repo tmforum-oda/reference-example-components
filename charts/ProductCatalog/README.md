@@ -49,7 +49,13 @@ The reference Canvas includes a Prometheus observability service that can scrape
       url: http://otel-collector.monitoring.svc.cluster.local:4318/v1/traces
 ```
 
+With telemetry enabled, you can view traces of executions in Jaeger:
 
+![alt text](image-1.png)
+
+And drill down into an individual trace:
+
+![alt text](image-2.png)
 
 ## Security function
 
