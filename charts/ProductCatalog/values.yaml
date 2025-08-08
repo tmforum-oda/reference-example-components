@@ -56,7 +56,7 @@ api:
       enabled: false
     protobuffCollector:
       enabled: true
-      url: http://otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
+      url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
       # url for Datadog OTLP collector       url: http://datadog-agent.default.svc.cluster.local:4318/v1/traces
 metrics:
   image: lesterthomas/openmetrics:1.0
