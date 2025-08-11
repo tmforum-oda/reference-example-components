@@ -1,5 +1,5 @@
 {
-  "name": "registeralleventsmicroservice",
+  "name": "openmetricsmicroservice",
   "version": "1.0.0",
   "description": "Register for all events from Open-APIs",
   "main": "index.js",

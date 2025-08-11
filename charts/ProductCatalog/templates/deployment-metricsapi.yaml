@@ -17,8 +17,8 @@ spec:
         version: lesterthomas-metricsapi-latest
     spec:
       containers:
-      - name: {{.Release.Name}}-registerallevents
-        image: lesterthomas/registerallevents:latest
+      - name: {{.Release.Name}}-openmetrics
+        image: {{.Values.metrics.image}}
         env:
         - name: RELEASE_NAME
           value: {{.Release.Name}}           

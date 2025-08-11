@@ -52,6 +52,7 @@ server.get('/' + componentName + '/', async function(req, res) {
     res.send('Microservice to report prometheus metrics from ODA Components. Go to /metrics to see the metrics')
   })
 server.get('/' + componentName + '/metrics', async function(req, res) {
+    res.set('Content-Type', client.register.contentType);
     const metrics = await client.register.metrics()
     res.send(metrics)
   })
