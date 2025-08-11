@@ -34,7 +34,7 @@ In its **management function** it implements:
 
 The reference Canvas includes a Prometheus observability service that can scrape the metrics API and report on these business events. For example the screenshot below shows a graph of the rate of Catalog Create events with the query `rate(product_catalog_api_counter{NotificationEvent="CatalogCreationNotification"}[5m])`. 
 
-![alt text](image.png)
+![alt text](Prometheus.png)
 
 
 
@@ -51,11 +51,11 @@ The reference Canvas includes a Prometheus observability service that can scrape
 
 With telemetry enabled, you can view traces of executions in Jaeger:
 
-![alt text](image-1.png)
+![alt text](Jaeger-1.png)
 
 And drill down into an individual trace:
 
-![alt text](image-2.png)
+![alt text](Jaeger-2.png)
 
 ## Security function
 
