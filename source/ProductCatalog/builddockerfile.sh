@@ -13,4 +13,4 @@ docker buildx build -t "lesterthomas/roleinitialization:0.5"  --platform "linux/
 
 docker buildx build -t "lesterthomas/productcataloginitialization:0.2" --platform "linux/amd64,linux/arm64" -f productcataloginitialization-dockerfile . --push
 
-docker buildx build -t "lesterthomas/openmetrics:1.0" --platform "linux/amd64,linux/arm64" -f registerAllEvents-dockerfile . --push
+docker buildx build -t "lesterthomas/openmetrics:1.0" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
