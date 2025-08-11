@@ -62,7 +62,7 @@ provider.register({
 trace.setGlobalTracerProvider(provider)
 
 const sdk = new opentelemetry.NodeSDK({
-    traceExporter: exporters[0], // Use first exporter for SDK
+    // Remove traceExporter since we're already handling exporters manually via the provider
     instrumentations: [getNodeAutoInstrumentations()]
 })
 
