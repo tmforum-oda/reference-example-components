@@ -1,11 +1,11 @@
 # MCP Server implementation on top of TM Forum Product Catalog component.
 # This script sets up a FastMCP server that interacts with the Product Catalog API to handle queries and responses.
 #
-# Transport can be configured via command-line arguments or environment variables:
-# - --transport=stdio or MCP_TRANSPORT=stdio for standard input/output (default)
-# - --transport=sse or MCP_TRANSPORT=sse for Server-Sent Events
+# The server uses Streamable HTTP transport as recommended by MCP specification 2025-06-18.
+# Streamable HTTP consolidates bidirectional communication into a single /mcp endpoint,
+# improving security, reliability, and operability in cloud/serverless environments.
 #
-# When using SSE transport, port can be specified:
+# Port can be specified:
 # - --port=8000 or MCP_PORT=8000 (default port is 8000)
 
 # logging and system imports
@@ -18,8 +18,6 @@ from pathlib import Path
 # MCP Server imports
 from typing import Any, Dict, List, Optional
 from mcp.server.fastmcp import FastMCP
-from fastapi import FastAPI
-import uvicorn
 
 
 # Import API functionality
@@ -2864,39 +2862,30 @@ if __name__ == "__main__":
     # Set up argument parser for command-line options
     parser = argparse.ArgumentParser(description="Product Catalog MCP Server")
     parser.add_argument(
-        "--url",
-        default=os.environ.get("COMPONENT_NAME", "r1-productcatalogmanagement"),
-        help="URL endpoint for the MCP server (default: r1-productcatalogmanagement)",
-    )
-    parser.add_argument(
         "--port",
         type=int,
         default=int(os.environ.get("MCP_PORT", 8000)),
-        help="Port for SSE transport (default: 8000, used only with --transport=sse)",
+        help="Port for the Streamable HTTP transport (default: 8000)",
+    )
+    parser.add_argument(
+        "--host",
+        default=os.environ.get("MCP_HOST", "0.0.0.0"),
+        help="Host address to bind to (default: 0.0.0.0)",
     )
     args = parser.parse_args()
 
-    # Get the transport from command-line argument or environment variable
-    transport = "sse"
     port = args.port
-    url = args.url
+    host = args.host
 
     logger.info(
-        f"Starting Product Catalog MCP Server with {transport} transport on port {port} at endpoint {url}"
+        f"Starting Product Catalog MCP Server with Streamable HTTP transport on {host}:{port}"
     )
+    logger.info("MCP endpoint will be available at: http://{host}:{port}/mcp")
 
     try:
-        # Create a main FastAPI app
-        main_app = FastAPI(title="Product Catalog MCP Server")
-
-        # Create the SSE app using the MCP server's built-in method
-        mcp_app = mcp.sse_app()
-
-        # Mount the MCP server app at the url endpoint
-        main_app.mount("/" + url + "/mcp", mcp_app)
-
-        # Run the ASGI app with uvicorn
-        uvicorn.run(main_app, host="0.0.0.0", port=port)
+        # Run the server with Streamable HTTP transport
+        # This creates a single /mcp endpoint that handles all MCP protocol messages
+        mcp.run(transport="streamable-http", host=host, port=port)
     except KeyboardInterrupt:
         logger.info("Server shutting down")
     except Exception as e:
