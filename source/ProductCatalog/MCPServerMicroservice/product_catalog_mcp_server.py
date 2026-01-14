@@ -61,8 +61,13 @@ logger.info("Product Catalog MCP Server")
 # ---------------------------------------------------------------------------------------------
 # MCP server code
 
-# Initialize FastMCP server
-mcp = FastMCP(name="product_catalog", version="1.0.0")
+# Initialize FastMCP server with configuration from environment or defaults
+# Host and port are configured in the constructor
+mcp = FastMCP(
+    name="product_catalog",
+    host=os.environ.get("MCP_HOST", "0.0.0.0"),
+    port=int(os.environ.get("MCP_PORT", 8000)),
+)
 
 
 # ---------------------------------------------------------------------------------------------
@@ -2874,18 +2879,20 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    port = args.port
-    host = args.host
+    # Update the MCP server configuration with command-line arguments
+    # Note: These override the environment variables used during initialization
+    mcp.host = args.host
+    mcp.port = args.port
 
     logger.info(
-        f"Starting Product Catalog MCP Server with Streamable HTTP transport on {host}:{port}"
+        f"Starting Product Catalog MCP Server with Streamable HTTP transport on {mcp.host}:{mcp.port}"
     )
-    logger.info("MCP endpoint will be available at: http://{host}:{port}/mcp")
+    logger.info(f"MCP endpoint will be available at: http://{mcp.host}:{mcp.port}/mcp")
 
     try:
         # Run the server with Streamable HTTP transport
         # This creates a single /mcp endpoint that handles all MCP protocol messages
-        mcp.run(transport="streamable-http", host=host, port=port)
+        mcp.run(transport="streamable-http")
     except KeyboardInterrupt:
         logger.info("Server shutting down")
     except Exception as e:
