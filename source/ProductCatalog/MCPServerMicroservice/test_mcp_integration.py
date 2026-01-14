@@ -40,6 +40,7 @@ async def create_mcp_client(url: str):
             # Initialize the session
             result = await session.initialize()
             logger.info("✓ MCP session initialized successfully")
+            # Note: MCP SDK may use either serverInfo or server_info depending on version
             server_info = result.serverInfo if hasattr(result, 'serverInfo') else result.server_info
             logger.info(f"  Server: {server_info.name}")
             logger.info(f"  Version: {server_info.version}")

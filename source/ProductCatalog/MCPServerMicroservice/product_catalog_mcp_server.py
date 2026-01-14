@@ -69,7 +69,6 @@ mcp = FastMCP(
     port=int(os.environ.get("MCP_PORT", 8000)),
 )
 
-
 # ---------------------------------------------------------------------------------------------
 # MCP tools
 # This section defines the tools for the MCP server to interact with the TM Forum Product Catalog Management API.

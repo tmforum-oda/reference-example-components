@@ -53,6 +53,10 @@ class MCPStreamableHTTPClient:
             
         Returns:
             The JSON-RPC response
+            
+        Raises:
+            httpx.HTTPError: If the HTTP request fails
+            json.JSONDecodeError: If the response cannot be parsed as JSON
         """
         request_id = self._get_next_request_id()
         
