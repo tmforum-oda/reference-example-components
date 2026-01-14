@@ -41,6 +41,7 @@ component:
   dependentAPIs:
     enabled: false
     rejectUnauthorizedCertificates: false
+    dependencyName: downstreamproductcatalog
   MCPServer:
     enabled: false
 security:
@@ -61,8 +62,8 @@ api:
 metrics:
   image: lesterthomas/openmetrics:1.0
 mcp:
-  image: lesterthomas/productcatalogmcp:0.11
-  versionLabel: productcatalogmcp-0.11
+  image: lesterthomas/productcatalogmcp:0.12
+  versionLabel: productcatalogmcp-0.12
 partyrole:
   image: lesterthomas/partyroleapi:1.0
   versionLabel: partyroleapi-1.0

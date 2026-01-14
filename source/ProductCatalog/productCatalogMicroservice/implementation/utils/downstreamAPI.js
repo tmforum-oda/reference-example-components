@@ -7,7 +7,7 @@ const CANVAS_INFO_BASEPATH = process.env.CANVAS_INFO_BASEPATH;
 const DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES = process.env.DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES === 'true';
 
 const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + CANVAS_INFO_BASEPATH // 'http://info.canvas.svc.cluster.local/tmf-api/serviceInventoryManagement/v5/'
-const API_DEPENDENCY_NAME = 'downstreamproductcatalog'; // defined in the component specification YAML file
+const API_DEPENDENCY_NAME = process.env.API_DEPENDENCY_NAME || 'downstreamproductcatalog'; // defined in the component specification YAML file
 let componentName = process.env.COMPONENT_NAME;
 
 let gDownstreamAPIList = [];
