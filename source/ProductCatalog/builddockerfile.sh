@@ -1,7 +1,7 @@
 
 docker buildx build -t "lesterthomas/productcatalogapi:1.2"  --platform "linux/amd64,linux/arm64" -f prodcat-dockerfile . --push
 
-docker buildx build -t "lesterthomas/productcatalogmcp:0.4"  --platform "linux/amd64,linux/arm64" -f prodcat-mcp-dockerfile . --push
+docker buildx build -t "lesterthomas/productcatalogmcp:0.12"  --platform "linux/amd64,linux/arm64" -f prodcat-mcp-dockerfile . --push
 
 docker buildx build -t "lesterthomas/promotionmgmtapi:0.2"  --platform "linux/amd64,linux/arm64" -f promotionmgmt-dockerfile . --push
 
