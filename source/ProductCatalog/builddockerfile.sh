@@ -1,11 +1,11 @@
 
-docker buildx build -t "lesterthomas/productcatalogapi:1.2"  --platform "linux/amd64,linux/arm64" -f prodcat-dockerfile . --push
+docker buildx build -t "lesterthomas/productcatalogapi:1.3"  --platform "linux/amd64,linux/arm64" -f prodcat-dockerfile . --push
 
-docker buildx build -t "lesterthomas/productcatalogmcp:0.4"  --platform "linux/amd64,linux/arm64" -f prodcat-mcp-dockerfile . --push
+docker buildx build -t "lesterthomas/productcatalogmcp:0.13"  --platform "linux/amd64,linux/arm64" -f prodcat-mcp-dockerfile . --push
 
-docker buildx build -t "lesterthomas/promotionmgmtapi:0.2"  --platform "linux/amd64,linux/arm64" -f promotionmgmt-dockerfile . --push
+docker buildx build -t "lesterthomas/promotionmgmtapi:0.6"  --platform "linux/amd64,linux/arm64" -f promotionmgmt-dockerfile . --push
 
-docker buildx build -t "lesterthomas/partyroleapi:0.2"  -t "lesterthomas/partyroleapi:latest" --platform "linux/amd64,linux/arm64" -f partyrole-dockerfile . --push
+docker buildx build -t "lesterthomas/partyroleapi:1.1"  -t "lesterthomas/partyroleapi:latest" --platform "linux/amd64,linux/arm64" -f partyrole-dockerfile . --push
 
 docker buildx build -t "lesterthomas/permissionspecapi:0.10"  --platform "linux/amd64,linux/arm64" -f permissionspec-dockerfile . --push
 

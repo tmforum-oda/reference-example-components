@@ -1,6 +1,6 @@
 # MCP Server Dockerfile for Product Catalog Component
 # This Dockerfile builds an image that runs the Product Catalog MCP server
-# exposing it as an API endpoint using the SSE transport method
+# exposing it as an API endpoint using the Streamable HTTP transport method
 
 # Use Python 3.13 as the base image for compatibility with dependencies
 FROM python:3.13-slim-bookworm
@@ -20,8 +20,8 @@ ENV PATH="/root/.local/bin/:$PATH"
 # Set working directory
 WORKDIR /app
 
-# Set environment variables
-ENV MCP_TRANSPORT=sse \
+# Set environment variables for Streamable HTTP transport
+ENV MCP_HOST=0.0.0.0 \
     MCP_PORT=8080 
 
 # Install system dependencies
@@ -40,8 +40,8 @@ RUN uv pip install -e . --system
 COPY MCPServerMicroservice/product_catalog_api.py /app/
 COPY MCPServerMicroservice/product_catalog_mcp_server.py /app/
 
-# Expose the port for the SSE server
+# Expose the port for the Streamable HTTP server
 EXPOSE 8080
 
-# Command to run the server with SSE transport
+# Command to run the server with Streamable HTTP transport
 CMD ["python", "product_catalog_mcp_server.py", "--port", "8080"]

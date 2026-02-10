@@ -3283,6 +3283,7 @@ paths:
 produces:
 - application/json;charset=utf-8
 schemes:
+- https
 - http
 swagger: '2.0'
 tags:

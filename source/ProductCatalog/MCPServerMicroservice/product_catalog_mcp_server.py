@@ -1,11 +1,11 @@
 # MCP Server implementation on top of TM Forum Product Catalog component.
 # This script sets up a FastMCP server that interacts with the Product Catalog API to handle queries and responses.
 #
-# Transport can be configured via command-line arguments or environment variables:
-# - --transport=stdio or MCP_TRANSPORT=stdio for standard input/output (default)
-# - --transport=sse or MCP_TRANSPORT=sse for Server-Sent Events
+# The server uses Streamable HTTP transport as recommended by MCP specification 2025-06-18.
+# Streamable HTTP consolidates bidirectional communication into a single /mcp endpoint,
+# improving security, reliability, and operability in cloud/serverless environments.
 #
-# When using SSE transport, port can be specified:
+# Port can be specified:
 # - --port=8000 or MCP_PORT=8000 (default port is 8000)
 
 # logging and system imports
@@ -18,8 +18,10 @@ from pathlib import Path
 # MCP Server imports
 from typing import Any, Dict, List, Optional
 from mcp.server.fastmcp import FastMCP
-from fastapi import FastAPI
 import uvicorn
+from starlette.applications import Starlette
+from starlette.routing import Mount
+from starlette.middleware.cors import CORSMiddleware
 
 
 # Import API functionality
@@ -63,9 +65,13 @@ logger.info("Product Catalog MCP Server")
 # ---------------------------------------------------------------------------------------------
 # MCP server code
 
-# Initialize FastMCP server
-mcp = FastMCP(name="product_catalog", version="1.0.0")
-
+# Initialize FastMCP server with configuration from environment or defaults
+# Host and port are configured in the constructor
+mcp = FastMCP(
+    name="product_catalog",
+    host=os.environ.get("MCP_HOST", "0.0.0.0"),
+    port=int(os.environ.get("MCP_PORT", 8000)),
+)
 
 # ---------------------------------------------------------------------------------------------
 # MCP tools
@@ -2864,39 +2870,68 @@ if __name__ == "__main__":
     # Set up argument parser for command-line options
     parser = argparse.ArgumentParser(description="Product Catalog MCP Server")
     parser.add_argument(
-        "--url",
-        default=os.environ.get("COMPONENT_NAME", "r1-productcatalogmanagement"),
-        help="URL endpoint for the MCP server (default: r1-productcatalogmanagement)",
-    )
-    parser.add_argument(
         "--port",
         type=int,
         default=int(os.environ.get("MCP_PORT", 8000)),
-        help="Port for SSE transport (default: 8000, used only with --transport=sse)",
+        help="Port for the Streamable HTTP transport (default: 8000)",
+    )
+    parser.add_argument(
+        "--host",
+        default=os.environ.get("MCP_HOST", "0.0.0.0"),
+        help="Host address to bind to (default: 0.0.0.0)",
     )
     args = parser.parse_args()
 
-    # Get the transport from command-line argument or environment variable
-    transport = "sse"
-    port = args.port
-    url = args.url
+    # Build the MCP endpoint path using COMPONENT_NAME env var set by the Helm chart.
+    # In Kubernetes, the ingress routes e.g. /r1-productcatalogmanagement/mcp to this service,
+    # so the server must serve at that full path, not just /mcp.
+    component_name = os.environ.get("COMPONENT_NAME", "")
+    mcp_path = f"/{component_name}/mcp" if component_name else "/mcp"
 
     logger.info(
-        f"Starting Product Catalog MCP Server with {transport} transport on port {port} at endpoint {url}"
+        f"Starting Product Catalog MCP Server with Streamable HTTP transport on {args.host}:{args.port}"
     )
+    logger.info(f"MCP endpoint will be available at: http://{args.host}:{args.port}{mcp_path}")
 
     try:
-        # Create a main FastAPI app
-        main_app = FastAPI(title="Product Catalog MCP Server")
+        # Create the MCP Starlette sub-app (serves at /mcp by default)
+        mcp_sub_app = mcp.streamable_http_app()
 
-        # Create the SSE app using the MCP server's built-in method
-        mcp_app = mcp.sse_app()
+        # Mount the MCP sub-app under the component name prefix so it serves
+        # at /<component_name>/mcp, matching the ingress path.
+        if component_name:
+            # The MCP app has a lifespan that initializes its task group.
+            # When mounting inside another Starlette app, we must propagate
+            # the inner app's lifespan to ensure it gets called.
+            from contextlib import asynccontextmanager
 
-        # Mount the MCP server app at the url endpoint
-        main_app.mount("/" + url + "/mcp", mcp_app)
+            @asynccontextmanager
+            async def lifespan(app):
+                async with mcp_sub_app.router.lifespan_context(app):
+                    yield
 
-        # Run the ASGI app with uvicorn
-        uvicorn.run(main_app, host="0.0.0.0", port=port)
+            app = Starlette(
+                routes=[
+                    Mount(f"/{component_name}", app=mcp_sub_app),
+                ],
+                lifespan=lifespan,
+            )
+        else:
+            app = mcp_sub_app
+
+        # Add CORS middleware so browser-based clients (e.g. MCP Inspector) can connect.
+        # The browser sends an OPTIONS preflight request that must be answered with
+        # appropriate CORS headers, otherwise the connection fails.
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=False,
+            allow_methods=["*"],
+            allow_headers=["*"],
+            expose_headers=["*"],
+        )
+
+        uvicorn.run(app, host=args.host, port=args.port)
     except KeyboardInterrupt:
         logger.info("Server shutting down")
     except Exception as e:

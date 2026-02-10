@@ -10,6 +10,18 @@ Model Context Protocol (MCP) is a standard designed to enable AI agents to inter
 - [MCP Specification](https://modelcontextprotocol.io/quickstart/server)
 - [Python MCP SDK](https://github.com/modelcontextprotocol/python-sdk)
 
+## Transport: Streamable HTTP
+
+This server uses the **Streamable HTTP** transport as specified in the [MCP 2025-06-18 specification](https://modelcontextprotocol.io/specification/2025-06-18/basic/transports). Streamable HTTP is the recommended remote transport for MCP, superseding the legacy HTTP+SSE approach. 
+
+### Why Streamable HTTP?
+
+- **Unified Endpoint**: All MCP traffic flows through a single `/mcp` endpoint
+- **Better Security**: Easier to secure behind firewalls and gateways
+- **Cloud-Friendly**: Works well in serverless and containerized environments
+- **Flexible Responses**: Supports both immediate JSON responses and server-sent event streams
+- **Session Management**: Built-in support for stateful and stateless operation
+
 
 ### Video demonstration of MCP Server (using Claude Desktop as AI Agent)
 
@@ -246,15 +258,196 @@ AI: "I can help you with that. Let me guide you through creating a new category 
 
 ## Running Locally (Development)
 
-
 You can run locally as a standalone server. By default, it expects a product catalog Open-API to be available at `https://localhost/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4`
-```
-uv run .\product_catalog_mcp_server.py 
+
+```bash
+uv run product_catalog_mcp_server.py
 ```
 
-Environment variables:
+The server will start on `http://localhost:8000` with the MCP endpoint at `http://localhost:8000/mcp`.
 
-- `MCP_PORT`: Port for SSE transport (default: 8080)
+### Environment Variables
+
+- `MCP_PORT`: Port for the server (default: 8000)
+- `MCP_HOST`: Host address to bind to (default: 0.0.0.0)
+
+### Command-Line Arguments
+
+```bash
+uv run product_catalog_mcp_server.py --port 8080 --host 0.0.0.0
+```
+
+## Testing with MCP Inspector
+
+The [MCP Inspector](https://github.com/modelcontextprotocol/inspector) is an interactive developer tool for testing MCP servers. It provides a web interface to explore available tools, resources, and prompts.
+
+### Using MCP Inspector
+
+1. Start the Product Catalog MCP Server:
+```bash
+cd source/ProductCatalog/MCPServerMicroservice
+uv run product_catalog_mcp_server.py
+```
+
+2. In a separate terminal, start the MCP Inspector:
+```bash
+npx @modelcontextprotocol/inspector
+```
+
+3. Open your browser to `http://localhost:5173` (or the URL shown in the terminal)
+
+4. Connect to your MCP server:
+   - Server URL: `http://localhost:8000/mcp`
+   - Click "Connect"
+
+5. You can now:
+   - Browse available tools (catalog_get, catalog_create, etc.)
+   - Explore resources (TMF620 schemas)
+   - Try prompt templates
+   - Execute tool calls and see responses
+
+### Example Tool Calls in MCP Inspector
+
+**List All Catalogs:**
+```json
+{
+  "name": "catalog_get"
+}
+```
+
+**Create a New Catalog:**
+```json
+{
+  "name": "catalog_create",
+  "arguments": {
+    "catalog_data": {
+      "name": "Test Catalog",
+      "description": "A test catalog for demonstration",
+      "catalogType": "Product",
+      "lifecycleStatus": "Active"
+    }
+  }
+}
+```
+
+**Search Product Offerings:**
+```json
+{
+  "name": "product_offering_get",
+  "arguments": {
+    "filter": {
+      "lifecycleStatus": "Active"
+    }
+  }
+}
+```
+
+## Using with Claude Desktop
+
+[Claude Desktop](https://claude.ai/download) supports MCP servers, allowing Claude to interact with your Product Catalog through natural language.
+
+### Configuration
+
+1. Start the Product Catalog MCP Server:
+```bash
+cd source/ProductCatalog/MCPServerMicroservice
+uv run product_catalog_mcp_server.py
+```
+
+2. Configure Claude Desktop to connect to your server. Add to your Claude Desktop MCP settings:
+
+**On macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**On Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "product-catalog": {
+      "url": "http://localhost:8000/mcp",
+      "transport": "http"
+    }
+  }
+}
+```
+
+3. Restart Claude Desktop
+
+4. You can now ask Claude to interact with your Product Catalog:
+
+### Example Conversations with Claude
+
+**Example 1: List Products**
+```
+User: "Show me all the product offerings in the catalog"
+
+Claude will use the product_offering_get tool to retrieve and display all product offerings.
+```
+
+**Example 2: Create a Product**
+```
+User: "Create a new product offering called 'Premium Internet 1Gbps' 
+      with a description 'High-speed fiber internet service with 1Gbps download speed'"
+
+Claude will use the product_offering_create tool with appropriate parameters.
+```
+
+**Example 3: Search and Filter**
+```
+User: "Find all active product offerings under $1000"
+
+Claude will use the product_offering_get tool with filters to find matching products.
+```
+
+## Using with GitHub Copilot
+
+GitHub Copilot can also connect to MCP servers. This allows you to use natural language in your editor to interact with the Product Catalog.
+
+### Configuration for VS Code
+
+1. Start the Product Catalog MCP Server:
+```bash
+cd source/ProductCatalog/MCPServerMicroservice
+uv run product_catalog_mcp_server.py
+```
+
+2. Install the GitHub Copilot extension in VS Code
+
+3. Configure the MCP server in VS Code settings:
+
+Open VS Code settings (JSON) and add:
+```json
+{
+  "github.copilot.advanced": {
+    "mcp": {
+      "servers": {
+        "product-catalog": {
+          "url": "http://localhost:8000/mcp",
+          "transport": "http"
+        }
+      }
+    }
+  }
+}
+```
+
+4. Use Copilot Chat to interact with the Product Catalog:
+
+### Example Copilot Interactions
+
+**Example 1: Query Products**
+```
+@workspace List all product specifications in the catalog
+```
+
+**Example 2: Create Resources**
+```
+@workspace Create a new category called "Mobile Services" for mobile product offerings
+```
+
+**Example 3: Generate Reports**
+```
+@workspace Generate a table showing all product offerings with their prices
+```
 
 ### Deployment in Kubernetes
 
@@ -267,7 +460,7 @@ helm install productcatalog ./charts/ProductCatalog
 
 ### Testing
 
-You can test the MCP server using the MCP client or by making HTTP requests to the SSE endpoints. Examples are available in the `example_payloads` directory.
+You can test the MCP server using the MCP Inspector (see above) or by making HTTP requests to the `/mcp` endpoint.
 
 For the Product Catalog API wrapper, there is a `test_product_catalog_api.py` script that can be run with a number of options:
 
@@ -346,18 +539,23 @@ Question in French (list all the product offerings and their corresponding price
 ```
 
 
-### Issues
+### Issues and Improvements
 
-The MCP server is working, but in dev environments we are using self-signed certificates that the MCP Clients (or proxies) are rejecting.
-The temporary workaround is to configure the MCP proxy to use http against the internal service (and ensure it is directly exposed). This workaround is suitable to demonstrate the capability of the MCP server.
+The MCP server is production-ready with Streamable HTTP transport. However, there are some areas for improvement:
 
-To make work:
-'''
-Show me all the product offerings under 2000 dollars
-'''
-At present doesn't use filtering (it get's all and then filters on the client)
+**Certificate Validation**
+In dev environments using self-signed certificates, some MCP clients may reject the connection. The workaround is to:
+- Configure the MCP client to accept self-signed certificates, or
+- Use HTTP for local development testing
+- Use proper TLS certificates in production
 
+**Advanced Filtering**
+To make queries like "Show me all the product offerings under 2000 dollars" work optimally:
+- The server should implement server-side filtering based on price
+- Currently, clients may fetch all offerings and filter locally
+- Future enhancement: Add price range filters to the product_offering_get tool
 
-### No Rollback
-
-At present an Agent can perform a large range of operations with no ability to undo those operations. We should add to the API compensating undo transactions to allow an Agent to review and undo if necessary.
+**Transaction Rollback**
+At present, an Agent can perform operations with limited ability to undo them:
+- Future enhancement: Add compensating transactions to allow agents to review and undo operations
+- This would improve safety when agents make bulk changes
