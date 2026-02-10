@@ -18,6 +18,10 @@ from pathlib import Path
 # MCP Server imports
 from typing import Any, Dict, List, Optional
 from mcp.server.fastmcp import FastMCP
+import uvicorn
+from starlette.applications import Starlette
+from starlette.routing import Mount
+from starlette.middleware.cors import CORSMiddleware
 
 
 # Import API functionality
@@ -2878,20 +2882,56 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    # Update the MCP server configuration with command-line arguments
-    # Note: These override the environment variables used during initialization
-    mcp.host = args.host
-    mcp.port = args.port
+    # Build the MCP endpoint path using COMPONENT_NAME env var set by the Helm chart.
+    # In Kubernetes, the ingress routes e.g. /r1-productcatalogmanagement/mcp to this service,
+    # so the server must serve at that full path, not just /mcp.
+    component_name = os.environ.get("COMPONENT_NAME", "")
+    mcp_path = f"/{component_name}/mcp" if component_name else "/mcp"
 
     logger.info(
-        f"Starting Product Catalog MCP Server with Streamable HTTP transport on {mcp.host}:{mcp.port}"
+        f"Starting Product Catalog MCP Server with Streamable HTTP transport on {args.host}:{args.port}"
     )
-    logger.info(f"MCP endpoint will be available at: http://{mcp.host}:{mcp.port}/mcp")
+    logger.info(f"MCP endpoint will be available at: http://{args.host}:{args.port}{mcp_path}")
 
     try:
-        # Run the server with Streamable HTTP transport
-        # This creates a single /mcp endpoint that handles all MCP protocol messages
-        mcp.run(transport="streamable-http")
+        # Create the MCP Starlette sub-app (serves at /mcp by default)
+        mcp_sub_app = mcp.streamable_http_app()
+
+        # Mount the MCP sub-app under the component name prefix so it serves
+        # at /<component_name>/mcp, matching the ingress path.
+        if component_name:
+            # The MCP app has a lifespan that initializes its task group.
+            # When mounting inside another Starlette app, we must propagate
+            # the inner app's lifespan to ensure it gets called.
+            from contextlib import asynccontextmanager
+
+            @asynccontextmanager
+            async def lifespan(app):
+                async with mcp_sub_app.router.lifespan_context(app):
+                    yield
+
+            app = Starlette(
+                routes=[
+                    Mount(f"/{component_name}", app=mcp_sub_app),
+                ],
+                lifespan=lifespan,
+            )
+        else:
+            app = mcp_sub_app
+
+        # Add CORS middleware so browser-based clients (e.g. MCP Inspector) can connect.
+        # The browser sends an OPTIONS preflight request that must be answered with
+        # appropriate CORS headers, otherwise the connection fails.
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=False,
+            allow_methods=["*"],
+            allow_headers=["*"],
+            expose_headers=["*"],
+        )
+
+        uvicorn.run(app, host=args.host, port=args.port)
     except KeyboardInterrupt:
         logger.info("Server shutting down")
     except Exception as e:

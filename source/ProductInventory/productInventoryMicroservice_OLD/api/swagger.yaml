@@ -21,6 +21,7 @@ tags:
 - name: "notification listeners (client side)"
 - name: "events subscription"
 schemes:
+- "https"
 - "http"
 consumes:
 - "application/json;charset=utf-8"

@@ -50,37 +50,36 @@ mongodb:
   port: 27017
   database: tmf
 api:
-  image: lesterthomas/productcatalogapi:1.2
-  versionLabel: productcatalogapi-1.2
+  image: lesterthomas/productcatalogapi:1.3
+  versionLabel: productcatalogapi-1.3
   otlp:
     console:
       enabled: true
     protobuffCollector:
       enabled: true
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
-      # url for Datadog OTLP collector       url: http://datadog-agent.default.svc.cluster.local:4318/v1/traces
 metrics:
   image: lesterthomas/openmetrics:1.0
 mcp:
-  image: lesterthomas/productcatalogmcp:0.12
-  versionLabel: productcatalogmcp-0.12
+  image: lesterthomas/productcatalogmcp:0.13
+  versionLabel: productcatalogmcp-0.13
 partyrole:
-  image: lesterthomas/partyroleapi:1.0
-  versionLabel: partyroleapi-1.0
+  image: lesterthomas/partyroleapi:1.1
+  versionLabel: partyroleapi-1.1
 permissionspec:
   image: lesterthomas/permissionspecapi:0.20
   versionLabel: permissionspecapi-0.20
   # Set to true to use permissionspec API instead of partyrole API
   enabled: true
 promotionmgmt:
-  image: lesterthomas/promotionmgmtapi:0.5
-  versionLabel: promotionmgmtapi-0.5
+  image: lesterthomas/promotionmgmtapi:0.6
+  versionLabel: promotionmgmtapi-0.6
   otlp:
     console:
       enabled: false
     protobuffCollector:
       enabled: true
-      url: http://datadog-agent.default.svc.cluster.local:4318/v1/traces
+      url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 canvasinfo:
   host: info.canvas.svc.cluster.local
   basepath: /

@@ -46,7 +46,7 @@ The reference Canvas includes a Prometheus observability service that can scrape
       enabled: false
     protobuffCollector:
       enabled: true
-      url: http://otel-collector.monitoring.svc.cluster.local:4318/v1/traces
+      url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 ```
 
 With telemetry enabled, you can view traces of executions in Jaeger:
@@ -102,7 +102,7 @@ If the deployment fails, refer to the [Troubleshooting-Guide](https://github.com
 ## Configuration
 You can configure the following aspects of the component:
 - OpenTelemetry tracing and metrics
-  - Any OTL endpoint with HTTP traces will do. This has been tested using Prometheus and DataDog.
+  - Any OTL endpoint with HTTP traces will do. This has been tested using Prometheus and OpenTelemetry Collector.
 - MongoDB Database connection
 
 You can do that  by changing the values in the values.yaml file, or by setting the values on the command line when you install the component using the --set parameter.
@@ -116,7 +116,7 @@ relevant variables:
 | `api.image`        	                           | csotiriou/productcatalogapi:0.10 	                               | The image for the implementation of the main api microservice                              	                                                                                                  |
 | `api.otlp.console.enabled`        	            | false 	                                                          | Whether OpenTelemetry traces will be recorded in the console instead of being sent to the collector                              	                                                            |
 | `api.otlp.protobuffCollector.enabled`        	 | true 	                                                           | Whether OpenTelemetry traces will be recorded in the OTL Collector instead of the console. Does not work if `api.otlp.console.enabled` is `true`                                              |
-| `api.otlp.protobuffCollector.url`        	     | http://datadog-agent.default.svc.cluster.local:4318/v1/traces 	  | The host of the OTL Collector. Only used if `api.otlp.protobuffCollector.enabled` is `true`. By default it's set to the url of the collector. However, any OTL collector endpoint will suffice |
+| `api.otlp.protobuffCollector.url`        	     | http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces 	  | The host of the OTL Collector. Only used if `api.otlp.protobuffCollector.enabled` is `true`. By default it's set to the url of the collector. However, any OTL collector endpoint will suffice |
 | `partyrole.image`        	                     | The image for the implementation of the partyrole microservice 	 | |
 
 Note that in the above configuration, MongoDB configuration is shared among the partyrole and the main microservice. The host of the MongoDB database is set automatically, since it depends on the release name (it's being installed along the rest of the microservices inside the cluster).
