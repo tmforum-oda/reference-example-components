@@ -61,8 +61,8 @@ api:
 metrics:
   image: lesterthomas/openmetrics:1.0
 mcp:
-  image: lesterthomas/productcatalogmcp:0.13
-  versionLabel: productcatalogmcp-0.13
+  image: lesterthomas/productcatalogmcp:0.14
+  versionLabel: productcatalogmcp-0.14
 partyrole:
   image: lesterthomas/partyroleapi:1.1
   versionLabel: partyroleapi-1.1

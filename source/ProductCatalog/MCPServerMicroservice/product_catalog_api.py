@@ -30,7 +30,7 @@ logger = logging.getLogger("product-catalog-api")
 if RELEASE_NAME == "local":
     API_URL = "https://localhost/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4"
 else:
-    API_URL = f"http://{RELEASE_NAME}-prodcatapi:8080/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4"
+    API_URL = f"http://{RELEASE_NAME}-prodcatapi:8080/{RELEASE_NAME}-productcatalogmanagement/tmf-api/productCatalogManagement/v4"
 logger.info(f"API URL: {API_URL}")
 
 
