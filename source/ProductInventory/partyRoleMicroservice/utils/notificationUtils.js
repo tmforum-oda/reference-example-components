@@ -120,10 +120,28 @@ function register(req, res, next) {
         return;
       }
 
+      // Check for an existing subscription with the same callback, query, and serviceGroup
+      // to ensure idempotency: repeated identical POST /hub requests return the same result
+      const duplicateQuery = {
+        callback: doc.callback,
+        query: doc.query ?? "",
+        _serviceGroup: doc._serviceGroup
+      };
+
       mongoUtils.connect().then(db => {
         db.collection(HUB)
-          .insertOne(doc)
-          .then(() => sendDoc(res, 201, payload))
+          .findOne(duplicateQuery)
+          .then(existingDoc => {
+            if (existingDoc) {
+              console.log('register :: duplicate subscription detected – returning existing id=' + existingDoc.id);
+              sendDoc(res, 201, clean(existingDoc));
+            } else {
+              db.collection(HUB)
+                .insertOne(doc)
+                .then(() => sendDoc(res, 201, payload))
+                .catch((error) => sendError(res, TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Database error")));
+            }
+          })
           .catch((error) => sendError(res, TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Database error")));
       })
       .catch((error) => sendError(res, TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Database error")));
