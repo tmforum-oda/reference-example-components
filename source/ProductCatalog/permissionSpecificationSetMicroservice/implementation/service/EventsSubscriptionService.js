@@ -56,23 +56,57 @@ exports.createHub = function(req, body) {
     console.log(`[HUB] Query filter: ${body.query || 'none'}`);
 
     mongoUtils.connect().then(db => {
+      // Check for an existing subscription with the same callback, query, and serviceGroup
+      // to ensure idempotency: repeated identical POST /hub requests return the same result
+      const duplicateQuery = {
+        callback: body.callback,
+        query: body.query,
+        _serviceGroup: body._serviceGroup
+      };
+
       db.collection(HUB)
-        .insertOne(body)
-        .then(() => {
-          console.log(`[HUB] Successfully registered listener with ID: ${body.id}`);
-          
-          // Clean the response (remove internal fields)
-          const response = Object.assign({}, body);
-          Object.keys(response).forEach(key => {
-            if (key.startsWith("_")) {
-              delete response[key];
-            }
-          });
-          
-          resolve(response);
+        .findOne(duplicateQuery)
+        .then(existingDoc => {
+          if (existingDoc) {
+            console.log(`[HUB] Duplicate subscription detected – returning existing ID: ${existingDoc.id}`);
+
+            // Return the existing subscription (strip internal fields)
+            const response = Object.assign({}, existingDoc);
+            Object.keys(response).forEach(key => {
+              if (key.startsWith("_")) {
+                delete response[key];
+              }
+            });
+
+            resolve(response);
+          } else {
+            // No duplicate found – insert the new subscription
+            db.collection(HUB)
+              .insertOne(body)
+              .then(() => {
+                console.log(`[HUB] Successfully registered listener with ID: ${body.id}`);
+
+                // Clean the response (remove internal fields)
+                const response = Object.assign({}, body);
+                Object.keys(response).forEach(key => {
+                  if (key.startsWith("_")) {
+                    delete response[key];
+                  }
+                });
+
+                resolve(response);
+              })
+              .catch((error) => {
+                console.error("[HUB] Error registering listener: " + error);
+                reject({
+                  code: 500,
+                  message: "Database error"
+                });
+              });
+          }
         })
         .catch((error) => {
-          console.error("[HUB] Error registering listener: " + error);
+          console.error("[HUB] Error checking for duplicate subscription: " + error);
           reject({
             code: 500,
             message: "Database error"
