@@ -1,0 +1,109 @@
+'use strict';
+require("dotenv").config();
+require('./utils/instrumentationUtil').init();
+
+
+const fs = require('fs'),
+      path = require('path'),
+      http = require('http'),
+      mongoUtils = require('./utils/mongoUtils'),
+      swaggerUtils = require('./utils/swaggerUtils'),
+      entrypointUtils = require('./utils/entrypoint');
+
+const {TError, TErrorEnum, sendError} = require('./utils/errorUtils');
+
+const app = require('connect')();
+const swaggerTools = require('swagger-tools');
+
+const serverPort = process.env.PORT || 8080;
+
+// Correct the url in swagger-ui-dist that points to some demo (like the petstore)
+// And add additional useful options
+try {
+  fs.copyFileSync(path.join(__dirname, './index.html_replacement'), path.join(__dirname, './node_modules/swagger-ui-dist/index.html'))
+} catch (err) {
+  console.log('Unable to replace swagger-ui-dist/index.html file - something wrong with the installation ??');
+  process.exit(1);
+}
+
+
+// swaggerRouter configuration
+const options = {
+  swaggerUi: path.join(__dirname, '/swagger.json'),
+  controllers: path.join(__dirname, './controllers'),
+  useStubs: process.env.NODE_ENV === 'development' // Conditionally turn on stubs (mock mode)
+};
+
+const swaggerDoc = swaggerUtils.getSwaggerDoc();
+
+
+// Get Component instance name from Environment variable and put it at start of API path
+let componentName = process.env.COMPONENT_NAME;
+if (!componentName) {
+  componentName = 'r1-serviceinventory' // for local testing, if not set
+}
+console.log('ComponentName:'+componentName);
+
+// add component name to url in swagger_ui
+fs.readFile(path.join(__dirname, './node_modules/swagger-ui-dist/index.html'), 'utf8', function (err,data) {
+  if (err) {
+    return console.log(err);
+  }
+  let result = data.replace(/url: \"/g, 'url: \"/' + componentName );
+  console.log('updating ' + path.join(__dirname, './node_modules/swagger-ui-dist/index.html'));
+  fs.writeFile(path.join(__dirname, './node_modules/swagger-ui-dist/index.html'), result, 'utf8', function (err) {
+      if (err) return console.log(err);
+  });
+});
+
+swaggerDoc.basePath = '/' + componentName + swaggerDoc.basePath
+
+// Initialize the Swagger middleware
+swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
+
+  // Interpret Swagger resources and attach metadata to request - must be first in swagger-tools middleware chain
+  app.use(middleware.swaggerMetadata());
+
+  // Validate Swagger requests
+  app.use(middleware.swaggerValidator({
+        validateResponse: false
+  }));
+
+  // Error handling for validation
+  app.use(errorHandler);
+
+  // Route validated requests to appropriate controller
+  app.use(middleware.swaggerRouter(options));
+
+  // Serve the Swagger documents and Swagger UI
+  // using the more up-to-date swagger-ui-dist - not the default app.use(middleware.swaggerUi())
+  app.use(middleware.swaggerUi({   apiDocs: swaggerDoc.basePath + 'api-docs',
+    swaggerUi: swaggerDoc.basePath + 'docs',
+    swaggerUiDir: path.join(__dirname, 'node_modules', 'swagger-ui-dist') }));
+
+  // create an entrypoint
+  console.log('app.use entrypoint');
+  app.use(swaggerDoc.basePath, entrypointUtils.entrypoint);
+
+  // Start the server
+  http.createServer(app).listen(serverPort, function () {
+    console.log('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
+    console.log('Swagger-ui is available on http://localhost:'+ serverPort  + swaggerDoc.basePath + 'docs', serverPort);
+  });
+
+});
+
+function errorHandler (err, req, res, next) {
+  if(err) {
+    if(err.failedValidation) {
+      const message = err.results.errors.map(item => item.message).join(", ");
+      const error = new TError(TErrorEnum.INVALID_BODY, message);
+      sendError(res,error);
+    } else {
+      const error = new TError(TErrorEnum.INVALID_BODY, "Invalid request");
+      sendError(res,error);
+    }
+  } else {
+    next(err,req,res);
+  }
+}

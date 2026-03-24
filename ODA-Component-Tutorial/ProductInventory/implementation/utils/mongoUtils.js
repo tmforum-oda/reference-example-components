@@ -1,3 +1,4 @@
+
 'use strict';
 
 const util = require('util')
@@ -10,14 +11,13 @@ const MongoClient = require('mongodb').MongoClient;
 
 const {getResponseType, getPayloadType, getTypeDefinition} = require('./swaggerUtils');
 
-var mongodb = null;
+var mongodb = null; 
 
-/* connection helper for running MongoDb from url */
+// local mongo db
 function connectHelper(callback) {
-  const database = process.env.MONGODB_DATABASE;
-  var credentials_uri = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${database}`
+ var credentials_uri = "mongodb://localhost:27017/tmf";
   let options = {
-    useNewUrlParser: true
+    useNewUrlParser: true 
   };
   MongoClient.connect(credentials_uri, options, function (err, db) {
     if (err) {
@@ -28,8 +28,28 @@ function connectHelper(callback) {
       callback(null,mongodb);
     }
   });
-}
+};
 
+
+/*Connection helper for running Mongodb from url */
+/*
+function connectHelper(callback) {
+  var releaseName = process.env.RELEASE_NAME; // Release name from Helm deployment
+  var credentials_uri = "mongodb://" + releaseName + "-mongodb:27017/tmf";
+  let options = {
+    useNewUrlParser: true 
+  };
+  MongoClient.connect(credentials_uri, options, function (err, db) {
+    if (err) {
+      mongodb = null;
+      callback(err,null);
+    } else {
+      mongodb = db.db("tmf");
+      callback(null,mongodb);
+    }
+  });
+};
+*/
 function getMongoQuery(req) {
   var res;
   if(req instanceof Object) {
@@ -131,4 +151,5 @@ function sendDoc(res,code,doc) {
 
 
 module.exports = { connect, connectDb, getMongoQuery, sendDoc };
+
 
