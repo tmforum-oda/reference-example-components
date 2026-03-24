@@ -253,41 +253,8 @@ exports.registerListener = function(req, res, next) {
 
   console.log('registerListener :: ' + req.method + ' ' + req.url + ' ' + req.headers.host);
 
-  const resourceType = getResponseType(req);
-  const requestSchema = getPayloadSchema(req);
-
-  swaggerUtils.getPayload(req)
-    .then(payload => validateRequest(req, 'registerListener', payload))
-    .then(payload => traverse(req, requestSchema, payload,[],getPayloadType(req)))
-    .then(payload => processCommonAttributes(req, resourceType, payload))
-    .then(payload => processAssignmentRules('registerListener', payload))
-    .then(payload => {
-
-      const internalError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
-
-      payload = swaggerUtils.updatePayloadServiceType(payload, req,'');
-
-      mongoUtils.connect().then(db => {
-        db.collection(resourceType)
-          .insertOne(payload)
-          .then(() => {
-            payload = cleanPayloadServiceType(payload);
-            sendDoc(res, 201, payload);
-          })
-          .catch((error) => {
-            console.log("registerListener: error=" + error);
-            sendError(res, internalError);
-          })
-      })
-      .catch((error) => {
-        console.log("registerListener: error=" + error);
-        sendError(res, internalError);
-      })
-    })
-    .catch( error => {
-      console.log("registerListener: error=" + error.toString());
-      sendError(res, error);
-    });
+  /* matching tmfHub & isRestfulCreate */
+  notificationUtils.register(req, res, next);
 
 };
 
@@ -303,25 +270,8 @@ exports.unregisterListener = function(req, res, next) {
 
   console.log('unregisterListener :: ' + req.method + ' ' + req.url + ' ' + req.headers.host);
 
-  const id = String(req.swagger.params.id.value);
-  var query = { id: id };
-  query = swaggerUtils.updateQueryServiceType(query, req,'id');
-
-  const resourceType = getResponseType(req); 
-  const internalError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
-
-  mongoUtils.connect().then(db => {
-    db.collection(resourceType)
-      .deleteOne(query)
-      .then(doc => {
-        if (doc.result.n == 1) {
-           sendDoc(res, 204, {});
-        } else { 
-           sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND,"No resource with given id found"));
-        }
-      }).catch(error => sendError(res, internalError))
-  })
-  .catch(error => sendError(res, internalError));
+  /* matching tmfHub & isRestfulDestroy */
+  notificationUtils.unregister(req, res, next);
 
 };
 

@@ -6,8 +6,7 @@ description: >
   - Build an implementation for a standard TMForum component (TMFC001 through TMFC062)
   - Generate source code and/or Helm charts following the ODA Component standard
   - Ask "how do I build TMFC006?" or "I want to implement Service Catalog Management"
-  - Set up a new reference component for the ODA Canvas
-  Invoke whenever you see: "create ODA component", "build TMForum component", "scaffold TMFC", "implement ODA", "new ODA component", "TM Forum reference implementation", or any mention of TMFCxxx component codes.
+  Invoke whenever you see: "create ODA component", "build TMForum component", "scaffold TMFC", "implement ODA", "new ODA component", or any mention of TMFCxxx component codes.
 ---
 
 # Create ODA Component
@@ -40,8 +39,8 @@ Parse the fetched YAML to understand:
 - `spec.componentMetadata` — id, name, description, functionalBlock, publicationDate
 - `spec.coreFunction.exposedAPIs` — APIs the component exposes (check `required` field)
 - `spec.coreFunction.dependentAPIs` — APIs the component consumes
-- `spec.securityFunction.exposedAPIs` — Security API (typically TMF669 PartyRole)
-- `spec.managementFunction.exposedAPIs` — Management API (typically Prometheus metrics)
+- `spec.securityFunction.exposedAPIs` — Security API (typically TMF672 PermissionSpecificationSet)
+- `spec.managementFunction.exposedAPIs` — Management API (typically open metrics)
 - `spec.eventNotification` — Published and subscribed events
 
 ---
@@ -52,8 +51,8 @@ Identify which exposed APIs are mandatory (`required: true`) and which are optio
 
 **Always implement:**
 - All mandatory exposed APIs (`required: true` in the spec's `coreFunction.exposedAPIs`)
-- The security API — use the existing shared **`lesterthomas/permissionspecapi:0.20`** (TMF672 PermissionSpecificationSet) image. This is the standard for all components. Do **not** use `lesterthomas/partyroleapi:1.1` (TMF669 PartyRole) unless the user explicitly asks for it.
-- The management API (Prometheus metrics — use existing `lesterthomas/openmetrics:1.0` image)
+- The security API — use the existing shared **`lesterthomas/permissionspecapi:0.20`** (TMF672 PermissionSpecificationSet) image. This is the standard for all components. 
+- The management API (open metrics — use existing `lesterthomas/openmetrics:1.0` image)
 
 **Ask the user about each optional API:**
 > "The specification includes these optional exposed APIs. Which would you like to implement?
@@ -98,6 +97,8 @@ Create `{apiname}Microservice/implementation/` with:
 **`controllers/{Resource}.js`** — One file per resource defined in the swagger spec. Use the thin-passthrough pattern. Inspect the swagger spec's `paths` to identify which resources exist and which CRUD operations each supports.
 
 **`service/{Resource}Service.js`** — One file per resource. Implement all CRUD operations defined in the swagger spec using the MongoDB promise chain pattern from `references/source-patterns.md`. Use `listResource` / `retrieveResource` utilities for GET operations.
+
+**Critical**: `registerListener` and `unregisterListener` must **always** delegate to `notificationUtils.register(req, res, next)` and `notificationUtils.unregister(req, res, next)` respectively — never use the generic CRUD pattern for these. This ensures hub subscriptions are stored in the `HUB` collection that `notificationUtils.publish` reads from when dispatching events to registered listeners.
 
 **`utils/`** — Copy all 14 utility files from `source/ProductCatalog/productCatalogMicroservice/implementation/utils/` verbatim into each microservice. These are shared utilities that work across any TMF API.
 
@@ -172,8 +173,8 @@ This is the most important template. Build it from the fetched specification YAM
 3. For optional APIs, wrap in `{{- if .Values.{optionalapi}.enabled }}` conditional
 4. For MCP server, wrap in `{{- if .Values.component.MCPServer.enabled }}`
 5. `spec.coreFunction.dependentAPIs` — wrap in `{{- if .Values.component.dependentAPIs.enabled }}` conditional with `{{- else }}` that outputs `[]`
-6. `spec.managementFunction` — standard Prometheus metrics block
-7. `spec.securityFunction` — conditional TMF672/TMF669 block using `{{- if .Values.permissionspec.enabled }}`
+6. `spec.managementFunction` — standard open metrics block
+7. `spec.securityFunction` — conditional TMF672 block using `{{- if .Values.permissionspec.enabled }}`
 
 **Critical**: Every path must use `{{.Release.Name}}-{{.Values.component.name}}` as the prefix. The API path should follow the pattern: `/{release}-{componentname}/tmf-api/{apiPath}/v{n}`.
 
