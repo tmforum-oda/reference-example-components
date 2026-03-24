@@ -235,13 +235,90 @@ Wait for each build to complete and confirm the push succeeded (`pushing manifes
 
 ---
 
-## Step 8 — Summary
+## Step 8 — Generate README Files
+
+### Chart README (`charts/{ComponentName}/README.md`)
+
+Model this on `charts/ProductCatalog/README.md`. Include:
+
+1. **Title and intro** — `# Example {ComponentName} component` with a one-line description linking to the TM Forum component directory page.
+
+2. **Functionality section** — describe each function area:
+   - **Core function** — list mandatory and optional exposed APIs, and any dependent APIs. For each optional feature, show the `--set` override to enable it:
+     ```
+     helm install <release name> oda-components/{componentnamelower} --set {feature}.enabled=true -n components
+     ```
+   - **Management function** — describe the open metrics endpoint and what business events are counted, mention Open Telemetry tracing with the OTLP config snippet from `values.yaml`.
+   - **Security function** — describe the conditional TMF672/TMF669 role management with `permissionspec.enabled`.
+
+3. **Microservices list** — bullet list of all microservices deployed, one line each describing what they do.
+
+4. **Installation section** — step-by-step:
+   ```
+   helm install r1 .\{componentnamelower} -n components
+   ```
+   Show the `kubectl get components -n components` verification command and expected output with `DEPLOYMENT_STATUS: Complete`.
+
+5. **Configuration table** — Markdown table of all configurable `values.yaml` keys with columns `Variable Name`, `Default`, `Explanation`. Cover at minimum:
+   - `mongodb.port`, `mongodb.database`
+   - `api.image`
+   - `api.otlp.console.enabled`, `api.otlp.protobuffCollector.enabled`, `api.otlp.protobuffCollector.url`
+   - `metrics.image`
+   - `permissionspec.enabled`
+   - Any component-specific optional API flags (e.g. `promotionmgmt.enabled`)
+
+---
+
+### Source README (`source/{ComponentName}/README.md`)
+
+Create a new file explaining the source code structure for developers who want to understand or extend it. Include:
+
+1. **Title and intro** — `# {ComponentName} Source Code` — explain this is the Node.js reference implementation of the ODA component, and link to the chart folder for deployment.
+
+2. **Repository structure** — a tree or table listing each top-level directory with a one-line description:
+   | Directory | Description |
+   |-----------|-------------|
+   | `{componentname}Microservice/` | Node.js implementation of the TMF{xxx} {API Name} Open API |
+   | `roleInitializationMicroservice/` | Bootstraps the initial role (PermissionSpecificationSet or PartyRole) on first deploy |
+   | `{componentname}InitializationMicroservice/` | Registers the metrics microservice as an event listener on first deploy |
+   | `openMetricsMicroservice/` | Prometheus/OpenMetrics endpoint that counts business events |
+   | `*-dockerfile` | Dockerfile for each microservice |
+   | `builddockerfile.sh` | Script to build and push all Docker images |
+
+3. **Architecture overview** — a short paragraph describing how the microservices interact:
+   - The main API microservice stores data in MongoDB and publishes events to registered listeners via the hub endpoint.
+   - The initialization job registers the metrics microservice as a listener.
+   - The metrics microservice receives events and increments Prometheus counters.
+   - The role initialization job creates the initial role in the permission/partyrole API on startup.
+
+4. **Main API microservice deep-dive** (`{componentname}Microservice/implementation/`) — describe the layout:
+   | File/Folder | Description |
+   |-------------|-------------|
+   | `index.js` | Entry point — loads swagger, wires middleware, starts HTTP server |
+   | `api/swagger.yaml` | OpenAPI spec — defines all routes and schemas |
+   | `controllers/` | Thin passthrough — maps swagger operationIds to service functions |
+   | `service/` | Business logic — MongoDB CRUD, event publishing |
+   | `utils/` | Shared utilities (mongoUtils, notificationUtils, swaggerUtils, etc.) |
+   | `config.json` | Runtime config (strict_schema: true) |
+   | `package.json` | npm dependencies |
+
+5. **Building Docker images** — show commands:
+   ```bash
+   cd source/{ComponentName}/
+   bash builddockerfile.sh
+   ```
+   Or individually per image. Note the multi-platform build requires `docker buildx`.
+
+6. **Running locally** (optional guidance) — briefly describe how a developer could run a single microservice locally for testing with a local MongoDB instance.
+
+---
+
+## Step 9 — Summary
 
 Tell the user what was created, what they need to do next:
 
-1. **Copy utils**: Copy all files from `source/ProductCatalog/productCatalogMicroservice/implementation/utils/` into each new microservice's `utils/` folder
-2. **Download swagger specs**: The `api/swagger.yaml` in each microservice needs the actual OpenAPI spec from the URL in the specification YAML
-3. **Deploy**: `helm install r1 charts/{ComponentName}/`
+1. **Deploy**: `helm install r1 charts/{ComponentName}/ -n components`
+2. **Verify**: `kubectl get components -n components` — expect `DEPLOYMENT_STATUS: Complete`
 
 ---
 
