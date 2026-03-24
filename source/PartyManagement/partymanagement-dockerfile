@@ -1,0 +1,7 @@
+FROM node:16
+COPY partyManagementMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY partyManagementMicroservice/implementation ./
+EXPOSE 8080
+CMD ["node", "index.js"]

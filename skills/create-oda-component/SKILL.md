@@ -136,7 +136,7 @@ Follow the Python/FastMCP pattern from `source/ProductCatalog/MCPServerMicroserv
 
 Create `builddockerfile.sh` listing `docker buildx build` commands for all new images, using multi-platform `linux/amd64,linux/arm64` builds. Follow the pattern from `references/source-patterns.md`.
 
-**Important naming rule for metrics image**: Use a component-specific tag (e.g. `{dockerhub-namespace}/{componentname}metrics:1.0`) rather than the shared `openmetrics:1.0` tag to avoid overwriting the ProductCatalog image. Update `values.yaml` `metrics.image` to match.
+**Important naming rule for metrics image**: Use a component-specific tag (e.g. `{dockerhub-namespace}/{componentname}metrics:0.1`) rather than the shared `openmetrics:1.0` tag to avoid overwriting the ProductCatalog image. Update `values.yaml` `metrics.image` to match.
 
 **Do not include a `permissionspecapi` or `partyroleapi` build** in `builddockerfile.sh` — both use pre-built shared images (`lesterthomas/permissionspecapi:0.20` and `lesterthomas/partyroleapi:1.1`) with no source dockerfile in this directory.
 
@@ -159,7 +159,7 @@ Fill in from the parsed specification YAML:
 - `component.name` — lowercase component name
 - `component.functionalBlock` — from `componentMetadata.functionalBlock`
 - `component.publicationDate` — from `componentMetadata.publicationDate`
-- `api.image` — `{dockerhub-namespace}/{componentname}api:1.0`
+- `api.image` — `{dockerhub-namespace}/{componentname}api:0.1`
 - `permissionspec.image: lesterthomas/permissionspecapi:0.20`, `permissionspec.enabled: true` — always default to permissionspec
 - `partyrole.image: lesterthomas/partyroleapi:1.1` — kept for reference but `permissionspec.enabled: true` means it won't be used
 - Add sections for each optional API that was selected (e.g. `promotionmgmt.image`, `promotionmgmt.enabled: false`)
@@ -224,9 +224,9 @@ Or run each command individually to monitor build output per image:
 
 ```bash
 cd source/{ComponentName}/
-docker buildx build -t "{dockerhub-namespace}/{componentnamelower}api:1.0" --platform "linux/amd64,linux/arm64" -f {componentnamelower}-dockerfile . --push
+docker buildx build -t "{dockerhub-namespace}/{componentnamelower}api:0.1" --platform "linux/amd64,linux/arm64" -f {componentnamelower}-dockerfile . --push
 docker buildx build -t "{dockerhub-namespace}/{componentnamelower}initialization:0.1" --platform "linux/amd64,linux/arm64" -f {componentnamelower}initialization-dockerfile . --push
-docker buildx build -t "{dockerhub-namespace}/{componentnamelower}metrics:1.0" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
+docker buildx build -t "{dockerhub-namespace}/{componentnamelower}metrics:0.1" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
 ```
 
 Wait for each build to complete and confirm the push succeeded (`pushing manifest for docker.io/...` in the output).
