@@ -78,6 +78,10 @@ exports.createProductOrder = function(req, res, next) {
           const offering = await retrieveFromDownstreamAPI('downstreamproductcatalog', 'productOffering', offeringId);
           if (!offering) {
             invalidOfferings.push(offeringId);
+          } else {
+            // Enrich the productOffering reference with href and name from the catalog
+            if (offering.href) item.productOffering.href = offering.href;
+            if (offering.name) item.productOffering.name = offering.name;
           }
         }
       }
@@ -131,6 +135,7 @@ exports.createProductOrder = function(req, res, next) {
                 item.product = item.product || {};
                 item.product.id = createdProduct.id;
                 item.product.href = createdProduct.href;
+                item.product.name = createdProduct.name || productPayload.name;
               }
             } catch (inventoryError) {
               console.log('createProductOrder :: warning - failed to create product in inventory for orderItem ' + item.id);
