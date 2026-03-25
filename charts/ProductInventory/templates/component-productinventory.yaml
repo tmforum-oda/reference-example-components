@@ -4,65 +4,100 @@ metadata:
   name: {{.Release.Name}}-{{.Values.component.name}}
   labels:
     oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
-  annotations:
-    webhookconverted: Webhook converted From oda.tmforum.org/v1beta3 to oda.tmforum.org/v1
 spec:
   componentMetadata:
     id: {{.Values.component.id}}
     name: {{.Values.component.name}}
-    version: {{.Values.component.version}}
-    description: >-
-      Simple Product Inventory ODA-Component from Open-API reference
-      implementation.
     functionalBlock: {{.Values.component.functionalBlock}}
     publicationDate: {{.Values.component.publicationDate}}
     status: specified
+    version: {{.Values.component.version}}
+    description: "Simple Product Inventory ODA-Component from Open-API reference implementation."
     maintainers:
-      - name: Dominic Oyeniran
-        email: dominic.oyeniran@vodafone.com
+    - name: Lester Thomas
+      email: lester.thomas@vodafone.com
     owners:
-      - name: Dominic Oyeniran
-        email: dominic.oyeniran@vodafone.com
+      - name: Lester Thomas
+        email: lester.thomas@vodafone.com     
   coreFunction:
-    exposedAPIs:
-      - name: productinventorymanagement
-        specification:
-          - url: >-
-              https://raw.githubusercontent.com/tmforum-apis/TMF637_ProductInventory/master/TMF637-ProductInventory-v4.0.0.swagger.json
-        implementation: {{.Release.Name}}-productinventoryapi
-        apiType: openapi
-        path: >-
-          /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productInventory/v4
-        developerUI: >-
-          /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productInventory/v4/docs
-        port: 8080
-        gatewayConfiguration: {}
-    dependentAPIs:
-      - name: party
-        apiType: openapi
-        specification:
-          - url: https://open-api.tmforum.org/TMF632-Party-v4.0.0.swagger.json
+    exposedAPIs: 
+    - name: productinventorymanagement
+      specification:
+      - url: "https://raw.githubusercontent.com/tmforum-apis/TMF637_ProductInventory/master/TMF637-ProductInventory-v4.0.0.swagger.json"
+      implementation: {{.Release.Name}}-productinventoryapi
+      apiType: openapi
+      id: TMF637
+      gatewayConfiguration:
+        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
+        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
+        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
+        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
+        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
+        template: "{{.Values.component.apipolicy.template}}"
+      path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productInventory/v4
+      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productInventory/v4/docs
+      port: 8080
+    dependentAPIs: 
+    {{- if .Values.component.dependentAPIs.enabled }}
+    - name: party
+      apiType: openapi
+      specification:
+      - url: https://open-api.tmforum.org/TMF632-Party-v4.0.0.swagger.json
+    {{- else }}
+      []
+    {{- end }}
   eventNotification:
     publishedEvents: []
     subscribedEvents: []
-  managementFunction:
-    exposedAPIs: []
-    dependentAPIs: []
+  managementFunction: 
+    exposedAPIs: 
+    - name: metrics
+      apiType: prometheus
+      gatewayConfiguration:
+        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
+        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
+        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
+        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
+        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
+        template: "{{.Values.component.apipolicy.template}}"
+      implementation: {{.Release.Name}}-{{.Values.component.name}}-sm
+      path: /{{.Release.Name}}-{{.Values.component.name}}/metrics
+      port: 4000      
   securityFunction:
-    canvasSystemRole: {{.Values.security.controllerRole}}
-    exposedAPIs:
-      - name: partyrole
-        specification:
-          - url: >-
-              https://raw.githubusercontent.com/tmforum-apis/TMF669_PartyRole/master/TMF669-PartyRole-v4.0.0.swagger.json
-        implementation: {{.Release.Name}}-partyroleapi
-        apiType: openapi
-        path: >-
-          /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4
-        developerUI: >-
-          /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4/docs
-        port: 8080
-        gatewayConfiguration: {}
-    
-  
-
+    canvasSystemRole: {{ .Values.security.canvasSystemRole }}
+    exposedAPIs: 
+    {{- if .Values.permissionspec.enabled }}
+    - name: userrolesandpermissions
+      specification:
+      - url: "https://raw.githubusercontent.com/tmforum-apis/TMF672_UserRolePermissions/master/TMF672-UserRolePermissions-v5.0.0.swagger.json"
+      implementation: {{.Release.Name}}-permissionspecapi
+      apiType: openapi
+      id: TMF672
+      gatewayConfiguration:
+        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
+        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
+        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
+        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
+        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
+        template: "{{.Values.component.apipolicy.template}}"
+      path: /{{.Release.Name}}-{{.Values.component.name}}/rolesAndPermissionsManagement/v5
+      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/rolesAndPermissionsManagement/v5/docs
+      port: 8080
+    {{- else }}
+    - name: partyrole
+      specification:
+      - url: "https://raw.githubusercontent.com/tmforum-apis/TMF669_PartyRole/master/TMF669-PartyRole-v4.0.0.swagger.json"
+      implementation: {{.Release.Name}}-partyroleapi
+      apiType: openapi
+      id: TMF669
+      gatewayConfiguration:
+        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
+        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
+        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
+        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
+        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
+        template: "{{.Values.component.apipolicy.template}}"
+      path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4
+      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4/docs
+      port: 8080
+    {{- end }}

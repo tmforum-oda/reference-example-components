@@ -8,8 +8,9 @@ if (!componentName) {
 console.log('ComponentName:' + componentName);
 
 const client = require('prom-client');
+const metricName = componentName.replace(/-/g, '_');
 const counter = new client.Counter({
-  name: componentName + '_api_counter',
+  name: metricName + '_api_counter',
   help: 'Count of Notification Events from ' + componentName + ' API',
   labelNames: ['NotificationEvent']
 });

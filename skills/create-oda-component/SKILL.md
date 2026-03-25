@@ -52,7 +52,7 @@ Identify which exposed APIs are mandatory (`required: true`) and which are optio
 **Always implement:**
 - All mandatory exposed APIs (`required: true` in the spec's `coreFunction.exposedAPIs`)
 - The security API — use the existing shared **`lesterthomas/permissionspecapi:0.20`** (TMF672 PermissionSpecificationSet) image. This is the standard for all components. 
-- The management API (open metrics — use existing `lesterthomas/openmetrics:1.0` image)
+- The management API (open metrics — use a component-specific tag, e.g. `lesterthomas/{componentnamelower}metrics:0.1`)
 
 **Ask the user about each optional API:**
 > "The specification includes these optional exposed APIs. Which would you like to implement?
@@ -86,6 +86,8 @@ Create `source/{ComponentName}/` with this structure:
 Create `{apiname}Microservice/implementation/` with:
 
 **`api/swagger.yaml`** — Download the OpenAPI spec from the URL in the specification YAML's `specification[0].url` field. Save it as `swagger.yaml`. This is the spec the Node.js server loads at startup.
+- Always use YAML format. Never use JSON (`swagger.json`) — `swaggerUtils.js` reads `swagger.yaml` exclusively.
+- After downloading, add `x-swagger-router-controller` to every operation in the spec. Map each operation's first tag to the corresponding PascalCase controller filename (e.g. tag `productOrder` → controller `ProductOrder`). This is required because Linux's case-sensitive filesystem cannot match a lowercase tag name to a PascalCase `.js` file. Without this field, `swagger-tools` will fail at runtime with `Cannot resolve the configured swagger-router handler`. The mapping pattern is: take the tag, split on spaces (for multi-word tags), PascalCase each word, join — e.g. `events subscription` → `EventsSubscription`, `notification listeners (client side)` → `NotificationListenersClientSide`.
 
 **`index.js`** — Follow the exact pattern from `references/source-patterns.md`. Key customizations:
 - Set `componentName` default to `r1-{componentnamelower}` for local testing
@@ -115,7 +117,7 @@ Create `roleInitializationMicroservice/implementation/` using the pattern from `
 ### 4c — Open Metrics Microservice
 
 Create `openMetricsMicroservice/` using the pattern from `references/source-patterns.md`. This is nearly identical across all components — customize:
-- Counter name: `{componentnamelower}_api_counter`
+- Counter name: `{componentnamelower}_api_counter` — **Important**: Prometheus metric names must match `[a-zA-Z_:][a-zA-Z0-9_:]*` (no hyphens). Always derive the metric name by replacing hyphens with underscores: `const metricName = componentName.replace(/-/g, '_');` then use `metricName + '_api_counter'`. The `COMPONENT_NAME` env var at runtime is typically `{release}-{componentname}` (e.g. `pi1-productinventory`), which contains hyphens.
 - Description: reference the specific TMF API being monitored
 
 ### 4d — Dockerfiles
@@ -189,7 +191,7 @@ Generate the following, following `references/chart-patterns.md` patterns exactl
 - `service-mongodb.yaml` — standard MongoDB service
 - `service-registerallevents.yaml` — metrics service (port 4000, selector: metricsapi)
 - `service-rolemanagement.yaml` — conditional service (permissionspecapi or partyroleapi)
-- `job-roleinitialization.yaml` — standard role init job (uses lesterthomas/roleinitialization:0.6)
+- `job-roleinitialization.yaml` — standard role init job (uses lesterthomas/roleinitialization:0.1)
 - `job-{componentname}initialization.yaml` — component-specific init job
 - `persistentVolumeClaim-mongodb.yaml` — standard 5Gi PVC
 

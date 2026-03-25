@@ -39,22 +39,22 @@ function connectHelper(callback) {
 
 /* connection helper for running MongoDb from url */
 function connectHelper(callback) {
-  //var credentials_uri = "mongodb://localhost:27017/tmf"; // local mongo db
-  var releaseName = process.env.RELEASE_NAME; // Release name from Helm deployment
-  var credentials_uri = "mongodb://" + releaseName + "-mongodb:27017/tmf"; 
+  const database = process.env.MONGODB_DATABASE;
+  const credentials_uri = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${database}`
   let options = {
-     useNewUrlParser: true 
-   };
-   MongoClient.connect(credentials_uri, options, function (err, db) {
-     if (err) {
-       mongodb = null;
-       callback(err,null);
-     } else {
-       mongodb = db.db("tmf");
-       callback(null,mongodb);
-     }
-   });
- };
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  };
+  MongoClient.connect(credentials_uri, options, function (err, db) {
+    if (err) {
+      mongodb = null;
+      callback(err,null);
+    } else {
+      mongodb = db.db(database);
+      callback(null,mongodb);
+    }
+  });
+}
 
 function getMongoQuery(req) {
   var res;

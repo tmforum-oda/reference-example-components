@@ -59,16 +59,16 @@ async function loadDownstreamAPIs() {
 
             // for each service in the apiResponse.data, check if it has a serviceCharacteristic of 'url'
             for (const service in matchingServices) {
-                if (apiResponse.data[service].serviceCharacteristic) {
-                    for (const serviceCharacteristic in apiResponse.data[service].serviceCharacteristic) {
-                        if (apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].name === 'url') {
+                if (matchingServices[service].serviceCharacteristic) {
+                    for (const serviceCharacteristic in matchingServices[service].serviceCharacteristic) {
+                        if (matchingServices[service].serviceCharacteristic[serviceCharacteristic].name === 'url') {
                             // ensure url ends with a / to avoid issues with concatenation
-                            if (!apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value.endsWith('/')) {
-                                apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value += '/';
+                            if (!matchingServices[service].serviceCharacteristic[serviceCharacteristic].value.endsWith('/')) {
+                                matchingServices[service].serviceCharacteristic[serviceCharacteristic].value += '/';
                             }
                             // running in a Dev environment sometimes returns urls with localhost - replace this with host.docker.internal
-                            apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value = apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value.replace('localhost', 'host.docker.internal');
-                            downstreamAPIList.push(apiResponse.data[service].serviceCharacteristic[serviceCharacteristic].value);
+                            matchingServices[service].serviceCharacteristic[serviceCharacteristic].value = matchingServices[service].serviceCharacteristic[serviceCharacteristic].value.replace('localhost', 'host.docker.internal');
+                            downstreamAPIList.push(matchingServices[service].serviceCharacteristic[serviceCharacteristic].value);
                         }
                     }
                 }
