@@ -43,7 +43,7 @@ mongodb:
   port: 27017
   database: tmf
 api:
-  image: lesterthomas/partymanagementapi:0.1
+  image: lesterthomas/partymanagementapi:0.3
   versionLabel: partymanagementapi-0.1
   otlp:
     console:

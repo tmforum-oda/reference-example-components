@@ -198,7 +198,7 @@ function processCommonAttributes(req, type, obj) {
 
     if(typeprops.href!==undefined && obj.href==undefined) {
       const self = req.url.replace(/\/$/,"") + "/" + obj.id;
-      obj.href = swaggerUtils.getURLScheme() + "://" + req.headers.host + self;
+      obj.href = self;  // store relative path only; absolute URL is built at response time
     }
     
     if(typeprops.lastUpdate!==undefined) {
@@ -206,8 +206,7 @@ function processCommonAttributes(req, type, obj) {
     }
 
     if(typeprops["@schemaLocation"]!==undefined && obj["@schemaLocation"]===undefined) {
-      const url = swaggerUtils.getURLScheme() + "://" + swaggerUtils.getHost() + "/docs/#/" 
-      obj["@schemaLocation"] = encodeURI(url);
+      obj["@schemaLocation"] = encodeURI("/docs/#/");  // relative; absolute URL built at response time
     }
 
     if(typeprops["@type"]!==undefined && obj["@type"]===undefined) {
@@ -229,7 +228,7 @@ function setBaseProperties(req,payload) {
       payload.id = uuid.v4();
     };
     var self = req.url.replace(/\/$/,"") + "/" + payload.id;
-    payload.href = swaggerUtils.getURLScheme() + "://" + req.headers.host + self;
+    payload.href = self;  // store relative path only; absolute URL is built at response time
     resolve(payload)
   })
 }

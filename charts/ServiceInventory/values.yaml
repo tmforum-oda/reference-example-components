@@ -47,7 +47,7 @@ mongodb:
   port: 27017
   database: tmf
 api:
-  image: lesterthomas/serviceinventoryapi:0.1
+  image: lesterthomas/serviceinventoryapi:0.3
   versionLabel: serviceinventoryapi-0.1
   otlp:
     console:

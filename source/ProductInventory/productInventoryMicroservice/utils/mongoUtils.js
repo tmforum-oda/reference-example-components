@@ -135,7 +135,7 @@ function connect() {
     });
 };
 
-function sendDoc(res,code,doc) {
+function sendDoc(res, code, doc) {
   // delete internal mongo _id from all documents
   if(Array.isArray(doc)) {
     // remove _id from all documents
@@ -146,8 +146,8 @@ function sendDoc(res,code,doc) {
     delete doc._id;
   }
 
-  if(doc.href) {
-    res.setHeader('Location',  doc.href);
+  if(!Array.isArray(doc) && doc.href) {
+    res.setHeader('Location', doc.href);
   }
 
   res.statusCode = code;
