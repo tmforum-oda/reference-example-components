@@ -5,7 +5,6 @@ info:
     Version 4.0 \n\nThe intent of this API is to provide a consistent/standardized
     mechanism to query and manipulate the Service inventory."
   version: 4.0.0
-host: serverRoot
 basePath: /tmf-api/serviceInventory/v4
 schemes:
 - https

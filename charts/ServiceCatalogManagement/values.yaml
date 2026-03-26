@@ -1,0 +1,98 @@
+# Default values for servicecatalogmanagement.
+component:
+  id: TMFC006
+  name: servicecatalogmanagement
+  functionalBlock: Production
+  publicationDate: 2024-11-12T00:00:00.000Z
+  version: "0.0.1"
+  storageClassName: default
+  apipolicy:
+    apiKeyVerification:
+      enabled: false
+      location: "header"
+    rateLimit:
+      enabled: false
+      identifier: "IP"
+      limit: "6"
+      interval: "pm"
+    quota:
+      identifier: ""
+      limit: ""
+    OASValidation:
+      requestEnabled: false
+      responseEnabled: false
+      allowUnspecifiedHeaders: false
+      allowUnspecifiedQueryParams: false
+      allowUnspecifiedCookies: false
+    CORS:
+      enabled: false
+      allowCredentials: false
+      allowOrigins: "https://allowed-origin.com"
+      handlePreflightRequests:
+        enabled: false
+        allowHeaders: "Accept, Content-Type"
+        allowMethods: "GET, POST"
+        maxAge: 36000
+    template: ""
+  dependentAPIs:
+    enabled: false
+  MCPServer:
+    enabled: true
+
+security:
+  canvasSystemRole: canvasRole
+
+mongodb:
+  port: 27017
+  database: tmf
+
+svcatapi:
+  image: lesterthomas/servicecatalogapi:0.1
+  versionLabel: servicecatalogapi-0.1
+  otlp:
+    console:
+      enabled: false
+    protobuffCollector:
+      enabled: true
+      url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
+
+svcqualapi:
+  image: lesterthomas/servicequalityapi:0.1
+  versionLabel: servicequalityapi-0.1
+  otlp:
+    console:
+      enabled: false
+    protobuffCollector:
+      enabled: true
+      url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
+
+processflow:
+  enabled: false
+  image: lesterthomas/processflowapi:0.1
+  versionLabel: processflowapi-0.1
+  otlp:
+    console:
+      enabled: false
+    protobuffCollector:
+      enabled: true
+      url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
+
+metrics:
+  image: lesterthomas/servicecatalogmetrics:0.1
+
+mcp:
+  image: lesterthomas/servicecatalogmcp:0.1
+  versionLabel: servicecatalogmcp-0.1
+
+partyrole:
+  image: lesterthomas/partyroleapi:1.1
+  versionLabel: partyroleapi-1.1
+
+permissionspec:
+  image: lesterthomas/permissionspecapi:0.20
+  versionLabel: permissionspecapi-0.20
+  enabled: true
+
+canvasinfo:
+  host: info.canvas.svc.cluster.local
+  basepath: /

@@ -29,9 +29,8 @@ info:
     Product Order API performs the following operations on product order :\n\n   -Retrieval\
     \ of a cancel product order or a collection of cancel product orders \n   -Creation\
     \ of a cancel product order \n   -Notification of events on cancel product order.\n\
-    \n\nCopyright © TM Forum 2019. All Rights Reserved\n\n\n"
+    \n\nCopyright ï¿½ TM Forum 2019. All Rights Reserved\n\n\n"
   version: 4.0.0
-host: serverRoot
 basePath: /tmf-api/productOrderingManagement/v4/
 schemes:
 - https

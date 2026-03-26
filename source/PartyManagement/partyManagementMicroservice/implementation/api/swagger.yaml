@@ -3,7 +3,6 @@ info:
   title: API Party
   description: "## TMF API Reference : TMF 632 - Party \n\n### Release : 19.0\n\nThe party API provides standardized mechanism for party management such as creation, update, retrieval, deletion and notification of events."
   version: 4.0.0
-host: serverRoot
 basePath: /tmf-api/party/v4/
 schemes:
   - https

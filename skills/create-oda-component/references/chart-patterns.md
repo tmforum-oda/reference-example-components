@@ -1,6 +1,6 @@
 # Helm Chart Patterns
 
-Reference patterns extracted from `charts/ProductCatalog/` for generating new ODA Component Helm charts.
+Reference patterns for generating new ODA Component Helm charts. Reusable template files are bundled in this skill under `templates/charts/`.
 
 ## Directory Structure
 
@@ -519,7 +519,7 @@ Add a `deployment-rolemanagement.yaml` template with a conditional deployment:
 - If `permissionspec.enabled=true`: deploy `permissionspecapi` image (TMF672)
 - If `permissionspec.enabled=false`: deploy `partyroleapi` image (TMF669)
 
-Reference `charts/ProductCatalog/templates/deployment-rolemanagement.yaml` for the exact template.
+Reference `templates/charts/templates/deployment-rolemanagement.yaml` (bundled in this skill) for the exact template.
 
 ---
 

@@ -1,0 +1,1079 @@
+swagger: "2.0"
+info:
+  title: Process Flow Management
+  description: |
+    This is Swagger UI environment generated for the TMF Process Flow Management specification
+  version: "4.0.0"
+basePath: /tmf-api/processFlowManagement/v4/
+schemes:
+  - https
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+tags:
+  - name: processFlow
+  - name: taskFlow
+  - name: events subscription
+  - name: notification listeners (client side)
+paths:
+  /processFlow:
+    get:
+      operationId: listProcessFlow
+      summary: List or find ProcessFlow objects
+      description: This operation list or find ProcessFlow entities
+      tags:
+        - processFlow
+      x-swagger-router-controller: ProcessFlow
+      parameters:
+        - name: fields
+          required: false
+          in: query
+          description: Comma-separated properties to be provided in response
+          type: string
+        - name: offset
+          required: false
+          in: query
+          description: Requested index for start of resources to be provided in response
+          type: integer
+        - name: limit
+          required: false
+          in: query
+          description: Requested number of resources to be provided in response
+          type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ProcessFlow"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      operationId: createProcessFlow
+      summary: Creates a ProcessFlow
+      description: This operation creates a ProcessFlow entity.
+      tags:
+        - processFlow
+      x-swagger-router-controller: ProcessFlow
+      parameters:
+        - name: processFlow
+          required: true
+          in: body
+          description: The ProcessFlow to be created
+          schema:
+            $ref: "#/definitions/ProcessFlow_Create"
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/ProcessFlow"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /processFlow/{id}:
+    get:
+      operationId: retrieveProcessFlow
+      summary: Retrieves a ProcessFlow by ID
+      description: This operation retrieves a ProcessFlow entity. Attribute selection is enabled for all first level attributes.
+      tags:
+        - processFlow
+      x-swagger-router-controller: ProcessFlow
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identifier of the ProcessFlow
+          type: string
+        - name: fields
+          required: false
+          in: query
+          description: Comma-separated properties to provide in response
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/ProcessFlow"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: deleteProcessFlow
+      summary: Deletes a ProcessFlow
+      description: This operation deletes a ProcessFlow entity.
+      tags:
+        - processFlow
+      x-swagger-router-controller: ProcessFlow
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identifier of the ProcessFlow
+          type: string
+      responses:
+        "204":
+          description: Deleted
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /processFlow/{processFlowId}/taskFlow:
+    get:
+      operationId: listTaskFlow
+      summary: List or find TaskFlow objects
+      description: This operation list or find TaskFlow entities
+      tags:
+        - taskFlow
+      x-swagger-router-controller: TaskFlow
+      parameters:
+        - name: processFlowId
+          required: true
+          in: path
+          description: Identifier of the parent ProcessFlow entity
+          type: string
+        - name: fields
+          required: false
+          in: query
+          description: Comma-separated properties to be provided in response
+          type: string
+        - name: offset
+          required: false
+          in: query
+          description: Requested index for start of resources to be provided in response
+          type: integer
+        - name: limit
+          required: false
+          in: query
+          description: Requested number of resources to be provided in response
+          type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/TaskFlow"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /processFlow/{processFlowId}/taskFlow/{id}:
+    get:
+      operationId: retrieveTaskFlow
+      summary: Retrieves a TaskFlow by ID
+      description: This operation retrieves a TaskFlow entity. Attribute selection is enabled for all first level attributes.
+      tags:
+        - taskFlow
+      x-swagger-router-controller: TaskFlow
+      parameters:
+        - name: processFlowId
+          required: true
+          in: path
+          description: Identifier of the parent ProcessFlow entity
+          type: string
+        - name: id
+          required: true
+          in: path
+          description: Identifier of the TaskFlow
+          type: string
+        - name: fields
+          required: false
+          in: query
+          description: Comma-separated properties to provide in response
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/TaskFlow"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    patch:
+      operationId: patchTaskFlow
+      summary: Updates partially a TaskFlow
+      description: This operation updates partially a TaskFlow entity.
+      tags:
+        - taskFlow
+      x-swagger-router-controller: TaskFlow
+      parameters:
+        - name: processFlowId
+          required: true
+          in: path
+          description: Identifier of the parent ProcessFlow entity
+          type: string
+        - name: id
+          required: true
+          in: path
+          description: Identifier of the TaskFlow
+          type: string
+        - name: taskFlow
+          required: true
+          in: body
+          description: The TaskFlow to be updated
+          schema:
+            $ref: "#/definitions/TaskFlow_Update"
+      responses:
+        "200":
+          description: Updated
+          schema:
+            $ref: "#/definitions/TaskFlow"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /hub:
+    post:
+      operationId: registerListener
+      summary: Register a listener
+      description: Sets the communication endpoint address the service instance must use to deliver information about its health state, execution state, failures and metrics.
+      tags:
+        - events subscription
+      x-swagger-router-controller: EventsSubscription
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: Data containing the callback endpoint to deliver the information
+          schema:
+            $ref: "#/definitions/EventSubscriptionInput"
+      responses:
+        "201":
+          description: Subscribed
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /hub/{id}:
+    delete:
+      operationId: unregisterListener
+      summary: Unregister a listener
+      description: Resets the communication endpoint address the service instance must use to deliver information about its health state, execution state, failures and metrics.
+      tags:
+        - events subscription
+      x-swagger-router-controller: EventsSubscription
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: The id of the registered listener
+          type: string
+      responses:
+        "204":
+          description: Deleted
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/processFlowCreateEvent:
+    post:
+      operationId: listenToProcessFlowCreateEvent
+      summary: Client listener for entity ProcessFlowCreateEvent
+      description: Example of a client listener for receiving the notification ProcessFlowCreateEvent
+      tags:
+        - notification listeners (client side)
+      x-swagger-router-controller: NotificationListenersClientSide
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/ProcessFlowCreateEvent"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/processFlowStateChangeEvent:
+    post:
+      operationId: listenToProcessFlowStateChangeEvent
+      summary: Client listener for entity ProcessFlowStateChangeEvent
+      description: Example of a client listener for receiving the notification ProcessFlowStateChangeEvent
+      tags:
+        - notification listeners (client side)
+      x-swagger-router-controller: NotificationListenersClientSide
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/ProcessFlowStateChangeEvent"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/processFlowDeleteEvent:
+    post:
+      operationId: listenToProcessFlowDeleteEvent
+      summary: Client listener for entity ProcessFlowDeleteEvent
+      description: Example of a client listener for receiving the notification ProcessFlowDeleteEvent
+      tags:
+        - notification listeners (client side)
+      x-swagger-router-controller: NotificationListenersClientSide
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/ProcessFlowDeleteEvent"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/processFlowAttributeValueChangeEvent:
+    post:
+      operationId: listenToProcessFlowAttributeValueChangeEvent
+      summary: Client listener for entity ProcessFlowAttributeValueChangeEvent
+      description: Example of a client listener for receiving the notification ProcessFlowAttributeValueChangeEvent
+      tags:
+        - notification listeners (client side)
+      x-swagger-router-controller: NotificationListenersClientSide
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/ProcessFlowAttributeValueChangeEvent"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/taskFlowCreateEvent:
+    post:
+      operationId: listenToTaskFlowCreateEvent
+      summary: Client listener for entity TaskFlowCreateEvent
+      description: Example of a client listener for receiving the notification TaskFlowCreateEvent
+      tags:
+        - notification listeners (client side)
+      x-swagger-router-controller: NotificationListenersClientSide
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/TaskFlowCreateEvent"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/taskFlowStateChangeEvent:
+    post:
+      operationId: listenToTaskFlowStateChangeEvent
+      summary: Client listener for entity TaskFlowStateChangeEvent
+      description: Example of a client listener for receiving the notification TaskFlowStateChangeEvent
+      tags:
+        - notification listeners (client side)
+      x-swagger-router-controller: NotificationListenersClientSide
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/TaskFlowStateChangeEvent"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/taskFlowDeleteEvent:
+    post:
+      operationId: listenToTaskFlowDeleteEvent
+      summary: Client listener for entity TaskFlowDeleteEvent
+      description: Example of a client listener for receiving the notification TaskFlowDeleteEvent
+      tags:
+        - notification listeners (client side)
+      x-swagger-router-controller: NotificationListenersClientSide
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/TaskFlowDeleteEvent"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/taskFlowAttributeValueChangeEvent:
+    post:
+      operationId: listenToTaskFlowAttributeValueChangeEvent
+      summary: Client listener for entity TaskFlowAttributeValueChangeEvent
+      description: Example of a client listener for receiving the notification TaskFlowAttributeValueChangeEvent
+      tags:
+        - notification listeners (client side)
+      x-swagger-router-controller: NotificationListenersClientSide
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/TaskFlowAttributeValueChangeEvent"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/taskFlowInformationRequiredEvent:
+    post:
+      operationId: listenToTaskFlowInformationRequiredEvent
+      summary: Client listener for entity TaskFlowInformationRequiredEvent
+      description: Example of a client listener for receiving the notification TaskFlowInformationRequiredEvent
+      tags:
+        - notification listeners (client side)
+      x-swagger-router-controller: NotificationListenersClientSide
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/TaskFlowInformationRequiredEvent"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+definitions:
+  ProcessFlow:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the ProcessFlow
+      href:
+        type: string
+        description: Hyperlink reference
+      description:
+        type: string
+        description: Description of the ProcessFlow
+      name:
+        type: string
+        description: Name of the ProcessFlow
+      state:
+        type: string
+        description: State of the ProcessFlow (acknowledged, inProgress, cancelled, completed, failed, paused, pendingCancellation)
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      taskFlow:
+        type: array
+        items:
+          $ref: "#/definitions/TaskFlow"
+      processFlowSpecification:
+        $ref: "#/definitions/ProcessFlowSpecificationRef"
+      characteristic:
+        type: array
+        items:
+          $ref: "#/definitions/Characteristic"
+      "@baseType":
+        type: string
+        description: When sub-classing, this defines the super-class
+      "@schemaLocation":
+        type: string
+        description: A URI to a JSON-Schema file that defines additional attributes and relationships
+      "@type":
+        type: string
+        description: When sub-classing, this defines the sub-class Extensible name
+  ProcessFlow_Create:
+    type: object
+    required:
+      - processFlowSpecification
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      processFlowSpecification:
+        $ref: "#/definitions/ProcessFlowSpecificationRef"
+      characteristic:
+        type: array
+        items:
+          $ref: "#/definitions/Characteristic"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  TaskFlow:
+    type: object
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      state:
+        type: string
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      characteristic:
+        type: array
+        items:
+          $ref: "#/definitions/Characteristic"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  TaskFlow_Update:
+    type: object
+    properties:
+      description:
+        type: string
+      state:
+        type: string
+      characteristic:
+        type: array
+        items:
+          $ref: "#/definitions/Characteristic"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  ProcessFlowSpecificationRef:
+    type: object
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+      name:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  RelatedParty:
+    type: object
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  Characteristic:
+    type: object
+    properties:
+      name:
+        type: string
+      value:
+        type: object
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  EventSubscriptionInput:
+    type: object
+    required:
+      - callback
+    properties:
+      callback:
+        type: string
+        description: The callback being registered
+      query:
+        type: string
+        description: additional data to be sent
+  EventSubscription:
+    type: object
+    required:
+      - id
+      - callback
+    properties:
+      id:
+        type: string
+      callback:
+        type: string
+      query:
+        type: string
+  ProcessFlowCreateEvent:
+    type: object
+    properties:
+      id:
+        type: string
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      eventType:
+        type: string
+      event:
+        $ref: "#/definitions/ProcessFlowCreateEventPayload"
+  ProcessFlowCreateEventPayload:
+    type: object
+    properties:
+      processFlow:
+        $ref: "#/definitions/ProcessFlow"
+  ProcessFlowStateChangeEvent:
+    type: object
+    properties:
+      id:
+        type: string
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        $ref: "#/definitions/ProcessFlowStateChangeEventPayload"
+  ProcessFlowStateChangeEventPayload:
+    type: object
+    properties:
+      processFlow:
+        $ref: "#/definitions/ProcessFlow"
+  ProcessFlowDeleteEvent:
+    type: object
+    properties:
+      id:
+        type: string
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        $ref: "#/definitions/ProcessFlowDeleteEventPayload"
+  ProcessFlowDeleteEventPayload:
+    type: object
+    properties:
+      processFlow:
+        $ref: "#/definitions/ProcessFlow"
+  ProcessFlowAttributeValueChangeEvent:
+    type: object
+    properties:
+      id:
+        type: string
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        $ref: "#/definitions/ProcessFlowAttributeValueChangeEventPayload"
+  ProcessFlowAttributeValueChangeEventPayload:
+    type: object
+    properties:
+      processFlow:
+        $ref: "#/definitions/ProcessFlow"
+  TaskFlowCreateEvent:
+    type: object
+    properties:
+      id:
+        type: string
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        $ref: "#/definitions/TaskFlowCreateEventPayload"
+  TaskFlowCreateEventPayload:
+    type: object
+    properties:
+      taskFlow:
+        $ref: "#/definitions/TaskFlow"
+  TaskFlowStateChangeEvent:
+    type: object
+    properties:
+      id:
+        type: string
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        $ref: "#/definitions/TaskFlowStateChangeEventPayload"
+  TaskFlowStateChangeEventPayload:
+    type: object
+    properties:
+      taskFlow:
+        $ref: "#/definitions/TaskFlow"
+  TaskFlowDeleteEvent:
+    type: object
+    properties:
+      id:
+        type: string
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        $ref: "#/definitions/TaskFlowDeleteEventPayload"
+  TaskFlowDeleteEventPayload:
+    type: object
+    properties:
+      taskFlow:
+        $ref: "#/definitions/TaskFlow"
+  TaskFlowAttributeValueChangeEvent:
+    type: object
+    properties:
+      id:
+        type: string
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        $ref: "#/definitions/TaskFlowAttributeValueChangeEventPayload"
+  TaskFlowAttributeValueChangeEventPayload:
+    type: object
+    properties:
+      taskFlow:
+        $ref: "#/definitions/TaskFlow"
+  TaskFlowInformationRequiredEvent:
+    type: object
+    properties:
+      id:
+        type: string
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        $ref: "#/definitions/TaskFlowInformationRequiredEventPayload"
+  TaskFlowInformationRequiredEventPayload:
+    type: object
+    properties:
+      taskFlow:
+        $ref: "#/definitions/TaskFlow"
+  Error:
+    type: object
+    required:
+      - code
+      - reason
+    properties:
+      code:
+        type: string
+        description: Application relevant detail, defined in the API or a common list.
+      reason:
+        type: string
+        description: Explanation of the reason for the error which can be shown to a client user.
+      message:
+        type: string
+        description: More details and corrective actions related to the error which can be shown to a client user.
+      status:
+        type: string
+        description: HTTP Error code extension
+      referenceError:
+        type: string
+        description: URI of documentation describing the error.
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string

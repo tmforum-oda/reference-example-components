@@ -11,7 +11,7 @@ description: >
 
 # Create ODA Component
 
-A skill for building complete TM Forum ODA Component implementations, following the patterns established in the `source/ProductCatalog/` and `charts/ProductCatalog/` reference examples.
+A standalone skill for building complete TM Forum ODA Component implementations. All reference patterns and reusable template files are bundled within this skill in the `templates/` directory, so the skill can be installed in any repository.
 
 ## What you will build
 
@@ -23,6 +23,16 @@ Before starting, read these reference files as needed:
 - `references/component-list.md` — Full list of ODA Components and spec URL pattern
 - `references/source-patterns.md` — Source code structure, Node.js patterns, dockerfiles
 - `references/chart-patterns.md` — Helm chart structure and template patterns
+
+Template files bundled in this skill:
+- `templates/source/utils/` — 14 shared Node.js utility files (copy verbatim into every microservice)
+- `templates/source/index.html_replacement` — Swagger UI customization file
+- `templates/source/roleInitializationMicroservice/` — Role init job implementation (copy verbatim)
+- `templates/source/openMetricsMicroservice/` — Metrics microservice implementation (customize counter name)
+- `templates/source/componentInitializationMicroservice/` — Component init job reference (customize API URL)
+- `templates/source/MCPServerMicroservice/` — MCP server reference implementation (customize per component)
+- `templates/charts/templates/deployment-rolemanagement.yaml` — Conditional role management deployment template
+- `templates/charts/README.md` — Chart README reference example
 
 ---
 
@@ -87,6 +97,7 @@ Create `{apiname}Microservice/implementation/` with:
 
 **`api/swagger.yaml`** — Download the OpenAPI spec from the URL in the specification YAML's `specification[0].url` field. Save it as `swagger.yaml`. This is the spec the Node.js server loads at startup.
 - Always use YAML format. Never use JSON (`swagger.json`) — `swaggerUtils.js` reads `swagger.yaml` exclusively.
+- Always remove the `host:` field from the downloaded spec (delete the line entirely). Leaving `host` undefined causes swagger-ui to use the current page's host, which is correct behaviour when the API is accessed through the ODA Canvas ingress at `localhost`. A hardcoded value such as `serverRoot` or any other placeholder will cause swagger-ui to show a wrong Base URL.
 - After downloading, add `x-swagger-router-controller` to every operation in the spec. Map each operation's first tag to the corresponding PascalCase controller filename (e.g. tag `productOrder` → controller `ProductOrder`). This is required because Linux's case-sensitive filesystem cannot match a lowercase tag name to a PascalCase `.js` file. Without this field, `swagger-tools` will fail at runtime with `Cannot resolve the configured swagger-router handler`. The mapping pattern is: take the tag, split on spaces (for multi-word tags), PascalCase each word, join — e.g. `events subscription` → `EventsSubscription`, `notification listeners (client side)` → `NotificationListenersClientSide`.
 
 **`index.js`** — Follow the exact pattern from `references/source-patterns.md`. Key customizations:
@@ -102,17 +113,17 @@ Create `{apiname}Microservice/implementation/` with:
 
 **Critical**: `registerListener` and `unregisterListener` must **always** delegate to `notificationUtils.register(req, res, next)` and `notificationUtils.unregister(req, res, next)` respectively — never use the generic CRUD pattern for these. This ensures hub subscriptions are stored in the `HUB` collection that `notificationUtils.publish` reads from when dispatching events to registered listeners.
 
-**`utils/`** — Copy all 14 utility files from `source/ProductCatalog/productCatalogMicroservice/implementation/utils/` verbatim into each microservice. These are shared utilities that work across any TMF API.
+**`utils/`** — Copy all 14 utility files from `templates/source/utils/` (bundled in this skill) verbatim into each microservice. These are shared utilities that work across any TMF API.
 
 **`package.json`** — Follow the pattern from `references/source-patterns.md`, updating `name` and `description` to match the specific API (e.g. `"name": "service-catalog-management"`, `"description": "TMF API Reference: TMF633 - Service Catalog Management"`).
 
 **`config.json`** — `{"strict_schema": true}`
 
-**`index.html_replacement`** — Copy from `source/ProductCatalog/productCatalogMicroservice/implementation/index.html_replacement`
+**`index.html_replacement`** — Copy from `templates/source/index.html_replacement` (bundled in this skill)
 
 ### 4b — Role Initialization Microservice
 
-Create `roleInitializationMicroservice/implementation/` using the pattern from `references/source-patterns.md`. This is identical across all components — copy from `source/ProductCatalog/roleInitializationMicroservice/`. The `initialization.js` supports both TMF669 and TMF672 via the `USE_PERMISSION_SPEC` env var.
+Create `roleInitializationMicroservice/implementation/` using the pattern from `references/source-patterns.md`. This is identical across all components — copy from `templates/source/roleInitializationMicroservice/` (bundled in this skill). The `initialization.js` supports both TMF669 and TMF672 via the `USE_PERMISSION_SPEC` env var.
 
 ### 4c — Open Metrics Microservice
 
@@ -128,7 +139,7 @@ Use `FROM node:10.19` for roleInitializationMicroservice and openMetricsMicroser
 
 ### 4e — MCP Server (if user requested)
 
-Follow the Python/FastMCP pattern from `source/ProductCatalog/MCPServerMicroservice/`. Create:
+Follow the Python/FastMCP pattern from `templates/source/MCPServerMicroservice/` (bundled in this skill — the `product_catalog_mcp_server.py` and `product_catalog_api.py` are ProductCatalog-specific examples to use as reference). Create:
 - `{componentname}MCPServerMicroservice/{componentname}_mcp_server.py` — FastMCP server with tools for each resource CRUD operation
 - `{componentname}MCPServerMicroservice/{componentname}_api.py` — httpx async API client
 - `{componentname}MCPServerMicroservice/pyproject.toml` — Python dependencies (fastmcp, httpx, uvicorn)
@@ -241,7 +252,7 @@ Wait for each build to complete and confirm the push succeeded (`pushing manifes
 
 ### Chart README (`charts/{ComponentName}/README.md`)
 
-Model this on `charts/ProductCatalog/README.md`. Include:
+Model this on `templates/charts/README.md` (bundled in this skill). Include:
 
 1. **Title and intro** — `# Example {ComponentName} component` with a one-line description linking to the TM Forum component directory page.
 

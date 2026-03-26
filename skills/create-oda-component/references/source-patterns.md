@@ -1,6 +1,6 @@
 # Source Code Patterns
 
-Reference patterns extracted from `source/ProductCatalog/` for generating new ODA Component source code.
+Reference patterns for generating new ODA Component source code. Reusable template files are bundled in this skill under `templates/source/`.
 
 ## Directory Structure
 
@@ -310,9 +310,9 @@ exports.delete{Resource} = function(req, res, next) {
 
 ---
 
-## Utils (copy from ProductCatalog)
+## Utils (copy from bundled templates)
 
-Copy all utils from `source/ProductCatalog/productCatalogMicroservice/implementation/utils/` into each new microservice's `utils/` folder. The key utils are:
+Copy all utils from `templates/source/utils/` (bundled in this skill) into each new microservice's `utils/` folder. The key utils are:
 
 | File | Purpose |
 |------|---------|
