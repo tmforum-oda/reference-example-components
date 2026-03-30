@@ -1,0 +1,1140 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "ProductCatalog - Retail and Wholesale Test Data",
+    "description": "Creates sample Vodafone RedBrand (Mobile + Broadband) and MVNO Wholesale test data in a Product Catalog Management v4 instance. Requests must be run in order. IDs are passed between requests using collection variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost/pc1-productcatalogmanagement/tmf-api/productCatalogManagement/v4",
+      "type": "string"
+    },
+    {
+      "key": "permBaseUrl",
+      "value": "https://localhost/pc1-productcatalogmanagement/rolesAndPermissionsManagement/v5",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Catalogs",
+      "item": [
+        {
+          "name": "Create RedBrand Catalog",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('redBrandId', json.id);",
+                  "pm.collectionVariables.set('redBrandName', json.name);",
+                  "pm.test('RedBrand catalog created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"RedBrand\",\n  \"description\": \"Vodafone RedBrand consumer catalog for Mobile and Broadband services\",\n  \"catalogType\": \"ProductCatalog\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/catalog",
+              "host": ["{{baseUrl}}"],
+              "path": ["catalog"]
+            }
+          }
+        },
+        {
+          "name": "Create MVNO Catalog",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('mvnoId', json.id);",
+                  "pm.collectionVariables.set('mvnoName', json.name);",
+                  "pm.test('MVNO catalog created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MVNO\",\n  \"description\": \"Wholesale MVNO services catalog\",\n  \"catalogType\": \"ProductCatalog\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/catalog",
+              "host": ["{{baseUrl}}"],
+              "path": ["catalog"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Categories",
+      "item": [
+        {
+          "name": "Create Mobile Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('catMobileId', json.id);",
+                  "pm.collectionVariables.set('catMobileName', json.name);",
+                  "pm.test('Mobile category created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mobile\",\n  \"description\": \"Vodafone Mobile plans and add-ons\",\n  \"lifecycleStatus\": \"Active\",\n  \"isRoot\": true,\n  \"version\": \"1.0\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/category",
+              "host": ["{{baseUrl}}"],
+              "path": ["category"]
+            }
+          }
+        },
+        {
+          "name": "Create Broadband Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('catBroadbandId', json.id);",
+                  "pm.collectionVariables.set('catBroadbandName', json.name);",
+                  "pm.test('Broadband category created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Broadband\",\n  \"description\": \"Vodafone Broadband and fixed-line services\",\n  \"lifecycleStatus\": \"Active\",\n  \"isRoot\": true,\n  \"version\": \"1.0\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/category",
+              "host": ["{{baseUrl}}"],
+              "path": ["category"]
+            }
+          }
+        },
+        {
+          "name": "Create MVNO Wholesale Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('catMVNOId', json.id);",
+                  "pm.collectionVariables.set('catMVNOName', json.name);",
+                  "pm.test('MVNO Wholesale category created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MVNO Wholesale\",\n  \"description\": \"Wholesale MVNO network access products\",\n  \"lifecycleStatus\": \"Active\",\n  \"isRoot\": true,\n  \"version\": \"1.0\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/category",
+              "host": ["{{baseUrl}}"],
+              "path": ["category"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Product Specifications",
+      "item": [
+        {
+          "name": "Create Spec - Unlimited SIM Plan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('specUnlimitedSimId', json.id);",
+                  "pm.collectionVariables.set('specUnlimitedSimName', json.name);",
+                  "pm.test('Spec created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Unlimited SIM Plan\",\n  \"description\": \"Unlimited calls, texts and data SIM-only plan\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"brand\": \"Vodafone\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productSpecification",
+              "host": ["{{baseUrl}}"],
+              "path": ["productSpecification"]
+            }
+          }
+        },
+        {
+          "name": "Create Spec - Pay As You Go Mobile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('specPayAsYouGoId', json.id);",
+                  "pm.collectionVariables.set('specPayAsYouGoName', json.name);",
+                  "pm.test('Spec created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pay As You Go Mobile\",\n  \"description\": \"Flexible pay-as-you-go mobile plan with no contract\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"brand\": \"Vodafone\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productSpecification",
+              "host": ["{{baseUrl}}"],
+              "path": ["productSpecification"]
+            }
+          }
+        },
+        {
+          "name": "Create Spec - Fibre 100",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('specFibre100Id', json.id);",
+                  "pm.collectionVariables.set('specFibre100Name', json.name);",
+                  "pm.test('Spec created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Fibre 100\",\n  \"description\": \"100Mbps fibre broadband with superfast speeds\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"brand\": \"Vodafone\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productSpecification",
+              "host": ["{{baseUrl}}"],
+              "path": ["productSpecification"]
+            }
+          }
+        },
+        {
+          "name": "Create Spec - Fibre 900",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('specFibre900Id', json.id);",
+                  "pm.collectionVariables.set('specFibre900Name', json.name);",
+                  "pm.test('Spec created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Fibre 900\",\n  \"description\": \"900Mbps ultrafast full-fibre broadband\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"brand\": \"Vodafone\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productSpecification",
+              "host": ["{{baseUrl}}"],
+              "path": ["productSpecification"]
+            }
+          }
+        },
+        {
+          "name": "Create Spec - MVNO Data Access",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('specMVNODataId', json.id);",
+                  "pm.collectionVariables.set('specMVNODataName', json.name);",
+                  "pm.test('Spec created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MVNO Data Access\",\n  \"description\": \"Wholesale data network access for MVNO operators\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"brand\": \"Vodafone Wholesale\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productSpecification",
+              "host": ["{{baseUrl}}"],
+              "path": ["productSpecification"]
+            }
+          }
+        },
+        {
+          "name": "Create Spec - MVNO Voice Access",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('specMVNOVoiceId', json.id);",
+                  "pm.collectionVariables.set('specMVNOVoiceName', json.name);",
+                  "pm.test('Spec created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MVNO Voice Access\",\n  \"description\": \"Wholesale voice network access for MVNO operators\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"brand\": \"Vodafone Wholesale\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productSpecification",
+              "host": ["{{baseUrl}}"],
+              "path": ["productSpecification"]
+            }
+          }
+        },
+        {
+          "name": "Create Spec - MVNO Full MVNE Bundle",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('specMVNOBundleId', json.id);",
+                  "pm.collectionVariables.set('specMVNOBundleName', json.name);",
+                  "pm.test('Spec created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MVNO Full MVNE Bundle\",\n  \"description\": \"Full MVNE managed service bundle including SIM, roaming, billing and support\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"brand\": \"Vodafone Wholesale\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productSpecification",
+              "host": ["{{baseUrl}}"],
+              "path": ["productSpecification"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. RedBrand - Mobile Offerings",
+      "item": [
+        {
+          "name": "Create Price - Unlimited Max Monthly (£28)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('priceMob1Id', json.id);",
+                  "pm.collectionVariables.set('priceMob1Name', json.name);",
+                  "pm.test('Price created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monthly price\",\n  \"priceType\": \"recurring\",\n  \"price\": { \"unit\": \"GBP\", \"value\": 28 }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOfferingPrice",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOfferingPrice"]
+            }
+          }
+        },
+        {
+          "name": "Create Offering - Unlimited Max SIM Only 24-month",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Offering created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Unlimited Max SIM Only 24-month\",\n  \"description\": \"Unlimited calls, texts and data on a 24-month SIM-only plan\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMobileId}}\", \"name\": \"{{catMobileName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specUnlimitedSimId}}\", \"name\": \"{{specUnlimitedSimName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMob1Id}}\", \"name\": \"{{priceMob1Name}}\" }]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOffering",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOffering"]
+            }
+          }
+        },
+        {
+          "name": "Create Price - Unlimited Lite Monthly (£18)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('priceMob2Id', json.id);",
+                  "pm.collectionVariables.set('priceMob2Name', json.name);",
+                  "pm.test('Price created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monthly price\",\n  \"priceType\": \"recurring\",\n  \"price\": { \"unit\": \"GBP\", \"value\": 18 }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOfferingPrice",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOfferingPrice"]
+            }
+          }
+        },
+        {
+          "name": "Create Offering - Unlimited Lite SIM Only 12-month",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Offering created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Unlimited Lite SIM Only 12-month\",\n  \"description\": \"Unlimited calls and texts with 30GB data on a 12-month SIM-only plan\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMobileId}}\", \"name\": \"{{catMobileName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specUnlimitedSimId}}\", \"name\": \"{{specUnlimitedSimName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMob2Id}}\", \"name\": \"{{priceMob2Name}}\" }]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOffering",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOffering"]
+            }
+          }
+        },
+        {
+          "name": "Create Price - Pay As You Go One-off SIM (£1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('priceMob3Id', json.id);",
+                  "pm.collectionVariables.set('priceMob3Name', json.name);",
+                  "pm.test('Price created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"One-off SIM\",\n  \"priceType\": \"oneTime\",\n  \"price\": { \"unit\": \"GBP\", \"value\": 1 }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOfferingPrice",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOfferingPrice"]
+            }
+          }
+        },
+        {
+          "name": "Create Offering - Pay As You Go Starter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Offering created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pay As You Go Starter\",\n  \"description\": \"No-contract pay-as-you-go mobile with 1p/min calls and 1p/text\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMobileId}}\", \"name\": \"{{catMobileName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specPayAsYouGoId}}\", \"name\": \"{{specPayAsYouGoName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMob3Id}}\", \"name\": \"{{priceMob3Name}}\" }]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOffering",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOffering"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. RedBrand - Broadband Offerings",
+      "item": [
+        {
+          "name": "Create Price - Fibre 100 Monthly (£27)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('priceBB1Id', json.id);",
+                  "pm.collectionVariables.set('priceBB1Name', json.name);",
+                  "pm.test('Price created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monthly price\",\n  \"priceType\": \"recurring\",\n  \"price\": { \"unit\": \"GBP\", \"value\": 27 }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOfferingPrice",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOfferingPrice"]
+            }
+          }
+        },
+        {
+          "name": "Create Offering - Fibre 100 Broadband",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Offering created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Fibre 100 Broadband\",\n  \"description\": \"100Mbps superfast broadband with free setup\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catBroadbandId}}\", \"name\": \"{{catBroadbandName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specFibre100Id}}\", \"name\": \"{{specFibre100Name}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceBB1Id}}\", \"name\": \"{{priceBB1Name}}\" }]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOffering",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOffering"]
+            }
+          }
+        },
+        {
+          "name": "Create Price - Fibre 900 Monthly (£38)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('priceBB2Id', json.id);",
+                  "pm.collectionVariables.set('priceBB2Name', json.name);",
+                  "pm.test('Price created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monthly price\",\n  \"priceType\": \"recurring\",\n  \"price\": { \"unit\": \"GBP\", \"value\": 38 }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOfferingPrice",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOfferingPrice"]
+            }
+          }
+        },
+        {
+          "name": "Create Offering - Fibre 900 Pro Broadband",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Offering created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Fibre 900 Pro Broadband\",\n  \"description\": \"900Mbps ultrafast full-fibre broadband, ideal for large households\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catBroadbandId}}\", \"name\": \"{{catBroadbandName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specFibre900Id}}\", \"name\": \"{{specFibre900Name}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceBB2Id}}\", \"name\": \"{{priceBB2Name}}\" }]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOffering",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOffering"]
+            }
+          }
+        },
+        {
+          "name": "Create Price - BB+Mobile Bundle Monthly (£40)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('priceBB3Id', json.id);",
+                  "pm.collectionVariables.set('priceBB3Name', json.name);",
+                  "pm.test('Price created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monthly bundle price\",\n  \"priceType\": \"recurring\",\n  \"price\": { \"unit\": \"GBP\", \"value\": 40 }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOfferingPrice",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOfferingPrice"]
+            }
+          }
+        },
+        {
+          "name": "Create Offering - Home Broadband + Mobile Bundle",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Offering created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Home Broadband + Mobile Bundle\",\n  \"description\": \"Fibre 100 broadband combined with an Unlimited Lite SIM-only plan\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catBroadbandId}}\", \"name\": \"{{catBroadbandName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specFibre100Id}}\", \"name\": \"{{specFibre100Name}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceBB3Id}}\", \"name\": \"{{priceBB3Name}}\" }]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOffering",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOffering"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. MVNO Wholesale Offerings",
+      "item": [
+        {
+          "name": "Create Price - MVNO Data Monthly (£500)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('priceMVNO1Id', json.id);",
+                  "pm.collectionVariables.set('priceMVNO1Name', json.name);",
+                  "pm.test('Price created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monthly wholesale rate\",\n  \"priceType\": \"recurring\",\n  \"price\": { \"unit\": \"GBP\", \"value\": 500 }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOfferingPrice",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOfferingPrice"]
+            }
+          }
+        },
+        {
+          "name": "Create Offering - MVNO Data Access - Standard",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Offering created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MVNO Data Access - Standard\",\n  \"description\": \"Wholesale 4G/5G data network access, up to 1TB pooled data\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specMVNODataId}}\", \"name\": \"{{specMVNODataName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMVNO1Id}}\", \"name\": \"{{priceMVNO1Name}}\" }]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOffering",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOffering"]
+            }
+          }
+        },
+        {
+          "name": "Create Price - MVNO Voice Per Minute (£0.005)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('priceMVNO2Id', json.id);",
+                  "pm.collectionVariables.set('priceMVNO2Name', json.name);",
+                  "pm.test('Price created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Per minute rate\",\n  \"priceType\": \"usage\",\n  \"price\": { \"unit\": \"GBP\", \"value\": 0.005 }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOfferingPrice",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOfferingPrice"]
+            }
+          }
+        },
+        {
+          "name": "Create Offering - MVNO Voice Access - National",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Offering created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MVNO Voice Access - National\",\n  \"description\": \"Wholesale national voice termination and origination for MVNO operators\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specMVNOVoiceId}}\", \"name\": \"{{specMVNOVoiceName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMVNO2Id}}\", \"name\": \"{{priceMVNO2Name}}\" }]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOffering",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOffering"]
+            }
+          }
+        },
+        {
+          "name": "Create Price - MVNE Managed Service Monthly (£2000)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('priceMVNO3Id', json.id);",
+                  "pm.collectionVariables.set('priceMVNO3Name', json.name);",
+                  "pm.test('Price created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Monthly managed service fee\",\n  \"priceType\": \"recurring\",\n  \"price\": { \"unit\": \"GBP\", \"value\": 2000 }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOfferingPrice",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOfferingPrice"]
+            }
+          }
+        },
+        {
+          "name": "Create Offering - Full MVNE Managed Service",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Offering created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Full MVNE Managed Service\",\n  \"description\": \"Complete white-label MVNE managed service: SIM logistics, roaming, billing integration and 24/7 NOC support\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specMVNOBundleId}}\", \"name\": \"{{specMVNOBundleName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMVNO3Id}}\", \"name\": \"{{priceMVNO3Name}}\" }]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOffering",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOffering"]
+            }
+          }
+        },
+        {
+          "name": "Create Price - IoT Per SIM Per Month (£2)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('priceMVNO4Id', json.id);",
+                  "pm.collectionVariables.set('priceMVNO4Name', json.name);",
+                  "pm.test('Price created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Per SIM per month\",\n  \"priceType\": \"recurring\",\n  \"price\": { \"unit\": \"GBP\", \"value\": 2 }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOfferingPrice",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOfferingPrice"]
+            }
+          }
+        },
+        {
+          "name": "Create Offering - MVNO IoT Connectivity Pack",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Offering created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MVNO IoT Connectivity Pack\",\n  \"description\": \"Wholesale IoT SIM connectivity with global eSIM support and multi-IMSI capability\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specMVNODataId}}\", \"name\": \"{{specMVNODataName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMVNO4Id}}\", \"name\": \"{{priceMVNO4Name}}\" }]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOffering",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOffering"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Link Categories to Catalogs",
+      "item": [
+        {
+          "name": "Link Mobile + Broadband to RedBrand Catalog",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('RedBrand catalog updated', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": [\n    { \"id\": \"{{catMobileId}}\", \"name\": \"{{catMobileName}}\" },\n    { \"id\": \"{{catBroadbandId}}\", \"name\": \"{{catBroadbandName}}\" }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/catalog/{{redBrandId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["catalog", "{{redBrandId}}"]
+            }
+          }
+        },
+        {
+          "name": "Link MVNO Wholesale to MVNO Catalog",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('MVNO catalog updated', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": [\n    { \"id\": \"{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/catalog/{{mvnoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["catalog", "{{mvnoId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Permission Specification Sets",
+      "item": [
+        {
+          "name": "Create RedBrand PermissionSpecificationSet",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('pssRedBrandId', json.id);",
+                  "pm.test('RedBrand PermissionSpecificationSet created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"@type\": \"PermissionSpecificationSet\",\n  \"name\": \"RedBrand\",\n  \"involvementRole\": \"RedBrand\",\n  \"description\": \"RedBrand consumer catalog permissions for retail Mobile and Broadband users\",\n  \"permissionSpecification\": [\n    {\n      \"@type\": \"PermissionSpecification\",\n      \"name\": \"RedBrand:read\",\n      \"description\": \"Read access to RedBrand catalog resources\",\n      \"function\": \"productCatalog\",\n      \"action\": \"Read\"\n    },\n    {\n      \"@type\": \"PermissionSpecification\",\n      \"name\": \"RedBrand:write\",\n      \"description\": \"Write access to RedBrand catalog resources\",\n      \"function\": \"productCatalog\",\n      \"action\": \"ReadWrite\"\n    }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{permBaseUrl}}/permissionSpecificationSet",
+              "host": ["{{permBaseUrl}}"],
+              "path": ["permissionSpecificationSet"]
+            }
+          }
+        },
+        {
+          "name": "Create MVNO PermissionSpecificationSet",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('pssMVNOId', json.id);",
+                  "pm.test('MVNO PermissionSpecificationSet created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"@type\": \"PermissionSpecificationSet\",\n  \"name\": \"MVNO\",\n  \"involvementRole\": \"MVNO\",\n  \"description\": \"MVNO wholesale catalog permissions for partner network operators\",\n  \"permissionSpecification\": [\n    {\n      \"@type\": \"PermissionSpecification\",\n      \"name\": \"MVNO:read\",\n      \"description\": \"Read access to MVNO wholesale catalog resources\",\n      \"function\": \"productCatalog\",\n      \"action\": \"Read\"\n    },\n    {\n      \"@type\": \"PermissionSpecification\",\n      \"name\": \"MVNO:write\",\n      \"description\": \"Write access to MVNO wholesale catalog resources\",\n      \"function\": \"productCatalog\",\n      \"action\": \"ReadWrite\"\n    }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{permBaseUrl}}/permissionSpecificationSet",
+              "host": ["{{permBaseUrl}}"],
+              "path": ["permissionSpecificationSet"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
