@@ -46,8 +46,8 @@ mongodb:
   port: 27017
   database: tmf
 api:
-  image: lesterthomas/productorderingapi:0.4
-  versionLabel: productorderingapi-0.1
+  image: lesterthomas/productorderingapi:0.9
+  versionLabel: productorderingapi-0.9
   otlp:
     console:
       enabled: false

@@ -1,0 +1,266 @@
+{
+  "info": {
+    "_postman_id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+    "name": "ProductOrderCaptureAndValidation - Retail and Wholesale Test Data",
+    "description": "Creates sample Vodafone RedBrand product orders and PermissionSpecificationSets in a Product Ordering Management v4 (po1) component instance. Requests must be run in order.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost/po1-productordercaptureandvalidation/tmf-api/productOrderingManagement/v4",
+      "type": "string"
+    },
+    {
+      "key": "permBaseUrl",
+      "value": "https://localhost/po1-productordercaptureandvalidation/rolesAndPermissionsManagement/v5",
+      "type": "string"
+    },
+    {
+      "key": "pc1BaseUrl",
+      "value": "https://localhost/pc1-productcatalogmanagement/tmf-api/productCatalogManagement/v4",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Look Up Product Offerings",
+      "item": [
+        {
+          "name": "Look Up Offering - Unlimited Max SIM Only 24-month",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.test('Unlimited Max SIM Only 24-month found', function() { pm.expect(json).to.be.an('array').with.lengthOf.above(0); });",
+                  "pm.collectionVariables.set('offeringId_unlimitedMax24', json[0].id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{pc1BaseUrl}}/productOffering?name=Unlimited Max SIM Only 24-month",
+              "host": ["{{pc1BaseUrl}}"],
+              "path": ["productOffering"],
+              "query": [{ "key": "name", "value": "Unlimited Max SIM Only 24-month" }]
+            }
+          }
+        },
+        {
+          "name": "Look Up Offering - Fibre 900 Pro Broadband",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.test('Fibre 900 Pro Broadband found', function() { pm.expect(json).to.be.an('array').with.lengthOf.above(0); });",
+                  "pm.collectionVariables.set('offeringId_fibre900Pro', json[0].id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{pc1BaseUrl}}/productOffering?name=Fibre 900 Pro Broadband",
+              "host": ["{{pc1BaseUrl}}"],
+              "path": ["productOffering"],
+              "query": [{ "key": "name", "value": "Fibre 900 Pro Broadband" }]
+            }
+          }
+        },
+        {
+          "name": "Look Up Offering - Unlimited Lite SIM Only 12-month",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.test('Unlimited Lite SIM Only 12-month found', function() { pm.expect(json).to.be.an('array').with.lengthOf.above(0); });",
+                  "pm.collectionVariables.set('offeringId_unlimitedLite12', json[0].id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{pc1BaseUrl}}/productOffering?name=Unlimited Lite SIM Only 12-month",
+              "host": ["{{pc1BaseUrl}}"],
+              "path": ["productOffering"],
+              "query": [{ "key": "name", "value": "Unlimited Lite SIM Only 12-month" }]
+            }
+          }
+        },
+        {
+          "name": "Look Up Offering - Pay As You Go Starter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.test('Pay As You Go Starter found', function() { pm.expect(json).to.be.an('array').with.lengthOf.above(0); });",
+                  "pm.collectionVariables.set('offeringId_paygStarter', json[0].id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{pc1BaseUrl}}/productOffering?name=Pay As You Go Starter",
+              "host": ["{{pc1BaseUrl}}"],
+              "path": ["productOffering"],
+              "query": [{ "key": "name", "value": "Pay As You Go Starter" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Product Orders",
+      "item": [
+        {
+          "name": "Create Order - Unlimited Max SIM Only 24-month",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('orderId1', json.id);",
+                  "pm.test('Product order 1 created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"@type\": \"ProductOrder\",\n  \"description\": \"RedBrand customer order for Unlimited Max SIM Only 24-month plan\",\n  \"priority\": \"1\",\n  \"requestedStartDate\": \"2026-04-01T00:00:00.000Z\",\n  \"requestedCompletionDate\": \"2026-04-03T00:00:00.000Z\",\n  \"productOrderItem\": [\n    {\n      \"@type\": \"ProductOrderItem\",\n      \"id\": \"1\",\n      \"quantity\": 1,\n      \"action\": \"add\",\n      \"productOffering\": {\n        \"@type\": \"ProductOfferingRef\",\n        \"id\": \"{{offeringId_unlimitedMax24}}\",\n        \"name\": \"Unlimited Max SIM Only 24-month\"\n      }\n    }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOrder",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOrder"]
+            }
+          }
+        },
+        {
+          "name": "Create Order - Fibre 900 Pro + Unlimited Lite Bundle",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('orderId2', json.id);",
+                  "pm.test('Product order 2 created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"@type\": \"ProductOrder\",\n  \"description\": \"RedBrand customer order for broadband and mobile bundle\",\n  \"priority\": \"2\",\n  \"requestedStartDate\": \"2026-04-01T00:00:00.000Z\",\n  \"requestedCompletionDate\": \"2026-04-05T00:00:00.000Z\",\n  \"productOrderItem\": [\n    {\n      \"@type\": \"ProductOrderItem\",\n      \"id\": \"1\",\n      \"quantity\": 1,\n      \"action\": \"add\",\n      \"productOffering\": {\n        \"@type\": \"ProductOfferingRef\",\n        \"id\": \"{{offeringId_fibre900Pro}}\",\n        \"name\": \"Fibre 900 Pro Broadband\"\n      }\n    },\n    {\n      \"@type\": \"ProductOrderItem\",\n      \"id\": \"2\",\n      \"quantity\": 1,\n      \"action\": \"add\",\n      \"productOffering\": {\n        \"@type\": \"ProductOfferingRef\",\n        \"id\": \"{{offeringId_unlimitedLite12}}\",\n        \"name\": \"Unlimited Lite SIM Only 12-month\"\n      }\n    }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOrder",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOrder"]
+            }
+          }
+        },
+        {
+          "name": "Create Order - Pay As You Go Starter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('orderId3', json.id);",
+                  "pm.test('Product order 3 created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"@type\": \"ProductOrder\",\n  \"description\": \"RedBrand customer order for Pay As You Go SIM\",\n  \"priority\": \"3\",\n  \"requestedStartDate\": \"2026-04-02T00:00:00.000Z\",\n  \"requestedCompletionDate\": \"2026-04-02T00:00:00.000Z\",\n  \"productOrderItem\": [\n    {\n      \"@type\": \"ProductOrderItem\",\n      \"id\": \"1\",\n      \"quantity\": 3,\n      \"action\": \"add\",\n      \"productOffering\": {\n        \"@type\": \"ProductOfferingRef\",\n        \"id\": \"{{offeringId_paygStarter}}\",\n        \"name\": \"Pay As You Go Starter\"\n      }\n    }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productOrder",
+              "host": ["{{baseUrl}}"],
+              "path": ["productOrder"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Permission Specification Sets",
+      "item": [
+        {
+          "name": "Create RedBrand PermissionSpecificationSet",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('pssRedBrandId', json.id);",
+                  "pm.test('RedBrand PermissionSpecificationSet created', function() { pm.response.to.have.status(201); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"@type\": \"PermissionSpecificationSet\",\n  \"@baseType\": \"PermissionSpecificationSet\",\n  \"name\": \"RedBrand\",\n  \"involvementRole\": \"RedBrand\",\n  \"description\": \"RedBrand consumer permissions for product ordering\",\n  \"permissionSpecification\": [\n    {\n      \"@type\": \"PermissionSpecification\",\n      \"name\": \"RedBrand:read\",\n      \"description\": \"Read access to RedBrand product orders\",\n      \"function\": \"productOrder\",\n      \"action\": \"Read\"\n    },\n    {\n      \"@type\": \"PermissionSpecification\",\n      \"name\": \"RedBrand:write\",\n      \"description\": \"Write access to RedBrand product orders\",\n      \"function\": \"productOrder\",\n      \"action\": \"ReadWrite\"\n    }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{permBaseUrl}}/permissionSpecificationSet",
+              "host": ["{{permBaseUrl}}"],
+              "path": ["permissionSpecificationSet"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

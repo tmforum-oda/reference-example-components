@@ -46,8 +46,8 @@ mongodb:
   port: 27017
   database: tmf
 api:
-  image: lesterthomas/productinventoryapi:0.3
-  versionLabel: productinventoryapi-0.1
+  image: lesterthomas/productinventoryapi:0.4
+  versionLabel: productinventoryapi-0.4
   otlp:
     console:
       enabled: false

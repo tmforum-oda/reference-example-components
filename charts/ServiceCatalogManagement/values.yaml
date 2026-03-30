@@ -47,8 +47,8 @@ mongodb:
   database: tmf
 
 svcatapi:
-  image: lesterthomas/servicecatalogapi:0.1
-  versionLabel: servicecatalogapi-0.1
+  image: lesterthomas/servicecatalogapi:0.2
+  versionLabel: servicecatalogapi-0.2
   otlp:
     console:
       enabled: false
@@ -57,8 +57,8 @@ svcatapi:
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 
 svcqualapi:
-  image: lesterthomas/servicequalityapi:0.1
-  versionLabel: servicequalityapi-0.1
+  image: lesterthomas/servicequalityapi:0.2
+  versionLabel: servicequalityapi-0.2
   otlp:
     console:
       enabled: false
@@ -68,8 +68,8 @@ svcqualapi:
 
 processflow:
   enabled: false
-  image: lesterthomas/processflowapi:0.1
-  versionLabel: processflowapi-0.1
+  image: lesterthomas/processflowapi:0.2
+  versionLabel: processflowapi-0.2
   otlp:
     console:
       enabled: false

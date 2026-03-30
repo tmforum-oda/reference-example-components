@@ -1,5 +1,5 @@
 
-docker buildx build -t "lesterthomas/productcatalogapi:1.5"  --platform "linux/amd64,linux/arm64" -f prodcat-dockerfile . --push
+docker buildx build -t "lesterthomas/productcatalogapi:1.6"  --platform "linux/amd64,linux/arm64" -f prodcat-dockerfile . --push
 
 docker buildx build -t "lesterthomas/productcatalogmcp:0.14"  --platform "linux/amd64,linux/arm64" -f prodcat-mcp-dockerfile . --push
 

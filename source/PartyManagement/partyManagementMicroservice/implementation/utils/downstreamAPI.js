@@ -5,6 +5,7 @@ const https = require('https');
 const CANVAS_INFO_HOST_PORT = process.env.CANVAS_INFO_HOST_PORT;
 const CANVAS_INFO_BASEPATH = process.env.CANVAS_INFO_BASEPATH;
 const DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES = process.env.DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES === 'true';
+const CACHE_DOWNSTREAM_APIS = process.env.CACHE_DOWNSTREAM_APIS === 'true';
 
 const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + CANVAS_INFO_BASEPATH // 'http://info.canvas.svc.cluster.local/tmf-api/serviceInventoryManagement/v5/'
 const API_DEPENDENCY_NAME = process.env.API_DEPENDENCY_NAME || 'downstreamproductcatalog'; // defined in the component specification YAML file
@@ -14,7 +15,7 @@ let gDownstreamAPIList = [];
 let gDownstreamAPIListLoaded = false;
 
 async function getDownstreamAPIs() {
-    if (!gDownstreamAPIListLoaded) {
+    if (!CACHE_DOWNSTREAM_APIS || !gDownstreamAPIListLoaded) {
         if (CANVAS_INFO_HOST_PORT) {  // onloadly load the downstream APIs if the CANVAS_INFO_HOST_PORT is set
             console.log('utils/downstreamAPI/getDownstreamAPIs :: loading downstream APIs');
             gDownstreamAPIList = await loadDownstreamAPIs();

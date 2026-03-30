@@ -5,6 +5,7 @@ const https = require('https');
 const CANVAS_INFO_HOST_PORT = process.env.CANVAS_INFO_HOST_PORT;
 const CANVAS_INFO_BASEPATH = process.env.CANVAS_INFO_BASEPATH;
 const DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES = process.env.DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES === 'true';
+const CACHE_DOWNSTREAM_APIS = process.env.CACHE_DOWNSTREAM_APIS === 'true';
 
 const CANVAS_INFO_SERVICE_INVENTORY_API = 'http://' + CANVAS_INFO_HOST_PORT + CANVAS_INFO_BASEPATH;
 let componentName = process.env.COMPONENT_NAME;
@@ -13,7 +14,7 @@ let componentName = process.env.COMPONENT_NAME;
 let gDownstreamAPICache = {};
 
 async function getDownstreamAPIs(dependencyName) {
-    if (!gDownstreamAPICache[dependencyName]) {
+    if (!gDownstreamAPICache[dependencyName] || !CACHE_DOWNSTREAM_APIS) {
         if (CANVAS_INFO_HOST_PORT) {
             console.log('utils/downstreamAPI/getDownstreamAPIs :: loading downstream APIs for dependency ' + dependencyName);
             gDownstreamAPICache[dependencyName] = await loadDownstreamAPIs(dependencyName);

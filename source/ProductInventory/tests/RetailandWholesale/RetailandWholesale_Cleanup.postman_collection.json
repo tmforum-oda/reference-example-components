@@ -1,0 +1,50 @@
+{
+  "info": {
+    "_postman_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+    "name": "ProductInventory - Retail and Wholesale Cleanup",
+    "description": "Deletes all PermissionSpecificationSets from the Product Inventory (pi1) rolesAndPermissionsManagement instance.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "permBaseUrl",
+      "value": "https://localhost/pi1-productinventory/rolesAndPermissionsManagement/v5",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Delete All Permission Specification Sets",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "var toDelete = json.filter(function(pss) { return pss.name !== 'canvasRole'; });",
+              "toDelete.forEach(function(pss) {",
+              "  pm.sendRequest({",
+              "    url: pm.collectionVariables.get('permBaseUrl') + '/permissionSpecificationSet/' + pss.id,",
+              "    method: 'DELETE'",
+              "  }, function(err, res) {",
+              "    console.log('Deleted PSS ' + pss.name + ' (' + pss.id + ') status: ' + res.status);",
+              "  });",
+              "});",
+              "pm.test('Got permission specification sets list', function() { pm.response.to.have.status(200); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{permBaseUrl}}/permissionSpecificationSet",
+          "host": ["{{permBaseUrl}}"],
+          "path": ["permissionSpecificationSet"]
+        }
+      }
+    }
+  ]
+}

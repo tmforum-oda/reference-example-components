@@ -50,8 +50,8 @@ mongodb:
   port: 27017
   database: tmf
 api:
-  image: lesterthomas/productcatalogapi:1.5
-  versionLabel: productcatalogapi-1.5
+  image: lesterthomas/productcatalogapi:1.6
+  versionLabel: productcatalogapi-1.6
   otlp:
     console:
       enabled: false

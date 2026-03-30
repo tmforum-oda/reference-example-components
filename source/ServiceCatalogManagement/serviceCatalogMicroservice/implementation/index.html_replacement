@@ -40,7 +40,7 @@
 
       // Build a system
       const ui = SwaggerUIBundle({
-        url: "/tmf-api/serviceCatalogManagement/v4/api-docs",
+        url: "/tmf-api/productCatalogManagement/v4/api-docs",
         dom_id: '#swagger-ui',
         deepLinking: true,
         docExpansion: 'none',

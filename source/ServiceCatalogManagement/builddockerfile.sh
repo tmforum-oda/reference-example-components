@@ -17,13 +17,13 @@ for svc in serviceCatalogMicroservice serviceQualityManagementMicroservice proce
 done
 
 echo "Building Service Catalog API (TMF633)..."
-docker buildx build -t "${NAMESPACE}/servicecatalogapi:0.1" --platform "linux/amd64,linux/arm64" -f svcatapi-dockerfile . --push
+docker buildx build -t "${NAMESPACE}/servicecatalogapi:0.2" --platform "linux/amd64,linux/arm64" -f svcatapi-dockerfile . --push
 
 echo "Building Service Quality Management API (TMF657)..."
-docker buildx build -t "${NAMESPACE}/servicequalityapi:0.1" --platform "linux/amd64,linux/arm64" -f svcqualapi-dockerfile . --push
+docker buildx build -t "${NAMESPACE}/servicequalityapi:0.2" --platform "linux/amd64,linux/arm64" -f svcqualapi-dockerfile . --push
 
 echo "Building Process Flow Management API (TMF701)..."
-docker buildx build -t "${NAMESPACE}/processflowapi:0.1" --platform "linux/amd64,linux/arm64" -f procflowapi-dockerfile . --push
+docker buildx build -t "${NAMESPACE}/processflowapi:0.2" --platform "linux/amd64,linux/arm64" -f procflowapi-dockerfile . --push
 
 echo "Building Role Initialization..."
 docker buildx build -t "${NAMESPACE}/roleinit-servicecatalog:0.1" --platform "linux/amd64,linux/arm64" -f roleinit-dockerfile . --push
