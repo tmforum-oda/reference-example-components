@@ -120,6 +120,7 @@ exports.createProductOrder = function(req, res, next) {
               productOrderItem: [{
                 orderItemId: item.id,
                 productOrderId: payload.id,
+                productOrderHref: payload.href,
                 orderItemAction: item.action
               }],
               productCharacteristic: (item.product && item.product.productCharacteristic) || [],

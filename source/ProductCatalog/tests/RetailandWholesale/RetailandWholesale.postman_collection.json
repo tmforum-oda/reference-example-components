@@ -457,7 +457,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Unlimited Max SIM Only 24-month\",\n  \"description\": \"Unlimited calls, texts and data on a 24-month SIM-only plan\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMobileId}}\", \"name\": \"{{catMobileName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specUnlimitedSimId}}\", \"name\": \"{{specUnlimitedSimName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMob1Id}}\", \"name\": \"{{priceMob1Name}}\" }]\n}",
+              "raw": "{\n  \"name\": \"Unlimited Max SIM Only 24-month\",\n  \"description\": \"Unlimited calls, texts and data on a 24-month SIM-only plan\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMobileId}}\", \"href\": \"{{baseUrl}}/category/{{catMobileId}}\", \"name\": \"{{catMobileName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specUnlimitedSimId}}\", \"href\": \"{{baseUrl}}/productSpecification/{{specUnlimitedSimId}}\", \"name\": \"{{specUnlimitedSimName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMob1Id}}\", \"href\": \"{{baseUrl}}/productOfferingPrice/{{priceMob1Id}}\", \"name\": \"{{priceMob1Name}}\" }]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -516,7 +516,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Unlimited Lite SIM Only 12-month\",\n  \"description\": \"Unlimited calls and texts with 30GB data on a 12-month SIM-only plan\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMobileId}}\", \"name\": \"{{catMobileName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specUnlimitedSimId}}\", \"name\": \"{{specUnlimitedSimName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMob2Id}}\", \"name\": \"{{priceMob2Name}}\" }]\n}",
+              "raw": "{\n  \"name\": \"Unlimited Lite SIM Only 12-month\",\n  \"description\": \"Unlimited calls and texts with 30GB data on a 12-month SIM-only plan\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMobileId}}\", \"href\": \"{{baseUrl}}/category/{{catMobileId}}\", \"name\": \"{{catMobileName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specUnlimitedSimId}}\", \"href\": \"{{baseUrl}}/productSpecification/{{specUnlimitedSimId}}\", \"name\": \"{{specUnlimitedSimName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMob2Id}}\", \"href\": \"{{baseUrl}}/productOfferingPrice/{{priceMob2Id}}\", \"name\": \"{{priceMob2Name}}\" }]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -575,7 +575,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Pay As You Go Starter\",\n  \"description\": \"No-contract pay-as-you-go mobile with 1p/min calls and 1p/text\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMobileId}}\", \"name\": \"{{catMobileName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specPayAsYouGoId}}\", \"name\": \"{{specPayAsYouGoName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMob3Id}}\", \"name\": \"{{priceMob3Name}}\" }]\n}",
+              "raw": "{\n  \"name\": \"Pay As You Go Starter\",\n  \"description\": \"No-contract pay-as-you-go mobile with 1p/min calls and 1p/text\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMobileId}}\", \"href\": \"{{baseUrl}}/category/{{catMobileId}}\", \"name\": \"{{catMobileName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specPayAsYouGoId}}\", \"href\": \"{{baseUrl}}/productSpecification/{{specPayAsYouGoId}}\", \"name\": \"{{specPayAsYouGoName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMob3Id}}\", \"href\": \"{{baseUrl}}/productOfferingPrice/{{priceMob3Id}}\", \"name\": \"{{priceMob3Name}}\" }]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -639,7 +639,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Fibre 100 Broadband\",\n  \"description\": \"100Mbps superfast broadband with free setup\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catBroadbandId}}\", \"name\": \"{{catBroadbandName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specFibre100Id}}\", \"name\": \"{{specFibre100Name}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceBB1Id}}\", \"name\": \"{{priceBB1Name}}\" }]\n}",
+              "raw": "{\n  \"name\": \"Fibre 100 Broadband\",\n  \"description\": \"100Mbps superfast broadband with free setup\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catBroadbandId}}\", \"href\": \"{{baseUrl}}/category/{{catBroadbandId}}\", \"name\": \"{{catBroadbandName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specFibre100Id}}\", \"href\": \"{{baseUrl}}/productSpecification/{{specFibre100Id}}\", \"name\": \"{{specFibre100Name}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceBB1Id}}\", \"href\": \"{{baseUrl}}/productOfferingPrice/{{priceBB1Id}}\", \"name\": \"{{priceBB1Name}}\" }]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -698,7 +698,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Fibre 900 Pro Broadband\",\n  \"description\": \"900Mbps ultrafast full-fibre broadband, ideal for large households\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catBroadbandId}}\", \"name\": \"{{catBroadbandName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specFibre900Id}}\", \"name\": \"{{specFibre900Name}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceBB2Id}}\", \"name\": \"{{priceBB2Name}}\" }]\n}",
+              "raw": "{\n  \"name\": \"Fibre 900 Pro Broadband\",\n  \"description\": \"900Mbps ultrafast full-fibre broadband, ideal for large households\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catBroadbandId}}\", \"href\": \"{{baseUrl}}/category/{{catBroadbandId}}\", \"name\": \"{{catBroadbandName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specFibre900Id}}\", \"href\": \"{{baseUrl}}/productSpecification/{{specFibre900Id}}\", \"name\": \"{{specFibre900Name}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceBB2Id}}\", \"href\": \"{{baseUrl}}/productOfferingPrice/{{priceBB2Id}}\", \"name\": \"{{priceBB2Name}}\" }]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -757,7 +757,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Home Broadband + Mobile Bundle\",\n  \"description\": \"Fibre 100 broadband combined with an Unlimited Lite SIM-only plan\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catBroadbandId}}\", \"name\": \"{{catBroadbandName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specFibre100Id}}\", \"name\": \"{{specFibre100Name}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceBB3Id}}\", \"name\": \"{{priceBB3Name}}\" }]\n}",
+              "raw": "{\n  \"name\": \"Home Broadband + Mobile Bundle\",\n  \"description\": \"Fibre 100 broadband combined with an Unlimited Lite SIM-only plan\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catBroadbandId}}\", \"href\": \"{{baseUrl}}/category/{{catBroadbandId}}\", \"name\": \"{{catBroadbandName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specFibre100Id}}\", \"href\": \"{{baseUrl}}/productSpecification/{{specFibre100Id}}\", \"name\": \"{{specFibre100Name}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceBB3Id}}\", \"href\": \"{{baseUrl}}/productOfferingPrice/{{priceBB3Id}}\", \"name\": \"{{priceBB3Name}}\" }]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -821,7 +821,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"MVNO Data Access - Standard\",\n  \"description\": \"Wholesale 4G/5G data network access, up to 1TB pooled data\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specMVNODataId}}\", \"name\": \"{{specMVNODataName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMVNO1Id}}\", \"name\": \"{{priceMVNO1Name}}\" }]\n}",
+              "raw": "{\n  \"name\": \"MVNO Data Access - Standard\",\n  \"description\": \"Wholesale 4G/5G data network access, up to 1TB pooled data\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMVNOId}}\", \"href\": \"{{baseUrl}}/category/{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specMVNODataId}}\", \"href\": \"{{baseUrl}}/productSpecification/{{specMVNODataId}}\", \"name\": \"{{specMVNODataName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMVNO1Id}}\", \"href\": \"{{baseUrl}}/productOfferingPrice/{{priceMVNO1Id}}\", \"name\": \"{{priceMVNO1Name}}\" }]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -880,7 +880,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"MVNO Voice Access - National\",\n  \"description\": \"Wholesale national voice termination and origination for MVNO operators\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specMVNOVoiceId}}\", \"name\": \"{{specMVNOVoiceName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMVNO2Id}}\", \"name\": \"{{priceMVNO2Name}}\" }]\n}",
+              "raw": "{\n  \"name\": \"MVNO Voice Access - National\",\n  \"description\": \"Wholesale national voice termination and origination for MVNO operators\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMVNOId}}\", \"href\": \"{{baseUrl}}/category/{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specMVNOVoiceId}}\", \"href\": \"{{baseUrl}}/productSpecification/{{specMVNOVoiceId}}\", \"name\": \"{{specMVNOVoiceName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMVNO2Id}}\", \"href\": \"{{baseUrl}}/productOfferingPrice/{{priceMVNO2Id}}\", \"name\": \"{{priceMVNO2Name}}\" }]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -939,7 +939,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Full MVNE Managed Service\",\n  \"description\": \"Complete white-label MVNE managed service: SIM logistics, roaming, billing integration and 24/7 NOC support\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specMVNOBundleId}}\", \"name\": \"{{specMVNOBundleName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMVNO3Id}}\", \"name\": \"{{priceMVNO3Name}}\" }]\n}",
+              "raw": "{\n  \"name\": \"Full MVNE Managed Service\",\n  \"description\": \"Complete white-label MVNE managed service: SIM logistics, roaming, billing integration and 24/7 NOC support\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMVNOId}}\", \"href\": \"{{baseUrl}}/category/{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specMVNOBundleId}}\", \"href\": \"{{baseUrl}}/productSpecification/{{specMVNOBundleId}}\", \"name\": \"{{specMVNOBundleName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMVNO3Id}}\", \"href\": \"{{baseUrl}}/productOfferingPrice/{{priceMVNO3Id}}\", \"name\": \"{{priceMVNO3Name}}\" }]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -998,7 +998,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"MVNO IoT Connectivity Pack\",\n  \"description\": \"Wholesale IoT SIM connectivity with global eSIM support and multi-IMSI capability\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specMVNODataId}}\", \"name\": \"{{specMVNODataName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMVNO4Id}}\", \"name\": \"{{priceMVNO4Name}}\" }]\n}",
+              "raw": "{\n  \"name\": \"MVNO IoT Connectivity Pack\",\n  \"description\": \"Wholesale IoT SIM connectivity with global eSIM support and multi-IMSI capability\",\n  \"lifecycleStatus\": \"Active\",\n  \"version\": \"1.0\",\n  \"category\": [{ \"id\": \"{{catMVNOId}}\", \"href\": \"{{baseUrl}}/category/{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }],\n  \"productSpecification\": { \"id\": \"{{specMVNODataId}}\", \"href\": \"{{baseUrl}}/productSpecification/{{specMVNODataId}}\", \"name\": \"{{specMVNODataName}}\" },\n  \"productOfferingPrice\": [{ \"id\": \"{{priceMVNO4Id}}\", \"href\": \"{{baseUrl}}/productOfferingPrice/{{priceMVNO4Id}}\", \"name\": \"{{priceMVNO4Name}}\" }]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -1031,7 +1031,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"category\": [\n    { \"id\": \"{{catMobileId}}\", \"name\": \"{{catMobileName}}\" },\n    { \"id\": \"{{catBroadbandId}}\", \"name\": \"{{catBroadbandName}}\" }\n  ]\n}",
+              "raw": "{\n  \"category\": [\n    { \"id\": \"{{catMobileId}}\", \"href\": \"{{baseUrl}}/category/{{catMobileId}}\", \"name\": \"{{catMobileName}}\" },\n    { \"id\": \"{{catBroadbandId}}\", \"href\": \"{{baseUrl}}/category/{{catBroadbandId}}\", \"name\": \"{{catBroadbandName}}\" }\n  ]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -1059,7 +1059,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"category\": [\n    { \"id\": \"{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }\n  ]\n}",
+              "raw": "{\n  \"category\": [\n    { \"id\": \"{{catMVNOId}}\", \"href\": \"{{baseUrl}}/category/{{catMVNOId}}\", \"name\": \"{{catMVNOName}}\" }\n  ]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
