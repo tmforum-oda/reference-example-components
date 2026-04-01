@@ -1,40 +1,97 @@
-# Example Product Inventory component (including Security_role)
+# Example Product Inventory component
 
-This is an example component that implements a TM Forum Product Inventory interface.
+This is an example implementation of a [TM Forum Product Inventory Management](https://www.tmforum.org/oda/directory/components-map/core-commerce-management/TMFC005) component (TMFC005).
 
-As part of the component implementation, it exposes role information to the Canvas using the TM Forum PartyRole API.
+This folder is the Helm Chart package which you distribute or host in a Helm Chart Repository. The source code is available at [../../source/ProductInventory](/source/ProductInventory/). The source README contains all the implementation documentation.
 
-The component implements 4 micro-services:
+## Functionality
 
-* Product Inventory Microservice that implements the TMF637 Product Inventory Management API (based on the NodeJs reference implementation). This is deployed as a Kubernetes Deployment.
-* Party Role Microservice that implements the TMF669 Party Role Management API (based on the NodeJs reference implementation). This is deployed as a Kubernetes Deployment.
-* Role Initialization Microservice that bootstraps the initial Party Role interface. This is deployed as a Kubernetes Job that runs once when the component is initialised.
-* a standard deployment of a mongoDb. This is deployed as a Kubernetes Deployment with a PersistentVolumeClaim.
+### Core function
 
-The component envelope exposes the ProductInventory as a CoreFunction API and the PartyRole as a Security/PartyRole API.
+In its **core function** it implements:
+* The *mandatory* TMF637 Product Inventory Management Open API, providing CRUD operations for `ProductInstance` resources plus a hub endpoint for event subscriptions.
 
-The Kubernetes services adopt the Istio naming convention for the Port names.
+### Management function
+
+In its **management function** it implements:
+* An open metrics endpoint that counts business events (ProductInstance create/update/delete). The Prometheus query to graph product instance creation events is:
+  ```
+  rate(productinventory_api_counter{NotificationEvent="ProductCreationNotification"}[5m])
+  ```
+
+* Outbound Open Telemetry events. Configure in `values.yaml`:
+  ```yaml
+  api:
+    otlp:
+      console:
+        enabled: false
+      protobuffCollector:
+        enabled: true
+        url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
+  ```
+
+### Security function
+
+In its **security function** it implements:
+* The *default* TMF672 User Roles and Permissions API (`permissionspec.enabled: true`) for dynamically managed roles.
+* The *alternative* TMF669 Party Role Management API (set `permissionspec.enabled: false`).
+
+## Microservices
+
+The implementation consists of 5 microservices:
+
+* **productInventoryMicroservice** — implements the TMF637 Product Inventory Management Open API (ProductInstance resources).
+* **permissionSpecificationSetMicroservice** / **partyRoleMicroservice** — role management microservice (TMF672 or TMF669, conditional on `permissionspec.enabled`).
+* **roleInitializationMicroservice** — bootstraps the initial `canvasRole` PermissionSpecificationSet/PartyRole. Deployed as a Kubernetes Job that runs once on initialisation.
+* **openMetricsMicroservice** — implements the open metrics API, counts business events published by the Product Inventory API.
+* **productInventoryInitializationMicroservice** — registers the metrics microservice as a listener on the Product Inventory hub. Deployed as a Kubernetes Job that runs once on initialisation.
+* **MongoDB** — shared document store for all microservices.
 
 ## Installation
 
-Install this component (assuming the kubectl config is connected to a Kubernetes cluster with an operational ODA Canvas) using:
+Install this component (assuming `kubectl` is connected to a Kubernetes cluster with an operational ODA Canvas):
 
 ```
 helm install r1 .\productinventory -n components
 ```
 
-You can test the component has deployed successfully using
+Verify the deployment:
 
 ```
 kubectl get components -n components
 ```
 
-You should get an output like
+Expected output (DEPLOYMENT_STATUS cycles through interim states during deploy):
 
 ```
-NAME                          DEPLOYMENT_STATUS
-r1-productinventory           Complete
+NAME                  DEPLOYMENT_STATUS
+r1-productinventory   Complete
 ```
 
-(The DEPLOYMENT_STATUS will cycle through a number of interim states as part of the deployment). If the deployment fails, refer to the [Troubleshooting-Guide](https://github.com/tmforum-oda/oda-ca-docs/tree/master/Troubleshooting-Guide).
- 
+If the deployment fails, refer to the [Troubleshooting Guide](https://github.com/tmforum-oda/oda-ca-docs/tree/master/Troubleshooting-Guide).
+
+## Configuration
+
+You can configure the component by editing `values.yaml` or using `--set` on the command line.
+
+To use the TMF669 Party Role API instead of TMF672:
+
+```
+helm install r1 .\productinventory --set permissionspec.enabled=false -n components
+```
+
+### Configuration reference
+
+| Variable Name | Default | Explanation |
+|---|---|---|
+| `mongodb.port` | `27017` | Port for the MongoDB instance (host derived from release name) |
+| `mongodb.database` | `tmf` | Database name |
+| `api.image` | `lesterthomas/productinventoryapi:0.4` | Docker image for the Product Inventory API microservice |
+| `api.otlp.console.enabled` | `false` | Log OpenTelemetry traces to console |
+| `api.otlp.protobuffCollector.enabled` | `true` | Send OpenTelemetry traces to the OTLP collector |
+| `api.otlp.protobuffCollector.url` | `http://observability-opentelemetry-collector...` | OTLP collector endpoint URL |
+| `metrics.image` | `lesterthomas/productinventorymetrics:0.1` | Docker image for the open metrics microservice |
+| `permissionspec.enabled` | `true` | Use TMF672 PermissionSpecificationSet API (set `false` for TMF669 PartyRole) |
+| `permissionspec.image` | `lesterthomas/permissionspecapi:0.20` | Docker image for the TMF672 role management microservice |
+| `partyrole.image` | `lesterthomas/partyroleapi:1.1` | Docker image for the TMF669 role management microservice |
+
