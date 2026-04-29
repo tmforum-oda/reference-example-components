@@ -1,5 +1,16 @@
 apiVersion: v1
 entries:
+  partymanagement:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-04-29T13:54:49.138786646Z"
+    description: A reference example TMFC028-PartyManagement ODA Component
+    digest: a0bd41bc29179c95d967c176d2e9893aba6e64d4bb618f9733db1ef938418d5a
+    name: partymanagement
+    type: application
+    urls:
+    - https://github.com/tmforum-oda/reference-example-components/releases/download/partymanagement-1.0.0/partymanagement-1.0.0.tgz
+    version: 1.0.0
   productcatalog:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -194,6 +205,16 @@ entries:
   productinventory:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2026-04-29T13:54:49.673867994Z"
+    description: A reference example TMFC005-ProductInventoryManagement ODA Component
+    digest: 3b2e26c6d0446ece59c3ea32b42251ed1d6345fad870140062e683d5de394add
+    name: productinventory
+    type: application
+    urls:
+    - https://github.com/tmforum-oda/reference-example-components/releases/download/productinventory-1.3.0/productinventory-1.3.0.tgz
+    version: 1.3.0
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2025-03-03T16:53:42.695492953Z"
     description: A reference example TMFC005-ProductInventoryManagement ODA Component
     digest: fa6c45c4d1c97d870154b7141babc8b39c0159a9312b6009d232602ac22b0471
@@ -262,4 +283,37 @@ entries:
     urls:
     - https://github.com/tmforum-oda/reference-example-components/releases/download/productinventory-0.1.4/productinventory-0.1.4.tgz
     version: 0.1.4
-generated: "2026-04-29T13:48:33.034108263Z"
+  productordercaptureandvalidation:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-04-29T13:54:49.922204611Z"
+    description: A reference example TMFC002-ProductOrderCaptureAndValidation ODA
+      Component
+    digest: 52c1fa3e841e9b203578271ba7eaff481bc6796c879e81da233fe0bc7231cda5
+    name: productordercaptureandvalidation
+    type: application
+    urls:
+    - https://github.com/tmforum-oda/reference-example-components/releases/download/productordercaptureandvalidation-0.1.0/productordercaptureandvalidation-0.1.0.tgz
+    version: 0.1.0
+  servicecatalogmanagement:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-04-29T13:54:50.18600406Z"
+    description: A reference example TMFC006-ServiceCatalogManagement ODA Component
+    digest: 9fbe30d4eb87320a05535934efaf5ec7e521ccd89bb993ec4d79b48d791700c1
+    name: servicecatalogmanagement
+    type: application
+    urls:
+    - https://github.com/tmforum-oda/reference-example-components/releases/download/servicecatalogmanagement-1.0.0/servicecatalogmanagement-1.0.0.tgz
+    version: 1.0.0
+  serviceinventory:
+  - apiVersion: v2
+    created: "2026-04-29T13:54:50.420007228Z"
+    description: A reference example TMFC008-ServiceInventory ODA Component
+    digest: d43fe1f0fe4aeb2c9a8710be3ef1a2aecc3c42f83c6517e230a2d04c465c4485
+    name: serviceinventory
+    type: application
+    urls:
+    - https://github.com/tmforum-oda/reference-example-components/releases/download/serviceinventory-1.0.0/serviceinventory-1.0.0.tgz
+    version: 1.0.0
+generated: "2026-04-29T13:54:50.420081045Z"
