@@ -1,0 +1,2272 @@
+swagger: "2.0"
+info:
+  title: API Party
+  description: "## TMF API Reference : TMF 632 - Party \n\n### Release : 19.0\n\nThe party API provides standardized mechanism for party management such as creation, update, retrieval, deletion and notification of events."
+  version: 4.0.0
+basePath: /tmf-api/party/v4/
+schemes:
+  - https
+consumes:
+  - "application/json;charset=utf-8"
+produces:
+  - "application/json;charset=utf-8"
+tags:
+  - name: individual
+  - name: organization
+  - name: "notification listeners (client side)"
+  - name: "events subscription"
+paths:
+  /individual:
+    get:
+      operationId: listIndividual
+      x-swagger-router-controller: Individual
+      summary: List or find Individual objects
+      description: This operation list or find Individual entities
+      tags:
+        - individual
+      parameters:
+        - type: string
+          required: false
+          in: query
+          name: fields
+          description: Comma-separated properties to be provided in response
+        - type: integer
+          required: false
+          in: query
+          name: offset
+          description: Requested index for start of resources to be provided in response
+        - type: integer
+          required: false
+          in: query
+          name: limit
+          description: Requested number of resources to be provided in response
+      responses:
+        "200":
+          description: Success
+          headers:
+            X-Total-Count:
+              type: integer
+              description: Total number of items matching criteria
+            X-Result-Count:
+              type: integer
+              description: Actual number of items returned in the response body
+          schema:
+            items:
+              $ref: "#/definitions/Individual"
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      operationId: createIndividual
+      x-swagger-router-controller: Individual
+      summary: Creates a Individual
+      description: This operation creates a Individual entity.
+      tags:
+        - individual
+      parameters:
+        - schema:
+            $ref: "#/definitions/Individual_Create"
+          required: true
+          in: body
+          name: individual
+          description: The Individual to be created
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/Individual"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  "/individual/{id}":
+    get:
+      operationId: retrieveIndividual
+      x-swagger-router-controller: Individual
+      summary: Retrieves a Individual by ID
+      description: This operation retrieves a Individual entity.
+      tags:
+        - individual
+      parameters:
+        - required: true
+          type: string
+          name: id
+          in: path
+          description: Identifier of the Individual
+        - required: false
+          type: string
+          name: fields
+          in: query
+          description: Comma-separated properties to provide in response
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Individual"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    patch:
+      operationId: patchIndividual
+      x-swagger-router-controller: Individual
+      summary: Updates partially a Individual
+      description: This operation updates partially a Individual entity.
+      tags:
+        - individual
+      parameters:
+        - required: true
+          type: string
+          name: id
+          in: path
+          description: Identifier of the Individual
+        - schema:
+            $ref: "#/definitions/Individual_Update"
+          required: true
+          in: body
+          name: individual
+          description: The Individual to be updated
+      responses:
+        "200":
+          description: Updated
+          schema:
+            $ref: "#/definitions/Individual"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: deleteIndividual
+      x-swagger-router-controller: Individual
+      summary: Deletes a Individual
+      description: This operation deletes a Individual entity.
+      tags:
+        - individual
+      parameters:
+        - required: true
+          type: string
+          name: id
+          in: path
+          description: Identifier of the Individual
+      responses:
+        "204":
+          description: Deleted
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /organization:
+    get:
+      operationId: listOrganization
+      x-swagger-router-controller: Organization
+      summary: List or find Organization objects
+      description: This operation list or find Organization entities
+      tags:
+        - organization
+      parameters:
+        - type: string
+          required: false
+          in: query
+          name: fields
+          description: Comma-separated properties to be provided in response
+        - type: integer
+          required: false
+          in: query
+          name: offset
+          description: Requested index for start of resources to be provided in response
+        - type: integer
+          required: false
+          in: query
+          name: limit
+          description: Requested number of resources to be provided in response
+      responses:
+        "200":
+          description: Success
+          headers:
+            X-Total-Count:
+              type: integer
+              description: Total number of items matching criteria
+            X-Result-Count:
+              type: integer
+              description: Actual number of items returned in the response body
+          schema:
+            items:
+              $ref: "#/definitions/Organization"
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      operationId: createOrganization
+      x-swagger-router-controller: Organization
+      summary: Creates a Organization
+      description: This operation creates a Organization entity.
+      tags:
+        - organization
+      parameters:
+        - schema:
+            $ref: "#/definitions/Organization_Create"
+          required: true
+          in: body
+          name: organization
+          description: The Organization to be created
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/Organization"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  "/organization/{id}":
+    get:
+      operationId: retrieveOrganization
+      x-swagger-router-controller: Organization
+      summary: Retrieves a Organization by ID
+      description: This operation retrieves a Organization entity.
+      tags:
+        - organization
+      parameters:
+        - required: true
+          type: string
+          name: id
+          in: path
+          description: Identifier of the Organization
+        - required: false
+          type: string
+          name: fields
+          in: query
+          description: Comma-separated properties to provide in response
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Organization"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    patch:
+      operationId: patchOrganization
+      x-swagger-router-controller: Organization
+      summary: Updates partially a Organization
+      description: This operation updates partially a Organization entity.
+      tags:
+        - organization
+      parameters:
+        - required: true
+          type: string
+          name: id
+          in: path
+          description: Identifier of the Organization
+        - schema:
+            $ref: "#/definitions/Organization_Update"
+          required: true
+          in: body
+          name: organization
+          description: The Organization to be updated
+      responses:
+        "200":
+          description: Updated
+          schema:
+            $ref: "#/definitions/Organization"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: deleteOrganization
+      x-swagger-router-controller: Organization
+      summary: Deletes a Organization
+      description: This operation deletes a Organization entity.
+      tags:
+        - organization
+      parameters:
+        - required: true
+          type: string
+          name: id
+          in: path
+          description: Identifier of the Organization
+      responses:
+        "204":
+          description: Deleted
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /hub:
+    post:
+      operationId: registerListener
+      x-swagger-router-controller: EventsSubscription
+      summary: Register a listener
+      description: Sets the communication endpoint address the service instance must use to deliver information about its health state, execution state, failures and metrics.
+      tags:
+        - "events subscription"
+      parameters:
+        - name: data
+          schema:
+            $ref: "#/definitions/EventSubscriptionInput"
+          required: true
+          in: body
+          description: Data containing the callback endpoint to deliver the information
+      responses:
+        "201":
+          description: Subscribed
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  "/hub/{id}":
+    delete:
+      operationId: unregisterListener
+      x-swagger-router-controller: EventsSubscription
+      summary: Unregister a listener
+      description: Resets the communication endpoint address the service instance must use to deliver information about its health state, execution state, failures and metrics.
+      tags:
+        - "events subscription"
+      parameters:
+        - name: id
+          type: string
+          required: true
+          in: path
+          description: The id of the registered listener
+      responses:
+        "204":
+          description: Deleted
+        "400":
+          description: Bad request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/organizationCreateEvent:
+    post:
+      operationId: listenToOrganizationCreateEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity OrganizationCreateEvent
+      description: Example of a client listener for receiving the notification OrganizationCreateEvent
+      tags:
+        - "notification listeners (client side)"
+      parameters:
+        - schema:
+            $ref: "#/definitions/OrganizationCreateEvent"
+          description: The event data
+          required: true
+          name: data
+          in: body
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/organizationAttributeValueChangeEvent:
+    post:
+      operationId: listenToOrganizationAttributeValueChangeEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity OrganizationAttributeValueChangeEvent
+      description: Example of a client listener for receiving the notification OrganizationAttributeValueChangeEvent
+      tags:
+        - "notification listeners (client side)"
+      parameters:
+        - schema:
+            $ref: "#/definitions/OrganizationAttributeValueChangeEvent"
+          description: The event data
+          required: true
+          name: data
+          in: body
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/organizationStateChangeEvent:
+    post:
+      operationId: listenToOrganizationStateChangeEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity OrganizationStateChangeEvent
+      description: Example of a client listener for receiving the notification OrganizationStateChangeEvent
+      tags:
+        - "notification listeners (client side)"
+      parameters:
+        - schema:
+            $ref: "#/definitions/OrganizationStateChangeEvent"
+          description: The event data
+          required: true
+          name: data
+          in: body
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/organizationDeleteEvent:
+    post:
+      operationId: listenToOrganizationDeleteEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity OrganizationDeleteEvent
+      description: Example of a client listener for receiving the notification OrganizationDeleteEvent
+      tags:
+        - "notification listeners (client side)"
+      parameters:
+        - schema:
+            $ref: "#/definitions/OrganizationDeleteEvent"
+          description: The event data
+          required: true
+          name: data
+          in: body
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/individualCreateEvent:
+    post:
+      operationId: listenToIndividualCreateEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity IndividualCreateEvent
+      description: Example of a client listener for receiving the notification IndividualCreateEvent
+      tags:
+        - "notification listeners (client side)"
+      parameters:
+        - schema:
+            $ref: "#/definitions/IndividualCreateEvent"
+          description: The event data
+          required: true
+          name: data
+          in: body
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/individualAttributeValueChangeEvent:
+    post:
+      operationId: listenToIndividualAttributeValueChangeEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity IndividualAttributeValueChangeEvent
+      description: Example of a client listener for receiving the notification IndividualAttributeValueChangeEvent
+      tags:
+        - "notification listeners (client side)"
+      parameters:
+        - schema:
+            $ref: "#/definitions/IndividualAttributeValueChangeEvent"
+          description: The event data
+          required: true
+          name: data
+          in: body
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/individualStateChangeEvent:
+    post:
+      operationId: listenToIndividualStateChangeEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity IndividualStateChangeEvent
+      description: Example of a client listener for receiving the notification IndividualStateChangeEvent
+      tags:
+        - "notification listeners (client side)"
+      parameters:
+        - schema:
+            $ref: "#/definitions/IndividualStateChangeEvent"
+          description: The event data
+          required: true
+          name: data
+          in: body
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/individualDeleteEvent:
+    post:
+      operationId: listenToIndividualDeleteEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity IndividualDeleteEvent
+      description: Example of a client listener for receiving the notification IndividualDeleteEvent
+      tags:
+        - "notification listeners (client side)"
+      parameters:
+        - schema:
+            $ref: "#/definitions/IndividualDeleteEvent"
+          description: The event data
+          required: true
+          name: data
+          in: body
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+definitions:
+  Individual:
+    type: object
+    description: Individual represents a single human being (a man, woman or child).
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the individual
+      href:
+        type: string
+        description: Hyperlink to access the individual
+      aristocraticTitle:
+        type: string
+      birthDate:
+        type: string
+        format: date-time
+      countryOfBirth:
+        type: string
+      deathDate:
+        type: string
+        format: date-time
+      familyName:
+        type: string
+      familyNamePrefix:
+        type: string
+      formattedName:
+        type: string
+      fullName:
+        type: string
+      gender:
+        type: string
+      generation:
+        type: string
+      givenName:
+        type: string
+      legalName:
+        type: string
+      location:
+        type: string
+      maritalStatus:
+        type: string
+      middleName:
+        type: string
+      nationality:
+        type: string
+      placeOfBirth:
+        type: string
+      preferredGivenName:
+        type: string
+      title:
+        type: string
+      contactMedium:
+        type: array
+        items:
+          $ref: "#/definitions/ContactMedium"
+      creditRating:
+        type: array
+        items:
+          $ref: "#/definitions/PartyCreditProfile"
+      disability:
+        type: array
+        items:
+          $ref: "#/definitions/Disability"
+      externalReference:
+        type: array
+        items:
+          $ref: "#/definitions/ExternalReference"
+      individualIdentification:
+        type: array
+        items:
+          $ref: "#/definitions/IndividualIdentification"
+      languageAbility:
+        type: array
+        items:
+          $ref: "#/definitions/LanguageAbility"
+      otherName:
+        type: array
+        items:
+          $ref: "#/definitions/OtherNameIndividual"
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: "#/definitions/Characteristic"
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      skill:
+        type: array
+        items:
+          $ref: "#/definitions/Skill"
+      status:
+        $ref: "#/definitions/IndividualStateType"
+      taxExemptionCertificate:
+        type: array
+        items:
+          $ref: "#/definitions/TaxExemptionCertificate"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  Individual_Create:
+    type: object
+    description: "Individual represents a single human being.\nSkipped properties: id,href"
+    required:
+      - givenName
+      - familyName
+    properties:
+      aristocraticTitle:
+        type: string
+      birthDate:
+        type: string
+        format: date-time
+      countryOfBirth:
+        type: string
+      deathDate:
+        type: string
+        format: date-time
+      familyName:
+        type: string
+      familyNamePrefix:
+        type: string
+      formattedName:
+        type: string
+      fullName:
+        type: string
+      gender:
+        type: string
+      generation:
+        type: string
+      givenName:
+        type: string
+      legalName:
+        type: string
+      location:
+        type: string
+      maritalStatus:
+        type: string
+      middleName:
+        type: string
+      nationality:
+        type: string
+      placeOfBirth:
+        type: string
+      preferredGivenName:
+        type: string
+      title:
+        type: string
+      contactMedium:
+        type: array
+        items:
+          $ref: "#/definitions/ContactMedium"
+      creditRating:
+        type: array
+        items:
+          $ref: "#/definitions/PartyCreditProfile"
+      disability:
+        type: array
+        items:
+          $ref: "#/definitions/Disability"
+      externalReference:
+        type: array
+        items:
+          $ref: "#/definitions/ExternalReference"
+      individualIdentification:
+        type: array
+        items:
+          $ref: "#/definitions/IndividualIdentification"
+      languageAbility:
+        type: array
+        items:
+          $ref: "#/definitions/LanguageAbility"
+      otherName:
+        type: array
+        items:
+          $ref: "#/definitions/OtherNameIndividual"
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: "#/definitions/Characteristic"
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      skill:
+        type: array
+        items:
+          $ref: "#/definitions/Skill"
+      status:
+        $ref: "#/definitions/IndividualStateType"
+      taxExemptionCertificate:
+        type: array
+        items:
+          $ref: "#/definitions/TaxExemptionCertificate"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  Individual_Update:
+    type: object
+    description: "Individual represents a single human being.\nSkipped properties: id,href"
+    properties:
+      aristocraticTitle:
+        type: string
+      birthDate:
+        type: string
+        format: date-time
+      countryOfBirth:
+        type: string
+      deathDate:
+        type: string
+        format: date-time
+      familyName:
+        type: string
+      familyNamePrefix:
+        type: string
+      formattedName:
+        type: string
+      fullName:
+        type: string
+      gender:
+        type: string
+      generation:
+        type: string
+      givenName:
+        type: string
+      legalName:
+        type: string
+      location:
+        type: string
+      maritalStatus:
+        type: string
+      middleName:
+        type: string
+      nationality:
+        type: string
+      placeOfBirth:
+        type: string
+      preferredGivenName:
+        type: string
+      title:
+        type: string
+      contactMedium:
+        type: array
+        items:
+          $ref: "#/definitions/ContactMedium"
+      creditRating:
+        type: array
+        items:
+          $ref: "#/definitions/PartyCreditProfile"
+      disability:
+        type: array
+        items:
+          $ref: "#/definitions/Disability"
+      externalReference:
+        type: array
+        items:
+          $ref: "#/definitions/ExternalReference"
+      individualIdentification:
+        type: array
+        items:
+          $ref: "#/definitions/IndividualIdentification"
+      languageAbility:
+        type: array
+        items:
+          $ref: "#/definitions/LanguageAbility"
+      otherName:
+        type: array
+        items:
+          $ref: "#/definitions/OtherNameIndividual"
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: "#/definitions/Characteristic"
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      skill:
+        type: array
+        items:
+          $ref: "#/definitions/Skill"
+      status:
+        $ref: "#/definitions/IndividualStateType"
+      taxExemptionCertificate:
+        type: array
+        items:
+          $ref: "#/definitions/TaxExemptionCertificate"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  IndividualStateType:
+    type: string
+    description: Valid values for the lifecycle state of the individual
+    enum:
+      - initialized
+      - validated
+      - deceaded
+  Organization:
+    type: object
+    description: Organization represents a group of people identified by shared interests or purpose.
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique identifier of the organization
+      href:
+        type: string
+        description: Hyperlink to access the organization
+      isHeadOffice:
+        type: boolean
+      isLegalEntity:
+        type: boolean
+      name:
+        type: string
+      nameType:
+        type: string
+      organizationType:
+        type: string
+      tradingName:
+        type: string
+      contactMedium:
+        type: array
+        items:
+          $ref: "#/definitions/ContactMedium"
+      creditRating:
+        type: array
+        items:
+          $ref: "#/definitions/PartyCreditProfile"
+      existsDuring:
+        $ref: "#/definitions/TimePeriod"
+      externalReference:
+        type: array
+        items:
+          $ref: "#/definitions/ExternalReference"
+      organizationChildRelationship:
+        type: array
+        items:
+          $ref: "#/definitions/OrganizationChildRelationship"
+      organizationIdentification:
+        type: array
+        items:
+          $ref: "#/definitions/OrganizationIdentification"
+      organizationParentRelationship:
+        $ref: "#/definitions/OrganizationParentRelationship"
+      otherName:
+        type: array
+        items:
+          $ref: "#/definitions/OtherNameOrganization"
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: "#/definitions/Characteristic"
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      status:
+        $ref: "#/definitions/OrganizationStateType"
+      taxExemptionCertificate:
+        type: array
+        items:
+          $ref: "#/definitions/TaxExemptionCertificate"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  Organization_Create:
+    type: object
+    description: "Organization represents a group of people identified by shared interests or purpose.\nSkipped properties: id,href"
+    required:
+      - tradingName
+    properties:
+      isHeadOffice:
+        type: boolean
+      isLegalEntity:
+        type: boolean
+      name:
+        type: string
+      nameType:
+        type: string
+      organizationType:
+        type: string
+      tradingName:
+        type: string
+      contactMedium:
+        type: array
+        items:
+          $ref: "#/definitions/ContactMedium"
+      creditRating:
+        type: array
+        items:
+          $ref: "#/definitions/PartyCreditProfile"
+      existsDuring:
+        $ref: "#/definitions/TimePeriod"
+      externalReference:
+        type: array
+        items:
+          $ref: "#/definitions/ExternalReference"
+      organizationChildRelationship:
+        type: array
+        items:
+          $ref: "#/definitions/OrganizationChildRelationship"
+      organizationIdentification:
+        type: array
+        items:
+          $ref: "#/definitions/OrganizationIdentification"
+      organizationParentRelationship:
+        $ref: "#/definitions/OrganizationParentRelationship"
+      otherName:
+        type: array
+        items:
+          $ref: "#/definitions/OtherNameOrganization"
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: "#/definitions/Characteristic"
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      status:
+        $ref: "#/definitions/OrganizationStateType"
+      taxExemptionCertificate:
+        type: array
+        items:
+          $ref: "#/definitions/TaxExemptionCertificate"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  Organization_Update:
+    type: object
+    description: "Organization represents a group of people identified by shared interests or purpose.\nSkipped properties: id,href"
+    properties:
+      isHeadOffice:
+        type: boolean
+      isLegalEntity:
+        type: boolean
+      name:
+        type: string
+      nameType:
+        type: string
+      organizationType:
+        type: string
+      tradingName:
+        type: string
+      contactMedium:
+        type: array
+        items:
+          $ref: "#/definitions/ContactMedium"
+      creditRating:
+        type: array
+        items:
+          $ref: "#/definitions/PartyCreditProfile"
+      existsDuring:
+        $ref: "#/definitions/TimePeriod"
+      externalReference:
+        type: array
+        items:
+          $ref: "#/definitions/ExternalReference"
+      organizationChildRelationship:
+        type: array
+        items:
+          $ref: "#/definitions/OrganizationChildRelationship"
+      organizationIdentification:
+        type: array
+        items:
+          $ref: "#/definitions/OrganizationIdentification"
+      organizationParentRelationship:
+        $ref: "#/definitions/OrganizationParentRelationship"
+      otherName:
+        type: array
+        items:
+          $ref: "#/definitions/OtherNameOrganization"
+      partyCharacteristic:
+        type: array
+        items:
+          $ref: "#/definitions/Characteristic"
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      status:
+        $ref: "#/definitions/OrganizationStateType"
+      taxExemptionCertificate:
+        type: array
+        items:
+          $ref: "#/definitions/TaxExemptionCertificate"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  OrganizationStateType:
+    type: string
+    description: Valid values for the lifecycle state of the organization
+    enum:
+      - initialized
+      - validated
+      - closed
+  ContactMedium:
+    type: object
+    properties:
+      mediumType:
+        type: string
+      preferred:
+        type: boolean
+      characteristic:
+        $ref: "#/definitions/MediumCharacteristic"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  MediumCharacteristic:
+    type: object
+    properties:
+      city:
+        type: string
+      contactType:
+        type: string
+      country:
+        type: string
+      emailAddress:
+        type: string
+      faxNumber:
+        type: string
+      phoneNumber:
+        type: string
+      postCode:
+        type: string
+      socialNetworkId:
+        type: string
+      stateOrProvince:
+        type: string
+      street1:
+        type: string
+      street2:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  Characteristic:
+    type: object
+    required:
+      - name
+      - value
+    properties:
+      name:
+        type: string
+      valueType:
+        type: string
+      value:
+        $ref: "#/definitions/Any"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  Any: {}
+  Disability:
+    type: object
+    properties:
+      disabilityCode:
+        type: string
+      disabilityName:
+        type: string
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  ExternalReference:
+    type: object
+    properties:
+      externalReferenceType:
+        type: string
+      name:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  IndividualIdentification:
+    type: object
+    properties:
+      identificationId:
+        type: string
+      identificationType:
+        type: string
+      issuingAuthority:
+        type: string
+      issuingDate:
+        type: string
+        format: date-time
+      attachment:
+        $ref: "#/definitions/AttachmentRefOrValue"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  LanguageAbility:
+    type: object
+    properties:
+      isFavouriteLanguage:
+        type: boolean
+      languageCode:
+        type: string
+      languageName:
+        type: string
+      listeningProficiency:
+        type: string
+      readingProficiency:
+        type: string
+      speakingProficiency:
+        type: string
+      writingProficiency:
+        type: string
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  OtherNameIndividual:
+    type: object
+    properties:
+      aristocraticTitle:
+        type: string
+      familyName:
+        type: string
+      familyNamePrefix:
+        type: string
+      formattedName:
+        type: string
+      fullName:
+        type: string
+      generation:
+        type: string
+      givenName:
+        type: string
+      legalName:
+        type: string
+      middleName:
+        type: string
+      preferredGivenName:
+        type: string
+      title:
+        type: string
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  Skill:
+    type: object
+    properties:
+      comment:
+        type: string
+      evaluatedLevel:
+        type: string
+      skillCode:
+        type: string
+      skillName:
+        type: string
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  PartyCreditProfile:
+    type: object
+    properties:
+      creditAgencyName:
+        type: string
+      creditAgencyType:
+        type: string
+      ratingReference:
+        type: string
+      ratingScore:
+        type: integer
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  TaxExemptionCertificate:
+    type: object
+    properties:
+      id:
+        type: string
+      attachment:
+        $ref: "#/definitions/AttachmentRefOrValue"
+      taxDefinition:
+        type: array
+        items:
+          $ref: "#/definitions/TaxDefinition"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  TaxDefinition:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      taxType:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  OrganizationChildRelationship:
+    type: object
+    properties:
+      relationshipType:
+        type: string
+      organization:
+        $ref: "#/definitions/OrganizationRef"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  OrganizationIdentification:
+    type: object
+    properties:
+      identificationId:
+        type: string
+      identificationType:
+        type: string
+      issuingAuthority:
+        type: string
+      issuingDate:
+        type: string
+        format: date-time
+      attachment:
+        $ref: "#/definitions/AttachmentRefOrValue"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  OrganizationParentRelationship:
+    type: object
+    properties:
+      relationshipType:
+        type: string
+      organization:
+        $ref: "#/definitions/OrganizationRef"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  OrganizationRef:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+      name:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  OtherNameOrganization:
+    type: object
+    properties:
+      name:
+        type: string
+      nameType:
+        type: string
+      tradingName:
+        type: string
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  RelatedParty:
+    type: object
+    required:
+      - "@referredType"
+      - id
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  AttachmentRefOrValue:
+    type: object
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+      attachmentType:
+        type: string
+      content:
+        type: string
+      description:
+        type: string
+      mimeType:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+      size:
+        $ref: "#/definitions/Quantity"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  Quantity:
+    type: object
+    properties:
+      amount:
+        default: 1
+        type: number
+        format: float
+      units:
+        type: string
+  TimePeriod:
+    type: object
+    properties:
+      endDateTime:
+        type: string
+        format: date-time
+      startDateTime:
+        type: string
+        format: date-time
+  EventSubscription:
+    required:
+      - id
+      - callback
+    type: object
+    description: Sets the communication endpoint address the service instance must use to deliver notification information
+    properties:
+      id:
+        type: string
+        description: Id of the listener
+      callback:
+        type: string
+        description: The callback being registered.
+      query:
+        type: string
+        description: additional data to be passed
+  EventSubscriptionInput:
+    required:
+      - callback
+    type: object
+    description: Sets the communication endpoint address the service instance must use to deliver notification information
+    properties:
+      callback:
+        type: string
+        description: The callback being registered.
+      query:
+        type: string
+        description: additional data to be passed
+  OrganizationCreateEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      description:
+        type: string
+      timeOcurred:
+        type: string
+        format: date-time
+      title:
+        type: string
+      eventType:
+        type: string
+      domain:
+        type: string
+      priority:
+        type: string
+      href:
+        type: string
+      id:
+        type: string
+      correlationId:
+        type: string
+      event:
+        $ref: "#/definitions/OrganizationCreateEventPayload"
+  OrganizationCreateEventPayload:
+    type: object
+    properties:
+      organization:
+        $ref: "#/definitions/Organization"
+  OrganizationAttributeValueChangeEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      fieldPath:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      description:
+        type: string
+      timeOcurred:
+        type: string
+        format: date-time
+      title:
+        type: string
+      eventType:
+        type: string
+      domain:
+        type: string
+      priority:
+        type: string
+      correlationId:
+        type: string
+      event:
+        $ref: "#/definitions/OrganizationAttributeValueChangeEventPayload"
+  OrganizationAttributeValueChangeEventPayload:
+    type: object
+    properties:
+      organization:
+        $ref: "#/definitions/Organization"
+  OrganizationStateChangeEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      description:
+        type: string
+      timeOcurred:
+        type: string
+        format: date-time
+      title:
+        type: string
+      eventType:
+        type: string
+      domain:
+        type: string
+      priority:
+        type: string
+      href:
+        type: string
+      id:
+        type: string
+      correlationId:
+        type: string
+      event:
+        $ref: "#/definitions/OrganizationStateChangeEventPayload"
+  OrganizationStateChangeEventPayload:
+    type: object
+    properties:
+      organization:
+        $ref: "#/definitions/Organization"
+  OrganizationDeleteEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      description:
+        type: string
+      timeOcurred:
+        type: string
+        format: date-time
+      title:
+        type: string
+      eventType:
+        type: string
+      domain:
+        type: string
+      priority:
+        type: string
+      href:
+        type: string
+      id:
+        type: string
+      correlationId:
+        type: string
+      event:
+        $ref: "#/definitions/OrganizationDeleteEventPayload"
+  OrganizationDeleteEventPayload:
+    type: object
+    properties:
+      organization:
+        $ref: "#/definitions/Organization"
+  IndividualCreateEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      description:
+        type: string
+      timeOcurred:
+        type: string
+        format: date-time
+      title:
+        type: string
+      eventType:
+        type: string
+      domain:
+        type: string
+      priority:
+        type: string
+      href:
+        type: string
+      id:
+        type: string
+      correlationId:
+        type: string
+      event:
+        $ref: "#/definitions/IndividualCreateEventPayload"
+  IndividualCreateEventPayload:
+    type: object
+    properties:
+      individual:
+        $ref: "#/definitions/Individual"
+  IndividualAttributeValueChangeEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      fieldPath:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      description:
+        type: string
+      timeOcurred:
+        type: string
+        format: date-time
+      title:
+        type: string
+      eventType:
+        type: string
+      domain:
+        type: string
+      priority:
+        type: string
+      correlationId:
+        type: string
+      event:
+        $ref: "#/definitions/IndividualAttributeValueChangeEventPayload"
+  IndividualAttributeValueChangeEventPayload:
+    type: object
+    properties:
+      individual:
+        $ref: "#/definitions/Individual"
+  IndividualStateChangeEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      description:
+        type: string
+      timeOcurred:
+        type: string
+        format: date-time
+      title:
+        type: string
+      eventType:
+        type: string
+      domain:
+        type: string
+      priority:
+        type: string
+      href:
+        type: string
+      id:
+        type: string
+      correlationId:
+        type: string
+      event:
+        $ref: "#/definitions/IndividualStateChangeEventPayload"
+  IndividualStateChangeEventPayload:
+    type: object
+    properties:
+      individual:
+        $ref: "#/definitions/Individual"
+  IndividualDeleteEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      description:
+        type: string
+      timeOcurred:
+        type: string
+        format: date-time
+      title:
+        type: string
+      eventType:
+        type: string
+      domain:
+        type: string
+      priority:
+        type: string
+      href:
+        type: string
+      id:
+        type: string
+      correlationId:
+        type: string
+      event:
+        $ref: "#/definitions/IndividualDeleteEventPayload"
+  IndividualDeleteEventPayload:
+    type: object
+    properties:
+      individual:
+        $ref: "#/definitions/Individual"
+  Error:
+    required:
+      - code
+      - reason
+    type: object
+    description: Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)
+    properties:
+      code:
+        type: string
+      reason:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+      referenceError:
+        type: string
+        format: uri
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string

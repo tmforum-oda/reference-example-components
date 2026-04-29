@@ -1,0 +1,1968 @@
+swagger: "2.0"
+info:
+  title: Service Catalog Management
+  description: "## TMF API Reference: TMF633 - Service Catalog Management\n\n Version 4.0\n\nThe Service Catalog API is one of Catalog Management API Family. Service Catalog API goal is to provide a catalog of services."
+  version: "4.0.0"
+basePath: /tmf-api/serviceCatalogManagement/v4/
+schemes:
+  - https
+  - http
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+tags:
+  - name: serviceCatalog
+  - name: serviceCategory
+  - name: serviceCandidate
+  - name: serviceSpecification
+  - name: importJob
+  - name: exportJob
+  - name: notification listeners (client side)
+  - name: events subscription
+paths:
+  /serviceCatalog:
+    get:
+      operationId: listServiceCatalog
+      x-swagger-router-controller: ServiceCatalog
+      summary: List or find ServiceCatalog objects
+      tags:
+        - serviceCatalog
+      parameters:
+        - name: fields
+          description: Comma-separated properties to be provided in response
+          required: false
+          in: query
+          type: string
+        - name: offset
+          description: Requested index for start of resources to be provided in response
+          required: false
+          in: query
+          type: integer
+        - name: limit
+          description: Requested number of resources to be provided in response
+          required: false
+          in: query
+          type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceCatalog"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      operationId: createServiceCatalog
+      x-swagger-router-controller: ServiceCatalog
+      summary: Creates a ServiceCatalog
+      tags:
+        - serviceCatalog
+      parameters:
+        - name: serviceCatalog
+          description: The ServiceCatalog to be created
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCatalog_Create"
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/ServiceCatalog"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /serviceCatalog/{id}:
+    get:
+      operationId: retrieveServiceCatalog
+      x-swagger-router-controller: ServiceCatalog
+      summary: Retrieves a ServiceCatalog by ID
+      tags:
+        - serviceCatalog
+      parameters:
+        - name: id
+          description: Identifier of the ServiceCatalog
+          required: true
+          type: string
+          in: path
+        - name: fields
+          description: Comma-separated properties to provide in response
+          required: false
+          type: string
+          in: query
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/ServiceCatalog"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    patch:
+      operationId: patchServiceCatalog
+      x-swagger-router-controller: ServiceCatalog
+      summary: Updates partially a ServiceCatalog
+      tags:
+        - serviceCatalog
+      parameters:
+        - name: id
+          description: Identifier of the ServiceCatalog
+          required: true
+          type: string
+          in: path
+        - name: serviceCatalog
+          description: The ServiceCatalog to be updated
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCatalog_Update"
+      responses:
+        "200":
+          description: Updated
+          schema:
+            $ref: "#/definitions/ServiceCatalog"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: deleteServiceCatalog
+      x-swagger-router-controller: ServiceCatalog
+      summary: Deletes a ServiceCatalog
+      tags:
+        - serviceCatalog
+      parameters:
+        - name: id
+          description: Identifier of the ServiceCatalog
+          required: true
+          type: string
+          in: path
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /serviceCategory:
+    get:
+      operationId: listServiceCategory
+      x-swagger-router-controller: ServiceCategory
+      summary: List or find ServiceCategory objects
+      tags:
+        - serviceCategory
+      parameters:
+        - name: fields
+          required: false
+          in: query
+          type: string
+        - name: offset
+          required: false
+          in: query
+          type: integer
+        - name: limit
+          required: false
+          in: query
+          type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceCategory"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      operationId: createServiceCategory
+      x-swagger-router-controller: ServiceCategory
+      summary: Creates a ServiceCategory
+      tags:
+        - serviceCategory
+      parameters:
+        - name: serviceCategory
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCategory_Create"
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/ServiceCategory"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /serviceCategory/{id}:
+    get:
+      operationId: retrieveServiceCategory
+      x-swagger-router-controller: ServiceCategory
+      summary: Retrieves a ServiceCategory by ID
+      tags:
+        - serviceCategory
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+        - name: fields
+          required: false
+          type: string
+          in: query
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/ServiceCategory"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    patch:
+      operationId: patchServiceCategory
+      x-swagger-router-controller: ServiceCategory
+      summary: Updates partially a ServiceCategory
+      tags:
+        - serviceCategory
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+        - name: serviceCategory
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCategory_Update"
+      responses:
+        "200":
+          description: Updated
+          schema:
+            $ref: "#/definitions/ServiceCategory"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: deleteServiceCategory
+      x-swagger-router-controller: ServiceCategory
+      summary: Deletes a ServiceCategory
+      tags:
+        - serviceCategory
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /serviceCandidate:
+    get:
+      operationId: listServiceCandidate
+      x-swagger-router-controller: ServiceCandidate
+      summary: List or find ServiceCandidate objects
+      tags:
+        - serviceCandidate
+      parameters:
+        - name: fields
+          required: false
+          in: query
+          type: string
+        - name: offset
+          required: false
+          in: query
+          type: integer
+        - name: limit
+          required: false
+          in: query
+          type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceCandidate"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      operationId: createServiceCandidate
+      x-swagger-router-controller: ServiceCandidate
+      summary: Creates a ServiceCandidate
+      tags:
+        - serviceCandidate
+      parameters:
+        - name: serviceCandidate
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCandidate_Create"
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/ServiceCandidate"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /serviceCandidate/{id}:
+    get:
+      operationId: retrieveServiceCandidate
+      x-swagger-router-controller: ServiceCandidate
+      summary: Retrieves a ServiceCandidate by ID
+      tags:
+        - serviceCandidate
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+        - name: fields
+          required: false
+          type: string
+          in: query
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/ServiceCandidate"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    patch:
+      operationId: patchServiceCandidate
+      x-swagger-router-controller: ServiceCandidate
+      summary: Updates partially a ServiceCandidate
+      tags:
+        - serviceCandidate
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+        - name: serviceCandidate
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCandidate_Update"
+      responses:
+        "200":
+          description: Updated
+          schema:
+            $ref: "#/definitions/ServiceCandidate"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: deleteServiceCandidate
+      x-swagger-router-controller: ServiceCandidate
+      summary: Deletes a ServiceCandidate
+      tags:
+        - serviceCandidate
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /serviceSpecification:
+    get:
+      operationId: listServiceSpecification
+      x-swagger-router-controller: ServiceSpecification
+      summary: List or find ServiceSpecification objects
+      tags:
+        - serviceSpecification
+      parameters:
+        - name: fields
+          required: false
+          in: query
+          type: string
+        - name: offset
+          required: false
+          in: query
+          type: integer
+        - name: limit
+          required: false
+          in: query
+          type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceSpecification"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      operationId: createServiceSpecification
+      x-swagger-router-controller: ServiceSpecification
+      summary: Creates a ServiceSpecification
+      tags:
+        - serviceSpecification
+      parameters:
+        - name: serviceSpecification
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceSpecification_Create"
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/ServiceSpecification"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /serviceSpecification/{id}:
+    get:
+      operationId: retrieveServiceSpecification
+      x-swagger-router-controller: ServiceSpecification
+      summary: Retrieves a ServiceSpecification by ID
+      tags:
+        - serviceSpecification
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+        - name: fields
+          required: false
+          type: string
+          in: query
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/ServiceSpecification"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    patch:
+      operationId: patchServiceSpecification
+      x-swagger-router-controller: ServiceSpecification
+      summary: Updates partially a ServiceSpecification
+      tags:
+        - serviceSpecification
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+        - name: serviceSpecification
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceSpecification_Update"
+      responses:
+        "200":
+          description: Updated
+          schema:
+            $ref: "#/definitions/ServiceSpecification"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: deleteServiceSpecification
+      x-swagger-router-controller: ServiceSpecification
+      summary: Deletes a ServiceSpecification
+      tags:
+        - serviceSpecification
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /importJob:
+    get:
+      operationId: listImportJob
+      x-swagger-router-controller: ImportJob
+      summary: List or find ImportJob objects
+      tags:
+        - importJob
+      parameters:
+        - name: fields
+          required: false
+          in: query
+          type: string
+        - name: offset
+          required: false
+          in: query
+          type: integer
+        - name: limit
+          required: false
+          in: query
+          type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ImportJob"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      operationId: createImportJob
+      x-swagger-router-controller: ImportJob
+      summary: Creates a ImportJob
+      tags:
+        - importJob
+      parameters:
+        - name: importJob
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ImportJob_Create"
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/ImportJob"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /importJob/{id}:
+    get:
+      operationId: retrieveImportJob
+      x-swagger-router-controller: ImportJob
+      summary: Retrieves a ImportJob by ID
+      tags:
+        - importJob
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+        - name: fields
+          required: false
+          type: string
+          in: query
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/ImportJob"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: deleteImportJob
+      x-swagger-router-controller: ImportJob
+      summary: Deletes a ImportJob
+      tags:
+        - importJob
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /exportJob:
+    get:
+      operationId: listExportJob
+      x-swagger-router-controller: ExportJob
+      summary: List or find ExportJob objects
+      tags:
+        - exportJob
+      parameters:
+        - name: fields
+          required: false
+          in: query
+          type: string
+        - name: offset
+          required: false
+          in: query
+          type: integer
+        - name: limit
+          required: false
+          in: query
+          type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ExportJob"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      operationId: createExportJob
+      x-swagger-router-controller: ExportJob
+      summary: Creates a ExportJob
+      tags:
+        - exportJob
+      parameters:
+        - name: exportJob
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ExportJob_Create"
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/ExportJob"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /exportJob/{id}:
+    get:
+      operationId: retrieveExportJob
+      x-swagger-router-controller: ExportJob
+      summary: Retrieves a ExportJob by ID
+      tags:
+        - exportJob
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+        - name: fields
+          required: false
+          type: string
+          in: query
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/ExportJob"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: deleteExportJob
+      x-swagger-router-controller: ExportJob
+      summary: Deletes a ExportJob
+      tags:
+        - exportJob
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /hub:
+    post:
+      operationId: registerListener
+      x-swagger-router-controller: EventsSubscription
+      summary: Register a listener
+      tags:
+        - events subscription
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/EventSubscriptionInput"
+      responses:
+        "201":
+          description: Subscribed
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /hub/{id}:
+    delete:
+      operationId: unregisterListener
+      x-swagger-router-controller: EventsSubscription
+      summary: Unregister a listener
+      tags:
+        - events subscription
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceCatalogCreateEvent:
+    post:
+      operationId: listenToServiceCatalogCreateEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceCatalogCreateEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCatalogCreateEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceCatalogChangeEvent:
+    post:
+      operationId: listenToServiceCatalogChangeEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceCatalogChangeEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCatalogChangeEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceCatalogDeleteEvent:
+    post:
+      operationId: listenToServiceCatalogDeleteEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceCatalogDeleteEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCatalogDeleteEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceCatalogBatchEvent:
+    post:
+      operationId: listenToServiceCatalogBatchEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceCatalogBatchEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCatalogBatchEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceCategoryCreateEvent:
+    post:
+      operationId: listenToServiceCategoryCreateEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceCategoryCreateEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCategoryCreateEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceCategoryChangeEvent:
+    post:
+      operationId: listenToServiceCategoryChangeEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceCategoryChangeEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCategoryChangeEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceCategoryDeleteEvent:
+    post:
+      operationId: listenToServiceCategoryDeleteEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceCategoryDeleteEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCategoryDeleteEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceCandidateCreateEvent:
+    post:
+      operationId: listenToServiceCandidateCreateEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceCandidateCreateEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCandidateCreateEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceCandidateChangeEvent:
+    post:
+      operationId: listenToServiceCandidateChangeEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceCandidateChangeEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCandidateChangeEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceCandidateDeleteEvent:
+    post:
+      operationId: listenToServiceCandidateDeleteEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceCandidateDeleteEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceCandidateDeleteEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceSpecificationCreateEvent:
+    post:
+      operationId: listenToServiceSpecificationCreateEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceSpecificationCreateEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceSpecificationCreateEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceSpecificationChangeEvent:
+    post:
+      operationId: listenToServiceSpecificationChangeEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceSpecificationChangeEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceSpecificationChangeEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceSpecificationDeleteEvent:
+    post:
+      operationId: listenToServiceSpecificationDeleteEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceSpecificationDeleteEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          schema:
+            $ref: "#/definitions/ServiceSpecificationDeleteEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+definitions:
+  TimePeriod:
+    type: object
+    properties:
+      endDateTime:
+        type: string
+        format: date-time
+      startDateTime:
+        type: string
+        format: date-time
+  Any: {}
+  RelatedParty:
+    type: object
+    required:
+      - "@referredType"
+      - id
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+        format: uri
+      name:
+        type: string
+      role:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  ServiceCatalog:
+    type: object
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+        format: uri
+      description:
+        type: string
+      lastUpdate:
+        type: string
+        format: date-time
+      lifecycleStatus:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      category:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceCategoryRef"
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  ServiceCatalog_Create:
+    type: object
+    required:
+      - name
+    properties:
+      description:
+        type: string
+      lastUpdate:
+        type: string
+        format: date-time
+      lifecycleStatus:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      category:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceCategoryRef"
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  ServiceCatalog_Update:
+    type: object
+    properties:
+      description:
+        type: string
+      lifecycleStatus:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      category:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceCategoryRef"
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  ServiceCategory:
+    type: object
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+        format: uri
+      description:
+        type: string
+      isRoot:
+        type: boolean
+      lastUpdate:
+        type: string
+        format: date-time
+      lifecycleStatus:
+        type: string
+      name:
+        type: string
+      parentId:
+        type: string
+      version:
+        type: string
+      category:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceCategoryRef"
+      serviceCandidate:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceCandidateRef"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  ServiceCategory_Create:
+    type: object
+    required:
+      - name
+    properties:
+      description:
+        type: string
+      isRoot:
+        type: boolean
+      lifecycleStatus:
+        type: string
+      name:
+        type: string
+      parentId:
+        type: string
+      version:
+        type: string
+      category:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceCategoryRef"
+      serviceCandidate:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceCandidateRef"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  ServiceCategory_Update:
+    type: object
+    properties:
+      description:
+        type: string
+      isRoot:
+        type: boolean
+      lifecycleStatus:
+        type: string
+      name:
+        type: string
+      parentId:
+        type: string
+      version:
+        type: string
+      category:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceCategoryRef"
+      serviceCandidate:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceCandidateRef"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  ServiceCategoryRef:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+        format: uri
+      name:
+        type: string
+      version:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  ServiceCandidate:
+    type: object
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+        format: uri
+      description:
+        type: string
+      lastUpdate:
+        type: string
+        format: date-time
+      lifecycleStatus:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      category:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceCategoryRef"
+      serviceSpecification:
+        $ref: "#/definitions/ServiceSpecificationRef"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  ServiceCandidate_Create:
+    type: object
+    required:
+      - name
+      - serviceSpecification
+    properties:
+      description:
+        type: string
+      lifecycleStatus:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      category:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceCategoryRef"
+      serviceSpecification:
+        $ref: "#/definitions/ServiceSpecificationRef"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  ServiceCandidate_Update:
+    type: object
+    properties:
+      description:
+        type: string
+      lifecycleStatus:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      category:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceCategoryRef"
+      serviceSpecification:
+        $ref: "#/definitions/ServiceSpecificationRef"
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  ServiceCandidateRef:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+        format: uri
+      name:
+        type: string
+      version:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  ServiceSpecification:
+    type: object
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+        format: uri
+      description:
+        type: string
+      isBundle:
+        type: boolean
+      lastUpdate:
+        type: string
+        format: date-time
+      lifecycleStatus:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  ServiceSpecification_Create:
+    type: object
+    required:
+      - name
+    properties:
+      description:
+        type: string
+      isBundle:
+        type: boolean
+      lifecycleStatus:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  ServiceSpecification_Update:
+    type: object
+    properties:
+      description:
+        type: string
+      isBundle:
+        type: boolean
+      lifecycleStatus:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      validFor:
+        $ref: "#/definitions/TimePeriod"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+  ServiceSpecificationRef:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+        format: uri
+      name:
+        type: string
+      version:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  ImportJob:
+    type: object
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+      completionDate:
+        type: string
+        format: date-time
+      contentType:
+        type: string
+      creationDate:
+        type: string
+        format: date-time
+      errorLog:
+        type: string
+      path:
+        type: string
+      url:
+        type: string
+        format: uri
+      status:
+        type: string
+        enum: ["Not Started", "Running", "Succeeded", "Failed"]
+  ImportJob_Create:
+    type: object
+    required:
+      - url
+    properties:
+      contentType:
+        type: string
+      path:
+        type: string
+      url:
+        type: string
+        format: uri
+      status:
+        type: string
+  ExportJob:
+    type: object
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+      completionDate:
+        type: string
+        format: date-time
+      contentType:
+        type: string
+      creationDate:
+        type: string
+        format: date-time
+      errorLog:
+        type: string
+      path:
+        type: string
+      query:
+        type: string
+      url:
+        type: string
+        format: uri
+      status:
+        type: string
+        enum: ["Not Started", "Running", "Succeeded", "Failed"]
+  ExportJob_Create:
+    type: object
+    required:
+      - url
+    properties:
+      contentType:
+        type: string
+      path:
+        type: string
+      query:
+        type: string
+      url:
+        type: string
+        format: uri
+  EventSubscription:
+    type: object
+    required:
+      - id
+      - callback
+    properties:
+      id:
+        type: string
+      callback:
+        type: string
+      query:
+        type: string
+  EventSubscriptionInput:
+    type: object
+    required:
+      - callback
+    properties:
+      callback:
+        type: string
+      query:
+        type: string
+  ServiceCatalogCreateEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      eventType:
+        type: string
+      correlationId:
+        type: string
+      domain:
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+      priority:
+        type: string
+      timeOcurred:
+        type: string
+        format: date-time
+      event:
+        type: object
+        properties:
+          serviceCatalog:
+            $ref: "#/definitions/ServiceCatalog"
+  ServiceCatalogChangeEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        type: object
+        properties:
+          serviceCatalog:
+            $ref: "#/definitions/ServiceCatalog"
+  ServiceCatalogDeleteEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        type: object
+        properties:
+          serviceCatalog:
+            $ref: "#/definitions/ServiceCatalog"
+  ServiceCatalogBatchEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        type: object
+        properties:
+          serviceCatalog:
+            $ref: "#/definitions/ServiceCatalog"
+  ServiceCategoryCreateEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        type: object
+        properties:
+          serviceCategory:
+            $ref: "#/definitions/ServiceCategory"
+  ServiceCategoryChangeEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        type: object
+        properties:
+          serviceCategory:
+            $ref: "#/definitions/ServiceCategory"
+  ServiceCategoryDeleteEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        type: object
+        properties:
+          serviceCategory:
+            $ref: "#/definitions/ServiceCategory"
+  ServiceCandidateCreateEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        type: object
+        properties:
+          serviceCandidate:
+            $ref: "#/definitions/ServiceCandidate"
+  ServiceCandidateChangeEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        type: object
+        properties:
+          serviceCandidate:
+            $ref: "#/definitions/ServiceCandidate"
+  ServiceCandidateDeleteEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        type: object
+        properties:
+          serviceCandidate:
+            $ref: "#/definitions/ServiceCandidate"
+  ServiceSpecificationCreateEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        type: object
+        properties:
+          serviceSpecification:
+            $ref: "#/definitions/ServiceSpecification"
+  ServiceSpecificationChangeEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        type: object
+        properties:
+          serviceSpecification:
+            $ref: "#/definitions/ServiceSpecification"
+  ServiceSpecificationDeleteEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventType:
+        type: string
+      event:
+        type: object
+        properties:
+          serviceSpecification:
+            $ref: "#/definitions/ServiceSpecification"
+  Error:
+    type: object
+    required:
+      - code
+      - reason
+    properties:
+      code:
+        type: string
+      reason:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+      referenceError:
+        type: string
+        format: uri
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
