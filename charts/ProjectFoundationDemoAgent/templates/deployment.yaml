@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-agent
+  labels:
+    app.kubernetes.io/name: {{ .Values.component.name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    oda.tmforum.org/componentName: {{ .Release.Name }}-{{ .Values.component.name }}
+
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-agent
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-agent
+        app.kubernetes.io/name: {{ .Values.component.name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        oda.tmforum.org/componentName: {{ .Release.Name }}-{{ .Values.component.name }}
+    spec:
+      containers:
+        - name: agent
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          command:
+            - streamlit
+            - run
+            - app.py
+            - --server.port=8000
+            - --server.address=0.0.0.0
+            - --server.baseUrlPath={{ .Release.Name }}-{{ .Values.component.name }}
+
+          ports:
+            - containerPort: 8000
+              name: http
+
+          env:
+            # Canvas discovery
+            - name: COMPONENT_NAME
+              value: "{{ .Release.Name }}-{{ .Values.component.name }}"
+            - name: CANVAS_INFO_ENDPOINT
+              value: {{ .Values.canvas.infoEndpoint | quote }}
+
+            # Databricks MCP auth
+            - name: DATABRICKS_HOST
+              value: {{ .Values.databricks.host | quote }}
+            - name: AGENT_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.databricks.existingSecret | quote }}
+                  key: {{ .Values.databricks.clientIdKey | quote }}
+            - name: AGENT_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.databricks.existingSecret | quote }}
+                  key: {{ .Values.databricks.clientSecretKey | quote }}
+
+            # AI Gateway / LiteLLM config
+            - name: AI_GATEWAY_BASE_URL
+              value: {{ .Values.gateway.baseUrl | quote }}
+            - name: LLM_MODEL
+              value: {{ .Values.llm.model | quote }}
+            - name: LLM_TIMEOUT_SECONDS
+              value: {{ .Values.llm.timeoutSeconds | quote }}
+            - name: VERIFY_SSL
+              value: {{ .Values.security.verifySSL | quote }}
+
+            # Open Telemetry Environment Variables
+            # Runtime observability - OpenTelemetry
+            - name: OTEL_SERVICE_NAME
+              value: {{ printf "%s-%s" .Release.Name .Values.component.name | quote }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ printf "http://%s-%s.%s.svc.cluster.local:4318" .Release.Name .Values.otel.collectorName .Release.Namespace | quote }}
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: "http/protobuf"
+            - name: OTEL_TRACES_EXPORTER
+              value: "otlp"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: {{ printf "service.namespace=oda-canvas,oda.component.name=%s-%s,deployment.environment=canvas-demo" .Release.Name .Values.component.name | quote }}
+              
+            # Keycloak auth for AI Gateway
+            - name: KEYCLOAK_TOKEN_URL
+              value: {{ .Values.keycloak.tokenUrl | quote }}
+            - name: KEYCLOAK_CLIENT_ID_FILE
+              value: "/var/run/secrets/keycloak/client_id"
+            - name: KEYCLOAK_CLIENT_SECRET_FILE
+              value: "/var/run/secrets/keycloak/client_secret"
+
+          volumeMounts:
+            - name: keycloak-creds
+              mountPath: /var/run/secrets/keycloak
+              readOnly: true
+
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+
+      volumes:
+        - name: keycloak-creds
+          secret:
+            secretName: {{ .Release.Name }}-{{ .Values.component.name }}-secret
+            optional: true
+            items:
+              - key: {{ .Values.keycloak.clientIdKey | quote }}
+                path: client_id
+              - key: {{ .Values.keycloak.clientSecretKey | quote }}
+                path: client_secret

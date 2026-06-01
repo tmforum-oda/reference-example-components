@@ -1,0 +1,50 @@
+{{- if .Values.otel.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.otel.collectorName }}-config
+  labels:
+    oda.tmforum.org/componentName: {{ .Release.Name }}-{{ .Values.component.name }}
+data:
+  otel-collector-config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:4318
+
+    processors:
+      resource:
+        attributes:
+          - key: service.namespace
+            value: oda-canvas
+            action: upsert
+          - key: oda.component.name
+            value: {{ .Release.Name }}-{{ .Values.component.name }}
+            action: upsert
+          - key: deployment.environment
+            value: canvas-demo
+            action: upsert
+      batch: {}
+
+    exporters:
+      otlphttp/langfuse:
+        endpoint: {{ .Values.otel.langfuseEndpoint | quote }}
+        headers:
+          Authorization: ${env:LANGFUSE_AUTH_HEADER}
+          x-langfuse-ingestion-version: "4"
+
+      debug:
+        verbosity: basic
+
+    service:
+      telemetry:
+        metrics:
+          address: 0.0.0.0:8888
+
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [resource, batch]
+          exporters: [otlphttp/langfuse, debug]
+{{- end }}

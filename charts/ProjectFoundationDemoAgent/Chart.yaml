@@ -1,0 +1,6 @@
+apiVersion: v2
+name: data-demo-agent
+description: Demo AI-native ODA Canvas data agent using discovered data-resource MCP dependencies
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

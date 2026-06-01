@@ -1,0 +1,45 @@
+{{- if .Values.otel.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.otel.collectorName }}
+  labels:
+    app: {{ .Release.Name }}-{{ .Values.otel.collectorName }}
+    oda.tmforum.org/componentName: {{ .Release.Name }}-{{ .Values.component.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-{{ .Values.otel.collectorName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-{{ .Values.otel.collectorName }}
+        oda.tmforum.org/componentName: {{ .Release.Name }}-{{ .Values.component.name }}
+    spec:
+      containers:
+        - name: otel-collector
+          image: {{ .Values.otel.image | quote }}
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--config=/etc/otelcol/otel-collector-config.yaml"
+          env:
+            - name: LANGFUSE_AUTH_HEADER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.otel.existingSecret | quote }}
+                  key: {{ .Values.otel.authHeaderKey | quote }}
+          ports:
+            - name: otlp-http
+              containerPort: 4318
+            - name: metrics
+              containerPort: 8888
+          volumeMounts:
+            - name: otel-config
+              mountPath: /etc/otelcol
+              readOnly: true
+      volumes:
+        - name: otel-config
+          configMap:
+            name: {{ .Release.Name }}-{{ .Values.otel.collectorName }}-config
+{{- end }}

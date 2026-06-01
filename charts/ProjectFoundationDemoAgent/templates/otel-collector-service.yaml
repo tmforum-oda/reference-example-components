@@ -1,0 +1,20 @@
+{{- if .Values.otel.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.otel.collectorName }}
+  labels:
+    app: {{ .Release.Name }}-{{ .Values.otel.collectorName }}
+    oda.tmforum.org/componentName: {{ .Release.Name }}-{{ .Values.component.name }}
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Release.Name }}-{{ .Values.otel.collectorName }}
+  ports:
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+    - name: metrics
+      port: 8888
+      targetPort: 8888
+{{- end }}

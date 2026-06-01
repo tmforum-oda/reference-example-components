@@ -1,0 +1,20 @@
+{{- if .Values.drc.enabled }}
+apiVersion: oda.tmforum.org/v1alpha1
+kind: DataResourceConfig
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.drc.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    oda.tmforum.org/componentName: {{ .Release.Name }}-{{ .Values.component.name }}
+spec:
+  provider: databricks
+  workspace:
+    host: {{ .Values.databricks.host | quote }}
+
+  dependentDataResources:
+{{- if .Values.drc.dependentDataResources }}
+{{- toYaml .Values.drc.dependentDataResources | nindent 4 }}
+{{- else }}
+    []
+{{- end }}
+{{- end }}

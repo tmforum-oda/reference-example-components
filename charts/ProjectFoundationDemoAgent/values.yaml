@@ -1,0 +1,140 @@
+replicaCount: 1
+
+image:
+  repository: akumartmf/databricks-demo-agent
+  tag: v0.12
+  pullPolicy: Always
+
+component:
+  id: demoagent
+  name: demoagent
+  version: "0.1.0"
+  functionalBlock: CoreCommerce
+  publicationDate: "2026-05-09T00:00:00Z"
+
+  maintainerName: Anshul Kumar
+  maintainerEmail: anshul@example.com
+  ownerName: Anshul Kumar
+  ownerEmail: anshul@example.com
+
+  api:
+    specificationUrl: "https://example.com/demo-agent-openapi.yaml"
+    specificationVersion: "0.1.0"
+
+  apipolicy:
+    apiKeyVerification: {}
+    rateLimit: {}
+    quota: {}
+    OASValidation: {}
+    CORS: {}
+    template: ""
+
+  dependentAPIs:
+    - name: productcatalogmcp
+      apiType: mcp
+    - name: agenta2a
+      apiType: a2a
+
+canvas:
+  infoEndpoint: "http://info.canvas.svc.cluster.local"
+
+databricks:
+  host: "https://dbc-51ad7bed-21aa.cloud.databricks.com"
+  existingSecret: "demo-agent-databricks"
+  clientIdKey: "client-id"
+  clientSecretKey: "client-secret"
+
+llm:
+  model: "apac.amazon.nova-pro-v1:0"
+  timeoutSeconds: 30
+
+gateway:
+  baseUrl: "http://ai-gateway-proxy.ai-gateway.svc.cluster.local/v1"
+
+langfuse:
+  host: "https://cloud.langfuse.com"
+  existingSecret: "demo-agent-langfuse"
+  publicKeyKey: "public-key"
+  secretKeyKey: "secret-key"
+
+otel:
+  enabled: true
+  collectorName: otel-collector
+  image: otel/opentelemetry-collector-contrib:0.104.0
+  langfuseEndpoint: "https://cloud.langfuse.com/api/public/otel"
+  existingSecret: "demo-agent-langfuse-otel"
+  authHeaderKey: "authorization"
+
+keycloak:
+  tokenUrl: "http://canvas-keycloak.canvas.svc.cluster.local:8083/auth/realms/odari/protocol/openid-connect/token"
+  existingSecret: "demo-agent-keycloak"
+  clientIdKey: "client_id"
+  clientSecretKey: "client_secret"
+
+drc:
+  enabled: true
+  name: data-demo-agent-drc
+
+  dependentDataResources:
+    - name: telco-sql
+      id: DP-NET-010
+      dataProductType: table
+      accessType: sql
+      description: >
+        SQL access to telco alarm and operations data. Agents can ask
+        natural language questions that get translated to SQL queries.
+      catalogRef:
+        catalog: tmforum
+        schema: oda_canvas_telco
+        object: network_alarms
+
+    - name: fault-knowledge-base
+      id: DP-NET-011
+      dataProductType: vectorDb
+      accessType: vector-search
+      description: >
+        Semantic search over the fault resolution knowledge base.
+        Agents can find relevant past incidents and resolution steps
+        based on similarity to the current fault description.
+      index:
+        catalog: tmforum
+        schema: oda_canvas_telco
+        indexName: fault_resolution_index
+
+    - name: network-explorer
+      id: DP-NET-012
+      dataProductType: table
+      accessType: genie
+      description: >
+        Natural language exploration of network KPIs and performance
+        metrics. Powered by a pre-configured Genie Space with curated
+        data models for network operations.
+      genieSpaceId: "01f14189f3561e09a802e9d34a40440b"
+
+    - name: enrichment-tools
+      id: DP-NET-013
+      accessType: functions
+      description: >
+        Unity Catalog functions for alarm enrichment and analysis.
+        These functions can classify alarm severity and geocode cell
+        tower locations for map-based visualization.
+      functions:
+        - catalog: tmforum
+          schema: oda_canvas_telco
+          functionName: classify_alarm_severity
+        - catalog: tmforum
+          schema: oda_canvas_telco
+          functionName: geocode_cell_tower
+
+
+security:
+  canvasSystemRole: Admin
+  verifySSL: "false"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
