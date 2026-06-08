@@ -1,0 +1,16 @@
+FROM node:16-alpine
+
+WORKDIR /usr/src/app
+
+# Copy package.json and install dependencies
+COPY productOrderProcessorMicroservice/implementation/package*.json ./
+RUN npm install --only=production
+
+# Copy application source
+COPY productOrderProcessorMicroservice/implementation/processor.js ./
+
+# Run as non-root user
+USER node
+
+# Start the processor
+CMD ["node", "processor.js"]
