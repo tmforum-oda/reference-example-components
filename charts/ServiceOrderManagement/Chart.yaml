@@ -1,0 +1,6 @@
+apiVersion: v2
+name: serviceordermanagement
+description: A reference example TMFC007-ServiceOrderManagement ODA Component
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

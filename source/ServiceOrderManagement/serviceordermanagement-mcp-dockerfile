@@ -1,0 +1,7 @@
+FROM python:3.13
+WORKDIR /app
+COPY serviceOrderManagementMCPServerMicroservice/pyproject.toml ./
+COPY serviceOrderManagementMCPServerMicroservice/*.py ./
+RUN pip install .
+EXPOSE 8000
+CMD ["python", "service_order_management_mcp_server.py"]

@@ -1,0 +1,78 @@
+component:
+  id: TMFC007
+  name: serviceordermanagement
+  functionalBlock: Production
+  publicationDate: 2024-02-23T00:00:00.000Z
+  version: "2.0.0"
+  storageClassName: default
+  MCPServer:
+    enabled: false
+  dependentAPIs:
+    enabled: false
+  apipolicy:
+    apiKeyVerification:
+      enabled: false
+      location: "header"
+    rateLimit:
+      enabled: false
+      identifier: "IP"
+      limit: "6"
+      interval: "pm"
+    quota:
+      identifier: ""
+      limit: ""
+    OASValidation:
+      requestEnabled: false
+      responseEnabled: false
+      allowUnspecifiedHeaders: false
+      allowUnspecifiedQueryParams: false
+      allowUnspecifiedCookies: false
+    CORS:
+      enabled: false
+      allowCredentials: false
+      allowOrigins: "https://allowed-origin.com"
+      handlePreflightRequests:
+        enabled: false
+        allowHeaders: "Accept, Content-Type"
+        allowMethods: "GET, POST"
+        maxAge: 36000
+    template: ""
+  MCPServer:
+    enabled: false
+
+security:
+  canvasSystemRole: canvasRole
+
+mongodb:
+  port: 27017
+  database: tmf
+
+api:
+  image: lesterthomas/serviceorderapi:0.1
+  versionLabel: serviceorderapi-0.1
+  otlp:
+    console:
+      enabled: false
+    protobuffCollector:
+      enabled: true
+      url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
+
+metrics:
+  image: lesterthomas/serviceordermanagementmetrics:0.1
+
+partyrole:
+  image: lesterthomas/partyroleapi:1.1
+  versionLabel: partyroleapi-1.1
+
+permissionspec:
+  image: lesterthomas/permissionspecapi:0.20
+  versionLabel: permissionspecapi-0.20
+  enabled: true
+
+mcp:
+  image: lesterthomas/serviceordermanagementmcp:0.1
+  versionLabel: serviceordermanagementmcp-0.1
+
+canvasinfo:
+  host: ""
+  basepath: ""

@@ -1,0 +1,6 @@
+FROM node:16
+COPY serviceOrderManagementInitializationMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY serviceOrderManagementInitializationMicroservice/implementation ./
+CMD ["node", "initialization.js"]

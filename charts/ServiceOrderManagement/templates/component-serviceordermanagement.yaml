@@ -1,0 +1,141 @@
+apiVersion: oda.tmforum.org/v1
+kind: Component
+metadata:
+  name: {{.Release.Name}}-{{.Values.component.name}}
+  labels:
+    oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
+spec:
+  componentMetadata:
+    id: {{.Values.component.id}}
+    name: {{.Values.component.name}}
+    functionalBlock: {{.Values.component.functionalBlock}}
+    publicationDate: {{.Values.component.publicationDate}}
+    status: specified
+    version: {{.Values.component.version}}
+    description: "Service Order Management (SOM) component is the entry point to the Production Domain. It oversees delivery of Customer-Facing-Service (CFS) resources (network and service platform equipment). The SOM exposes the API ServiceOrder. It is triggered when the Product Order Delivery Orchestration And Management component calls this API to request CFS delivery."
+    maintainers:
+    - name: Lester Thomas
+      email: components@tmforum.org
+    owners:
+    - name: Lester Thomas
+      email: components@tmforum.org
+
+  coreFunction:
+    exposedAPIs:
+    - name: serviceordering
+      specification:
+      - url: "https://tmf-open-api-table-documents.s3.eu-west-1.amazonaws.com/Beta/TMF641_Service_Ordering/4.2.0/swagger/TMF641_Service_Ordering_v4.2.0_beta_swagger.json"
+      implementation: {{.Release.Name}}-serviceorderapi
+      apiType: openapi
+      id: TMF641
+      gatewayConfiguration:
+        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
+        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
+        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
+        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
+        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
+        template: "{{.Values.component.apipolicy.template}}"
+      path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/serviceOrdering/v4
+      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/serviceOrdering/v4/docs
+      port: 8080
+
+    {{- if .Values.component.MCPServer.enabled }}
+    - name: serviceordermanagementmcp
+      implementation: {{.Release.Name}}-serviceordermanagementmcp
+      apiType: mcp
+      path: /{{.Release.Name}}-{{.Values.component.name}}/mcp
+      port: 8000
+    {{- end }}
+
+    dependentAPIs:
+    {{- if .Values.component.dependentAPIs.enabled }}
+    - name: service-catalog-management-api
+      apiType: openapi
+      id: TMF633
+      specification:
+      - url: https://tmf-open-api-table-documents.s3.eu-west-1.amazonaws.com/OpenApiTable/TMF633_Service_Catalog/4.0.0/swagger/TMF633_Service_Catalog_Management_API_v4.0.0_swagger.json
+    - name: service-inventory-management-api
+      apiType: openapi
+      id: TMF638
+      specification:
+      - url: https://tmf-open-api-table-documents.s3.eu-west-1.amazonaws.com/OpenApiTable/TMF638_Service_Inventory/4.0.0/swagger/TMF638_Service_Inventory_Management_API_v4.0.0_swagger.json
+    - name: resource-order-management-api
+      apiType: openapi
+      id: TMF652
+      specification:
+      - url: https://tmf-open-api-table-documents.s3.eu-west-1.amazonaws.com/OpenApiTable/TMF652_Resource_Order/4.0.0/swagger/TMF652_Resource_Order_Management_API_v4.0.0_swagger.json
+    {{- else }}
+      []
+    {{- end }}
+
+  eventNotification:
+    publishedEvents:
+    - hub: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/serviceOrdering/v4/hub
+      name: TMF641 Service Ordering Management API
+      port: 80
+      resources:
+      - serviceOrderCreateEvent
+      - serviceOrderStateChangeEvent
+      - serviceOrderDeleteEvent
+      - serviceOrderAttributeValueChangeEvent
+      - serviceOrderInformationRequiredEvent
+      - serviceOrderMilestoneEvent
+      - serviceOrderJeopardyEvent
+      - cancelServiceOrderCreateEvent
+      - cancelServiceOrderStateChangeEvent
+      - cancelServiceOrderInformationRequiredEvent
+    subscribedEvents: []
+
+  managementFunction:
+    exposedAPIs:
+    - name: metrics
+      apiType: prometheus
+      gatewayConfiguration:
+        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
+        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
+        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
+        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
+        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
+        template: "{{.Values.component.apipolicy.template}}"
+      implementation: {{.Release.Name}}-{{.Values.component.name}}-sm
+      path: /{{.Release.Name}}-{{.Values.component.name}}/metrics
+      port: 4000
+
+  securityFunction:
+    canvasSystemRole: {{ .Values.security.canvasSystemRole }}
+    exposedAPIs:
+    {{- if .Values.permissionspec.enabled }}
+    - name: userrolesandpermissions
+      specification:
+      - url: "https://raw.githubusercontent.com/tmforum-apis/TMF672_UserRolePermissions/master/TMF672-UserRolePermissions-v5.0.0.swagger.json"
+      implementation: {{.Release.Name}}-permissionspecapi
+      apiType: openapi
+      id: TMF672
+      gatewayConfiguration:
+        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
+        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
+        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
+        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
+        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
+        template: "{{.Values.component.apipolicy.template}}"
+      path: /{{.Release.Name}}-{{.Values.component.name}}/rolesAndPermissionsManagement/v5
+      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/rolesAndPermissionsManagement/v5/docs
+      port: 8080
+    {{- else }}
+    - name: partyrole
+      specification:
+      - url: "https://raw.githubusercontent.com/tmforum-apis/TMF669_PartyRole/master/TMF669-PartyRole-v4.0.0.swagger.json"
+      implementation: {{.Release.Name}}-partyroleapi
+      apiType: openapi
+      id: TMF669
+      gatewayConfiguration:
+        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
+        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
+        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
+        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
+        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
+        template: "{{.Values.component.apipolicy.template}}"
+      path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4
+      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4/docs
+      port: 8080
+    {{- end }}
