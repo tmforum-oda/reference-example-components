@@ -43,6 +43,7 @@ mcp = FastMCP(
 # ServiceOrder tools
 # ---------------------------------------------------------------------------
 
+
 @mcp.tool()
 async def service_order_get(
     service_order_id: str = None,
@@ -63,9 +64,15 @@ async def service_order_get(
     Returns:
         A dictionary or list containing the service order data, or an error dictionary.
     """
-    logger.info(f"MCP Tool - Getting service order: {service_order_id if service_order_id else 'ALL'}")
+    logger.info(
+        f"MCP Tool - Getting service order: {service_order_id if service_order_id else 'ALL'}"
+    )
     result = await get_service_order(
-        service_order_id=service_order_id, fields=fields, offset=offset, limit=limit, filter=filter
+        service_order_id=service_order_id,
+        fields=fields,
+        offset=offset,
+        limit=limit,
+        filter=filter,
     )
     if result is None:
         logger.warning("Failed to retrieve service order data")
@@ -125,13 +132,20 @@ async def service_order_delete(service_order_id: str) -> dict:
     logger.info(f"MCP Tool - Deleting service order: {service_order_id}")
     result = await delete_service_order(service_order_id)
     if result is None:
-        return {"success": False, "error": f"Failed to delete service order with ID: {service_order_id}"}
-    return {"success": True, "message": f"Service order {service_order_id} deleted successfully"}
+        return {
+            "success": False,
+            "error": f"Failed to delete service order with ID: {service_order_id}",
+        }
+    return {
+        "success": True,
+        "message": f"Service order {service_order_id} deleted successfully",
+    }
 
 
 # ---------------------------------------------------------------------------
 # CancelServiceOrder tools
 # ---------------------------------------------------------------------------
+
 
 @mcp.tool()
 async def cancel_service_order_get(
@@ -153,9 +167,15 @@ async def cancel_service_order_get(
     Returns:
         A dictionary or list containing the cancel service order data, or an error dictionary.
     """
-    logger.info(f"MCP Tool - Getting cancel service order: {cancel_order_id if cancel_order_id else 'ALL'}")
+    logger.info(
+        f"MCP Tool - Getting cancel service order: {cancel_order_id if cancel_order_id else 'ALL'}"
+    )
     result = await get_cancel_service_order(
-        cancel_order_id=cancel_order_id, fields=fields, offset=offset, limit=limit, filter=filter
+        cancel_order_id=cancel_order_id,
+        fields=fields,
+        offset=offset,
+        limit=limit,
+        filter=filter,
     )
     if result is None:
         return {"error": "Failed to retrieve cancel service order data"}
@@ -178,7 +198,9 @@ async def cancel_service_order_create(cancel_order_data: dict) -> dict:
     if result and "error" in result:
         return result
     if result is None:
-        return {"error": {"status": 500, "detail": "Failed to create cancel service order"}}
+        return {
+            "error": {"status": 500, "detail": "Failed to create cancel service order"}
+        }
     return result
 
 

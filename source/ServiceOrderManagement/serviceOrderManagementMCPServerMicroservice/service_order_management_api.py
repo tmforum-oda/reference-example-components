@@ -37,7 +37,9 @@ LIMITS = httpx.Limits(max_keepalive_connections=5, max_connections=10)
 
 async def _get(url: str, params: dict = None) -> Any:
     try:
-        async with httpx.AsyncClient(timeout=TIMEOUT, limits=LIMITS, verify=VALIDATE_SSL) as client:
+        async with httpx.AsyncClient(
+            timeout=TIMEOUT, limits=LIMITS, verify=VALIDATE_SSL
+        ) as client:
             response = await client.get(url, headers=HEADERS, params=params or {})
             response.raise_for_status()
             return response.json()
@@ -48,12 +50,16 @@ async def _get(url: str, params: dict = None) -> Any:
 
 async def _post(url: str, data: dict) -> Any:
     try:
-        async with httpx.AsyncClient(timeout=TIMEOUT, limits=LIMITS, verify=VALIDATE_SSL) as client:
+        async with httpx.AsyncClient(
+            timeout=TIMEOUT, limits=LIMITS, verify=VALIDATE_SSL
+        ) as client:
             response = await client.post(url, headers=HEADERS, json=data)
             response.raise_for_status()
             return response.json()
     except httpx.HTTPStatusError as e:
-        logger.error(f"POST {url} HTTP error: {e.response.status_code} - {e.response.text}")
+        logger.error(
+            f"POST {url} HTTP error: {e.response.status_code} - {e.response.text}"
+        )
         return {"error": {"status": e.response.status_code, "detail": e.response.text}}
     except Exception as e:
         logger.error(f"POST {url} failed: {e}")
@@ -62,7 +68,9 @@ async def _post(url: str, data: dict) -> Any:
 
 async def _patch(url: str, data: dict) -> Any:
     try:
-        async with httpx.AsyncClient(timeout=TIMEOUT, limits=LIMITS, verify=VALIDATE_SSL) as client:
+        async with httpx.AsyncClient(
+            timeout=TIMEOUT, limits=LIMITS, verify=VALIDATE_SSL
+        ) as client:
             response = await client.patch(url, headers=HEADERS, json=data)
             response.raise_for_status()
             return response.json()
@@ -73,7 +81,9 @@ async def _patch(url: str, data: dict) -> Any:
 
 async def _delete(url: str) -> bool:
     try:
-        async with httpx.AsyncClient(timeout=TIMEOUT, limits=LIMITS, verify=VALIDATE_SSL) as client:
+        async with httpx.AsyncClient(
+            timeout=TIMEOUT, limits=LIMITS, verify=VALIDATE_SSL
+        ) as client:
             response = await client.delete(url, headers=HEADERS)
             response.raise_for_status()
             return True
@@ -86,6 +96,7 @@ async def _delete(url: str) -> bool:
 # ServiceOrder
 # ---------------------------------------------------------------------------
 
+
 async def get_service_order(
     service_order_id: str = None,
     fields: str = None,
@@ -96,9 +107,12 @@ async def get_service_order(
     base_url = f"{API_URL}/serviceOrder"
     url = f"{base_url}/{service_order_id}" if service_order_id else base_url
     params = {}
-    if fields: params["fields"] = fields
-    if offset is not None: params["offset"] = offset
-    if limit is not None: params["limit"] = limit
+    if fields:
+        params["fields"] = fields
+    if offset is not None:
+        params["offset"] = offset
+    if limit is not None:
+        params["limit"] = limit
     if filter:
         params.update(filter)
     return await _get(url, params)
@@ -120,6 +134,7 @@ async def delete_service_order(service_order_id: str) -> Any:
 # CancelServiceOrder
 # ---------------------------------------------------------------------------
 
+
 async def get_cancel_service_order(
     cancel_order_id: str = None,
     fields: str = None,
@@ -130,9 +145,12 @@ async def get_cancel_service_order(
     base_url = f"{API_URL}/cancelServiceOrder"
     url = f"{base_url}/{cancel_order_id}" if cancel_order_id else base_url
     params = {}
-    if fields: params["fields"] = fields
-    if offset is not None: params["offset"] = offset
-    if limit is not None: params["limit"] = limit
+    if fields:
+        params["fields"] = fields
+    if offset is not None:
+        params["offset"] = offset
+    if limit is not None:
+        params["limit"] = limit
     if filter:
         params.update(filter)
     return await _get(url, params)
