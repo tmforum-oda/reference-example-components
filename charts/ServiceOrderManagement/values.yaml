@@ -4,7 +4,6 @@ component:
   functionalBlock: Production
   publicationDate: 2024-02-23T00:00:00.000Z
   version: "2.0.0"
-  storageClassName: default
   MCPServer:
     enabled: false
   dependentAPIs:
@@ -74,5 +73,5 @@ mcp:
   versionLabel: serviceordermanagementmcp-0.1
 
 canvasinfo:
-  host: ""
-  basepath: ""
+  host: info.canvas.svc.cluster.local
+  basepath: /
