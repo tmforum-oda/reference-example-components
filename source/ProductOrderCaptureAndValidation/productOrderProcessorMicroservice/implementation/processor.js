@@ -5,7 +5,7 @@ const MongoClient = require('mongodb').MongoClient;
 // Configuration
 const POLL_INTERVAL = 5000; // 5 seconds
 const PROCESSING_TIME = 10000; // 10 seconds
-const COLLECTION_NAME = 'productorder';
+const COLLECTION_NAME = 'ProductOrder';
 
 let mongodb = null;
 

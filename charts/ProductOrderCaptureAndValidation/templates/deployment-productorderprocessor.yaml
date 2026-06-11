@@ -4,6 +4,7 @@ metadata:
   name: {{.Release.Name}}-productorderprocessor
   labels:
     oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
+    carbon-aware: enabled
 spec:
   replicas: {{.Values.processor.replicas}}
   selector:

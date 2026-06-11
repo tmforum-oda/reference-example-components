@@ -50,10 +50,32 @@ const pendingOrdersGauge = new client.Gauge({
   async collect() {
     if (db) {
       try {
-        const count = await db.collection('productorder').countDocuments({ state: 'acknowledged' });
+        const count = await db.collection('ProductOrder').countDocuments({ state: 'acknowledged' });
+        console.log("Pending orders:", count);
         this.set(count);
       } catch (error) {
         console.error('Error querying pending orders:', error);
+        this.set(0);
+      }
+    } else {
+      this.set(0);
+    }
+  }
+});
+
+
+// Gauge metric for completed orders
+const completedOrdersGauge = new client.Gauge({
+  name: metricName + '_completed_orders',
+  help: 'Number of product orders in completed state (processing completed)',
+  async collect() {
+    if (db) {
+      try {
+        const count = await db.collection('ProductOrder').countDocuments({ state: 'completed' });
+        console.log("completed orders:", count);
+        this.set(count);
+      } catch (error) {
+        console.error('Error querying completed orders:', error);
         this.set(0);
       }
     } else {
