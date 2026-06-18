@@ -55,7 +55,7 @@ api:
       enabled: true
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 metrics:
-  image: adarshkrm/productordercaptureandvalidationmetrics:0.3
+  image: adarshkrm/productordercaptureandvalidationmetrics:0.4
 processor:
   image: adarshkrm/productorderprocessor:0.1
   versionLabel: productorderprocessor-0.1
