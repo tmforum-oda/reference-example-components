@@ -9,10 +9,12 @@ This is the Node.js reference implementation of the [TMFC002 — Product Order C
 | `productOrderingMicroservice/` | Node.js implementation of the TMF622 Product Ordering Management Open API |
 | `roleInitializationMicroservice/` | Bootstraps the initial role (PermissionSpecificationSet or PartyRole) on first deploy |
 | `productOrderInitializationMicroservice/` | Registers the metrics microservice as an event listener on first deploy |
+| `productOrderProcessorMicroservice/` | Background processor that continuously fulfills Product Orders from `acknowledged` to `completed` state |
 | `openMetricsMicroservice/` | Prometheus/OpenMetrics endpoint that counts TMF622 business events |
 | `productordering-dockerfile` | Dockerfile for the TMF622 Product Ordering API microservice |
 | `roleinitialization-dockerfile` | Dockerfile for the role initialization Job |
 | `productorderinitialization-dockerfile` | Dockerfile for the product order initialization Job |
+| `productorderprocessor-dockerfile` | Dockerfile for the product order processor microservice |
 | `openMetricsMicroservice-dockerfile` | Dockerfile for the open metrics microservice |
 | `builddockerfile.sh` | Script to build and push all Docker images to Docker Hub |
 
@@ -22,7 +24,8 @@ The microservices interact as follows:
 
 - The **productOrderingMicroservice** is the core API. It stores ProductOrder and CancelProductOrder resources in MongoDB. On order creation, it optionally validates product offerings against a downstream TMF620 Product Catalog API and creates product instances in a downstream TMF637 Product Inventory API. It publishes TMF622 business events to all registered listeners via the hub endpoint.
 - The **productOrderInitializationMicroservice** runs as a one-shot Kubernetes Job on first deploy. It registers the open metrics microservice as a hub listener at `http://{componentName}-sm:4000/listener`.
-- The **openMetricsMicroservice** receives event POSTs from the hub and increments a Prometheus counter labelled by event type. These metrics are scraped by the Canvas observability stack.
+- The **productOrderProcessorMicroservice** is a background processor that continuously polls MongoDB for orders in the `acknowledged` state and transitions them through `inProgress` to `completed`. It runs as a long-lived deployment with 1 or more replicas. Uses MongoDB atomic operations to ensure each order is processed exactly once, even when multiple processor replicas are running. Processing takes approximately 10 seconds per order with a 5-second polling interval.
+- The **openMetricsMicroservice** receives event POSTs from the hub and increments a Prometheus counter labelled by event type. It also exposes two gauge metrics that report the current count of orders in specific states: pending orders (acknowledged state) and completed orders (completed state). These metrics are scraped by the Canvas observability stack.
 - The **roleInitializationMicroservice** runs as a one-shot Kubernetes Job on first deploy. It creates the initial `canvasRole` PermissionSpecificationSet (TMF672) or PartyRole (TMF669) needed by the Canvas for access control.
 - The downstream integration with TMF620 (Product Catalog) and TMF637 (Product Inventory) is handled by `utils/downstreamAPI.js`, which discovers API URLs at runtime via the Canvas Info Service Inventory.
 
@@ -85,6 +88,7 @@ Or build images individually:
 ```bash
 docker buildx build -t "lesterthomas/productorderingapi:0.1" --platform "linux/amd64,linux/arm64" -f productordering-dockerfile . --push
 docker buildx build -t "lesterthomas/roleinitialization:0.1" --platform "linux/amd64,linux/arm64" -f roleinitialization-dockerfile . --push
+docker buildx build -t "lesterthomas/productorderprocessor:0.1" --platform "linux/amd64,linux/arm64" -f productorderprocessor-dockerfile . --push
 docker buildx build -t "lesterthomas/productorderinitialization:0.1" --platform "linux/amd64,linux/arm64" -f productorderinitialization-dockerfile . --push
 docker buildx build -t "lesterthomas/productordercaptureandvalidationmetrics:0.1" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
 ```

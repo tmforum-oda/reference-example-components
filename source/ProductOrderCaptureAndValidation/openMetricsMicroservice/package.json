@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "prom-client": "^14.0.0"
+    "prom-client": "^14.0.0",
+    "mongodb": "^3.1.1"
   }
 }

@@ -27,12 +27,22 @@ helm install <release name> oda-components/productordercaptureandvalidation --se
 ### Management function
 
 In its **management function** it implements:
-* An *optional* metrics API supporting the open metrics standard (formerly the prometheus de-facto standard). This metrics endpoint provides business metrics about all the Create/Update/Delete events for all the Product Ordering resources (ProductOrder, CancelProductOrder).
+* An *optional* metrics API supporting the open metrics standard (formerly the prometheus de-facto standard). This metrics endpoint provides business metrics about Product Ordering operations including:
+  - **Event counter**: Tracks the rate of all notification events published from the component (e.g., ProductOrder creation, cancellation, state changes)
+  - **Pending orders gauge**: Reports the current count of orders in `acknowledged` state (waiting to be processed)
+  - **Completed orders gauge**: Reports the current count of orders in `completed` state (processing finished)
 
-The reference Canvas includes a Prometheus observability service that can scrape the metrics API. For example, you can query the rate of ProductOrder create events with:
+The reference Canvas includes a Prometheus observability service that can scrape the metrics API. Example queries:
 
 ```
+# Rate of ProductOrder creation events over the last 5 minutes
 rate(r1-productordercaptureandvalidation_api_counter{NotificationEvent="ProductOrderCreationNotification"}[5m])
+
+# Current number of pending (acknowledged) orders
+r1-productordercaptureandvalidation_pending_orders
+
+# Current number of completed orders
+r1-productordercaptureandvalidation_completed_orders
 ```
 
 * Outbound Open Telemetry events. The component also generates Open-Telemetry events that can either be logged to the console using `otlp.console.enabled:true` or sent to an Open-Telemetry protobuffCollector. You can set this in the `values.yaml` file as follows:
@@ -53,11 +63,12 @@ In its **security function** it implements:
 
 ## Microservices
 
-The implementation consists of 6 microservices:
+The implementation consists of 7 microservices:
 
 * **productOrderingMicroservice** — implements the TMF622 Product Ordering Management Open API. Stores ProductOrder and CancelProductOrder resources in MongoDB, validates orders against a downstream Product Catalog, creates products in a downstream Product Inventory, and publishes events to registered listeners.
 * **roleInitializationMicroservice** — bootstraps the initial PermissionSpecificationSet (TMF672) or PartyRole (TMF669) on first deploy. Deployed as a Kubernetes Job that runs once.
 * **productOrderInitializationMicroservice** — registers the metrics microservice as a listener for product ordering business events. Deployed as a Kubernetes Job that runs once.
+* **productOrderProcessorMicroservice** — background processor that continuously fulfills Product Orders. Polls MongoDB every 5 seconds for orders in `acknowledged` state, transitions them to `inProgress` and processes them asynchronously (~10 seconds per order), then marks them as `completed`. Uses atomic MongoDB operations to ensure each order is processed exactly once across multiple processor replicas.
 * **openMetricsMicroservice** — implements the Prometheus/OpenMetrics endpoint that counts TMF622 business events received via the hub.
 * **MongoDB** — a simple MongoDB deployment used as the backing store for all API resources.
 * **Role management microservice** — implements either the TMF672 User Roles and Permissions API (default) or the TMF669 Party Role Management API.
@@ -99,11 +110,13 @@ You can configure the following aspects of the component by changing the values 
 |---|---|---|
 | `mongodb.port` | `27017` | The port to connect to the MongoDB instance. The host is derived from the release name. |
 | `mongodb.database` | `tmf` | The database name to connect to in MongoDB. |
-| `api.image` | `lesterthomas/productorderingapi:0.1` | The image for the TMF622 Product Ordering API microservice. |
+| `api.image` | `lesterthomas/productorderingapi:0.9` | The image for the TMF622 Product Ordering API microservice. |
 | `api.otlp.console.enabled` | `false` | Whether OpenTelemetry traces are logged to the console instead of being sent to the collector. |
 | `api.otlp.protobuffCollector.enabled` | `true` | Whether OpenTelemetry traces are sent to the OTL Collector. Does not apply if `api.otlp.console.enabled` is `true`. |
 | `api.otlp.protobuffCollector.url` | `http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces` | The URL of the OTL Collector endpoint. |
-| `metrics.image` | `lesterthomas/productordercaptureandvalidationmetrics:0.1` | The image for the OpenMetrics microservice. |
+| `processor.image` | `adarshkrm/productorderprocessor:0.1` | The image for the product order processor microservice. |
+| `processor.replicas` | `1` | The number of processor replicas to deploy. Uses MongoDB atomic operations to ensure orders are processed exactly once across multiple replicas. |
+| `metrics.image` | `adarshkrm/productordercaptureandvalidationmetrics:0.4` | The image for the OpenMetrics microservice. |
 | `permissionspec.enabled` | `true` | When `true`, deploys the TMF672 Permission Specification Set API. When `false`, deploys the TMF669 Party Role API. |
 | `permissionspec.image` | `lesterthomas/permissionspecapi:0.20` | The image for the TMF672 Permission Specification Set microservice. |
 | `partyrole.image` | `lesterthomas/partyroleapi:1.1` | The image for the TMF669 Party Role microservice (used when `permissionspec.enabled=false`). |
