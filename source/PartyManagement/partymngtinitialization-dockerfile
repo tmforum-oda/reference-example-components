@@ -1,0 +1,6 @@
+FROM node:18
+COPY partymngtInitializationMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY partymngtInitializationMicroservice/implementation ./
+CMD ["node", "initialization.js"]

@@ -1,0 +1,10 @@
+{
+  "name": "productinventoryinitialization",
+  "version": "0.1.0",
+  "description": "Initialization job for ProductInventory component",
+  "main": "initialization.js",
+  "scripts": { "start": "node initialization.js" },
+  "license": "Apache-2.0",
+  "private": true,
+  "dependencies": { "axios": "^0.21.1" }
+}

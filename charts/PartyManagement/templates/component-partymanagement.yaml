@@ -12,51 +12,64 @@ spec:
     publicationDate: {{.Values.component.publicationDate}}
     status: specified
     version: {{.Values.component.version}}
-    description: "Simple Party Management ODA-Component from Open-API reference implementation."
+    description: "The Party Management component is responsible for the capture, validation and management of Parties. A Party may be an individual or organization that has a relationship with an enterprise."
     maintainers:
-    - name: Lester Thomas
-      email: lester.thomas@vodafone.com
+    - name: TM Forum
+      email: components@tmforum.org
     owners:
-      - name: Lester Thomas
-        email: lester.thomas@vodafone.com
+    - name: TM Forum
+      email: components@tmforum.org
+
   coreFunction:
     exposedAPIs:
-    - name: party-management
-      specification:
-      - url: "https://raw.githubusercontent.com/tmforum-apis/TMF632_Party/master/TMF632-Party-v4.0.0.swagger.json"
-      implementation: {{.Release.Name}}-partymanagementapi
-      apiType: openapi
+    - name: party-management-api
       id: TMF632
-      gatewayConfiguration:
-        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
-        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
-        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
-        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
-        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
-        template: "{{.Values.component.apipolicy.template}}"
-      path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/party/v4
-      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/party/v4/docs
-      port: 8080
-    dependentAPIs: []
+      specification:
+      - url: "https://tmf-open-api-table-documents.s3.eu-west-1.amazonaws.com/OpenApiTable/TMF632_Party/5.0.0/swagger/TMF632-Party_Management-v5.0.0.oas.yaml"
+        implementation: {{.Release.Name}}-partymngtapi
+        apiType: openapi
+        gatewayConfiguration:
+          apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 12}}
+          rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 12}}
+          quota: {{.Values.component.apipolicy.quota | toYaml | nindent 12}}
+          OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 12}}
+          CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 12}}
+          template: "{{.Values.component.apipolicy.template}}"
+        path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyManagement/v5
+        developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyManagement/v5/api-docs
+        port: 8632
+
+    dependentAPIs:
+    - name: party-role-management-api
+      id: TMF669
+      required: true
+      specification:
+      - url: "https://tmf-open-api-table-documents.s3.eu-west-1.amazonaws.com/OpenApiTable/TMF669_Party_Role/5.0.0/swagger/TMF669-Party_Role_Management-v5.0.0.oas.yaml"
+        apiType: openapi
+        resources:
+        - partyRole:
+          - GET
+          - GET /id
+
   eventNotification:
     publishedEvents:
-    - name: individualCreateEvent
-      href: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/party/v4/hub
-    - name: individualAttributeValueChangeEvent
-      href: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/party/v4/hub
-    - name: individualStateChangeEvent
-      href: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/party/v4/hub
-    - name: individualDeleteEvent
-      href: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/party/v4/hub
-    - name: organizationCreateEvent
-      href: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/party/v4/hub
-    - name: organizationAttributeValueChangeEvent
-      href: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/party/v4/hub
-    - name: organizationStateChangeEvent
-      href: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/party/v4/hub
-    - name: organizationDeleteEvent
-      href: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/party/v4/hub
+    - apiType: openapi
+      implementation: /{{.Release.Name}}-partymngtapi
+      name: party-management-api
+      port: 8632
+      resources:
+      - IndividualCreateEvent
+      - IndividualAttributeValueChangeEvent
+      - IndividualStateChangeEvent
+      - IndividualDeleteEvent
+      - OrganizationCreateEvent
+      - OrganizationAttributeValueChangeEvent
+      - OrganizationStateChangeEvent
+      - OrganizationDeleteEvent
+      id: TMF632
+      apiSDO: tmForum
     subscribedEvents: []
+
   managementFunction:
     exposedAPIs:
     - name: metrics
@@ -71,41 +84,7 @@ spec:
       implementation: {{.Release.Name}}-{{.Values.component.name}}-sm
       path: /{{.Release.Name}}-{{.Values.component.name}}/metrics
       port: 4000
+
   securityFunction:
     canvasSystemRole: {{ .Values.security.canvasSystemRole }}
-    exposedAPIs:
-    {{- if .Values.permissionspec.enabled }}
-    - name: userrolesandpermissions
-      specification:
-      - url: "https://raw.githubusercontent.com/tmforum-apis/TMF672_UserRolePermissions/master/TMF672-UserRolePermissions-v5.0.0.swagger.json"
-      implementation: {{.Release.Name}}-permissionspecapi
-      apiType: openapi
-      id: TMF672
-      gatewayConfiguration:
-        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
-        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
-        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
-        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
-        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
-        template: "{{.Values.component.apipolicy.template}}"
-      path: /{{.Release.Name}}-{{.Values.component.name}}/rolesAndPermissionsManagement/v5
-      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/rolesAndPermissionsManagement/v5/docs
-      port: 8080
-    {{- else }}
-    - name: partyrole
-      specification:
-      - url: "https://raw.githubusercontent.com/tmforum-apis/TMF669_PartyRole/master/TMF669-PartyRole-v4.0.0.swagger.json"
-      implementation: {{.Release.Name}}-partyroleapi
-      apiType: openapi
-      id: TMF669
-      gatewayConfiguration:
-        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
-        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
-        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
-        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
-        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
-        template: "{{.Values.component.apipolicy.template}}"
-      path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4
-      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4/docs
-      port: 8080
-    {{- end }}
+    exposedAPIs: []

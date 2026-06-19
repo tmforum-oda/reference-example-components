@@ -1,0 +1,7 @@
+FROM node:18
+COPY prodcatapiMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY prodcatapiMicroservice/implementation ./
+EXPOSE 8620
+CMD ["node", "index.js"]

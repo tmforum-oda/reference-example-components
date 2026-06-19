@@ -1,13 +1,9 @@
-# Default values for partymanagement.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 component:
   id: TMFC028
   name: partymanagement
   functionalBlock: PartyManagement
-  publicationDate: 2024-10-14T00:00:00.000Z
-  version: "2.1.0"
+  publicationDate: 2026-05-21T00:00:00.000Z
+  version: "2.2.0"
   storageClassName: default
   apipolicy:
     apiKeyVerification:
@@ -30,37 +26,38 @@ component:
     CORS:
       enabled: false
       allowCredentials: false
-      allowOrigins: "https://allowed-origin.com, https://allowed-origin2.com"
+      allowOrigins: "https://allowed-origin.com"
       handlePreflightRequests:
         enabled: false
-        allowHeaders: "Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
+        allowHeaders: "Accept, Content-Type"
         allowMethods: "GET, POST"
         maxAge: 36000
     template: ""
+
 security:
   canvasSystemRole: canvasRole
+
 mongodb:
   port: 27017
   database: tmf
+
+image:
+  pullPolicy: Always
+
 api:
-  image: lesterthomas/partymanagementapi:0.4
-  versionLabel: partymanagementapi-0.4
+  image: "akumartmf/partymanagementv5api:0.1"
+  versionLabel: partymanagementv5api-0.1
+  port: 8632
   otlp:
     console:
       enabled: false
     protobuffCollector:
-      enabled: true
+      enabled: false
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
+
 metrics:
-  image: lesterthomas/partymanagementmetrics:0.1
-partyrole:
-  image: lesterthomas/partyroleapi:1.1
-  versionLabel: partyroleapi-1.1
-permissionspec:
-  image: lesterthomas/permissionspecapi:0.20
-  versionLabel: permissionspecapi-0.20
-  # Set to true to use permissionspec API instead of partyrole API
-  enabled: true
+  image: "akumartmf/partymanagementmetrics:0.1"
+
 canvasinfo:
-  host: info.canvas.svc.cluster.local
-  basepath: /
+  host: ""
+  basepath: ""

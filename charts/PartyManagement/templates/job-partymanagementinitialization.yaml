@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: {{.Release.Name}}-partymanagementinitialization
-        image: lesterthomas/partymanagementinitialization:0.1
+        image: akumartmf/partymanagementinitialization:0.1
         env:
         - name: RELEASE_NAME
           value: {{.Release.Name}}

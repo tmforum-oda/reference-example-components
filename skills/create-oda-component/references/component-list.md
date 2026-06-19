@@ -1,18 +1,18 @@
 # ODA Component List
 
-Full list of standard TM Forum ODA Components from the v1.0.0 release at
-https://github.com/tmforum-rand/TMForum-ODA-Ready-for-publication/tree/v1.0.0
+Full list of standard TM Forum ODA Components from the v1.1.0 release at
+https://github.com/tmforum-rand/TMForum-ODA-Ready-for-publication/tree/v1.1.0
 
 ## Specification URL Pattern
 
 For each component, the specification YAML is at:
 ```
-https://raw.githubusercontent.com/tmforum-rand/TMForum-ODA-Ready-for-publication/v1.0.0/{CODE}-{ShortName}/Specification/{CODE}-{ShortName}.yaml
+https://raw.githubusercontent.com/tmforum-rand/TMForum-ODA-Ready-for-publication/v1.1.0/{CODE}-{ShortName}/Specification/{CODE}-{ShortName}.yaml
 ```
 
 Example:
 ```
-https://raw.githubusercontent.com/tmforum-rand/TMForum-ODA-Ready-for-publication/v1.0.0/TMFC001-ProductCatalogManagement/Specification/TMFC001-ProductCatalogManagement.yaml
+https://raw.githubusercontent.com/tmforum-rand/TMForum-ODA-Ready-for-publication/v1.1.0/TMFC001-ProductCatalogManagement/Specification/TMFC001-ProductCatalogManagement.yaml
 ```
 
 ## Components
@@ -69,5 +69,5 @@ Components are grouped into functional blocks:
 
 When constructing the specification URL, use the exact folder name from the GitHub repo. Most follow the pattern `{CODE}-{ShortName}`. To confirm the exact folder name, you can list them from the GitHub tree:
 ```
-https://api.github.com/repos/tmforum-rand/TMForum-ODA-Ready-for-publication/contents/?ref=v1.0.0
+https://api.github.com/repos/tmforum-rand/TMForum-ODA-Ready-for-publication/contents/?ref=v1.1.0
 ```

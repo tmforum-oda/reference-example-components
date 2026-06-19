@@ -1,0 +1,16 @@
+'use strict';
+var url = require('url');
+var S = require('../service/NotificationListenersClientSideService');
+module.exports.listenToServiceCatalogCreateEvent        = function(req,res,next){ S.listenToServiceCatalogCreateEvent(req,res,next); };
+module.exports.listenToServiceCatalogChangeEvent        = function(req,res,next){ S.listenToServiceCatalogChangeEvent(req,res,next); };
+module.exports.listenToServiceCatalogBatchEvent         = function(req,res,next){ S.listenToServiceCatalogBatchEvent(req,res,next); };
+module.exports.listenToServiceCatalogDeleteEvent        = function(req,res,next){ S.listenToServiceCatalogDeleteEvent(req,res,next); };
+module.exports.listenToServiceCategoryCreateEvent       = function(req,res,next){ S.listenToServiceCategoryCreateEvent(req,res,next); };
+module.exports.listenToServiceCategoryChangeEvent       = function(req,res,next){ S.listenToServiceCategoryChangeEvent(req,res,next); };
+module.exports.listenToServiceCategoryDeleteEvent       = function(req,res,next){ S.listenToServiceCategoryDeleteEvent(req,res,next); };
+module.exports.listenToServiceCandidateCreateEvent      = function(req,res,next){ S.listenToServiceCandidateCreateEvent(req,res,next); };
+module.exports.listenToServiceCandidateChangeEvent      = function(req,res,next){ S.listenToServiceCandidateChangeEvent(req,res,next); };
+module.exports.listenToServiceCandidateDeleteEvent      = function(req,res,next){ S.listenToServiceCandidateDeleteEvent(req,res,next); };
+module.exports.listenToServiceSpecificationCreateEvent  = function(req,res,next){ S.listenToServiceSpecificationCreateEvent(req,res,next); };
+module.exports.listenToServiceSpecificationChangeEvent  = function(req,res,next){ S.listenToServiceSpecificationChangeEvent(req,res,next); };
+module.exports.listenToServiceSpecificationDeleteEvent  = function(req,res,next){ S.listenToServiceSpecificationDeleteEvent(req,res,next); };

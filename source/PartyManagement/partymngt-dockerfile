@@ -1,0 +1,7 @@
+FROM node:18
+COPY partymngtapiMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY partymngtapiMicroservice/implementation ./
+EXPOSE 8632
+CMD ["node", "index.js"]

@@ -1,0 +1,13 @@
+{
+  "name": "partymngtinitialization",
+  "version": "1.0.0",
+  "description": "Register metrics listener for PartyManagement events",
+  "main": "initialization.js",
+  "scripts": {
+    "start": "node initialization.js"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}

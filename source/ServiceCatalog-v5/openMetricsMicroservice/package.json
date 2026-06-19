@@ -1,0 +1,10 @@
+{
+  "name": "servicecatalog-metrics",
+  "version": "1.0.0",
+  "description": "TMFC006 OpenMetrics microservice",
+  "main": "index.js",
+  "scripts": { "prestart": "npm install", "start": "node index.js" },
+  "license": "Apache-2.0",
+  "private": true,
+  "dependencies": { "prom-client": "^14.0.1", "restify": "^10.0.0" }
+}

@@ -1,0 +1,6 @@
+FROM node:10.19
+COPY roleInitializationMicroservice/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY roleInitializationMicroservice ./
+CMD ["node", "initialization.js"]

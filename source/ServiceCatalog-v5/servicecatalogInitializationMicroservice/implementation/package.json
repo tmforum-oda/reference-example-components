@@ -1,0 +1,10 @@
+{
+  "name": "servicecatalog-initialization",
+  "version": "1.0.0",
+  "description": "TMFC006 ServiceCatalogManagement Initialization microservice",
+  "main": "initialization.js",
+  "scripts": { "prestart": "npm install", "start": "node initialization.js" },
+  "license": "Apache-2.0",
+  "private": true,
+  "dependencies": { "node-fetch": "^2.6.7" }
+}

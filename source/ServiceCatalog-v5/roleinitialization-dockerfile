@@ -1,0 +1,6 @@
+FROM node:18-alpine
+WORKDIR /app
+COPY roleInitializationMicroservice/implementation/package.json ./
+RUN npm install
+COPY roleInitializationMicroservice/implementation/ ./
+CMD ["node", "initialization.js"]

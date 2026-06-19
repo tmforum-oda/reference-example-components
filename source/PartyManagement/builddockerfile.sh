@@ -1,4 +1,10 @@
 #!/bin/bash
-docker buildx build -t "lesterthomas/partymanagementapi:0.4"  --platform "linux/amd64,linux/arm64" -f partymanagement-dockerfile . --push
-docker buildx build -t "lesterthomas/partymanagementinitialization:0.1" --platform "linux/amd64,linux/arm64" -f partymanagementinitialization-dockerfile . --push
-docker buildx build -t "lesterthomas/partymanagementmetrics:0.1" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
+# Build and push all Docker images for PartyManagement
+
+# Requires: docker buildx create --use --name multiarch-builder (if not already set up)
+
+docker buildx build -t "akumartmf/partymanagementv5api:0.1" --platform "linux/amd64,linux/arm64" -f partymngt-dockerfile . --push
+
+docker buildx build -t "akumartmf/partymanagementinitialization:0.1" --platform "linux/amd64,linux/arm64" -f partymngtinitialization-dockerfile . --push
+
+docker buildx build -t "akumartmf/partymanagementmetrics:0.1" --platform "linux/amd64,linux/arm64" -f partymngt-metricsapi-dockerfile . --push

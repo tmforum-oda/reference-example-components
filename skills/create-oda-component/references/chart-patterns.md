@@ -13,14 +13,15 @@ charts/{ComponentName}/
     ├── deployment-{apiname}api.yaml         # One per API microservice
     ├── deployment-mongodb.yaml              # Standard MongoDB deployment
     ├── deployment-metricsapi.yaml           # Prometheus metrics deployment
-    ├── deployment-rolemanagement.yaml       # Conditional PartyRole/PermissionSpec
     ├── service-{apiname}api.yaml            # One per API microservice
     ├── service-mongodb.yaml                 # MongoDB ClusterIP service
-    ├── service-rolemanagement.yaml          # Role management service
     ├── service-registerallevents.yaml       # Metrics/events service (port 4000)
-    ├── job-roleinitialization.yaml          # Role init job (runs once)
     ├── job-{component}initialization.yaml   # Component-specific init job
-    └── persistentVolumeClaim-mongodb.yaml   # 5Gi MongoDB storage
+    ├── persistentVolumeClaim-mongodb.yaml   # 5Gi MongoDB storage
+    # --- Optional: only when user explicitly requests security API exposure ---
+    ├── deployment-rolemanagement.yaml       # Conditional PartyRole/PermissionSpec
+    ├── service-rolemanagement.yaml          # Role management service
+    └── job-roleinitialization.yaml          # Role init job (runs once)
 ```
 
 ---
@@ -84,6 +85,9 @@ mongodb:
   port: 27017
   database: tmf
 
+image:
+  pullPolicy: Always    # used by all deployment templates via {{.Values.image.pullPolicy}}
+
 api:
   image: {dockerhub-namespace}/{componentname}api:1.0
   versionLabel: {componentname}api-1.0
@@ -122,6 +126,12 @@ canvasinfo:
 
 This is the core template. Populate from the fetched specification YAML, translating static values into Helm template expressions.
 
+**v1.1.0 schema change**: `implementation`, `apiType`, `gatewayConfiguration`, `path`, `developerUI`, and `port` are now nested **inside** each `specification[]` item, not at the top level of the `exposedAPIs` entry. Only `name` and `id` remain at the top level of each exposed API entry.
+
+**`developerUI` path**: use `/api-docs` suffix for V5 APIs, `/docs` for V4 APIs.
+
+**`port`**: use `8080` for V4 APIs, use the port from the API's `servers[0].url` for V5 APIs (e.g. `8620` for TMF620 v5).
+
 ```yaml
 # templates/component-{componentname}.yaml
 apiVersion: oda.tmforum.org/v1
@@ -149,65 +159,72 @@ spec:
   coreFunction:
     exposedAPIs:
     # MANDATORY API (required: true in spec) - always included
+    # implementation details are inside specification[], not at the top level
     - name: {apiname}
-      specification:
-      - url: "{spec url from specification YAML}"
-      implementation: {{.Release.Name}}-{apishortname}api
-      apiType: openapi
       id: {TMFXXX}
-      gatewayConfiguration:
-        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
-        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
-        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
-        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
-        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
-        template: "{{.Values.component.apipolicy.template}}"
-      path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/{apiPathSegment}/v{n}
-      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/{apiPathSegment}/v{n}/docs
-      port: 8080
+      specification:
+      - url: "{spec url from specification YAML — the user-selected version}"
+        implementation: {{.Release.Name}}-{apishortname}api
+        apiType: openapi
+        gatewayConfiguration:
+          apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 12}}
+          rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 12}}
+          quota: {{.Values.component.apipolicy.quota | toYaml | nindent 12}}
+          OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 12}}
+          CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 12}}
+          template: "{{.Values.component.apipolicy.template}}"
+        path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/{apiPathSegment}/v{n}
+        developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/{apiPathSegment}/v{n}/docs
+        port: 8080
 
     # OPTIONAL API (required: false in spec, user chose to include)
     {{- if .Values.{optionalapi}.enabled }}
     - name: {optionalapiname}
+      id: {TMFXXX}
       specification:
       - url: "{spec url}"
-      implementation: {{.Release.Name}}-{optionalapishortname}api
-      apiType: openapi
-      id: {TMFXXX}
-      gatewayConfiguration:
-        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
-        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
-        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
-        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
-        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
-        template: "{{.Values.component.apipolicy.template}}"
-      path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/{optionalapipath}/v{n}
-      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/{optionalapipath}/v{n}/docs
-      port: 8080
+        implementation: {{.Release.Name}}-{optionalapishortname}api
+        apiType: openapi
+        gatewayConfiguration:
+          apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 12}}
+          rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 12}}
+          quota: {{.Values.component.apipolicy.quota | toYaml | nindent 12}}
+          OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 12}}
+          CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 12}}
+          template: "{{.Values.component.apipolicy.template}}"
+        path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/{optionalapipath}/v{n}
+        developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/{optionalapipath}/v{n}/docs
+        port: 8080
     {{- end }}
 
     # MCP Server (optional, only when MCPServer.enabled)
     {{- if .Values.component.MCPServer.enabled }}
     - name: {componentname}mcp
-      implementation: {{.Release.Name}}-{componentname}mcp
-      apiType: mcp
-      path: /{{.Release.Name}}-{{.Values.component.name}}/mcp
-      port: 8080
+      id: {componentname}mcp
+      specification:
+      - implementation: {{.Release.Name}}-{componentname}mcp
+        apiType: mcp
+        path: /{{.Release.Name}}-{{.Values.component.name}}/mcp
+        port: 8080
     {{- end }}
 
     dependentAPIs:
     {{- if .Values.component.dependentAPIs.enabled }}
-    # Dependent APIs from the specification YAML
     - name: {dependentapiname}
       apiType: openapi
-      id: {TMFYYY}
       specification:
-      - url: {dependent api spec url}
+      - url: "{dependent api spec url}"
     {{- else }}
       []
     {{- end }}
 
   eventNotification:
+    # CRITICAL: the `name` field for each publishedEvents / subscribedEvents entry is used by the
+    # component operator to construct the Kubernetes resource name:
+    #   "{release}-{component}-{name}"
+    # Kubernetes names must be RFC 1123 compliant (lowercase alphanumeric + hyphens, no spaces).
+    # ALWAYS use lowercase-kebab-case for name — NEVER use display names with spaces or uppercase.
+    # Example: use `party-management-api`, NOT `Party Management API`
     publishedEvents: []
     subscribedEvents: []
 
@@ -228,41 +245,50 @@ spec:
 
   securityFunction:
     canvasSystemRole: {{ .Values.security.canvasSystemRole }}
+    exposedAPIs: []
+```
+
+**Default**: `exposedAPIs: []` — the permissionspecapi is always deployed for canvas role management but is not declared in the component spec. Only add an entry below if the user explicitly requests security API exposure.
+
+**Optional — TMF672 (permissionspecapi), add only on explicit user request:**
+```yaml
+  securityFunction:
+    canvasSystemRole: {{ .Values.security.canvasSystemRole }}
     exposedAPIs:
     {{- if .Values.permissionspec.enabled }}
     - name: userrolesandpermissions
+      id: TMF672
       specification:
       - url: "https://raw.githubusercontent.com/tmforum-apis/TMF672_UserRolePermissions/master/TMF672-UserRolePermissions-v5.0.0.swagger.json"
-      implementation: {{.Release.Name}}-permissionspecapi
-      apiType: openapi
-      id: TMF672
-      gatewayConfiguration:
-        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
-        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
-        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
-        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
-        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
-        template: "{{.Values.component.apipolicy.template}}"
-      path: /{{.Release.Name}}-{{.Values.component.name}}/rolesAndPermissionsManagement/v5
-      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/rolesAndPermissionsManagement/v5/docs
-      port: 8080
+        implementation: {{.Release.Name}}-permissionspecapi
+        apiType: openapi
+        gatewayConfiguration:
+          apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 12}}
+          rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 12}}
+          quota: {{.Values.component.apipolicy.quota | toYaml | nindent 12}}
+          OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 12}}
+          CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 12}}
+          template: "{{.Values.component.apipolicy.template}}"
+        path: /{{.Release.Name}}-{{.Values.component.name}}/rolesAndPermissionsManagement/v5
+        developerUI: /{{.Release.Name}}-{{.Values.component.name}}/rolesAndPermissionsManagement/v5/docs
+        port: 8080
     {{- else }}
     - name: partyrole
+      id: TMF669
       specification:
       - url: "https://raw.githubusercontent.com/tmforum-apis/TMF669_PartyRole/master/TMF669-PartyRole-v4.0.0.swagger.json"
-      implementation: {{.Release.Name}}-partyroleapi
-      apiType: openapi
-      id: TMF669
-      gatewayConfiguration:
-        apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
-        rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 10}}
-        quota: {{.Values.component.apipolicy.quota | toYaml | nindent 10}}
-        OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
-        CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
-        template: "{{.Values.component.apipolicy.template}}"
-      path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4
-      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4/docs
-      port: 8080
+        implementation: {{.Release.Name}}-partyroleapi
+        apiType: openapi
+        gatewayConfiguration:
+          apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 12}}
+          rateLimit: {{.Values.component.apipolicy.rateLimit | toYaml | nindent 12}}
+          quota: {{.Values.component.apipolicy.quota | toYaml | nindent 12}}
+          OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 12}}
+          CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 12}}
+          template: "{{.Values.component.apipolicy.template}}"
+        path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4
+        developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/partyRoleManagement/v4/docs
+        port: 8080
     {{- end }}
 ```
 
@@ -293,6 +319,7 @@ spec:
       containers:
       - name: {{.Release.Name}}-{apishortname}api
         image: {{.Values.api.image}}
+        imagePullPolicy: {{.Values.image.pullPolicy}}
         env:
         - name: RELEASE_NAME
           value: {{.Release.Name}}
@@ -316,7 +343,6 @@ spec:
           value: "{{.Values.canvasinfo.host}}"
         - name: CANVAS_INFO_BASEPATH
           value: "{{.Values.canvasinfo.basepath}}"
-        imagePullPolicy: Always
         ports:
         - name: {{.Release.Name}}-{abbrapi}
           containerPort: 8080
@@ -330,6 +356,48 @@ spec:
 ```
 
 For the `startupProbe` path, use the first/primary resource from the API spec (e.g. `catalog` for ProductCatalog, `product` for ProductInventory).
+
+### V5 API Deployment Differences
+
+V5 microservices use different env var names for MongoDB and expose a non-standard port. Replace the V4 env block with this when generating a V5 deployment:
+
+```yaml
+        env:
+        - name: COMPONENT_NAME
+          value: {{.Release.Name}}-{{.Values.component.name}}
+        - name: PORT
+          value: "{apiPort}"          # port from the API spec servers[0].url, e.g. 8620 for TMF620 v5
+        - name: dbhost
+          value: {{.Release.Name}}-mongodb
+        - name: dbport
+          value: "{{.Values.mongodb.port}}"
+        - name: dbname
+          value: {{.Values.mongodb.database}}
+        - name: LOG_LEVEL
+          value: "info"
+        imagePullPolicy: {{.Values.image.pullPolicy}}
+        ports:
+        - containerPort: {apiPort}    # must match PORT env var above
+        startupProbe:
+          httpGet:
+            path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/{apiPathSegment}/v{n}/{primaryResource}
+            port: {apiPort}
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/{apiPathSegment}/v{n}/{primaryResource}
+            port: {apiPort}
+          initialDelaySeconds: 10
+          periodSeconds: 5
+```
+
+Key differences from V4:
+- **No `RELEASE_NAME` env var** — V5 `mongo.js` uses `dbhost` directly, not `RELEASE_NAME-mongodb`
+- **No `MONGODB_HOST`/`MONGODB_PORT`/`MONGODB_DATABASE`** — replaced by `dbhost`/`dbport`/`dbname`
+- **`dbhost` = `{{.Release.Name}}-mongodb`** — just release name + `-mongodb`, NOT including component name (e.g. `pc-1-mongodb`, not `pc-1-productcatalogmanagement-mongodb`)
+- **`PORT` env var + container port** — read from the API spec's `servers[0].url` (e.g. TMF620 v5 uses port `8620`); must match `containerPort` and all probe `port` fields
+- **No `NODE_ENV`** — V5 uses Winston logger with `LOG_LEVEL` instead
 
 ---
 
@@ -406,7 +474,7 @@ spec:
   ports:
   - port: {{.Values.mongodb.port}}
     targetPort: {{.Release.Name}}-mongodb
-    name: http-{{.Release.Name}}-mongodb
+    name: tcp-{{.Release.Name}}-mongodb
   type: NodePort
   selector:
     impl: {{.Release.Name}}-mongodb
@@ -513,9 +581,11 @@ spec:
 
 ---
 
-## Role Management Deployment (conditional)
+## Role Management Deployment (optional — only when user explicitly requests security API exposure)
 
-Add a `deployment-rolemanagement.yaml` template with a conditional deployment:
+Only generate `deployment-rolemanagement.yaml`, `service-rolemanagement.yaml`, and `job-roleinitialization.yaml` when the user explicitly asks to expose TMF672 or TMF669 in the component's `securityFunction`. Also add `permissionspec` and `partyrole` sections to `values.yaml`.
+
+The deployment is conditional on `permissionspec.enabled`:
 - If `permissionspec.enabled=true`: deploy `permissionspecapi` image (TMF672)
 - If `permissionspec.enabled=false`: deploy `partyroleapi` image (TMF669)
 
@@ -547,16 +617,18 @@ spec:
       containers:
       - name: {{.Release.Name}}-openmetrics
         image: {{.Values.metrics.image}}
+        imagePullPolicy: {{.Values.image.pullPolicy}}
         env:
         - name: RELEASE_NAME
           value: {{.Release.Name}}
         - name: COMPONENT_NAME
           value: {{.Release.Name}}-{{.Values.component.name}}
-        imagePullPolicy: Always
         ports:
         - name: {{.Release.Name}}-prapi
           containerPort: 4000
 ```
+
+**Note**: Use `{{.Values.image.pullPolicy}}` (not hardcoded `Always`) so it is configurable. Add `image.pullPolicy: Always` to `values.yaml` as the default.
 
 ---
 

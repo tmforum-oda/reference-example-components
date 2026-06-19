@@ -1,0 +1,7 @@
+FROM node:16
+COPY rescatapiMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY rescatapiMicroservice/implementation ./
+EXPOSE 8634
+CMD ["node", "index.js"]

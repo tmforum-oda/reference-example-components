@@ -1,0 +1,7 @@
+FROM node:18-alpine
+WORKDIR /app
+COPY openMetricsMicroservice/package.json ./
+RUN npm install
+COPY openMetricsMicroservice/ ./
+EXPOSE 4000
+CMD ["node", "index.js"]

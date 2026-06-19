@@ -1,0 +1,7 @@
+FROM node:16
+COPY productinventoryMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY productinventoryMicroservice/implementation ./
+EXPOSE 8637
+CMD ["node", "index.js"]

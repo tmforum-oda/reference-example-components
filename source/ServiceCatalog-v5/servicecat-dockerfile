@@ -1,0 +1,7 @@
+FROM node:18-alpine
+WORKDIR /app
+COPY servicecatalogMicroservice/implementation/package.json ./
+RUN npm install
+COPY servicecatalogMicroservice/implementation/ ./
+EXPOSE 8633
+CMD ["node", "index.js"]

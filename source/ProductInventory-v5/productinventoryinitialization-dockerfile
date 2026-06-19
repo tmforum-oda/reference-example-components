@@ -1,0 +1,6 @@
+FROM node:10.19
+COPY productinventoryInitializationMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY productinventoryInitializationMicroservice/implementation ./
+CMD ["node", "initialization.js"]

@@ -1,0 +1,6 @@
+FROM node:16
+COPY permissionsmanagementInitializationMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY permissionsmanagementInitializationMicroservice/implementation ./
+CMD ["node", "initialization.js"]
