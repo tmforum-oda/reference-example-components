@@ -1,0 +1,6 @@
+FROM node:10.19
+COPY resourceconfigandactivationInitializationMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY resourceconfigandactivationInitializationMicroservice/implementation ./
+CMD ["node", "initialization.js"]

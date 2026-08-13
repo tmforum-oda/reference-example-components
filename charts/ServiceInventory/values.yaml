@@ -38,7 +38,7 @@ component:
         maxAge: 36000
     template: ""
   dependentAPIs:
-    enabled: false
+    enabled: true
     rejectUnauthorizedCertificates: false
     dependencyName: downstreamservicecatalog
 security:
@@ -47,8 +47,8 @@ mongodb:
   port: 27017
   database: tmf
 api:
-  image: lesterthomas/serviceinventoryapi:0.4
-  versionLabel: serviceinventoryapi-0.4
+  image: akumartmf/serviceinventoryapi:0.3
+  versionLabel: serviceinventoryapi-0.3
   otlp:
     console:
       enabled: false

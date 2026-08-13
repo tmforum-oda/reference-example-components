@@ -1,0 +1,7 @@
+FROM node:18
+COPY privacymanagementMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY privacymanagementMicroservice/implementation ./
+EXPOSE 8080
+CMD ["node", "index.js"]

@@ -1,0 +1,35 @@
+{{- if .Values.component.A2AServer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Release.Name}}-productordera2a
+  labels: {oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {impl: {{.Release.Name}}-productordera2a}
+  template:
+    metadata:
+      labels: {app: {{.Release.Name}}-{{.Values.component.name}}, impl: {{.Release.Name}}-productordera2a, version: {{.Values.a2a.versionLabel}}}
+    spec:
+      containers:
+      - name: productordera2a
+        image: {{.Values.a2a.image}}
+        imagePullPolicy: Always
+        env:
+        - {name: AGENT_MODE, value: order}
+        - {name: COMPONENT_NAME, value: {{.Release.Name}}-{{.Values.component.name}}}
+        - {name: MCP_ENDPOINT, value: "http://{{.Release.Name}}-productordermcp:{{.Values.mcp.port}}/{{.Release.Name}}-{{.Values.component.name}}/mcp/"}
+        - {name: VERIFY_SSL, value: "{{.Values.mcp.verifySsl}}"}
+        - {name: LOG_LEVEL, value: {{.Values.a2a.logLevel | quote}}}
+        ports:
+        - {name: a2a-http, containerPort: {{.Values.a2a.port}}}
+        readinessProbe:
+          httpGet: {path: /healthz, port: a2a-http}
+          initialDelaySeconds: 2
+          periodSeconds: 15
+        livenessProbe:
+          httpGet: {path: /healthz, port: a2a-http}
+          initialDelaySeconds: 10
+          periodSeconds: 30
+{{- end }}

@@ -1,0 +1,14 @@
+{{- if .Values.component.MCPServer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Release.Name}}-productordermcp
+  labels:
+    app: {{.Release.Name}}-{{.Values.component.name}}
+    oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
+spec:
+  ports:
+  - {name: http-mcp, port: {{.Values.mcp.port}}, targetPort: mcp-http}
+  selector: {impl: {{.Release.Name}}-productordermcp}
+  type: NodePort
+{{- end }}

@@ -1,0 +1,37 @@
+{{- if .Values.component.MCPServer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Release.Name}}-servicequalmcp
+  labels:
+    oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {impl: {{.Release.Name}}-servicequalmcp}
+  template:
+    metadata:
+      labels: {app: {{.Release.Name}}-{{.Values.component.name}}, impl: {{.Release.Name}}-servicequalmcp, version: {{.Values.mcp.versionLabel}}}
+    spec:
+      containers:
+      - name: servicequalificationmcp
+        image: {{.Values.mcp.image}}
+        imagePullPolicy: {{.Values.image.pullPolicy}}
+        env:
+        - {name: COMPONENT_NAME, value: {{.Release.Name}}-{{.Values.component.name}}}
+        - {name: SERVICE_QUALIFICATION_API_URL, value: "http://{{.Release.Name}}-servicequalificationapi:{{.Values.api.port}}/{{.Release.Name}}-{{.Values.component.name}}/tmf-api/serviceQualificationManagement/v5"}
+        - {name: MCP_PORT, value: "{{.Values.mcp.port}}"}
+        - {name: LOG_LEVEL, value: {{.Values.mcp.logLevel | quote}}}
+        - {name: API_REQUEST_TIMEOUT_SECONDS, value: "{{.Values.mcp.requestTimeoutSeconds}}"}
+        - {name: VERIFY_SSL, value: "{{.Values.mcp.verifySsl}}"}
+        ports:
+        - {name: mcp-http, containerPort: {{.Values.mcp.port}}}
+        readinessProbe:
+          httpGet: {path: /health, port: mcp-http}
+          initialDelaySeconds: 2
+          periodSeconds: 15
+        livenessProbe:
+          httpGet: {path: /health, port: mcp-http}
+          initialDelaySeconds: 10
+          periodSeconds: 30
+{{- end }}

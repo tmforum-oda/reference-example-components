@@ -6,3 +6,7 @@ docker buildx build -t "lesterthomas/roleinitialization:0.1"  --platform "linux/
 docker buildx build -t "lesterthomas/productorderinitialization:0.1" --platform "linux/amd64,linux/arm64" -f productorderinitialization-dockerfile . --push
 
 docker buildx build -t "lesterthomas/productordercaptureandvalidationmetrics:0.1" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
+
+docker buildx build -t "akumartmf/productorderingmcp:0.1" --platform "linux/amd64,linux/arm64" -f productordering-mcp-dockerfile . --push
+
+docker buildx build -t "akumartmf/productordera2a:0.1" --platform "linux/amd64,linux/arm64" -f productorder-a2a-dockerfile . --push

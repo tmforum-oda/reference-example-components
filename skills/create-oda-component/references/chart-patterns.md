@@ -18,7 +18,7 @@ charts/{ComponentName}/
     ├── service-registerallevents.yaml       # Metrics/events service (port 4000)
     ├── job-{component}initialization.yaml   # Component-specific init job
     ├── persistentVolumeClaim-mongodb.yaml   # 5Gi MongoDB storage
-    # --- Optional: only when user explicitly requests security API exposure ---
+    # --- Only when user confirmed roleInitializationMicroservice in Step 2 ---
     ├── deployment-rolemanagement.yaml       # Conditional PartyRole/PermissionSpec
     ├── service-rolemanagement.yaml          # Role management service
     └── job-roleinitialization.yaml          # Role init job (runs once)
@@ -209,14 +209,26 @@ spec:
     {{- end }}
 
     dependentAPIs:
-    {{- if .Values.component.dependentAPIs.enabled }}
+    # MANDATORY dependent APIs (required: true in spec) — include unconditionally, one entry each.
+    # Use the highest-version spec URL from the component specification YAML.
     - name: {dependentapiname}
+      id: {TMFXXX}
       apiType: openapi
       specification:
-      - url: "{dependent api spec url}"
-    {{- else }}
-      []
+      - url: "{dependent api spec url — highest version}"
+
+    # OPTIONAL dependent APIs (required: false in spec) — wrap each in its own conditional.
+    # Only include optional entries if the user explicitly asks for them; omit by default.
+    {{- if .Values.component.{optionaldep}.enabled }}
+    - name: {optionaldependentapiname}
+      id: {TMFXXX}
+      apiType: openapi
+      specification:
+      - url: "{optional dependent api spec url}"
     {{- end }}
+
+    # If the component has NO dependent APIs at all, use:
+    # dependentAPIs: []
 
   eventNotification:
     # CRITICAL: the `name` field for each publishedEvents / subscribedEvents entry is used by the
@@ -248,7 +260,7 @@ spec:
     exposedAPIs: []
 ```
 
-**Default**: `exposedAPIs: []` — the permissionspecapi is always deployed for canvas role management but is not declared in the component spec. Only add an entry below if the user explicitly requests security API exposure.
+**Default**: `exposedAPIs: []` — use a static canvas role (`canvasSystemRole`) with no security APIs declared. Only add an entry below if the user explicitly requests security API exposure in the ODA Component CRD (this is separate from the roleInitializationMicroservice question).
 
 **Optional — TMF672 (permissionspecapi), add only on explicit user request:**
 ```yaml
@@ -581,9 +593,9 @@ spec:
 
 ---
 
-## Role Management Deployment (optional — only when user explicitly requests security API exposure)
+## Role Management Deployment (conditional — only when user confirmed roleInitializationMicroservice)
 
-Only generate `deployment-rolemanagement.yaml`, `service-rolemanagement.yaml`, and `job-roleinitialization.yaml` when the user explicitly asks to expose TMF672 or TMF669 in the component's `securityFunction`. Also add `permissionspec` and `partyrole` sections to `values.yaml`.
+Only generate `deployment-rolemanagement.yaml`, `service-rolemanagement.yaml`, and `job-roleinitialization.yaml` when the user confirmed `roleInitializationMicroservice` in Step 2 of the skill. Also add `permissionspec` and `partyrole` sections to `values.yaml` only in that case.
 
 The deployment is conditional on `permissionspec.enabled`:
 - If `permissionspec.enabled=true`: deploy `permissionspecapi` image (TMF672)

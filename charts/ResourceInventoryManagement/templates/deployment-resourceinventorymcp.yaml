@@ -1,0 +1,40 @@
+{{- if .Values.component.MCPServer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Release.Name}}-resourceinvmcp
+  labels: {oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {impl: {{.Release.Name}}-resourceinvmcp}
+  template:
+    metadata:
+      labels: {app: {{.Release.Name}}-{{.Values.component.name}}, impl: {{.Release.Name}}-resourceinvmcp, version: {{.Values.mcp.versionLabel}}}
+    spec:
+      containers:
+      - name: resourceinventorymcp
+        image: {{.Values.mcp.image}}
+        imagePullPolicy: Always
+        env:
+        - {name: COMPONENT_NAME, value: {{.Release.Name}}-{{.Values.component.name}}}
+        - {name: RESOURCE_INVENTORY_API_URL, value: "http://{{.Release.Name}}-resourceinventoryapi:{{.Values.api.port}}/{{.Release.Name}}-{{.Values.component.name}}/tmf-api/resourceInventoryManagement/v4"}
+        - {name: MCP_PORT, value: "{{.Values.mcp.port}}"}
+        - {name: LOG_LEVEL, value: {{.Values.mcp.logLevel | quote}}}
+        - {name: API_REQUEST_TIMEOUT_SECONDS, value: "{{.Values.mcp.requestTimeoutSeconds}}"}
+        - {name: VERIFY_SSL, value: "{{.Values.mcp.verifySsl}}"}
+        ports:
+        - {name: mcp-http, containerPort: {{.Values.mcp.port}}}
+        readinessProbe:
+          httpGet: {path: /health, port: mcp-http}
+          initialDelaySeconds: 2
+          periodSeconds: 15
+          timeoutSeconds: 2
+          failureThreshold: 3
+        livenessProbe:
+          httpGet: {path: /health, port: mcp-http}
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 2
+          failureThreshold: 3
+{{- end }}

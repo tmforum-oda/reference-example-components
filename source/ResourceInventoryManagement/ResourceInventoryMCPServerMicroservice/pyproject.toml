@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "resource-inventory-mcp-server"
+version = "0.1.0"
+description = "MCP server for the TMF639 Resource Inventory component"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx==0.28.1",
+    "mcp[cli]==1.9.0",
+    "starlette==0.46.2",
+    "uvicorn==0.34.2",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest==8.3.4",
+    "pytest-asyncio==0.25.3",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.setuptools]
+py-modules = ["resource_inventory_api", "resource_inventory_mcp_server"]

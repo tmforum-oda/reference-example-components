@@ -1,0 +1,13 @@
+{
+  "name": "openmetrics",
+  "version": "1.0.0",
+  "description": "Prometheus metrics for ProductInventory component",
+  "main": "index.js",
+  "scripts": { "start": "node index.js" },
+  "license": "Apache-2.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.17.1",
+    "prom-client": "^14.0.0"
+  }
+}

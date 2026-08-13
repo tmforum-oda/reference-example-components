@@ -197,8 +197,10 @@ function processCommonAttributes(req, type, obj) {
     };
 
     if(typeprops.href!==undefined && obj.href==undefined) {
+      const protocol = req.headers['x-forwarded-proto'] || (req.socket && req.socket.encrypted ? 'https' : 'http');
+      const host = req.headers['x-forwarded-host'] || req.headers.host || 'localhost';
       const self = req.url.replace(/\/$/,"") + "/" + obj.id;
-      obj.href = self;  // store relative path only; absolute URL is built at response time
+      obj.href = protocol + '://' + host + self;
     }
     
     if(typeprops.lastUpdate!==undefined) {
@@ -227,8 +229,10 @@ function setBaseProperties(req,payload) {
     if (payload.id == undefined) {
       payload.id = uuid.v4();
     };
-    var self = req.url.replace(/\/$/,"") + "/" + payload.id;
-    payload.href = self;  // store relative path only; absolute URL is built at response time
+    const protocol = req.headers['x-forwarded-proto'] || (req.socket && req.socket.encrypted ? 'https' : 'http');
+    const host = req.headers['x-forwarded-host'] || req.headers.host || 'localhost';
+    const self = req.url.replace(/\/$/,"") + "/" + payload.id;
+    payload.href = protocol + '://' + host + self;
     resolve(payload)
   })
 }

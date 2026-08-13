@@ -1,0 +1,14 @@
+{
+  "name": "resourceinventoryinitialization",
+  "version": "0.1.0",
+  "description": "Initialization microservice for TMF639 Resource Inventory Management",
+  "private": true,
+  "main": "initialization.js",
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node initialization.js"
+  },
+  "dependencies": {
+    "axios": "^0.27.2"
+  }
+}

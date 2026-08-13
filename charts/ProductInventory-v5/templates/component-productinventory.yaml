@@ -39,12 +39,26 @@ spec:
         developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productInventory/v5/api-docs
         port: 8637
 
+    {{- if .Values.component.MCPServer.enabled }}
+    - name: productinventorymcp
+      id: productinventorymcp
+      specification:
+      - implementation: {{.Release.Name}}-productinvmcp
+        apiType: mcp
+        path: /{{.Release.Name}}-{{.Values.component.name}}/mcp/
+        port: {{.Values.mcp.port}}
+    {{- end }}
+
     dependentAPIs:
+    {{- if .Values.component.dependentAPIs.enabled }}
     - name: product-catalog-management-api
       id: TMF620
       apiType: openapi
       specification:
       - url: "https://tmf-open-api-table-documents.s3.eu-west-1.amazonaws.com/OpenApiTable/TMF620_Product_Catalog/5.0.0/swagger/TMF620-Product_Catalog_Management-v5.0.0.oas.yaml"
+    {{- else }}
+      []
+    {{- end }}
 
   eventNotification:
     # CRITICAL: name must be lowercase-kebab-case — used by component operator to build K8s resource name

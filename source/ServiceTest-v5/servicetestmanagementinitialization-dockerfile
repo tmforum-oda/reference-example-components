@@ -1,0 +1,6 @@
+FROM node:10.19
+COPY servicetestmanagementInitializationMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY servicetestmanagementInitializationMicroservice/implementation ./
+CMD ["node", "initialization.js"]

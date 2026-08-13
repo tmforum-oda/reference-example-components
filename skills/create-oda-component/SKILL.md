@@ -32,7 +32,7 @@ Template files bundled in this skill:
 - `templates/source/openMetricsMicroservice/` — Metrics microservice implementation (customize counter name)
 - `templates/source/componentInitializationMicroservice/` — Component init job reference (customize API URL)
 - `templates/source/MCPServerMicroservice/` — MCP server reference implementation (customize per component)
-- `templates/charts/templates/deployment-rolemanagement.yaml` — Conditional role management deployment template (optional — only used when user explicitly requests security API exposure)
+- `templates/charts/templates/deployment-rolemanagement.yaml` — Conditional role management deployment template (optional — only used when user confirms roleInitializationMicroservice in Step 2)
 - `templates/charts/README.md` — Chart README reference example
 
 ---
@@ -79,7 +79,7 @@ The user can override any of these at any point.
 **Always implement:**
 - All mandatory exposed APIs (`required: true` in the spec's `coreFunction.exposedAPIs`)
 - The management API (open metrics — use a component-specific tag, e.g. `lesterthomas/{componentnamelower}metrics:0.1`)
-- Role management infrastructure (permissionspecapi deployment, service, and roleinitialization job) — **only generated when the user explicitly requests security API exposure**. By default, no role management pods are deployed.
+- Role management infrastructure (permissionspecapi deployment, service, and roleinitialization job) — **only generated when the user confirms roleInitializationMicroservice in Step 2**. By default, no role management pods are deployed.
 
 **Ask the user about each optional API:**
 > "The specification includes these optional exposed APIs. Which would you like to implement?
@@ -89,7 +89,11 @@ The user can override any of these at any point.
 Also ask:
 > "Would you also like to generate an MCP server microservice for AI agent access to this component's APIs? (Following the Python/FastMCP pattern from ProductCatalog)"
 
-Note which APIs the user selects — this determines what microservices and Helm templates to generate.
+And ask:
+> "Would you like to generate a `roleInitializationMicroservice`? This bootstraps an initial canvas role in the permissionspec/partyrole API when the component is first deployed. If omitted (the default), the component uses a static canvas role via `canvasSystemRole` only — no dynamic role initialization is performed.
+> **Default: No**"
+
+Record all answers — they determine what microservices, Dockerfiles, and Helm templates to generate. If the user confirms roleInitializationMicroservice, generate the source, Dockerfile, AND the corresponding Helm templates (`deployment-rolemanagement.yaml`, `service-rolemanagement.yaml`, `job-roleinitialization.yaml`). If not confirmed, generate none of those.
 
 **Multi-version resolution** — Before fetching any spec, inspect the `specification` field for each selected API. In newer component specifications (v1.1.0+), `specification` is an array and may contain multiple entries representing different API versions, for example:
 
@@ -342,9 +346,13 @@ For each field the user confirms:
 
 If the user confirms no validation is needed, skip this step.
 
-### 4b — Role Initialization Microservice
+### 4b — Role Initialization Microservice (conditional)
+
+**Only generate this section if the user confirmed roleInitializationMicroservice in Step 2.**
 
 Create `roleInitializationMicroservice/implementation/` using the pattern from `references/source-patterns.md`. This is identical across all components — copy from `templates/source/roleInitializationMicroservice/` (bundled in this skill). The `initialization.js` supports both TMF669 and TMF672 via the `USE_PERMISSION_SPEC` env var.
+
+If the user did **not** confirm roleInitializationMicroservice, skip this section entirely — do not create the directory, Dockerfile, or any Helm templates for role management.
 
 ### 4c — Open Metrics Microservice
 
@@ -356,7 +364,9 @@ Create `openMetricsMicroservice/` using the pattern from `references/source-patt
 
 Create one dockerfile per microservice following the `FROM node:16 / COPY / WORKDIR / RUN npm install / EXPOSE 8080 / CMD` pattern.
 
-Use `FROM node:10.19` for roleInitializationMicroservice and openMetricsMicroservice (no port expose for role init).
+Use `FROM node:10.19` for openMetricsMicroservice and (if generated) roleInitializationMicroservice (no port expose for role init).
+
+**Only generate `roleinitialization-dockerfile` if roleInitializationMicroservice was confirmed in Step 2.** If not confirmed, omit that Dockerfile entirely.
 
 ### 4e — MCP Server (if user requested)
 
@@ -371,6 +381,8 @@ Follow the Python/FastMCP pattern from `templates/source/MCPServerMicroservice/`
 Create `builddockerfile.sh` listing `docker buildx build` commands for all new images, using multi-platform `linux/amd64,linux/arm64` builds. Follow the pattern from `references/source-patterns.md`.
 
 **Important naming rule for metrics image**: Use a component-specific tag (e.g. `{dockerhub-namespace}/{componentname}metrics:0.1`) rather than the shared `openmetrics:1.0` tag to avoid overwriting the ProductCatalog image. Update `values.yaml` `metrics.image` to match.
+
+**Only include the `roleinitialization` build line if roleInitializationMicroservice was confirmed in Step 2.** If not confirmed, omit that line from `builddockerfile.sh`.
 
 **Do not include a `permissionspecapi` or `partyroleapi` build** in `builddockerfile.sh` — both use pre-built shared images (`lesterthomas/permissionspecapi:0.20` and `lesterthomas/partyroleapi:1.1`) with no source dockerfile in this directory.
 
@@ -395,7 +407,7 @@ Fill in from the parsed specification YAML:
 - `component.publicationDate` — from `componentMetadata.publicationDate`
 - `api.image` — `{dockerhub-namespace}/{componentname}api:0.1`
 - Add sections for each optional API that was selected (e.g. `promotionmgmt.image`, `promotionmgmt.enabled: false`)
-- **Only if user requests security API exposure**: add `permissionspec.image: lesterthomas/permissionspecapi:0.20`, `permissionspec.enabled: true`, and `partyrole.image: lesterthomas/partyroleapi:1.1`
+- **Only if user confirmed roleInitializationMicroservice in Step 2**: add `permissionspec.image: lesterthomas/permissionspecapi:0.20`, `permissionspec.enabled: true`, and `partyrole.image: lesterthomas/partyroleapi:1.1`
 
 ### templates/component-{componentname}.yaml (the ODA Component CRD)
 
@@ -405,7 +417,10 @@ This is the most important template. Build it from the fetched specification YAM
 2. `spec.coreFunction.exposedAPIs` — add each selected API with proper `gatewayConfiguration` block using `{{.Values.component.apipolicy.*}}` Helm template expressions
 3. For optional APIs, wrap in `{{- if .Values.{optionalapi}.enabled }}` conditional
 4. For MCP server, wrap in `{{- if .Values.component.MCPServer.enabled }}`
-5. `spec.coreFunction.dependentAPIs` — wrap in `{{- if .Values.component.dependentAPIs.enabled }}` conditional with `{{- else }}` that outputs `[]`
+5. `spec.coreFunction.dependentAPIs` — apply the mandatory/optional distinction from the component spec:
+   - **Mandatory** (`required: true`) — include unconditionally, one entry per API with `name`, `id`, `apiType: openapi`, and `specification[0].url` (highest version). Never wrap these in a conditional.
+   - **Optional** (`required: false`) — wrap each in its own `{{- if .Values.component.{optionaldep}.enabled }}` conditional with `{{- else }}` that outputs `[]` 
+   - If the component has no dependent APIs at all, use `dependentAPIs: []`.
 6. `spec.managementFunction` — standard open metrics block
 7. `spec.securityFunction` — `canvasSystemRole: {{ .Values.security.canvasSystemRole }}` with `exposedAPIs: []` by default. Only add a TMF672 or TMF669 entry here if the user explicitly asks to expose the security API in the component spec.
 
@@ -423,7 +438,7 @@ Generate the following, following `references/chart-patterns.md` patterns exactl
 - `job-{componentname}initialization.yaml` — component-specific init job
 - `persistentVolumeClaim-mongodb.yaml` — standard 5Gi PVC
 
-**Only if the user explicitly requests security API exposure**, also generate:
+**Only if the user confirmed roleInitializationMicroservice in Step 2**, also generate:
 - `deployment-rolemanagement.yaml` — conditional permissionspec/partyrole deployment
 - `service-rolemanagement.yaml` — conditional service (permissionspecapi or partyroleapi)
 - `job-roleinitialization.yaml` — role init job (uses lesterthomas/roleinitialization:0.6)
@@ -568,6 +583,7 @@ Tell the user what was created, what they need to do next:
 - **Never** hardcode the Helm release name in templates. Always use `{{.Release.Name}}`.
 - **Always** put the `oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}` label on every Kubernetes resource.
 - **Follow the spec**: The mandatory/optional distinction in `exposedAPIs[].required` must be respected — always implement `required: true` APIs, always ask about `required: false` APIs.
-- **Security infrastructure is opt-in**: by default, no permissionspecapi/partyroleapi deployment, service, or roleinitialization job is generated, and `securityFunction.exposedAPIs` is `[]`. Only generate these and populate `securityFunction.exposedAPIs` when the user explicitly requests security API exposure.
+- **roleInitializationMicroservice is opt-in, default No**: The default security model is a static canvas role (`canvasSystemRole`) with no dynamic role bootstrapping. Only generate the roleInitializationMicroservice source, its Dockerfile, and the corresponding Helm templates (`deployment-rolemanagement.yaml`, `service-rolemanagement.yaml`, `job-roleinitialization.yaml`) when the user explicitly confirms this in Step 2. This is a unified decision — confirming roleInitializationMicroservice enables all three artefacts; not confirming it omits all three.
+- **`securityFunction.exposedAPIs` is always `[]` by default**: Even when roleInitializationMicroservice is generated, do not declare TMF672 or TMF669 in `securityFunction.exposedAPIs` unless the user explicitly requests security API exposure in the ODA Component CRD.
 - **Spec resolution priority**: Always check `skills/create-oda-component/specs/` first for both the component YAML and any API spec files (`.yaml` or `.json`). Only download from the internet if the local specs folder is absent or contains no matching file. This applies to both the component specification (Step 1) and the API specs (Step 4a).
 - **Naming consistency**: The Kubernetes service name for each API becomes the hostname for inter-service communication. It must match the `implementation` field in the Component CRD and the selector in the Service template.

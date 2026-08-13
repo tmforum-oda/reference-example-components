@@ -1,0 +1,10 @@
+{
+  "name": "resourceordering-initialization",
+  "version": "0.0.1",
+  "dependencies": {
+    "axios": "^0.21.1"
+  },
+  "engines": {
+    "node": ">=8.10"
+  }
+}

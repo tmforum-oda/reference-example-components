@@ -1,0 +1,11 @@
+{
+  "name": "openmetrics",
+  "version": "1.0.0",
+  "description": "Prometheus metrics for ProductUsageManagement events",
+  "main": "index.js",
+  "scripts": { "start": "node index.js" },
+  "dependencies": {
+    "express": "^4.17.1",
+    "prom-client": "^14.0.0"
+  }
+}

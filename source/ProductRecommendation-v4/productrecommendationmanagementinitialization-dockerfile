@@ -1,0 +1,6 @@
+FROM node:10.19
+COPY productrecommendationmanagementInitializationMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY productrecommendationmanagementInitializationMicroservice/implementation ./
+CMD ["node", "initialization.js"]

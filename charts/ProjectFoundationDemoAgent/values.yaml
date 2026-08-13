@@ -32,7 +32,7 @@ component:
   dependentAPIs:
     - name: productcatalogmcp
       apiType: mcp
-    - name: agenta2a
+    - name: productcataloga2a
       apiType: a2a
 
 canvas:

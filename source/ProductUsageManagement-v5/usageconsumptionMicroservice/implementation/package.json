@@ -1,0 +1,29 @@
+{
+  "name": "usage-consumption-management-v5",
+  "version": "1.0.0",
+  "description": "TMF API Reference: TMF677 v5 - Usage Consumption Management",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "license": "Apache-2.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "cookie-parser": "^1.4.6",
+    "express-openapi-validator": "^4.13.2",
+    "swagger-ui-express": "^4.6.3",
+    "winston": "^3.11.0",
+    "jsonpath": "^1.1.1",
+    "mongodb": "^3.7.4",
+    "query-to-mongo": "^0.9.0",
+    "uuid": "^3.4.0",
+    "js-yaml": "^4.1.0",
+    "axios": "^1.7.3"
+  },
+  "engines": { "node": ">=16.0.0", "npm": ">=8.0" },
+  "devDependencies": { "nodemon": "^3.0.1" }
+}

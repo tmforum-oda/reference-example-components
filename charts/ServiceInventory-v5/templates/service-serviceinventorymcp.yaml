@@ -1,0 +1,16 @@
+{{- if .Values.component.MCPServer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Release.Name}}-serviceinvmcp
+  labels:
+    oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
+spec:
+  ports:
+  - name: http-mcp
+    port: {{.Values.mcp.port}}
+    targetPort: mcp-http
+  selector:
+    impl: {{.Release.Name}}-serviceinvmcp
+  type: NodePort
+{{- end }}

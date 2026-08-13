@@ -1,0 +1,14 @@
+{{- if .Values.component.A2AServer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Release.Name}}-productordera2a
+  labels:
+    app: {{.Release.Name}}-{{.Values.component.name}}
+    oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
+spec:
+  ports:
+  - {name: http-a2a, port: {{.Values.a2a.port}}, targetPort: a2a-http}
+  selector: {impl: {{.Release.Name}}-productordera2a}
+  type: NodePort
+{{- end }}

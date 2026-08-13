@@ -1,0 +1,6 @@
+FROM node:10.19
+COPY privacymanagementInitializationMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY privacymanagementInitializationMicroservice/implementation ./
+CMD ["node", "initialization.js"]

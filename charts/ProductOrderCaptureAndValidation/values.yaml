@@ -9,6 +9,10 @@ component:
   publicationDate: 2024-11-12T00:00:00.000Z
   version: "0.0.1"
   storageClassName: default
+  MCPServer:
+    enabled: true
+  A2AServer:
+    enabled: true
   apipolicy:
     apiKeyVerification:
       enabled: false
@@ -38,7 +42,7 @@ component:
         maxAge: 36000
     template: ""
   dependentAPIs:
-    enabled: true
+    enabled: false
     rejectUnauthorizedCertificates: false
 security:
   canvasSystemRole: canvasRole
@@ -48,12 +52,25 @@ mongodb:
 api:
   image: lesterthomas/productorderingapi:0.9
   versionLabel: productorderingapi-0.9
+  port: 8080
   otlp:
     console:
       enabled: false
     protobuffCollector:
       enabled: true
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
+mcp:
+  image: akumartmf/productorderingmcp:0.1
+  versionLabel: productorderingmcp-0.1
+  port: 8080
+  logLevel: INFO
+  requestTimeoutSeconds: 30
+  verifySsl: false
+a2a:
+  image: akumartmf/productordera2a:0.1
+  versionLabel: productordera2a-0.1
+  port: 8000
+  logLevel: INFO
 metrics:
   image: lesterthomas/productordercaptureandvalidationmetrics:0.1
 partyrole:

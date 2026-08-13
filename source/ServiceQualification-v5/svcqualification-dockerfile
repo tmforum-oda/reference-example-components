@@ -1,0 +1,7 @@
+FROM node:16
+COPY servicequalificationMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY servicequalificationMicroservice/implementation ./
+EXPOSE 8645
+CMD ["node", "index.js"]

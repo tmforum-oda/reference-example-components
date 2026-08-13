@@ -37,6 +37,24 @@ spec:
       path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productOrderingManagement/v4
       developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productOrderingManagement/v4/docs
       port: 8080
+    {{- if .Values.component.MCPServer.enabled }}
+    - name: productorderingmcp
+      id: productorderingmcp
+      specification:
+      - implementation: {{.Release.Name}}-productordermcp
+        apiType: mcp
+        path: /{{.Release.Name}}-{{.Values.component.name}}/mcp/
+        port: {{.Values.mcp.port}}
+    {{- end }}
+    {{- if .Values.component.A2AServer.enabled }}
+    - name: productordera2a
+      id: productordera2a
+      specification:
+      - implementation: {{.Release.Name}}-productordera2a
+        apiType: a2a
+        path: /{{.Release.Name}}-{{.Values.component.name}}/v1/agent
+        port: {{.Values.a2a.port}}
+    {{- end }}
     dependentAPIs: 
     {{- if .Values.component.dependentAPIs.enabled }}
     - name: downstreamproductcatalog

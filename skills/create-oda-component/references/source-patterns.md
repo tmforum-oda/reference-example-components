@@ -8,7 +8,7 @@ Reference patterns for generating new ODA Component source code. These patterns 
 source/{ComponentName}/
 ├── builddockerfile.sh                          # Multi-platform Docker build script
 ├── {apiname}-dockerfile                        # Dockerfile for each API microservice
-├── roleinitialization-dockerfile               # Dockerfile for role init job
+├── roleinitialization-dockerfile               # Dockerfile for role init job (only if roleInitMicroservice confirmed)
 ├── {component}initialization-dockerfile        # Dockerfile for component init job
 ├── openMetricsMicroservice-dockerfile          # Dockerfile for metrics service
 ├── {apiname}Microservice/
@@ -24,7 +24,7 @@ source/{ComponentName}/
 │       ├── service/
 │       │   └── {Resource}Service.js            # Business logic with MongoDB CRUD
 │       └── utils/                              # Copy all utils from templates/source/utils/
-├── roleInitializationMicroservice/
+├── roleInitializationMicroservice/             # Only generated if user confirms in Step 2
 │   └── implementation/
 │       ├── initialization.js                   
 │       └── package.json                        
@@ -48,6 +48,8 @@ CMD ["node", "index.js"]
 ```
 
 ## Dockerfile Pattern (Role Initialization Job)
+
+**Only generate this dockerfile if the user confirmed roleInitializationMicroservice in Step 2.**
 
 ```dockerfile
 FROM node:10.19
@@ -77,7 +79,8 @@ CMD ["node", "index.js"]
 ```bash
 docker buildx build -t "{dockerhub-namespace}/{componentname}api:1.0" --platform "linux/amd64,linux/arm64" -f {apiname}-dockerfile . --push
 
-docker buildx build -t "{dockerhub-namespace}/roleinitialization:0.1" --platform "linux/amd64,linux/arm64" -f roleinitialization-dockerfile . --push
+# Only include the following line if roleInitializationMicroservice was confirmed in Step 2:
+# docker buildx build -t "{dockerhub-namespace}/roleinitialization:0.1" --platform "linux/amd64,linux/arm64" -f roleinitialization-dockerfile . --push
 
 docker buildx build -t "{dockerhub-namespace}/{componentname}initialization:0.1" --platform "linux/amd64,linux/arm64" -f {component}initialization-dockerfile . --push
 
@@ -1055,7 +1058,7 @@ Given a component like `TMFC006-ServiceCatalogManagement`:
 - Primary API microservice folder: `serviceCatalogMicroservice/` (camelCase, lowercase first letter)
 - Dockerfile: `servicecat-dockerfile`
 - Docker image tag: `{namespace}/servicecatalogapi:1.0`
-- Role init dockerfile: `roleinitialization-dockerfile` (same for all components)
-- Role init Docker image tag: `{namespace}/roleinitialization:0.1`
+- Role init dockerfile: `roleinitialization-dockerfile` (same for all components) — **only generated if user confirmed roleInitializationMicroservice**
+- Role init Docker image tag: `{namespace}/roleinitialization:0.1` — **only in builddockerfile.sh if roleInitializationMicroservice confirmed**
 - Metrics Docker image tag: `{namespace}/openmetrics:1.0` (same for all components, already published)
 - `COMPONENT_NAME` default (for local testing): `r1-{componentnamelower}` e.g. `r1-servicecatalogmanagement`

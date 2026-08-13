@@ -1,0 +1,11 @@
+{{- if .Values.component.A2AServer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Release.Name}}-servicequala2a
+spec:
+  ports:
+  - {name: http-a2a, port: {{.Values.a2a.port}}, targetPort: a2a-http}
+  selector: {impl: {{.Release.Name}}-servicequala2a}
+  type: NodePort
+{{- end }}

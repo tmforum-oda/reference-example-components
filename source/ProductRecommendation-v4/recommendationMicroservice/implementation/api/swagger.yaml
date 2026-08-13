@@ -1,0 +1,1834 @@
+basePath: /customer/v4/
+consumes:
+- application/json;charset=utf-8
+definitions:
+  AgreementItemRef:
+    description: Agreement reference. An agreement represents a contract or arrangement,
+      either written or verbal and sometimes enforceable by law, such as a service
+      level agreement or a customer price agreement. An agreement involves a number
+      of other business entities, such as products, services, and resources and/or
+      their specifications.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      agreementItemId:
+        description: Identifier of the agreement
+        type: string
+      href:
+        description: Reference of the related entity.
+        type: string
+      id:
+        description: Unique identifier of a related entity.
+        type: string
+      name:
+        description: Name of the related entity.
+        type: string
+    required:
+    - id
+    type: object
+  Any: {}
+  BillingAccountRef:
+    description: BillingAccount reference. A BillingAccount is a detailed description
+      of a bill structure.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Reference of the billing account
+        type: string
+      id:
+        description: Unique identifier of the billing account
+        type: string
+      name:
+        description: Name of the billing account
+        type: string
+    required:
+    - id
+    type: object
+  CategoryRef:
+    description: The category for grouping recommendations
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Reference of the related entity.
+        type: string
+      id:
+        description: Unique identifier of a related entity.
+        type: string
+      name:
+        description: Name of the related entity.
+        type: string
+      version:
+        description: Category version
+        type: string
+    required:
+    - id
+    type: object
+  ChannelRef:
+    description: The channel to which the resource reference to. e.g. channel for
+      selling product offerings, channel for opening a trouble ticket etc..
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Reference of the related entity.
+        type: string
+      id:
+        description: Unique identifier of a related entity.
+        type: string
+      name:
+        description: Name of the channel.
+        type: string
+    required:
+    - id
+    type: object
+  Characteristic:
+    description: Describes a given characteristic of an object or entity through a
+      name/value pair.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      characteristicRelationship:
+        items:
+          $ref: '#/definitions/CharacteristicRelationship'
+        type: array
+      id:
+        description: Unique identifier of the characteristic
+        type: string
+      name:
+        description: Name of the characteristic
+        type: string
+      value:
+        $ref: '#/definitions/Any'
+        description: The value of the characteristic
+      valueType:
+        description: Data type of the value of the characteristic
+        type: string
+    required:
+    - name
+    - value
+    type: object
+  CharacteristicRelationship:
+    description: Another Characteristic that is related to the current Characteristic;
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      id:
+        description: Unique identifier of the characteristic
+        type: string
+      relationshipType:
+        description: The type of relationship
+        type: string
+    type: object
+  EntityRef:
+    description: Entity reference schema to be use for all entityRef class.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Reference of the related entity.
+        type: string
+      id:
+        description: Unique identifier of a related entity.
+        type: string
+      name:
+        description: Name of the related entity.
+        type: string
+    required:
+    - id
+    type: object
+  Error:
+    description: Used when an API throws an Error, typically with a HTTP error response-code
+      (3xx, 4xx, 5xx)
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name.
+        type: string
+      code:
+        description: Application relevant detail, defined in the API or a common list.
+        type: string
+      message:
+        description: More details and corrective actions related to the error which
+          can be shown to a client user.
+        type: string
+      reason:
+        description: Explanation of the reason for the error which can be shown to
+          a client user.
+        type: string
+      referenceError:
+        description: URI of documentation describing the error.
+        format: uri
+        type: string
+      status:
+        description: HTTP Error code extension
+        type: string
+    required:
+    - code
+    - reason
+    type: object
+  EventSubscription:
+    description: Sets the communication endpoint address the service instance must
+      use to deliver notification information
+    properties:
+      callback:
+        description: The callback being registered.
+        type: string
+      id:
+        description: Id of the listener
+        type: string
+      query:
+        description: additional data to be passed
+        type: string
+    required:
+    - id
+    - callback
+    type: object
+  EventSubscriptionInput:
+    description: Sets the communication endpoint address the service instance must
+      use to deliver notification information
+    properties:
+      callback:
+        description: The callback being registered.
+        type: string
+      query:
+        description: additional data to be passed
+        type: string
+    required:
+    - callback
+    type: object
+  ItemRef:
+    description: Describes a specific item contained in a parent element
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      entityHref:
+        description: Hypertext Reference of the parent element.
+        type: string
+      entityId:
+        description: Unique identifier of the parent element.
+        type: string
+      itemId:
+        description: Unique identifier of the considered item.
+        type: string
+      name:
+        description: Name of the related entity.
+        type: string
+    type: object
+  Money:
+    description: A base / value business entity used to represent money
+    properties:
+      unit:
+        description: Currency (ISO4217 norm uses 3 letters to define the currency)
+        type: string
+      value:
+        description: A positive floating point number
+        format: float
+        type: number
+    type: object
+  Place:
+    description: Place reference. Place defines the places where the products are
+      sold or delivered.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Unique reference of the place
+        type: string
+      id:
+        description: Unique identifier of the place
+        type: string
+      name:
+        description: A user-friendly name for the place, such as [Paris Store], [London
+          Store], [Main Home]
+        type: string
+    type: object
+  PlaceRef:
+    description: Place reference. PlaceRef defines the placeRefs where the products
+      are sold or delivered.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Reference of the related entity.
+        type: string
+      id:
+        description: Unique identifier of a related entity.
+        type: string
+      name:
+        description: Name of the related entity.
+        type: string
+    required:
+    - id
+    type: object
+  Price:
+    description: Provides all amounts (tax included, duty free, tax rate), used currency
+      and percentage to apply for Price Alteration.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      dutyFreeAmount:
+        $ref: '#/definitions/Money'
+        description: All taxes excluded amount (expressed in the given currency)
+      percentage:
+        description: Percentage to apply for ProdOfferPriceAlteration
+        format: float
+        type: number
+      taxIncludedAmount:
+        $ref: '#/definitions/Money'
+        description: All taxes included amount (expressed in the given currency)
+      taxRate:
+        description: Tax rate
+        format: float
+        type: number
+    type: object
+  PriceAlteration:
+    description: Is an amount, usually of money, that modifies the price charged for
+      an order item.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      applicationDuration:
+        description: Duration during which the alteration applies on the order item
+          price (for instance 2 months free of charge for the recurring charge)
+        type: integer
+      description:
+        description: A narrative that explains in detail the semantics of this order
+          item price alteration
+        type: string
+      name:
+        description: Name of the order item price alteration
+        type: string
+      price:
+        $ref: '#/definitions/Price'
+      priceType:
+        description: A category that describes the price such as recurring, one time
+          and usage.
+        type: string
+      priority:
+        description: Priority level for applying this alteration among all the defined
+          alterations on the order item price
+        type: integer
+      productOfferingPrice:
+        $ref: '#/definitions/ProductOfferingPriceRef'
+      recurringChargePeriod:
+        description: Could be month, week...
+        type: string
+      unitOfMeasure:
+        description: Could be minutes, GB...
+        type: string
+    required:
+    - price
+    - priceType
+    type: object
+  Product:
+    description: A product offering procured by a customer or other interested party
+      playing a party role. A product is realized as one or more service(s) and /
+      or resource(s).
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      agreement:
+        items:
+          $ref: '#/definitions/AgreementItemRef'
+        type: array
+      billingAccount:
+        $ref: '#/definitions/BillingAccountRef'
+      description:
+        description: Is the description of the product. It could be copied from the
+          description of the Product Offering.
+        type: string
+      href:
+        description: Reference of the product
+        type: string
+      id:
+        description: Unique identifier of the product
+        type: string
+      isBundle:
+        description: If true, the product is a ProductBundle which is an instantiation
+          of a BundledProductOffering. If false, the product is a ProductComponent
+          which is an instantiation of a SimpleProductOffering.
+        type: boolean
+      isCustomerVisible:
+        description: If true, the product is visible by the customer.
+        type: boolean
+      name:
+        description: Name of the product. It could be the same as the name of the
+          product offering
+        type: string
+      orderDate:
+        description: Is the date when the product was ordered
+        format: date-time
+        type: string
+      place:
+        items:
+          $ref: '#/definitions/RelatedPlaceRefOrValue'
+        type: array
+      product:
+        items:
+          $ref: '#/definitions/ProductRefOrValue'
+        type: array
+      productCharacteristic:
+        items:
+          $ref: '#/definitions/Characteristic'
+        type: array
+      productOffering:
+        $ref: '#/definitions/ProductOfferingRef'
+      productOrderItem:
+        items:
+          $ref: '#/definitions/RelatedProductOrderItem'
+        type: array
+      productPrice:
+        items:
+          $ref: '#/definitions/ProductPrice'
+        type: array
+      productRelationship:
+        items:
+          $ref: '#/definitions/ProductRelationship'
+        type: array
+      productSerialNumber:
+        description: Is the serial number for the product. This is typically applicable
+          to tangible products e.g. Broadband Router.
+        type: string
+      productSpecification:
+        $ref: '#/definitions/ProductSpecificationRef'
+      productTerm:
+        items:
+          $ref: '#/definitions/ProductTerm'
+        type: array
+      realizingResource:
+        items:
+          $ref: '#/definitions/ResourceRef'
+        type: array
+      realizingService:
+        items:
+          $ref: '#/definitions/ServiceRef'
+        type: array
+      relatedParty:
+        items:
+          $ref: '#/definitions/RelatedParty'
+        type: array
+      startDate:
+        description: Is the date from which the product starts
+        format: date-time
+        type: string
+      status:
+        $ref: '#/definitions/ProductStatusType'
+        description: Is the lifecycle status of the product.
+      terminationDate:
+        description: Is the date when the product was terminated
+        format: date-time
+        type: string
+    type: object
+  ProductOfferingPriceRef:
+    description: ProductPriceOffering reference. An amount, usually of money, that
+      is asked for or allowed when a ProductOffering is bought, rented, or leased
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Reference of the related entity.
+        type: string
+      id:
+        description: Unique identifier of a related entity.
+        type: string
+      name:
+        description: Name of the related entity.
+        type: string
+    required:
+    - id
+    type: object
+  ProductOfferingRef:
+    description: ProductOffering reference. A product offering represents entities
+      that are orderable from the provider of the catalog, this resource includes
+      pricing information.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Reference of the related entity.
+        type: string
+      id:
+        description: Unique identifier of a related entity.
+        type: string
+      name:
+        description: Name of the related entity.
+        type: string
+    required:
+    - id
+    type: object
+  ProductOrderRef:
+    description: ProductOrder (ProductOrder) .The product order which the recommendation
+      is related with.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Reference of the related entity.
+        type: string
+      id:
+        description: Unique identifier of a related entity.
+        type: string
+      name:
+        description: Name of the related entity.
+        type: string
+    required:
+    - id
+    type: object
+  ProductPrice:
+    description: An amount, usually of money, that represents the actual price paid
+      by a Customer for a purchase, a rent or a lease of a Product. The price is valid
+      for a defined period of time.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      billingAccount:
+        $ref: '#/definitions/BillingAccountRef'
+      description:
+        description: A narrative that explains in detail the semantics of this product
+          price.
+        type: string
+      name:
+        description: A short descriptive name such as "Subscription price".
+        type: string
+      price:
+        $ref: '#/definitions/Price'
+      priceType:
+        description: A category that describes the price, such as recurring, discount,
+          allowance, penalty, and so forth.
+        type: string
+      productOfferingPrice:
+        $ref: '#/definitions/ProductOfferingPriceRef'
+      productPriceAlteration:
+        items:
+          $ref: '#/definitions/PriceAlteration'
+        type: array
+      recurringChargePeriod:
+        description: Could be month, week...
+        type: string
+      unitOfMeasure:
+        description: Could be minutes, GB...
+        type: string
+    required:
+    - price
+    - priceType
+    type: object
+  ProductRef:
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Reference of the related entity.
+        type: string
+      id:
+        description: Unique identifier of a related entity.
+        type: string
+      name:
+        description: Name of the related entity.
+        type: string
+    required:
+    - id
+    type: object
+  ProductRefOrValue:
+    description: A product to be created defined by value or existing defined by reference.
+      The polymorphic attributes @type, @schemaLocation & @referredType are related
+      to the product entity and not the RelatedProductRefOrValue class itself
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      agreement:
+        items:
+          $ref: '#/definitions/AgreementItemRef'
+        type: array
+      billingAccount:
+        $ref: '#/definitions/BillingAccountRef'
+      description:
+        description: Is the description of the product. It could be copied from the
+          description of the Product Offering.
+        type: string
+      href:
+        description: Reference of the product
+        type: string
+      id:
+        description: Unique identifier of the product
+        type: string
+      isBundle:
+        description: If true, the product is a ProductBundle which is an instantiation
+          of a BundledProductOffering. If false, the product is a ProductComponent
+          which is an instantiation of a SimpleProductOffering.
+        type: boolean
+      isCustomerVisible:
+        description: If true, the product is visible by the customer.
+        type: boolean
+      name:
+        description: Name of the product. It could be the same as the name of the
+          product offering
+        type: string
+      orderDate:
+        description: Is the date when the product was ordered
+        format: date-time
+        type: string
+      place:
+        items:
+          $ref: '#/definitions/RelatedPlaceRefOrValue'
+        type: array
+      product:
+        items:
+          $ref: '#/definitions/ProductRefOrValue'
+        type: array
+      productCharacteristic:
+        items:
+          $ref: '#/definitions/Characteristic'
+        type: array
+      productOffering:
+        $ref: '#/definitions/ProductOfferingRef'
+      productOrderItem:
+        items:
+          $ref: '#/definitions/RelatedProductOrderItem'
+        type: array
+      productPrice:
+        items:
+          $ref: '#/definitions/ProductPrice'
+        type: array
+      productRelationship:
+        items:
+          $ref: '#/definitions/ProductRelationship'
+        type: array
+      productSerialNumber:
+        description: Is the serial number for the product. This is typically applicable
+          to tangible products e.g. Broadband Router.
+        type: string
+      productSpecification:
+        $ref: '#/definitions/ProductSpecificationRef'
+      productTerm:
+        items:
+          $ref: '#/definitions/ProductTerm'
+        type: array
+      realizingResource:
+        items:
+          $ref: '#/definitions/ResourceRef'
+        type: array
+      realizingService:
+        items:
+          $ref: '#/definitions/ServiceRef'
+        type: array
+      relatedParty:
+        items:
+          $ref: '#/definitions/RelatedParty'
+        type: array
+      startDate:
+        description: Is the date from which the product starts
+        format: date-time
+        type: string
+      status:
+        $ref: '#/definitions/ProductStatusType'
+        description: Is the lifecycle status of the product.
+      terminationDate:
+        description: Is the date when the product was terminated
+        format: date-time
+        type: string
+    type: object
+  ProductRelationship:
+    description: Linked products to the one instantiate, such as [bundled] if the
+      product is a bundle and you want to describe the bundled products inside this
+      bundle; [reliesOn] if the product needs another already owned product to rely
+      on (e.g. an option on an already owned mobile access product) [targets] or [isTargeted]
+      (depending on the way of expressing the link) for any other kind of links that
+      may be useful
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      product:
+        $ref: '#/definitions/ProductRefOrValue'
+      relationshipType:
+        description: Type of the product relationship, such as [bundled] if the product
+          is a bundle and you want to describe the bundled products inside this bundle;
+          [reliesOn] if the product needs another already owned product to rely on
+          (e.g. an option on an already owned mobile access product) [targets] or
+          [isTargeted] (depending on the way of expressing the link) for any other
+          kind of links that may be useful
+        type: string
+    required:
+    - product
+    - relationshipType
+    type: object
+  ProductSpecificationRef:
+    description: 'Product specification reference: A ProductSpecification is a detailed
+      description of a tangible or intangible object made available externally in
+      the form of a ProductOffering to customers or other parties playing a party
+      role.'
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Reference of the related entity.
+        type: string
+      id:
+        description: Unique identifier of a related entity.
+        type: string
+      name:
+        description: Name of the related entity.
+        type: string
+      targetProductSchema:
+        $ref: '#/definitions/TargetProductSchema'
+        description: A target product schema reference. The reference object to the
+          schema and type of target product which is described by product specification.
+      version:
+        description: Version of the product specification
+        type: string
+    required:
+    - id
+    type: object
+  ProductStatusType:
+    description: Possible values for the status of the product
+    enum:
+    - created
+    - pendingActive
+    - cancelled
+    - active
+    - pendingTerminate
+    - terminated
+    - suspended
+    - 'aborted '
+    type: string
+  ProductTerm:
+    description: Description of a productTerm linked to this product. This represent
+      a commitment with a duration
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      description:
+        description: Description of the productTerm
+        type: string
+      duration:
+        $ref: '#/definitions/Quantity'
+        description: Duration of the productTerm
+      name:
+        description: Name of the productTerm
+        type: string
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: productTerm validity period
+    type: object
+  Quantity:
+    description: An amount in a given unit
+    properties:
+      amount:
+        default: 1
+        description: Numeric value in a given unit
+        format: float
+        type: number
+      units:
+        description: Unit
+        type: string
+    type: object
+  QueryProductRecommendation:
+    description: Recommendation API is used to recommend offering quickly based on
+      the history and real-time context of customer. It is a real-time and personalized
+      recommendation API. It is usually provided by e-commerce or BSS, CRM system
+      in omni-channel.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      category:
+        items:
+          $ref: '#/definitions/CategoryRef'
+        type: array
+      channel:
+        items:
+          $ref: '#/definitions/ChannelRef'
+        type: array
+      description:
+        type: string
+      href:
+        description: Hypertext Reference of the queryProductRecommendation
+        type: string
+      id:
+        description: Unique identifier of the queryProductRecommendation
+        type: string
+      instantSyncRecommendation:
+        description: An indicator which when the value is "true" means that requester
+          expects to get recommendation result in the response
+        type: boolean
+      name:
+        description: Name of the queryProductRecommendation
+        type: string
+      place:
+        $ref: '#/definitions/RelatedPlaceRefOrValue'
+        description: The place which the queryProductRecommendation is related to
+      productOrder:
+        items:
+          $ref: '#/definitions/ProductOrderRef'
+        type: array
+      productOrderItem:
+        items:
+          $ref: '#/definitions/ItemRef'
+        type: array
+      recommendationItem:
+        items:
+          $ref: '#/definitions/RecommendationItem'
+        type: array
+      recommendationType:
+        description: The type of the queryProductRecommendation
+        type: string
+      relatedParty:
+        $ref: '#/definitions/RelatedParty'
+      shoppingCart:
+        items:
+          $ref: '#/definitions/ShoppingCartRef'
+        type: array
+      shoppingCartItem:
+        items:
+          $ref: '#/definitions/ItemRef'
+        type: array
+      state:
+        $ref: '#/definitions/TaskStateType'
+        description: State of the queryProductRecommendation defined in the state
+          engine
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+        description: The period in which the queryProductRecommendation is valid
+    type: object
+  QueryProductRecommendationCreateEvent:
+    description: The notification data structure
+    properties:
+      correlationId:
+        description: The correlation id for this event.
+        type: string
+      description:
+        description: An explnatory of the event.
+        type: string
+      domain:
+        description: The domain of the event.
+        type: string
+      event:
+        $ref: '#/definitions/QueryProductRecommendationCreateEventPayload'
+        description: The event payload linked to the involved resource object
+      eventId:
+        description: The identifier of the notification.
+        type: string
+      eventTime:
+        description: Time of the event occurrence.
+        format: date-time
+        type: string
+      eventType:
+        description: The type of the notification.
+        type: string
+      href:
+        description: Reference of the ProcessFlow
+        type: string
+      id:
+        description: Identifier of the Process flow
+        type: string
+      priority:
+        description: A priority.
+        type: string
+      timeOcurred:
+        description: The time the event occured.
+        format: date-time
+        type: string
+      title:
+        description: The title of the event.
+        type: string
+    type: object
+  QueryProductRecommendationCreateEventPayload:
+    description: The event data structure
+    properties:
+      queryProductRecommendation:
+        $ref: '#/definitions/QueryProductRecommendation'
+        description: The involved resource data for the event
+    type: object
+  QueryProductRecommendationStateChangeEvent:
+    description: The notification data structure
+    properties:
+      correlationId:
+        description: The correlation id for this event.
+        type: string
+      description:
+        description: An explnatory of the event.
+        type: string
+      domain:
+        description: The domain of the event.
+        type: string
+      event:
+        $ref: '#/definitions/QueryProductRecommendationStateChangeEventPayload'
+        description: The event payload linked to the involved resource object
+      eventId:
+        description: The identifier of the notification.
+        type: string
+      eventTime:
+        description: Time of the event occurrence.
+        format: date-time
+        type: string
+      eventType:
+        description: The type of the notification.
+        type: string
+      href:
+        description: Reference of the ProcessFlow
+        type: string
+      id:
+        description: Identifier of the Process flow
+        type: string
+      priority:
+        description: A priority.
+        type: string
+      timeOcurred:
+        description: The time the event occured.
+        format: date-time
+        type: string
+      title:
+        description: The title of the event.
+        type: string
+    type: object
+  QueryProductRecommendationStateChangeEventPayload:
+    description: The event data structure
+    properties:
+      queryProductRecommendation:
+        $ref: '#/definitions/QueryProductRecommendation'
+        description: The involved resource data for the event
+    type: object
+  QueryProductRecommendation_Create:
+    description: 'Recommendation API is used to recommend offering quickly based on
+      the history and real-time context of customer. It is a real-time and personalized
+      recommendation API. It is usually provided by e-commerce or BSS, CRM system
+      in omni-channel.
+
+      Skipped properties: id,href,validFor,item'
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      category:
+        items:
+          $ref: '#/definitions/CategoryRef'
+        type: array
+      channel:
+        items:
+          $ref: '#/definitions/ChannelRef'
+        type: array
+      description:
+        type: string
+      instantSyncRecommendation:
+        description: An indicator which when the value is "true" means that requester
+          expects to get recommendation result in the response
+        type: boolean
+      name:
+        description: Name of the queryProductRecommendation
+        type: string
+      place:
+        $ref: '#/definitions/RelatedPlaceRefOrValue'
+        description: The place which the queryProductRecommendation is related to
+      productOrder:
+        items:
+          $ref: '#/definitions/ProductOrderRef'
+        type: array
+      productOrderItem:
+        items:
+          $ref: '#/definitions/ItemRef'
+        type: array
+      recommendationItem:
+        items:
+          $ref: '#/definitions/RecommendationItem'
+        type: array
+      recommendationType:
+        description: The type of the queryProductRecommendation
+        type: string
+      relatedParty:
+        $ref: '#/definitions/RelatedParty'
+      shoppingCart:
+        items:
+          $ref: '#/definitions/ShoppingCartRef'
+        type: array
+      shoppingCartItem:
+        items:
+          $ref: '#/definitions/ItemRef'
+        type: array
+      state:
+        $ref: '#/definitions/TaskStateType'
+        description: State of the queryProductRecommendation defined in the state
+          engine
+    type: object
+  RecommendationItem:
+    description: A list of recommendation items. Every item is a product offering
+      and its rank.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      id:
+        description: Unique identifier of the product
+        type: string
+      priority:
+        description: The rank of the list of recommended offering.
+        type: integer
+      product:
+        $ref: '#/definitions/ProductRefOrValue'
+        description: A recommended product.
+      productOffering:
+        $ref: '#/definitions/ProductOfferingRef'
+    required:
+    - product
+    type: object
+  RelatedParty:
+    description: Related Entity reference. A related party defines party or party
+      role linked to a specific entity.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Reference of the related entity.
+        type: string
+      id:
+        description: Unique identifier of a related entity.
+        type: string
+      name:
+        description: Name of the related entity.
+        type: string
+      role:
+        description: Role played by the related party
+        type: string
+    required:
+    - '@referredType'
+    - id
+    type: object
+  RelatedPlaceRefOrValue:
+    description: Related Entity reference. A related place defines a place described
+      by reference or by value linked to a specific entity. The polymorphic attributes
+      @type, @schemaLocation & @referredType are related to the place entity and not
+      the RelatedPlaceRefOrValue class itself
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Unique reference of the place
+        type: string
+      id:
+        description: Unique identifier of the place
+        type: string
+      name:
+        description: A user-friendly name for the place, such as [Paris Store], [London
+          Store], [Main Home]
+        type: string
+      role:
+        type: string
+    required:
+    - role
+    type: object
+  RelatedProductOrderItem:
+    description: RelatedProductOrderItem (ProductOrder item) .The product order item
+      which triggered product creation/change/termination.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      orderItemAction:
+        description: Action of the order item for this product
+        type: string
+      orderItemId:
+        description: Identifier of the order item where the product was managed
+        type: string
+      productOrderHref:
+        description: Reference of the related entity.
+        type: string
+      productOrderId:
+        description: Unique identifier of a related entity.
+        type: string
+      role:
+        description: role of the product order item for this product
+        type: string
+    required:
+    - orderItemId
+    - productOrderId
+    type: object
+  ResourceRef:
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        type: string
+      id:
+        type: string
+    required:
+    - id
+    type: object
+  ServiceRef:
+    description: Service reference, for when Service is used by other entities
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Reference of the related entity.
+        type: string
+      id:
+        description: Unique identifier of a related entity.
+        type: string
+      name:
+        description: Name of the related entity.
+        type: string
+    required:
+    - id
+    type: object
+  ShoppingCartRef:
+    description: ShoppingCart (ShoppingCartRef) . The shopping cart which the recommendation
+      is related with.
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@referredType':
+        description: The actual type of the target instance when needed for disambiguation.
+        type: string
+      '@schemaLocation':
+        description: A URI to a JSON-Schema file that defines additional attributes
+          and relationships
+        format: uri
+        type: string
+      '@type':
+        description: When sub-classing, this defines the sub-class entity name
+        type: string
+      href:
+        description: Hypertext Reference of the shopping cart.
+        type: string
+      id:
+        description: Unique identifier of shopping cart
+        type: string
+    required:
+    - id
+    type: object
+  TargetProductSchema:
+    description: The reference object to the schema and type of target product which
+      is described by product specification
+    properties:
+      '@baseType':
+        description: When sub-classing, this defines the super-class
+        type: string
+      '@schemaLocation':
+        description: This field provides a link to the schema describing the target
+          product
+        type: string
+      '@type':
+        description: Class type of the target product
+        type: string
+    required:
+    - '@schemaLocation'
+    - '@type'
+    type: object
+  TaskStateType:
+    description: Possible values for the state of a task
+    enum:
+    - accepted
+    - terminatedWithError
+    - inProgress
+    - done
+    type: string
+  TimePeriod:
+    description: A period of time, either as a deadline (endDateTime only) a startDateTime
+      only, or both
+    properties:
+      endDateTime:
+        description: End of the time period, using IETC-RFC-3339 format
+        format: date-time
+        type: string
+      startDateTime:
+        description: Start of the time period, using IETC-RFC-3339 format. If you
+          define a start, you must also define an end
+        format: date-time
+        type: string
+    type: object
+info:
+  description: "## TMF API Reference : TMF 680 - Customer \n\nRecommendation API is\
+    \ used to recommend offering quickly based on the history and real-time context\
+    \ of customer. It is a real-time and personalized recommendation API."
+  title: Recommendation
+  version: 4.0.0
+paths:
+  /hub:
+    post:
+      description: Sets the communication endpoint address the service instance must
+        use to deliver information about its health state, execution state, failures
+        and metrics.
+      operationId: registerListener
+      parameters:
+      - description: Data containing the callback endpoint to deliver the information
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/EventSubscriptionInput'
+      responses:
+        '201':
+          description: Subscribed
+          schema:
+            $ref: '#/definitions/EventSubscription'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      summary: Register a listener
+      tags:
+      - events subscription
+      x-swagger-router-controller: EventsSubscription
+  /hub/{id}:
+    delete:
+      description: Resets the communication endpoint address the service instance
+        must use to deliver information about its health state, execution state, failures
+        and metrics.
+      operationId: unregisterListener
+      parameters:
+      - description: The id of the registered listener
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        '204':
+          description: Deleted
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      summary: Unregister a listener
+      tags:
+      - events subscription
+      x-swagger-router-controller: EventsSubscription
+  /listener/queryProductRecommendationCreateEvent:
+    post:
+      description: Example of a client listener for receiving the notification QueryProductRecommendationCreateEvent
+      operationId: listenToQueryProductRecommendationCreateEvent
+      parameters:
+      - description: The event data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/QueryProductRecommendationCreateEvent'
+      responses:
+        '201':
+          description: Notified
+          schema:
+            $ref: '#/definitions/EventSubscription'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      summary: Client listener for entity QueryProductRecommendationCreateEvent
+      tags:
+      - notification listeners (client side)
+      x-swagger-router-controller: NotificationListenersClientSide
+  /listener/queryProductRecommendationStateChangeEvent:
+    post:
+      description: Example of a client listener for receiving the notification QueryProductRecommendationStateChangeEvent
+      operationId: listenToQueryProductRecommendationStateChangeEvent
+      parameters:
+      - description: The event data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/QueryProductRecommendationStateChangeEvent'
+      responses:
+        '201':
+          description: Notified
+          schema:
+            $ref: '#/definitions/EventSubscription'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      summary: Client listener for entity QueryProductRecommendationStateChangeEvent
+      tags:
+      - notification listeners (client side)
+      x-swagger-router-controller: NotificationListenersClientSide
+  /queryProductRecommendation:
+    get:
+      description: This operation list or find QueryProductRecommendation entities
+      operationId: listQueryProductRecommendation
+      parameters:
+      - description: Comma-separated properties to be provided in response
+        in: query
+        name: fields
+        required: false
+        type: string
+      - description: Requested index for start of resources to be provided in response
+        in: query
+        name: offset
+        required: false
+        type: integer
+      - description: Requested number of resources to be provided in response
+        in: query
+        name: limit
+        required: false
+        type: integer
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-Result-Count:
+              description: Actual number of items returned in the response body
+              type: integer
+            X-Total-Count:
+              description: Total number of items matching criteria
+              type: integer
+          schema:
+            items:
+              $ref: '#/definitions/QueryProductRecommendation'
+            type: array
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      summary: List or find QueryProductRecommendation objects
+      tags:
+      - queryProductRecommendation
+      x-swagger-router-controller: QueryProductRecommendation
+    post:
+      description: This operation creates a QueryProductRecommendation entity.
+      operationId: createQueryProductRecommendation
+      parameters:
+      - description: The QueryProductRecommendation to be created
+        in: body
+        name: queryProductRecommendation
+        required: true
+        schema:
+          $ref: '#/definitions/QueryProductRecommendation_Create'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/QueryProductRecommendation'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      summary: Creates a QueryProductRecommendation
+      tags:
+      - queryProductRecommendation
+      x-swagger-router-controller: QueryProductRecommendation
+  /queryProductRecommendation/{id}:
+    get:
+      description: This operation retrieves a QueryProductRecommendation entity. Attribute
+        selection is enabled for all first level attributes.
+      operationId: retrieveQueryProductRecommendation
+      parameters:
+      - description: Identifier of the QueryProductRecommendation
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Comma-separated properties to provide in response
+        in: query
+        name: fields
+        required: false
+        type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/QueryProductRecommendation'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '405':
+          description: Method Not allowed
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+      summary: Retrieves a QueryProductRecommendation by ID
+      tags:
+      - queryProductRecommendation
+      x-swagger-router-controller: QueryProductRecommendation
+produces:
+- application/json;charset=utf-8
+schemes:
+- https
+swagger: '2.0'
+tags:
+- name: queryProductRecommendation
+- name: notification listeners (client side)
+- name: events subscription
+

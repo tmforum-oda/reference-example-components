@@ -33,6 +33,10 @@ component:
         allowMethods: "GET, POST"
         maxAge: 36000
     template: ""
+  MCPServer:
+    enabled: true
+  dependentAPIs:
+    enabled: false
 
 security:
   canvasSystemRole: canvasRole
@@ -48,6 +52,14 @@ api:
   image: "akumartmf/productinventoryapi:0.1"
   versionLabel: productinventoryapi-0.1
   port: 8637
+
+mcp:
+  image: "akumartmf/productinventorymcp:0.1"
+  versionLabel: productinventorymcp-0.1
+  port: 8080
+  logLevel: INFO
+  requestTimeoutSeconds: 30
+  verifySsl: false
 
 metrics:
   image: "akumartmf/productinventorymetrics:0.1"
