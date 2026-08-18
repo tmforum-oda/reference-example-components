@@ -59,7 +59,7 @@
             "properties": {
               "name": {
                 "type": "string",
-                "enum": ["productcatalogmcp", "agenta2a"]
+                "enum": ["productcatalogmcp", "productcataloga2a"]
               },
               "apiType": {
                 "type": "string",
@@ -82,7 +82,7 @@
               {
                 "if": {
                   "properties": {
-                    "name": { "const": "agenta2a" }
+                    "name": { "const": "productcataloga2a" }
                   }
                 },
                 "then": {

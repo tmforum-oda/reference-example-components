@@ -2,6 +2,14 @@
 const Service = require('./Service');
 const { validateServiceSpecificationHref } = require('../utils/ruleUtils');
 
+// Service.serve may reject with an already-normalized { error, code } response.
+// Preserve it so a database not-found remains HTTP 404 instead of being replaced
+// by the historical generic HTTP 405 fallback.
+const normalizeOperationError = (error) => {
+  if (error?.code !== undefined && error?.error !== undefined) return error;
+  return Service.rejectResponse(error);
+};
+
 const createService = (args, context) => new Promise(async (resolve) => {
   context.classname   = 'Service';
   context.operationId = 'createService';
@@ -10,8 +18,7 @@ const createService = (args, context) => new Promise(async (resolve) => {
     if (args.body) await validateServiceSpecificationHref(args.body);
     resolve(await Service.serve(args, context));
   } catch (e) {
-    if (e?.code !== undefined && e?.error !== undefined) resolve(e);
-    else resolve(Service.rejectResponse(e));
+    resolve(normalizeOperationError(e));
   }
 });
 
@@ -22,7 +29,7 @@ const listService = (args, context) => new Promise(async (resolve) => {
   try {
     resolve(await Service.serve(args, context));
   } catch (e) {
-    resolve(Service.rejectResponse(e.message || 'Invalid input', e.status || 405));
+    resolve(normalizeOperationError(e));
   }
 });
 
@@ -33,7 +40,7 @@ const retrieveService = (args, context) => new Promise(async (resolve) => {
   try {
     resolve(await Service.serve(args, context));
   } catch (e) {
-    resolve(Service.rejectResponse(e.message || 'Invalid input', e.status || 405));
+    resolve(normalizeOperationError(e));
   }
 });
 
@@ -44,7 +51,7 @@ const patchService = (args, context) => new Promise(async (resolve) => {
   try {
     resolve(await Service.serve(args, context));
   } catch (e) {
-    resolve(Service.rejectResponse(e.message || 'Invalid input', e.status || 405));
+    resolve(normalizeOperationError(e));
   }
 });
 
@@ -55,7 +62,7 @@ const deleteService = (args, context) => new Promise(async (resolve) => {
   try {
     resolve(await Service.serve(args, context));
   } catch (e) {
-    resolve(Service.rejectResponse(e.message || 'Invalid input', e.status || 405));
+    resolve(normalizeOperationError(e));
   }
 });
 

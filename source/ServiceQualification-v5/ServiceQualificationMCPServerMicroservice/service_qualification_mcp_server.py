@@ -4,7 +4,7 @@ import argparse
 import logging
 import os
 from contextlib import asynccontextmanager
-from typing import Any
+from typing import Any, Literal
 
 import uvicorn
 from mcp.server.fastmcp import FastMCP
@@ -15,7 +15,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
 
-from service_qualification_api import ServiceQualificationAPI
+from service_qualification_api import ServiceQualificationAPI, ServiceQualificationAPIError
 
 logging.basicConfig(level=getattr(logging, os.getenv("LOG_LEVEL", "INFO").upper(), logging.INFO), format="%(asctime)s %(levelname)s %(name)s %(message)s")
 LOGGER = logging.getLogger("service-qualification-mcp")
@@ -35,14 +35,19 @@ class QueryServiceQualificationFVO(BaseModel):
     search_criteria: dict[str, Any] = Field(alias="searchCriteria")
 
 
-async def _get(resource: str, resource_id: str | None, fields: str | None, offset: int | None, limit: int | None, filter: dict[str, Any] | None) -> Any:
-    return await api.get(resource, resource_id, fields=fields, offset=offset, limit=limit, filter=filter)
+async def _get(resource: str, resource_id: str | None, external_id: str | None, state: str | None, offset: int | None, limit: int | None) -> Any:
+    try:
+        return await api.get(resource, resource_id, external_id=external_id, state=state, offset=offset, limit=limit)
+    except ServiceQualificationAPIError as error:
+        if error.status_code == 404:
+            return {"error": {"status": 404, "detail": "No service qualification was found for the supplied API-generated qualification_id."}}
+        raise
 
 
 @mcp.tool()
-async def check_service_qualification_get(qualification_id: str | None = None, fields: str | None = None, offset: int | None = None, limit: int | None = None, filter: dict[str, Any] | None = None) -> Any:
-    """List check qualifications or retrieve one by ID."""
-    return await _get("checkServiceQualification", qualification_id, fields, offset, limit, filter)
+async def check_service_qualification_get(qualification_id: str | None = None, external_id: str | None = None, state: Literal["acknowledged", "rejected", "inProgress", "cancelled", "done", "terminatedWithError"] | None = None, offset: int | None = None, limit: int | None = None) -> Any:
+    """List check qualifications or retrieve one by ID. Use external_id for stable workshop identifiers stored in externalIdentifier.id. Omit state to retrieve every state; never use all or any. Complete records are returned."""
+    return await _get("checkServiceQualification", qualification_id, external_id, state, offset, limit)
 
 
 @mcp.tool()
@@ -64,9 +69,9 @@ async def check_service_qualification_delete(qualification_id: str) -> Any:
 
 
 @mcp.tool()
-async def query_service_qualification_get(qualification_id: str | None = None, fields: str | None = None, offset: int | None = None, limit: int | None = None, filter: dict[str, Any] | None = None) -> Any:
-    """List query qualifications or retrieve one by ID."""
-    return await _get("queryServiceQualification", qualification_id, fields, offset, limit, filter)
+async def query_service_qualification_get(qualification_id: str | None = None, external_id: str | None = None, state: Literal["acknowledged", "rejected", "inProgress", "cancelled", "done", "terminatedWithError"] | None = None, offset: int | None = None, limit: int | None = None) -> Any:
+    """List query qualifications or retrieve one by ID. Use external_id for stable workshop identifiers stored in externalIdentifier.id. Omit state to retrieve every state; never use all or any. Complete records are returned."""
+    return await _get("queryServiceQualification", qualification_id, external_id, state, offset, limit)
 
 
 @mcp.tool()

@@ -50,13 +50,13 @@ image:
   pullPolicy: Always
 
 api:
-  image: "akumartmf/serviceinventoryapiv5:0.1"
-  versionLabel: serviceinventoryapiv5-0.1
+  image: "akumartmf/serviceinventoryapiv5:0.2"
+  versionLabel: serviceinventoryapiv5-0.2
   port: 8080
 
 mcp:
-  image: "akumartmf/serviceinventorymcp:0.1"
-  versionLabel: serviceinventorymcp-0.1
+  image: "akumartmf/serviceinventorymcp:0.4"
+  versionLabel: serviceinventorymcp-0.4
   port: 8080
   logLevel: INFO
   requestTimeoutSeconds: 30

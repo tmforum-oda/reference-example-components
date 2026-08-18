@@ -58,11 +58,15 @@ spec:
     {{- end }}
 
     dependentAPIs:
+    {{- if .Values.component.dependentAPIs.enabled }}
     - name: service-catalog-management-api
       id: TMF633
       apiType: openapi
       specification:
       - url: "https://tmf-open-api-table-documents.s3.eu-west-1.amazonaws.com/OpenApiTable/TMF633_Service_Catalog/4.0.0/swagger/TMF633_Service_Catalog_Management_API_v4.0.0_swagger.json"
+    {{- else }}
+      []
+    {{- end }}
 
   eventNotification:
     publishedEvents: []

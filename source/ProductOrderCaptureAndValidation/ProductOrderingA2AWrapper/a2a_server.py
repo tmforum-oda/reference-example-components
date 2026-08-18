@@ -36,6 +36,13 @@ CONTRACTS = {
 app = FastAPI(title=CONTRACTS[MODE]["name"], version="0.1.0")
 
 
+class DependencyResultError(RuntimeError):
+    def __init__(self, detail: str, status: int | None = None) -> None:
+        super().__init__(detail)
+        self.detail = detail
+        self.status = status
+
+
 def _prefix(path: str) -> str:
     return f"/{COMPONENT_NAME}/v1/agent{path}" if COMPONENT_NAME else f"/v1/agent{path}"
 
@@ -71,7 +78,7 @@ def select_tool(mode: str, query: str, available: set[str]) -> tuple[str, dict[s
         if any(word in q for word in ("create", "update", "delete", "cancel ", "cancel order")) and "status" not in q:
             raise ValueError("This A2A skill is status-focused and does not invoke Product Ordering mutation tools")
         tool = "cancel_product_order_get" if "cancel" in q else "product_order_get"
-        args = {"filter": {"externalId": stable_id.group(0).upper()}} if stable_id else {}
+        args = {"external_id": stable_id.group(0).upper()} if stable_id else {}
     else:
         family = "check" if "check" in q else "query"
         is_create = any(word in q for word in ("create", "submit", "request qualification"))
@@ -82,7 +89,7 @@ def select_tool(mode: str, query: str, available: set[str]) -> tuple[str, dict[s
                 raise ValueError("A qualification create request must include one JSON payload")
             args = {"qualification_data": data}
         else:
-            args = {"filter": {"externalId": stable_id.group(0).upper()}} if stable_id else {}
+            args = {"external_id": stable_id.group(0).upper()} if stable_id else {}
     if tool not in available or tool not in CONTRACTS[mode]["allowed"]:
         raise ValueError(f"Required bounded capability is unavailable: {tool}")
     return tool, args
@@ -102,6 +109,24 @@ def _normalize_result(result: Any) -> Any:
     return values[0] if len(values) == 1 else values
 
 
+def _raise_for_structured_error(result: Any) -> None:
+    if not isinstance(result, dict):
+        return
+    candidate = result.get("result") if isinstance(result.get("result"), dict) else result
+    if "error" not in candidate:
+        return
+    error = candidate["error"]
+    if isinstance(error, dict):
+        raw_status = error.get("status") or error.get("statusCode")
+        try:
+            status = int(raw_status) if raw_status is not None else None
+        except (TypeError, ValueError):
+            status = None
+        detail = error.get("detail") or error.get("message") or str(error)
+        raise DependencyResultError(str(detail), status)
+    raise DependencyResultError(str(error))
+
+
 async def invoke(query: str) -> tuple[str, dict[str, Any], Any]:
     if not MCP_ENDPOINT:
         raise RuntimeError("MCP_ENDPOINT is not configured")
@@ -114,8 +139,12 @@ async def invoke(query: str) -> tuple[str, dict[str, Any], Any]:
             tool, arguments = select_tool(MODE, query, available)
             result = await session.call_tool(tool, arguments)
             if getattr(result, "isError", False):
-                raise RuntimeError(f"MCP tool returned an error: {_normalize_result(result)}")
-            return tool, arguments, _normalize_result(result)
+                raise DependencyResultError(
+                    f"MCP tool returned an error: {_normalize_result(result)}"
+                )
+            normalized = _normalize_result(result)
+            _raise_for_structured_error(normalized)
+            return tool, arguments, normalized
 
 
 def _card(request: Request) -> dict[str, Any]:
@@ -135,12 +164,19 @@ async def agent_card(request: Request) -> dict[str, Any]:
     return _card(request)
 
 
+@app.post(_prefix(""))
 @app.post(_prefix("/a2a"))
 async def a2a(payload: dict[str, Any]) -> JSONResponse:
     try:
         request_id, query, is_rpc = _extract_text(payload)
         tool, arguments, result = await invoke(query)
         task = {"id": str(request_id), "status": {"state": "completed"}, "artifacts": [{"name": "answer", "parts": [{"kind": "text", "text": json.dumps(result, indent=2, default=str)}], "metadata": {"grounding": "tool-results", "dependency": MCP_ENDPOINT, "tool": tool, "arguments": arguments}}], "metadata": {"toolCallsUsed": 1, "maximumToolCalls": 1}}
+        return JSONResponse({"jsonrpc": "2.0", "id": request_id, "result": task} if is_rpc else task)
+    except DependencyResultError as exc:
+        request_id = locals().get("request_id", payload.get("id", "unknown"))
+        is_rpc = locals().get("is_rpc", payload.get("jsonrpc") == "2.0")
+        state = "not-found" if exc.status == 404 else "failed"
+        task = {"id": str(request_id), "status": {"state": state}, "artifacts": [{"name": "error", "parts": [{"kind": "text", "text": exc.detail}]}], "metadata": {"errors": [{"status": exc.status, "message": exc.detail}], "toolCallsUsed": 1, "maximumToolCalls": 1}}
         return JSONResponse({"jsonrpc": "2.0", "id": request_id, "result": task} if is_rpc else task)
     except ValueError as exc:
         return JSONResponse({"jsonrpc": "2.0", "id": payload.get("id"), "error": {"code": -32602, "message": str(exc)}} if payload.get("jsonrpc") else {"id": str(payload.get("id", "unknown")), "status": {"state": "failed"}, "artifacts": [], "metadata": {"error": str(exc)}}, status_code=400)

@@ -49,13 +49,13 @@ image:
   pullPolicy: Always
 
 api:
-  image: "akumartmf/productinventoryapi:0.1"
-  versionLabel: productinventoryapi-0.1
+  image: "akumartmf/productinventoryapi:0.2"
+  versionLabel: productinventoryapi-0.2
   port: 8637
 
 mcp:
-  image: "akumartmf/productinventorymcp:0.1"
-  versionLabel: productinventorymcp-0.1
+  image: "akumartmf/productinventorymcp:0.2"
+  versionLabel: productinventorymcp-0.2
   port: 8080
   logLevel: INFO
   requestTimeoutSeconds: 30

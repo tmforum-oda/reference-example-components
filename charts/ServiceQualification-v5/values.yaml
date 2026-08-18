@@ -37,6 +37,9 @@ component:
         allowMethods: "GET, POST"
         maxAge: 36000
     template: ""
+  dependentAPIs:
+    enabled: false
+    rejectUnauthorizedCertificates: false
 
 security:
   canvasSystemRole: canvasRole
@@ -60,16 +63,16 @@ api:
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 
 mcp:
-  image: akumartmf/servicequalificationmcp:0.1
-  versionLabel: servicequalificationmcp-0.1
+  image: akumartmf/servicequalificationmcp:0.3
+  versionLabel: servicequalificationmcp-0.3
   port: 8080
   logLevel: INFO
   requestTimeoutSeconds: 30
   verifySsl: true
 
 a2a:
-  image: akumartmf/servicequalificationa2a:0.1
-  versionLabel: servicequalificationa2a-0.1
+  image: akumartmf/servicequalificationa2a:0.3
+  versionLabel: servicequalificationa2a-0.3
   port: 8000
   logLevel: INFO
 

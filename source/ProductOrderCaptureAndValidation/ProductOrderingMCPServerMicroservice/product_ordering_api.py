@@ -13,6 +13,10 @@ def _env_bool(name: str, default: bool) -> bool:
 class ProductOrderingAPIError(RuntimeError):
     """Safe representation of a downstream API failure."""
 
+    def __init__(self, message: str, status_code: int | None = None) -> None:
+        super().__init__(message)
+        self.status_code = status_code
+
 
 class ProductOrderingAPI:
     def __init__(self, base_url: str | None = None, *, client: httpx.AsyncClient | None = None) -> None:
@@ -31,7 +35,10 @@ class ProductOrderingAPI:
             response.raise_for_status()
         except httpx.HTTPStatusError as exc:
             detail = exc.response.text.strip()[:500] or exc.response.reason_phrase
-            raise ProductOrderingAPIError(f"Product Ordering API returned HTTP {exc.response.status_code}: {detail}") from exc
+            raise ProductOrderingAPIError(
+                f"Product Ordering API returned HTTP {exc.response.status_code}: {detail}",
+                exc.response.status_code,
+            ) from exc
         except httpx.HTTPError as exc:
             raise ProductOrderingAPIError(f"Product Ordering API request failed: {type(exc).__name__}") from exc
         if response.status_code == 204 or not response.content:
@@ -41,11 +48,32 @@ class ProductOrderingAPI:
         except ValueError as exc:
             raise ProductOrderingAPIError("Product Ordering API returned a non-JSON response") from exc
 
-    async def get(self, resource: str, resource_id: str | None = None, **query: Any) -> Any:
-        params = {key: value for key, value in query.items() if value is not None}
-        extra_filter = params.pop("filter", None)
-        if extra_filter:
-            params.update({key: value for key, value in extra_filter.items() if value is not None})
+    async def get(
+        self,
+        resource: str,
+        resource_id: str | None = None,
+        *,
+        external_id: str | None = None,
+        state: str | None = None,
+        offset: int | None = None,
+        limit: int | None = None,
+    ) -> Any:
+        if resource_id and any(
+            value is not None
+            for value in (external_id, state, offset, limit)
+        ):
+            raise ProductOrderingAPIError(
+                "order ID cannot be combined with list filters or pagination"
+            )
+        params: dict[str, Any] = {}
+        if external_id:
+            params["externalId"] = external_id
+        if state:
+            params["state"] = state
+        if offset is not None:
+            params["offset"] = offset
+        if limit is not None:
+            params["limit"] = limit
         return await self._request("GET", resource, resource_id, params=params or None)
 
     async def create(self, resource: str, data: dict[str, Any]) -> Any:

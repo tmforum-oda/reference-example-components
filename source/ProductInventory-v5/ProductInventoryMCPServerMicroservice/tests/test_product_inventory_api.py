@@ -7,7 +7,7 @@ from product_inventory_api import ProductInventoryAPI, ProductInventoryAPIError
 
 
 @pytest.mark.asyncio
-async def test_get_omits_unset_optional_arguments_and_applies_filter() -> None:
+async def test_get_translates_semantic_inventory_filters() -> None:
     captured: httpx.Request | None = None
 
     async def handler(request: httpx.Request) -> httpx.Response:
@@ -18,12 +18,56 @@ async def test_get_omits_unset_optional_arguments_and_applies_filter() -> None:
     client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
     api = ProductInventoryAPI("https://inventory.test/v5", client=client)
 
-    result = await api.get_product(filter={"externalId": "WS-PROD-1001"})
+    result = await api.get_product(
+        product_serial_number="WS-PROD-1001",
+        customer_id="CUST-1001",
+        status="active",
+    )
 
     assert result == [{"id": "generated-id"}]
     assert captured is not None
     assert captured.url.path == "/v5/product"
-    assert dict(captured.url.params) == {"externalId": "WS-PROD-1001"}
+    assert dict(captured.url.params) == {
+        "productSerialNumber": "WS-PROD-1001",
+        "productCharacteristic.name": "customerId",
+        "productCharacteristic.value": "CUST-1001",
+        "status": "active",
+    }
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_explicit_semantic_filter_overrides_advanced_filter() -> None:
+    captured: httpx.Request | None = None
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal captured
+        captured = request
+        return httpx.Response(200, json=[])
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    api = ProductInventoryAPI("https://inventory.test/v5", client=client)
+
+    await api.get_product(
+        status="active",
+        filter={"status": "terminated", "name": "Fiber"},
+    )
+
+    assert captured is not None
+    assert dict(captured.url.params) == {"status": "active", "name": "Fiber"}
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_product_id_cannot_be_combined_with_list_filters() -> None:
+    async def handler(_: httpx.Request) -> httpx.Response:
+        raise AssertionError("No request should be made")
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    api = ProductInventoryAPI("https://inventory.test/v5", client=client)
+
+    with pytest.raises(ProductInventoryAPIError, match="cannot be combined"):
+        await api.get_product("api-id", status="active")
     await client.aclose()
 
 

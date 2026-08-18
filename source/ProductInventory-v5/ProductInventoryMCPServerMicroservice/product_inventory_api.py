@@ -96,21 +96,45 @@ class ProductInventoryAPI:
         self,
         product_id: str | None = None,
         *,
-        fields: str | None = None,
+        product_serial_number: str | None = None,
+        customer_id: str | None = None,
+        status: str | None = None,
         offset: int | None = None,
         limit: int | None = None,
         filter: dict[str, Any] | None = None,
     ) -> Any:
+        if product_id and any(
+            value is not None
+            for value in (
+                product_serial_number,
+                customer_id,
+                status,
+                offset,
+                limit,
+                filter,
+            )
+        ):
+            raise ProductInventoryAPIError(
+                "product_id cannot be combined with list filters or pagination"
+            )
+
         path = f"/product/{product_id}" if product_id else "/product"
-        params: dict[str, Any] = {}
-        if fields:
-            params["fields"] = fields
+        params: dict[str, Any] = {
+            key: value
+            for key, value in (filter or {}).items()
+            if value is not None
+        }
+        if product_serial_number:
+            params["productSerialNumber"] = product_serial_number
+        if customer_id:
+            params["productCharacteristic.name"] = "customerId"
+            params["productCharacteristic.value"] = customer_id
+        if status:
+            params["status"] = status
         if offset is not None:
             params["offset"] = offset
         if limit is not None:
             params["limit"] = limit
-        if filter:
-            params.update({key: value for key, value in filter.items() if value is not None})
         return await self._request("GET", path, params=params or None)
 
     async def create_product(self, product_data: dict[str, Any]) -> Any:

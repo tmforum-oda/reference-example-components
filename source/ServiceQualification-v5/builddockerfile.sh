@@ -17,6 +17,6 @@ docker buildx build --platform linux/amd64,linux/arm64 \
 docker buildx build --platform linux/amd64,linux/arm64 \
   -f openMetricsMicroservice-dockerfile -t ${NAMESPACE}/servicequalificationmetrics:0.1 --push .
 
-docker buildx build --platform linux/amd64,linux/arm64 -f servicequalification-mcp-dockerfile -t ${NAMESPACE}/servicequalificationmcp:0.1 --push .
+docker buildx build --platform linux/amd64,linux/arm64 -f servicequalification-mcp-dockerfile -t ${NAMESPACE}/servicequalificationmcp:0.3 --push .
 
-docker buildx build --platform linux/amd64,linux/arm64 -f servicequalification-a2a-dockerfile -t ${NAMESPACE}/servicequalificationa2a:0.1 --push .
+docker buildx build --platform linux/amd64,linux/arm64 -f servicequalification-a2a-dockerfile -t ${NAMESPACE}/servicequalificationa2a:0.3 --push .

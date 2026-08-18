@@ -7,7 +7,7 @@ from resource_inventory_api import ResourceInventoryAPI, ResourceInventoryAPIErr
 
 
 @pytest.mark.asyncio
-async def test_get_omits_unset_optional_arguments_and_applies_filter() -> None:
+async def test_get_translates_semantic_resource_filters() -> None:
     captured: httpx.Request | None = None
 
     async def handler(request: httpx.Request) -> httpx.Response:
@@ -18,12 +18,25 @@ async def test_get_omits_unset_optional_arguments_and_applies_filter() -> None:
     client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
     api = ResourceInventoryAPI("https://inventory.test/v5", client=client)
 
-    result = await api.get_resource(filter={"externalId": "WS-RES-1001"})
+    result = await api.get_resource(
+        workshop_id="WS-RES-1001",
+        resource_name="Accelerate Asia Edge Router",
+        resource_type="Router",
+        location_id="WS-LOC-MUM-001",
+        resource_status="available",
+    )
 
     assert result == [{"id": "generated-id"}]
     assert captured is not None
     assert captured.url.path == "/v5/resource"
-    assert dict(captured.url.params) == {"externalId": "WS-RES-1001"}
+    assert dict(captured.url.params) == {
+        "resourceCharacteristic.name": "workshopId",
+        "resourceCharacteristic.value": "WS-RES-1001",
+        "name": "Accelerate Asia Edge Router",
+        "category": "Router",
+        "place.id": "WS-LOC-MUM-001",
+        "resourceStatus": "available",
+    }
     await client.aclose()
 
 
@@ -37,6 +50,19 @@ async def test_retrieve_uses_resource_id_path() -> None:
     api = ResourceInventoryAPI("https://inventory.test/v5", client=client)
 
     assert await api.get_resource("api-id") == {"id": "api-id"}
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_resource_id_cannot_be_combined_with_list_filters() -> None:
+    async def handler(_: httpx.Request) -> httpx.Response:
+        raise AssertionError("No request should be made")
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    api = ResourceInventoryAPI("https://inventory.test/v5", client=client)
+
+    with pytest.raises(ResourceInventoryAPIError, match="cannot be combined"):
+        await api.get_resource("api-id", resource_status="available")
     await client.aclose()
 
 

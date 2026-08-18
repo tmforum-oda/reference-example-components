@@ -3,7 +3,7 @@ import argparse
 import logging
 import os
 from contextlib import asynccontextmanager
-from typing import Any
+from typing import Any, Literal
 import uvicorn
 from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel, ConfigDict, Field
@@ -12,7 +12,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
-from product_ordering_api import ProductOrderingAPI
+from product_ordering_api import ProductOrderingAPI, ProductOrderingAPIError
 
 logging.basicConfig(level=getattr(logging, os.getenv("LOG_LEVEL", "INFO").upper(), logging.INFO), format="%(asctime)s %(levelname)s %(name)s %(message)s")
 LOGGER = logging.getLogger("product-ordering-mcp")
@@ -30,14 +30,19 @@ class CancelProductOrderCreate(BaseModel):
     product_order: dict[str, Any] = Field(alias="productOrder")
 
 
-async def _get(resource: str, resource_id: str | None, fields: str | None, offset: int | None, limit: int | None, filter: dict[str, Any] | None) -> Any:
-    return await api.get(resource, resource_id, fields=fields, offset=offset, limit=limit, filter=filter)
+async def _get(resource: str, resource_id: str | None, external_id: str | None, state: str | None, offset: int | None, limit: int | None) -> Any:
+    try:
+        return await api.get(resource, resource_id, external_id=external_id, state=state, offset=offset, limit=limit)
+    except ProductOrderingAPIError as error:
+        if error.status_code == 404:
+            return {"error": {"status": 404, "detail": "No product-order resource was found for the supplied API-generated ID."}}
+        raise
 
 
 @mcp.tool()
-async def product_order_get(product_order_id: str | None = None, fields: str | None = None, offset: int | None = None, limit: int | None = None, filter: dict[str, Any] | None = None) -> Any:
-    """List product orders or retrieve one by API-generated ID."""
-    return await _get("productOrder", product_order_id, fields, offset, limit, filter)
+async def product_order_get(product_order_id: str | None = None, external_id: str | None = None, state: Literal["acknowledged", "rejected", "pending", "held", "inProgress", "cancelled", "completed", "failed", "partial", "assessingCancellation", "pendingCancellation"] | None = None, offset: int | None = None, limit: int | None = None) -> Any:
+    """List product orders or retrieve one by API-generated ID. Use external_id for stable workshop order IDs such as PO-1001. Omit state to retrieve every state; never use all or any. Complete records are returned."""
+    return await _get("productOrder", product_order_id, external_id, state, offset, limit)
 
 
 @mcp.tool()
@@ -59,9 +64,9 @@ async def product_order_delete(product_order_id: str) -> Any:
 
 
 @mcp.tool()
-async def cancel_product_order_get(cancel_order_id: str | None = None, fields: str | None = None, offset: int | None = None, limit: int | None = None, filter: dict[str, Any] | None = None) -> Any:
-    """List cancellation requests or retrieve one by API-generated ID."""
-    return await _get("cancelProductOrder", cancel_order_id, fields, offset, limit, filter)
+async def cancel_product_order_get(cancel_order_id: str | None = None, external_id: str | None = None, state: Literal["acknowledged", "terminatedWithError", "inProgress", "done"] | None = None, offset: int | None = None, limit: int | None = None) -> Any:
+    """List cancellation requests or retrieve one by API-generated ID. Use external_id for list filtering. Omit state to retrieve every state; never use all or any. Complete records are returned."""
+    return await _get("cancelProductOrder", cancel_order_id, external_id, state, offset, limit)
 
 
 @mcp.tool()

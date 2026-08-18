@@ -15,7 +15,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
 
-from product_inventory_api import ProductInventoryAPI
+from product_inventory_api import ProductInventoryAPI, ProductInventoryAPIError
 
 
 logging.basicConfig(
@@ -43,27 +43,56 @@ class ProductFVO(BaseModel):
 @mcp.tool()
 async def product_get(
     product_id: str | None = None,
-    fields: str | None = None,
+    product_serial_number: str | None = None,
+    customer_id: str | None = None,
+    status: str | None = None,
     offset: int | None = None,
     limit: int | None = None,
     filter: dict[str, Any] | None = None,
 ) -> Any:
-    """List products or retrieve one product from the TMF637 Product Inventory.
+    """Find installed products and explain their Product Inventory lifecycle state.
+
+    Use this tool to list installed products, find products belonging to a customer,
+    find products by lifecycle status, or retrieve one installed product. Workshop
+    identifiers such as WS-PROD-1001 are product serial numbers, not API IDs.
 
     Args:
-        product_id: Optional API-generated product ID. Omit it to list products.
-        fields: Optional comma-separated response fields.
+        product_id: Optional API-generated UUID for direct retrieval. Do not use a
+            product serial number or workshop ID here. When supplied, omit all list
+            filters and pagination arguments.
+        product_serial_number: Optional stable product serial number, such as
+            WS-PROD-1001, used to find an installed product through the list API.
+        customer_id: Optional customer identifier. The server translates this into
+            the TMF637 nested productCharacteristic customer filter.
+        status: Optional Product Inventory lifecycle status, such as active,
+            suspended, or terminated.
         offset: Optional pagination offset.
         limit: Optional maximum number of products to return.
-        filter: Optional flat TMF filter criteria, such as status, name, or external ID.
+        filter: Optional advanced flat TMF query criteria. Prefer the explicit
+            product_serial_number, customer_id, and status arguments when applicable.
     """
-    return await api.get_product(
-        product_id,
-        fields=fields,
-        offset=offset,
-        limit=limit,
-        filter=filter,
-    )
+    try:
+        return await api.get_product(
+            product_id,
+            product_serial_number=product_serial_number,
+            customer_id=customer_id,
+            status=status,
+            offset=offset,
+            limit=limit,
+            filter=filter,
+        )
+    except ProductInventoryAPIError as error:
+        if error.status_code == 404:
+            return {
+                "error": {
+                    "status": 404,
+                    "detail": (
+                        "No installed product was found for the supplied "
+                        "API-generated product_id."
+                    ),
+                }
+            }
+        raise
 
 
 @mcp.tool()

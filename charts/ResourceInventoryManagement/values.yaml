@@ -59,12 +59,12 @@ api:
       enabled: true
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 mcp:
-  image: akumartmf/resourceinventorymcp:0.1
-  versionLabel: resourceinventorymcp-0.1
+  image: akumartmf/resourceinventorymcp:0.5
+  versionLabel: resourceinventorymcp-0.5
   port: 8080
   logLevel: INFO
   requestTimeoutSeconds: 30
-  verifySsl: true
+  verifySsl: false
 metrics:
   image: akumartmf/resourceinventorymetrics:0.1
 canvasinfo:

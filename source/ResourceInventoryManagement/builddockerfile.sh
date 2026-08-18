@@ -7,4 +7,4 @@ docker buildx build -t "akumartmf/resourceinventoryinitialization:0.1" --platfor
 
 docker buildx build -t "akumartmf/resourceinventorymetrics:0.1" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
 
-docker buildx build -t "akumartmf/resourceinventorymcp:0.1" --platform "linux/amd64,linux/arm64" -f resourceinventory-mcp-dockerfile . --push
+docker buildx build -t "akumartmf/resourceinventorymcp:0.5" --platform "linux/amd64,linux/arm64" -f resourceinventory-mcp-dockerfile . --push

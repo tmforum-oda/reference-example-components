@@ -96,21 +96,47 @@ class ResourceInventoryAPI:
         self,
         resource_id: str | None = None,
         *,
-        fields: str | None = None,
+        workshop_id: str | None = None,
+        resource_name: str | None = None,
+        resource_type: str | None = None,
+        location_id: str | None = None,
+        resource_status: str | None = None,
         offset: int | None = None,
         limit: int | None = None,
-        filter: dict[str, Any] | None = None,
     ) -> Any:
+        if resource_id and any(
+            value is not None
+            for value in (
+                workshop_id,
+                resource_name,
+                resource_type,
+                location_id,
+                resource_status,
+                offset,
+                limit,
+            )
+        ):
+            raise ResourceInventoryAPIError(
+                "resource_id cannot be combined with list filters or pagination"
+            )
+
         path = f"/resource/{resource_id}" if resource_id else "/resource"
         params: dict[str, Any] = {}
-        if fields:
-            params["fields"] = fields
+        if workshop_id:
+            params["resourceCharacteristic.name"] = "workshopId"
+            params["resourceCharacteristic.value"] = workshop_id
+        if resource_name:
+            params["name"] = resource_name
+        if resource_type:
+            params["category"] = resource_type
+        if location_id:
+            params["place.id"] = location_id
+        if resource_status:
+            params["resourceStatus"] = resource_status
         if offset is not None:
             params["offset"] = offset
         if limit is not None:
             params["limit"] = limit
-        if filter:
-            params.update({key: value for key, value in filter.items() if value is not None})
         return await self._request("GET", path, params=params or None)
 
     async def create_resource(self, resource_data: dict[str, Any]) -> Any:

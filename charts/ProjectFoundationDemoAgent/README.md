@@ -14,7 +14,7 @@ The demo agent is an AI-native ODA component that:
 
 It has the following dependent APIs:
 * The *optional* dependency on a **productcatalogmcp** MCP API — discovered at runtime from the Canvas, allowing the agent to use the Product Catalog as a tool.
-* The *optional* dependency on an **agenta2a** A2A API — discovered at runtime from the Canvas, enabling agent-to-agent communication.
+* The *optional* dependency on a **productcataloga2a** A2A API — discovered at runtime from the Canvas, enabling agent-to-agent communication.
 
 ### Management function
 

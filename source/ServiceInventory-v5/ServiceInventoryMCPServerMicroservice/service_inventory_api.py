@@ -16,6 +16,10 @@ def _env_bool(name: str, default: bool) -> bool:
 class ServiceInventoryAPIError(RuntimeError):
     """Safe representation of a downstream API failure."""
 
+    def __init__(self, message: str, status_code: int | None = None) -> None:
+        super().__init__(message)
+        self.status_code = status_code
+
 
 class ServiceInventoryAPI:
     """Own the HTTP connection pool used by the Service Inventory MCP server."""
@@ -40,7 +44,10 @@ class ServiceInventoryAPI:
             response.raise_for_status()
         except httpx.HTTPStatusError as exc:
             detail = exc.response.text.strip()[:500] or exc.response.reason_phrase
-            raise ServiceInventoryAPIError(f"Service Inventory API returned HTTP {exc.response.status_code}: {detail}") from exc
+            raise ServiceInventoryAPIError(
+                f"Service Inventory API returned HTTP {exc.response.status_code}: {detail}",
+                exc.response.status_code,
+            ) from exc
         except httpx.HTTPError as exc:
             raise ServiceInventoryAPIError(f"Service Inventory API request failed: {type(exc).__name__}") from exc
         if response.status_code == 204 or not response.content:
@@ -50,12 +57,48 @@ class ServiceInventoryAPI:
         except ValueError as exc:
             raise ServiceInventoryAPIError("Service Inventory API returned a non-JSON response") from exc
 
-    async def get_service(self, service_id: str | None = None, **query: Any) -> Any:
+    async def get_service(
+        self,
+        service_id: str | None = None,
+        *,
+        workshop_id: str | None = None,
+        customer_id: str | None = None,
+        state: str | None = None,
+        offset: int | None = None,
+        limit: int | None = None,
+    ) -> Any:
+        if service_id and any(
+            value is not None
+            for value in (workshop_id, customer_id, state, offset, limit)
+        ):
+            raise ServiceInventoryAPIError(
+                "service_id cannot be combined with list filters or pagination"
+            )
+
         path = f"/service/{service_id}" if service_id else "/service"
-        params = {key: value for key, value in query.items() if value is not None}
-        extra_filter = params.pop("filter", None)
-        if extra_filter:
-            params.update({key: value for key, value in extra_filter.items() if value is not None})
+        params: dict[str, Any] = {}
+        characteristic_name: str | None = None
+        characteristic_value: str | None = None
+        if workshop_id:
+            characteristic_name = "workshopId"
+            characteristic_value = workshop_id
+        if customer_id:
+            if characteristic_name:
+                raise ServiceInventoryAPIError(
+                    "workshop_id and customer_id cannot be combined because the "
+                    "deployed TMF638 API supports one characteristic filter at a time"
+                )
+            characteristic_name = "customerId"
+            characteristic_value = customer_id
+        if characteristic_name:
+            params["serviceCharacteristic.name"] = characteristic_name
+            params["serviceCharacteristic.value"] = characteristic_value
+        if state:
+            params["state"] = state
+        if offset is not None:
+            params["offset"] = offset
+        if limit is not None:
+            params["limit"] = limit
         return await self._request("GET", path, params=params or None)
 
     async def create_service(self, data: dict[str, Any]) -> Any:

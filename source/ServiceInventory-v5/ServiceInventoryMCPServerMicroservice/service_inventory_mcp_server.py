@@ -4,7 +4,7 @@ import argparse
 import logging
 import os
 from contextlib import asynccontextmanager
-from typing import Any
+from typing import Any, Literal
 
 import uvicorn
 from mcp.server.fastmcp import FastMCP
@@ -15,7 +15,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
 
-from service_inventory_api import ServiceInventoryAPI
+from service_inventory_api import ServiceInventoryAPI, ServiceInventoryAPIError
 
 logging.basicConfig(level=getattr(logging, os.getenv("LOG_LEVEL", "INFO").upper(), logging.INFO), format="%(asctime)s %(levelname)s %(name)s %(message)s")
 LOGGER = logging.getLogger("service-inventory-mcp")
@@ -33,9 +33,62 @@ class ServiceFVO(BaseModel):
 
 
 @mcp.tool()
-async def service_get(service_id: str | None = None, fields: str | None = None, offset: int | None = None, limit: int | None = None, filter: dict[str, Any] | None = None) -> Any:
-    """List services or retrieve one service. Omit service_id to list all matching services."""
-    return await api.get_service(service_id, fields=fields, offset=offset, limit=limit, filter=filter)
+async def service_get(
+    service_id: str | None = None,
+    workshop_id: str | None = None,
+    customer_id: str | None = None,
+    state: Literal[
+        "feasibilityChecked",
+        "designed",
+        "reserved",
+        "inactive",
+        "active",
+        "terminated",
+        "suspended",
+    ] | None = None,
+    offset: int | None = None,
+    limit: int | None = None,
+) -> Any:
+    """Find service instances and explain their Service Inventory lifecycle state.
+
+    Use this tool to list services, find services belonging to a customer, filter
+    services by lifecycle state, find a workshop service by its stable workshop ID,
+    or retrieve one service using its API-generated UUID. Complete service records
+    are returned so grounded responses can include state, enabled status, customer,
+    characteristics, and service specification details.
+
+    Args:
+        service_id: Optional API-generated UUID for direct retrieval. Do not use a
+            workshop ID here. When supplied, omit list filters and pagination.
+        workshop_id: Optional stable workshop identifier, such as WS-SVC-1001.
+        customer_id: Optional customer identifier. The server translates this into
+            the TMF638 nested serviceCharacteristic customer filter.
+        state: Optional TMF638 lifecycle state. Omit it to retrieve every state;
+            never use values such as all or any.
+        offset: Optional pagination offset.
+        limit: Optional maximum number of services to return.
+    """
+    try:
+        return await api.get_service(
+            service_id,
+            workshop_id=workshop_id,
+            customer_id=customer_id,
+            state=state,
+            offset=offset,
+            limit=limit,
+        )
+    except ServiceInventoryAPIError as error:
+        if error.status_code == 404:
+            return {
+                "error": {
+                    "status": 404,
+                    "detail": (
+                        "No service instance was found for the supplied "
+                        "API-generated service_id."
+                    ),
+                }
+            }
+        raise
 
 
 @mcp.tool()
