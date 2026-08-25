@@ -1,0 +1,6 @@
+FROM node:10.19
+COPY faultmanagementInitializationMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY faultmanagementInitializationMicroservice/implementation ./
+CMD ["node", "initialization.js"]
