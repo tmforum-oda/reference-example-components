@@ -1,0 +1,7 @@
+FROM node:16
+COPY serviceOrderManagementMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY serviceOrderManagementMicroservice/implementation ./
+EXPOSE 8080
+CMD ["node", "index.js"]
