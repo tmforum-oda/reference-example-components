@@ -36,8 +36,6 @@ component:
         allowMethods: "GET, POST"
         maxAge: 36000
     template: ""
-  MCPServer:
-    enabled: false
 
 security:
   canvasSystemRole: canvasRole
