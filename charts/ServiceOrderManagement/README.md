@@ -2,6 +2,12 @@
 
 A reference example implementation of [TMFC007 - Service Order Management](https://www.tmforum.org/oda/open-digital-architecture/oda-component-directory/).
 
+## Architecture
+
+![ServiceOrderManagement component architecture](ServiceOrderManagement-architecture.svg)
+
+The diagram is generated from the Helm chart with the optional features switched on (the MCP server, the dependent APIs and the TMF672 security API). The dependent APIs are on the left and the exposed APIs are on the right, colour-coded by function (core, management, security). The microservices deployed by the chart are shown in the box.
+
 ## Functionality
 
 ### Core function

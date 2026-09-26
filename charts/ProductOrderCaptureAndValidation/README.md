@@ -4,6 +4,12 @@ This is an example implementation of a [TM Forum Product Order Capture And Valid
 
 This folder is the Helm Chart package which you distribute or host in a Helm Chart Repository. This README describes the functionality of the component. The source code is available at [../source/ProductOrderCaptureAndValidation](/source/ProductOrderCaptureAndValidation/). The source file readme contains all the implementation documentation.
 
+## Architecture
+
+![ProductOrderCaptureAndValidation component architecture](ProductOrderCaptureAndValidation-architecture.svg)
+
+The diagram is generated from the Helm chart with the optional features switched on (the dependent APIs and the TMF672 security API). The dependent APIs are on the left and the exposed APIs are on the right, colour-coded by function (core, management, security). The microservices deployed by the chart are shown in the box.
+
 ## Functionality
 
 ### Core function
