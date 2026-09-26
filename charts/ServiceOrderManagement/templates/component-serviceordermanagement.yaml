@@ -68,24 +68,6 @@ spec:
       []
     {{- end }}
 
-  eventNotification:
-    publishedEvents:
-    - hub: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/serviceOrdering/v4/hub
-      name: TMF641 Service Ordering Management API
-      port: 80
-      resources:
-      - serviceOrderCreateEvent
-      - serviceOrderStateChangeEvent
-      - serviceOrderDeleteEvent
-      - serviceOrderAttributeValueChangeEvent
-      - serviceOrderInformationRequiredEvent
-      - serviceOrderMilestoneEvent
-      - serviceOrderJeopardyEvent
-      - cancelServiceOrderCreateEvent
-      - cancelServiceOrderStateChangeEvent
-      - cancelServiceOrderInformationRequiredEvent
-    subscribedEvents: []
-
   managementFunction:
     exposedAPIs:
     - name: metrics
