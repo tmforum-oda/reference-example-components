@@ -4,6 +4,12 @@ This is an example implementation of a [TM Forum Product Catalog Management](htt
 
 This folder is the Helm Chart package which you distribute or host in a Helm Chart Repository. This README describes the functionality of the Product Catalog component. The source code is available at [../source/ProductCatalog](/source/ProductCatalog/). The source file readme contains all the implementation documentation.
 
+## Architecture
+
+![ProductCatalog component architecture](ProductCatalog-architecture.svg)
+
+The diagram is generated from the Helm chart with the optional features switched on (the MCP server, the dependent APIs and the TMF672 security API). The dependent APIs are on the left and the exposed APIs are on the right, colour-coded by function (core, management, security). The microservices deployed by the chart are shown in the box.
+
 ## Functionality
 
 ### Core function

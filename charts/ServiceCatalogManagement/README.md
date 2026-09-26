@@ -4,6 +4,12 @@ This is an example implementation of a [TM Forum Service Catalog Management](htt
 
 This folder is the Helm Chart package which you distribute or host in a Helm Chart Repository. The source code is available at [../../source/ServiceCatalogManagement](/source/ServiceCatalogManagement/). The source README contains all the implementation documentation.
 
+## Architecture
+
+![ServiceCatalogManagement component architecture](ServiceCatalogManagement-architecture.svg)
+
+The diagram is generated from the Helm chart with the optional features switched on (the MCP server, the dependent APIs, the process flow API and the TMF672 security API). The dependent APIs are on the left and the exposed APIs are on the right, colour-coded by function (core, management, security). The microservices deployed by the chart are shown in the box.
+
 ## Functionality
 
 ### Core function
