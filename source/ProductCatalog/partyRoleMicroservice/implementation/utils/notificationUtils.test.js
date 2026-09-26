@@ -206,3 +206,65 @@ describe('notificationUtils.register – idempotency', () => {
     expect(Object.keys(capturedDoc).every(k => !k.startsWith('_'))).toBe(true);
   });
 });
+
+describe('notificationUtils.register – duplicate lookup filter', () => {
+  const operationsUtils = require('../utils/operationsUtils');
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  /** Run register for the given payload and return the filter passed to findOne */
+  async function captureDuplicateQuery(payload) {
+    const req = makeReq(payload);
+    swaggerUtils.getPayload.mockResolvedValue(req._mockPayload);
+
+    const collection = makeMockCollection({ existingDoc: null });
+    mongoUtils.connect.mockResolvedValue(makeMockDb(collection));
+
+    await new Promise(resolve => {
+      sendDoc.mockImplementation(() => resolve());
+      notificationUtils.register(req, makeRes(), () => {});
+    });
+
+    expect(collection.findOne).toHaveBeenCalledTimes(1);
+    return collection.findOne.mock.calls[0][0];
+  }
+
+  it('matches missing, null or empty query when the request omits query', async () => {
+    const filter = await captureDuplicateQuery({ callback: callbackUrl });
+
+    expect(filter.query).toEqual({ $in: [null, ''] });
+  });
+
+  it('matches missing, null or empty query when the request sends an empty query', async () => {
+    const filter = await captureDuplicateQuery({ callback: callbackUrl, query: '' });
+
+    expect(filter.query).toEqual({ $in: [null, ''] });
+  });
+
+  it('matches the exact query when one is supplied', async () => {
+    const filter = await captureDuplicateQuery({ callback: callbackUrl, query: queryFilter });
+
+    expect(filter.query).toBe(queryFilter);
+  });
+
+  it('includes additional client-supplied fields so different subscriptions are not merged', async () => {
+    const filter = await captureDuplicateQuery({ callback: callbackUrl, query: queryFilter, eventType: 'PartyRoleCreateEvent' });
+
+    expect(filter).toMatchObject({ callback: callbackUrl, eventType: 'PartyRoleCreateEvent' });
+  });
+
+  it('excludes server-generated id and href from the filter', async () => {
+    operationsUtils.processCommonAttributes.mockImplementationOnce((req, type, payload) => {
+      payload.id = 'generated-id';
+      payload.href = 'http://localhost/hub/generated-id';
+      return Promise.resolve(payload);
+    });
+
+    const filter = await captureDuplicateQuery({ callback: callbackUrl });
+
+    expect(filter).not.toHaveProperty('id');
+    expect(filter).not.toHaveProperty('href');
+  });
+});

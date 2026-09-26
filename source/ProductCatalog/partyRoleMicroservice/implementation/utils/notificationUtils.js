@@ -96,8 +96,14 @@ function register(req, res, next) {
   const resourceType = getResponseType(req);
   const requestSchema = getPayloadSchema(req);
 
+  // the fields as sent by the client, before server-generated id/href/lastUpdate are added
+  var requestPayload;
+
   swaggerUtils.getPayload(req)
-    .then(payload => traverse(req,requestSchema,payload,[]))
+    .then(payload => {
+      requestPayload = copy(payload);
+      return traverse(req,requestSchema,payload,[]);
+    })
     .then(payload => processCommonAttributes(req, resourceType, payload))
     .then(payload => processAssignmentRulesByType(req, resourceType, payload))
     .then(payload => {
@@ -120,13 +126,9 @@ function register(req, res, next) {
         return;
       }
 
-      // Check for an existing subscription with the same callback, query, and serviceGroup
+      // Check for an existing subscription with the same client-supplied fields and serviceGroup
       // to ensure idempotency: repeated identical POST /hub requests return the same result
-      const duplicateQuery = {
-        callback: doc.callback,
-        query: doc.query ?? "",
-        _serviceGroup: doc._serviceGroup
-      };
+      const duplicateQuery = getDuplicateQuery(requestPayload, doc._serviceGroup);
 
       mongoUtils.connect().then(db => {
         db.collection(HUB)
@@ -308,6 +310,21 @@ function addToQuery(query, doc) {
     }
   })
   return query;
+}
+
+// Every field the client sent must match (extra fields also become part of the
+// subscription filter via addToQuery). An omitted, null or empty query all mean
+// "no filter"; stored subscriptions hold these as missing/null or "", so match any.
+function getDuplicateQuery(requestPayload, serviceGroup) {
+  const filter = { _serviceGroup: serviceGroup };
+  Object.keys(requestPayload).forEach(key => {
+    if(key!=='query') {
+      filter[key] = requestPayload[key];
+    }
+  });
+  const query = requestPayload.query;
+  filter.query = (query===undefined || query===null || query==="") ? { $in: [null, ""] } : query;
+  return filter;
 }
 
 function sendReplacementResult(res,result,doc) {
