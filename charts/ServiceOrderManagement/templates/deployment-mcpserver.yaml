@@ -1,0 +1,34 @@
+{{- if .Values.component.MCPServer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Release.Name}}-serviceordermanagementmcp
+  labels:
+    oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      impl: {{.Release.Name}}-serviceordermanagementmcp
+  template:
+    metadata:
+      labels:
+        app: {{.Release.Name}}-{{.Values.component.name}}
+        impl: {{.Release.Name}}-serviceordermanagementmcp
+        version: {{.Values.mcp.versionLabel}}
+    spec:
+      containers:
+      - name: {{.Release.Name}}-serviceordermanagementmcp
+        image: {{.Values.mcp.image}}
+        env:
+        - name: RELEASE_NAME
+          value: {{.Release.Name}}
+        - name: COMPONENT_NAME
+          value: {{.Release.Name}}-{{.Values.component.name}}
+        - name: MCP_PORT
+          value: "8000"
+        imagePullPolicy: Always
+        ports:
+        - name: {{.Release.Name}}-somcp
+          containerPort: 8000
+{{- end }}

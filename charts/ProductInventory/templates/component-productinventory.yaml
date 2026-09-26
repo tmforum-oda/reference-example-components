@@ -41,6 +41,7 @@ spec:
     {{- if .Values.component.dependentAPIs.enabled }}
     - name: party
       apiType: openapi
+      id: TMF632
       specification:
       - url: https://open-api.tmforum.org/TMF632-Party-v4.0.0.swagger.json
     {{- else }}

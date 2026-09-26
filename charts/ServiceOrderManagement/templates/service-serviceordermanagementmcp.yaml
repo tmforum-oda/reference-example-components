@@ -1,0 +1,17 @@
+{{- if .Values.component.MCPServer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Release.Name}}-serviceordermanagementmcp
+  labels:
+    app: {{.Release.Name}}-{{.Values.component.name}}
+    oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
+spec:
+  ports:
+  - port: 8000
+    targetPort: {{.Release.Name}}-somcp
+    name: http-{{.Release.Name}}-serviceordermanagementmcp
+  type: NodePort
+  selector:
+    impl: {{.Release.Name}}-serviceordermanagementmcp
+{{- end }}
