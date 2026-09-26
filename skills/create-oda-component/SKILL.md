@@ -246,6 +246,32 @@ Wait for each build to complete and confirm the push succeeded (`pushing manifes
 
 > **Note**: `docker buildx` requires a multi-platform builder. If not already set up, run `docker buildx create --use --name multiarch-builder` first.
 
+### Multi-Arch Build Reliability
+
+Multi-platform builds can sometimes stall during the registry push phase despite successful local builds. If you encounter `--push` hanging indefinitely or manifest errors:
+
+1. **Add `--provenance=false` flag** to all `docker buildx build` commands. This reduces manifest complexity and improves registry upload reliability:
+   ```bash
+   docker buildx build -t "{namespace}/{image}:0.1" --platform "linux/amd64,linux/arm64" -f {dockerfile} . --push --provenance=false
+   ```
+
+2. **For persistent push failures**, use the per-architecture workaround:
+   ```bash
+   # Build separate tags for each architecture
+   docker buildx build -t "{namespace}/{image}:0.1-amd64" --platform linux/amd64 -f {dockerfile} . --push --provenance=false
+   docker buildx build -t "{namespace}/{image}:0.1-arm64" --platform linux/arm64 -f {dockerfile} . --push --provenance=false
+   
+   # Compose multi-arch manifest from per-arch images
+   docker buildx imagetools create -t {namespace}/{image}:0.1 {namespace}/{image}:0.1-amd64 {namespace}/{image}:0.1-arm64
+   ```
+   Single-platform pushes are more reliable than multi-platform `--push`, and `imagetools create` assembles the final manifest atomically.
+
+3. **Verify successful push** by inspecting the manifest:
+   ```bash
+   docker buildx imagetools inspect {namespace}/{image}:0.1
+   ```
+   Both `linux/amd64` and `linux/arm64` manifests should be listed.
+
 ---
 
 ## Step 8 — Generate README Files
@@ -343,3 +369,4 @@ Tell the user what was created, what they need to do next:
 - **Security API** (`securityFunction.exposedAPIs`) is always implemented — use the existing shared role management implementation images unless the user wants custom ones.
 - **OpenAPI spec URLs**: Get them from `exposedAPIs[].specification[0].url` in the specification YAML. The swagger spec must be downloaded and saved as `api/swagger.yaml` in each microservice.
 - **Naming consistency**: The Kubernetes service name for each API becomes the hostname for inter-service communication. It must match the `implementation` field in the Component CRD and the selector in the Service template.
+- **Docker Buildx multi-arch**: Always use `--provenance=false` on multi-platform builds. If standard multi-platform `--push` stalls, use per-arch `--push` followed by `docker buildx imagetools create` to compose the final manifest.
