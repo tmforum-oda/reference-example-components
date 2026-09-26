@@ -1,0 +1,292 @@
+{
+  "info": {
+    "_postman_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+    "name": "ProductCatalog - Retail and Wholesale Cleanup",
+    "description": "Deletes all Catalogs, Categories, Product Specifications, Product Offering Prices, and Product Offerings from a Product Catalog Management v4 instance. Each request fetches all resources of a given type and deletes them using pm.sendRequest in the test script.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost/pc1-productcatalogmanagement/tmf-api/productCatalogManagement/v4",
+      "type": "string"
+    },
+    {
+      "key": "permBaseUrl",
+      "value": "https://localhost/pc1-productcatalogmanagement/rolesAndPermissionsManagement/v5",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Delete All Catalogs",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "var baseUrl = pm.collectionVariables.get('baseUrl');",
+              "var deleted = 0;",
+              "var total = json.length;",
+              "",
+              "if (total === 0) {",
+              "    pm.test('No catalogs to delete', function() { pm.expect(true).to.be.true; });",
+              "} else {",
+              "    json.forEach(function(item) {",
+              "        pm.sendRequest({",
+              "            url: baseUrl + '/catalog/' + item.id,",
+              "            method: 'DELETE'",
+              "        }, function(err, res) {",
+              "            deleted++;",
+              "            console.log('Deleted catalog: ' + item.name + ' (' + item.id + ') status=' + res.status);",
+              "            if (deleted === total) {",
+              "                pm.test('All ' + total + ' catalog(s) deleted', function() {",
+              "                    pm.expect(deleted).to.equal(total);",
+              "                });",
+              "            }",
+              "        });",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/catalog",
+          "host": ["{{baseUrl}}"],
+          "path": ["catalog"]
+        }
+      }
+    },
+    {
+      "name": "2. Delete All Categories",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "var baseUrl = pm.collectionVariables.get('baseUrl');",
+              "var deleted = 0;",
+              "var total = json.length;",
+              "",
+              "if (total === 0) {",
+              "    pm.test('No categories to delete', function() { pm.expect(true).to.be.true; });",
+              "} else {",
+              "    json.forEach(function(item) {",
+              "        pm.sendRequest({",
+              "            url: baseUrl + '/category/' + item.id,",
+              "            method: 'DELETE'",
+              "        }, function(err, res) {",
+              "            deleted++;",
+              "            console.log('Deleted category: ' + item.name + ' (' + item.id + ') status=' + res.status);",
+              "            if (deleted === total) {",
+              "                pm.test('All ' + total + ' category/categories deleted', function() {",
+              "                    pm.expect(deleted).to.equal(total);",
+              "                });",
+              "            }",
+              "        });",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/category",
+          "host": ["{{baseUrl}}"],
+          "path": ["category"]
+        }
+      }
+    },
+    {
+      "name": "3. Delete All Product Offerings",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "var baseUrl = pm.collectionVariables.get('baseUrl');",
+              "var deleted = 0;",
+              "var total = json.length;",
+              "",
+              "if (total === 0) {",
+              "    pm.test('No product offerings to delete', function() { pm.expect(true).to.be.true; });",
+              "} else {",
+              "    json.forEach(function(item) {",
+              "        pm.sendRequest({",
+              "            url: baseUrl + '/productOffering/' + item.id,",
+              "            method: 'DELETE'",
+              "        }, function(err, res) {",
+              "            deleted++;",
+              "            console.log('Deleted productOffering: ' + item.name + ' (' + item.id + ') status=' + res.status);",
+              "            if (deleted === total) {",
+              "                pm.test('All ' + total + ' product offering(s) deleted', function() {",
+              "                    pm.expect(deleted).to.equal(total);",
+              "                });",
+              "            }",
+              "        });",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/productOffering",
+          "host": ["{{baseUrl}}"],
+          "path": ["productOffering"]
+        }
+      }
+    },
+    {
+      "name": "4. Delete All Product Offering Prices",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "var baseUrl = pm.collectionVariables.get('baseUrl');",
+              "var deleted = 0;",
+              "var total = json.length;",
+              "",
+              "if (total === 0) {",
+              "    pm.test('No product offering prices to delete', function() { pm.expect(true).to.be.true; });",
+              "} else {",
+              "    json.forEach(function(item) {",
+              "        pm.sendRequest({",
+              "            url: baseUrl + '/productOfferingPrice/' + item.id,",
+              "            method: 'DELETE'",
+              "        }, function(err, res) {",
+              "            deleted++;",
+              "            console.log('Deleted productOfferingPrice: ' + item.name + ' (' + item.id + ') status=' + res.status);",
+              "            if (deleted === total) {",
+              "                pm.test('All ' + total + ' product offering price(s) deleted', function() {",
+              "                    pm.expect(deleted).to.equal(total);",
+              "                });",
+              "            }",
+              "        });",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/productOfferingPrice",
+          "host": ["{{baseUrl}}"],
+          "path": ["productOfferingPrice"]
+        }
+      }
+    },
+    {
+      "name": "5. Delete All Product Specifications",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "var baseUrl = pm.collectionVariables.get('baseUrl');",
+              "var deleted = 0;",
+              "var total = json.length;",
+              "",
+              "if (total === 0) {",
+              "    pm.test('No product specifications to delete', function() { pm.expect(true).to.be.true; });",
+              "} else {",
+              "    json.forEach(function(item) {",
+              "        pm.sendRequest({",
+              "            url: baseUrl + '/productSpecification/' + item.id,",
+              "            method: 'DELETE'",
+              "        }, function(err, res) {",
+              "            deleted++;",
+              "            console.log('Deleted productSpecification: ' + item.name + ' (' + item.id + ') status=' + res.status);",
+              "            if (deleted === total) {",
+              "                pm.test('All ' + total + ' product specification(s) deleted', function() {",
+              "                    pm.expect(deleted).to.equal(total);",
+              "                });",
+              "            }",
+              "        });",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/productSpecification",
+          "host": ["{{baseUrl}}"],
+          "path": ["productSpecification"]
+        }
+      }
+    },
+    {
+      "name": "6. Delete All Permission Specification Sets",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "var permBaseUrl = pm.collectionVariables.get('permBaseUrl');",
+              "var deleted = 0;",
+              "var total = json.length;",
+              "",
+              "if (total === 0) {",
+              "    pm.test('No permission specification sets to delete', function() { pm.expect(true).to.be.true; });",
+              "} else {",
+              "    json.forEach(function(item) {",
+              "        pm.sendRequest({",
+              "            url: permBaseUrl + '/permissionSpecificationSet/' + item.id,",
+              "            method: 'DELETE'",
+              "        }, function(err, res) {",
+              "            deleted++;",
+              "            console.log('Deleted permissionSpecificationSet: ' + item.name + ' (' + item.id + ') status=' + res.status);",
+              "            if (deleted === total) {",
+              "                pm.test('All ' + total + ' permission specification set(s) deleted', function() {",
+              "                    pm.expect(deleted).to.equal(total);",
+              "                });",
+              "            }",
+              "        });",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{permBaseUrl}}/permissionSpecificationSet",
+          "host": ["{{permBaseUrl}}"],
+          "path": ["permissionSpecificationSet"]
+        }
+      }
+    }
+  ]
+}

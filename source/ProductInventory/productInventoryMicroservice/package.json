@@ -1,38 +1,49 @@
 {
-  "name": "product-inventory",
+  "name": "product-inventory-management",
   "version": "4.0.0",
-  "description": "**TMF API Reference : TMF 637 - Product Inventory Management**  Release : 19.0 - June 2019  The Product Inventory Management API provides standardized mechanism for product inventory management such as creation, update and retrieval of the representation of a product in the inventory. It also allows the notification of events related to product lifecycle  **Product resource** A product offering procured by a customer or other interested party playing a party role. A product is realized as one or more service(s) and / or resource(s).  Product Inventory API performs the following operations on product : - Retrieval of a product or a collection of products depending on filter criteria - Partial update of a product (including updating rules and for administration purpose) - Creation of a product (including default values and creation rules and for administration purpose) - Deletion of a product (for administration purposes) - Notification of events on product.  Copyright © TM Forum 2019. All Rights Reserved   ",
+  "description": "TMF API Reference: TMF637 - Product Inventory Management",
   "main": "index.js",
   "scripts": {
-	"prestart": "npm install",
-	"start": "node index.js"
+    "prestart": "npm install",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": [
     "swagger"
   ],
-  "license": "Unlicense",
+  "license": "Apache-2.0",
   "private": true,
   "dependencies": {
-    "axios": "^0.19.2",
+    "@opentelemetry/api": "^1.7.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.40.0",
+    "@opentelemetry/exporter-trace-otlp-proto": "^0.45.1",
+    "@opentelemetry/sdk-metrics": "^1.18.1",
+    "@opentelemetry/sdk-node": "^0.45.1",
+    "@opentelemetry/sdk-trace-node": "^1.18.1",
+    "axios": "^1.7.3",
     "body-parser": "^1.15.2",
     "cfenv": "^1.0.3",
     "commander": "^2.6.0",
     "connect": "^3.2.0",
-    "core-js": "^3.6.5",
+    "dotenv": "^16.3.1",
     "express": "^4.15.3",
     "http-post": "^0.1.1",
     "http-proxy": "^1.8.1",
     "js-yaml": "^3.3.0",
-    "lodash": "^4.17.15",
     "mongodb": "^3.1.1",
     "query-to-mongo": "^0.9.0",
-    "swagger-tools": "^0.10.4",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "swagger-tools": "0.10.1",
     "swagger-ui-dist": "^3.17.6",
     "untildify": "^3.0.3",
     "uuid": "^3.3.2"
   },
   "engines": {
-    "node": "12.18.0",
-    "npm": ">=6.14.4"
+    "node": ">=8.10",
+    "npm": ">=6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }

@@ -1,0 +1,113 @@
+{
+  "info": {
+    "_postman_id": "e5f6a7b8-c9d0-1234-efab-345678901234",
+    "name": "ProductOrderCaptureAndValidation - Retail and Wholesale Cleanup",
+    "description": "Deletes all product orders and PermissionSpecificationSets (except canvasRole) from the Product Ordering (po1) instance.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost/po1-productordercaptureandvalidation/tmf-api/productOrderingManagement/v4",
+      "type": "string"
+    },
+    {
+      "key": "permBaseUrl",
+      "value": "https://localhost/po1-productordercaptureandvalidation/rolesAndPermissionsManagement/v5",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Delete All Product Orders",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "var baseUrl = pm.collectionVariables.get('baseUrl');",
+              "var deleted = 0;",
+              "var total = json.length;",
+              "",
+              "if (total === 0) {",
+              "    pm.test('No product orders to delete', function() { pm.expect(true).to.be.true; });",
+              "} else {",
+              "    json.forEach(function(item) {",
+              "        pm.sendRequest({",
+              "            url: baseUrl + '/productOrder/' + item.id,",
+              "            method: 'DELETE'",
+              "        }, function(err, res) {",
+              "            deleted++;",
+              "            console.log('Deleted productOrder: ' + item.id + ' status=' + res.status);",
+              "            if (deleted === total) {",
+              "                pm.test('All ' + total + ' product order(s) deleted', function() {",
+              "                    pm.expect(deleted).to.equal(total);",
+              "                });",
+              "            }",
+              "        });",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/productOrder",
+          "host": ["{{baseUrl}}"],
+          "path": ["productOrder"]
+        }
+      }
+    },
+    {
+      "name": "2. Delete All Permission Specification Sets",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "var permBaseUrl = pm.collectionVariables.get('permBaseUrl');",
+              "var toDelete = json.filter(function(item) { return item.name !== 'canvasRole'; });",
+              "var deleted = 0;",
+              "var deleteTotal = toDelete.length;",
+              "",
+              "if (deleteTotal === 0) {",
+              "    pm.test('No permission specification sets to delete', function() { pm.expect(true).to.be.true; });",
+              "} else {",
+              "    toDelete.forEach(function(item) {",
+              "        pm.sendRequest({",
+              "            url: permBaseUrl + '/permissionSpecificationSet/' + item.id,",
+              "            method: 'DELETE'",
+              "        }, function(err, res) {",
+              "            deleted++;",
+              "            console.log('Deleted permissionSpecificationSet: ' + item.name + ' (' + item.id + ') status=' + res.status);",
+              "            if (deleted === deleteTotal) {",
+              "                pm.test('All ' + deleteTotal + ' permission specification set(s) deleted', function() {",
+              "                    pm.expect(deleted).to.equal(deleteTotal);",
+              "                });",
+              "            }",
+              "        });",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{permBaseUrl}}/permissionSpecificationSet",
+          "host": ["{{permBaseUrl}}"],
+          "path": ["permissionSpecificationSet"]
+        }
+      }
+    }
+  ]
+}

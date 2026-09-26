@@ -1,0 +1,13 @@
+FROM node:16
+
+WORKDIR /src
+
+# Copy package.json and install dependencies
+COPY productOrderProcessorMicroservice/implementation/package*.json /src/
+RUN npm install
+
+# Copy application source
+COPY productOrderProcessorMicroservice/implementation/ ./
+
+# Start the processor
+CMD ["node", "processor.js"]

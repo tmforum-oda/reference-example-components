@@ -1,0 +1,7 @@
+FROM node:10.19
+COPY openMetricsMicroservice/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY openMetricsMicroservice ./
+EXPOSE 4000
+CMD ["node", "index.js"]

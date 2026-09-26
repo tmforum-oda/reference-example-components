@@ -1,0 +1,1342 @@
+swagger: "2.0"
+info:
+  title: API ServiceOrdering
+  description: "## TMF API Reference : TMF 641 - Service Ordering Management\n\n Version
+    4.2.0 \n\nThe Service Order API provides a standardized mechanism for managing
+    Service Order, a type of order which can be used to place an order between internal
+    Customer Order management system to service order management system or between
+    a service provider and a partner and vice versa."
+  version: "4.2.0"
+basePath: /tmf-api/serviceOrdering/v4
+schemes:
+  - https
+  - http
+consumes:
+  - application/json;charset=utf-8
+produces:
+  - application/json;charset=utf-8
+tags:
+  - name: serviceOrder
+  - name: cancelServiceOrder
+  - name: notification listeners (client side)
+  - name: events subscription
+paths:
+  /serviceOrder:
+    get:
+      operationId: listServiceOrder
+      x-swagger-router-controller: ServiceOrder
+      summary: List or find ServiceOrder objects
+      tags:
+        - serviceOrder
+      parameters:
+        - name: fields
+          description: Comma-separated properties to be provided in response
+          required: false
+          in: query
+          type: string
+        - name: offset
+          description: Requested index for start of resources to be provided in response
+          required: false
+          in: query
+          type: integer
+        - name: limit
+          description: Requested number of resources to be provided in response
+          required: false
+          in: query
+          type: integer
+      responses:
+        "200":
+          description: Success
+          headers:
+            X-Result-Count:
+              description: Actual number of items returned in the response body
+              type: integer
+            X-Total-Count:
+              description: Total number of items matching criteria
+              type: integer
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceOrder"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      operationId: createServiceOrder
+      x-swagger-router-controller: ServiceOrder
+      summary: Creates a ServiceOrder
+      tags:
+        - serviceOrder
+      parameters:
+        - name: serviceOrder
+          description: The ServiceOrder to be created
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceOrder_Create"
+          in: body
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/ServiceOrder"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /serviceOrder/{id}:
+    get:
+      operationId: retrieveServiceOrder
+      x-swagger-router-controller: ServiceOrder
+      summary: Retrieves a ServiceOrder by ID
+      tags:
+        - serviceOrder
+      parameters:
+        - name: id
+          description: Identifier of the ServiceOrder
+          required: true
+          type: string
+          in: path
+        - name: fields
+          description: Comma-separated properties to provide in response
+          required: false
+          type: string
+          in: query
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/ServiceOrder"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    patch:
+      operationId: patchServiceOrder
+      x-swagger-router-controller: ServiceOrder
+      summary: Updates partially a ServiceOrder
+      tags:
+        - serviceOrder
+      parameters:
+        - name: id
+          description: Identifier of the ServiceOrder
+          required: true
+          type: string
+          in: path
+        - name: serviceOrder
+          description: The ServiceOrder to be updated
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceOrder_Update"
+          in: body
+      responses:
+        "200":
+          description: Updated
+          schema:
+            $ref: "#/definitions/ServiceOrder"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      operationId: deleteServiceOrder
+      x-swagger-router-controller: ServiceOrder
+      summary: Deletes a ServiceOrder
+      tags:
+        - serviceOrder
+      parameters:
+        - name: id
+          description: Identifier of the ServiceOrder
+          required: true
+          type: string
+          in: path
+      responses:
+        "204":
+          description: Deleted
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /cancelServiceOrder:
+    get:
+      operationId: listCancelServiceOrder
+      x-swagger-router-controller: CancelServiceOrder
+      summary: List or find CancelServiceOrder objects
+      tags:
+        - cancelServiceOrder
+      parameters:
+        - name: fields
+          description: Comma-separated properties to be provided in response
+          required: false
+          in: query
+          type: string
+        - name: offset
+          description: Requested index for start of resources to be provided in response
+          required: false
+          in: query
+          type: integer
+        - name: limit
+          description: Requested number of resources to be provided in response
+          required: false
+          in: query
+          type: integer
+      responses:
+        "200":
+          description: Success
+          headers:
+            X-Result-Count:
+              description: Actual number of items returned in the response body
+              type: integer
+            X-Total-Count:
+              description: Total number of items matching criteria
+              type: integer
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/CancelServiceOrder"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      operationId: createCancelServiceOrder
+      x-swagger-router-controller: CancelServiceOrder
+      summary: Creates a CancelServiceOrder
+      tags:
+        - cancelServiceOrder
+      parameters:
+        - name: cancelServiceOrder
+          description: The CancelServiceOrder to be created
+          required: true
+          schema:
+            $ref: "#/definitions/CancelServiceOrder_Create"
+          in: body
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: "#/definitions/CancelServiceOrder"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "409":
+          description: Conflict
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /cancelServiceOrder/{id}:
+    get:
+      operationId: retrieveCancelServiceOrder
+      x-swagger-router-controller: CancelServiceOrder
+      summary: Retrieves a CancelServiceOrder by ID
+      tags:
+        - cancelServiceOrder
+      parameters:
+        - name: id
+          description: Identifier of the CancelServiceOrder
+          required: true
+          type: string
+          in: path
+        - name: fields
+          description: Comma-separated properties to provide in response
+          required: false
+          type: string
+          in: query
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/CancelServiceOrder"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /hub:
+    post:
+      operationId: registerListener
+      x-swagger-router-controller: EventsSubscription
+      summary: Register a listener
+      tags:
+        - events subscription
+      parameters:
+        - name: data
+          schema:
+            $ref: "#/definitions/EventSubscriptionInput"
+          required: true
+          in: body
+          description: Data containing the callback endpoint to deliver the information
+      responses:
+        "201":
+          description: Subscribed
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method Not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /hub/{id}:
+    delete:
+      operationId: unregisterListener
+      x-swagger-router-controller: EventsSubscription
+      summary: Unregister a listener
+      tags:
+        - events subscription
+      parameters:
+        - name: id
+          type: string
+          required: true
+          in: path
+          description: The id of the registered listener
+      responses:
+        "204":
+          description: Deleted
+        "400":
+          description: Bad request
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/Error"
+        "405":
+          description: Method not allowed
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceOrderCreateEvent:
+    post:
+      operationId: listenToServiceOrderCreateEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceOrderCreateEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/ServiceOrderCreateEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceOrderAttributeValueChangeEvent:
+    post:
+      operationId: listenToServiceOrderAttributeValueChangeEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceOrderAttributeValueChangeEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/ServiceOrderAttributeValueChangeEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceOrderStateChangeEvent:
+    post:
+      operationId: listenToServiceOrderStateChangeEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceOrderStateChangeEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/ServiceOrderStateChangeEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceOrderDeleteEvent:
+    post:
+      operationId: listenToServiceOrderDeleteEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceOrderDeleteEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/ServiceOrderDeleteEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceOrderInformationRequiredEvent:
+    post:
+      operationId: listenToServiceOrderInformationRequiredEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceOrderInformationRequiredEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/ServiceOrderInformationRequiredEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceOrderMilestoneEvent:
+    post:
+      operationId: listenToServiceOrderMilestoneEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceOrderMilestoneEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/ServiceOrderMilestoneEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/serviceOrderJeopardyEvent:
+    post:
+      operationId: listenToServiceOrderJeopardyEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity ServiceOrderJeopardyEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/ServiceOrderJeopardyEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/cancelServiceOrderCreateEvent:
+    post:
+      operationId: listenToCancelServiceOrderCreateEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity CancelServiceOrderCreateEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/CancelServiceOrderCreateEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/cancelServiceOrderStateChangeEvent:
+    post:
+      operationId: listenToCancelServiceOrderStateChangeEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity CancelServiceOrderStateChangeEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/CancelServiceOrderStateChangeEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+  /listener/cancelServiceOrderInformationRequiredEvent:
+    post:
+      operationId: listenToCancelServiceOrderInformationRequiredEvent
+      x-swagger-router-controller: NotificationListenersClientSide
+      summary: Client listener for entity CancelServiceOrderInformationRequiredEvent
+      tags:
+        - notification listeners (client side)
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: "#/definitions/CancelServiceOrderInformationRequiredEvent"
+      responses:
+        "201":
+          description: Notified
+          schema:
+            $ref: "#/definitions/EventSubscription"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Error"
+definitions:
+  ServiceOrder:
+    type: object
+    properties:
+      id:
+        type: string
+        description: ID created on repository side
+      href:
+        type: string
+        description: Hyperlink to access the order
+      cancellationDate:
+        type: string
+        format: date-time
+      cancellationReason:
+        type: string
+      category:
+        type: string
+      completionDate:
+        type: string
+        format: date-time
+      description:
+        type: string
+      expectedCompletionDate:
+        type: string
+        format: date-time
+      externalId:
+        type: string
+      notificationContact:
+        type: string
+      orderDate:
+        type: string
+        format: date-time
+      priority:
+        type: string
+      requestedCompletionDate:
+        type: string
+        format: date-time
+      requestedStartDate:
+        type: string
+        format: date-time
+      startDate:
+        type: string
+        format: date-time
+      state:
+        $ref: "#/definitions/ServiceOrderStateType"
+      note:
+        type: array
+        items:
+          $ref: "#/definitions/Note"
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      serviceOrderItem:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceOrderItem"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  ServiceOrder_Create:
+    type: object
+    required:
+      - serviceOrderItem
+    properties:
+      category:
+        type: string
+      description:
+        type: string
+      externalId:
+        type: string
+      notificationContact:
+        type: string
+      priority:
+        type: string
+      requestedCompletionDate:
+        type: string
+        format: date-time
+      requestedStartDate:
+        type: string
+        format: date-time
+      note:
+        type: array
+        items:
+          $ref: "#/definitions/Note"
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      serviceOrderItem:
+        type: array
+        minItems: 1
+        items:
+          $ref: "#/definitions/ServiceOrderItem"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  ServiceOrder_Update:
+    type: object
+    properties:
+      description:
+        type: string
+      expectedCompletionDate:
+        type: string
+        format: date-time
+      externalId:
+        type: string
+      notificationContact:
+        type: string
+      priority:
+        type: string
+      requestedCompletionDate:
+        type: string
+        format: date-time
+      requestedStartDate:
+        type: string
+        format: date-time
+      state:
+        $ref: "#/definitions/ServiceOrderStateType"
+      note:
+        type: array
+        items:
+          $ref: "#/definitions/Note"
+      relatedParty:
+        type: array
+        items:
+          $ref: "#/definitions/RelatedParty"
+      serviceOrderItem:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceOrderItem"
+  ServiceOrderStateType:
+    type: string
+    description: Possible values for the state of the order
+    enum:
+      - acknowledged
+      - rejected
+      - pending
+      - held
+      - inProgress
+      - cancelled
+      - completed
+      - failed
+      - partial
+      - assessingCancellation
+      - pendingCancellation
+  ServiceOrderItem:
+    type: object
+    required:
+      - id
+      - action
+      - service
+    properties:
+      id:
+        type: string
+      quantity:
+        type: integer
+      action:
+        $ref: "#/definitions/OrderItemActionType"
+      service:
+        $ref: "#/definitions/ServiceRefOrValue"
+      state:
+        $ref: "#/definitions/ServiceOrderItemStateType"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  ServiceOrderItemStateType:
+    type: string
+    enum:
+      - acknowledged
+      - rejected
+      - pending
+      - held
+      - inProgress
+      - cancelled
+      - completed
+      - failed
+      - assessingCancellation
+      - pendingCancellation
+      - partial
+  OrderItemActionType:
+    type: string
+    enum:
+      - add
+      - modify
+      - delete
+      - noChange
+  CancelServiceOrder:
+    type: object
+    properties:
+      id:
+        type: string
+        description: unique identifier
+      href:
+        type: string
+        format: uri
+      cancellationReason:
+        type: string
+      completionMessage:
+        type: string
+      effectiveCancellationDate:
+        type: string
+        format: date-time
+      requestedCancellationDate:
+        type: string
+        format: date-time
+      state:
+        $ref: "#/definitions/TaskStateType"
+      serviceOrder:
+        $ref: "#/definitions/ServiceOrderRef"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  CancelServiceOrder_Create:
+    type: object
+    required:
+      - serviceOrder
+    properties:
+      cancellationReason:
+        type: string
+      requestedCancellationDate:
+        type: string
+        format: date-time
+      serviceOrder:
+        $ref: "#/definitions/ServiceOrderRef"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  TaskStateType:
+    type: string
+    enum:
+      - accepted
+      - terminatedWithError
+      - inProgress
+      - done
+  ServiceOrderRef:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+        format: uri
+      name:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  ServiceRefOrValue:
+    type: object
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+      name:
+        type: string
+      category:
+        type: string
+      description:
+        type: string
+      state:
+        $ref: "#/definitions/ServiceStateType"
+      serviceCharacteristic:
+        type: array
+        items:
+          $ref: "#/definitions/Characteristic"
+      serviceSpecification:
+        $ref: "#/definitions/ServiceSpecificationRef"
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  ServiceStateType:
+    type: string
+    enum:
+      - feasibilityChecked
+      - designed
+      - reserved
+      - inactive
+      - active
+      - suspended
+      - terminated
+  ServiceSpecificationRef:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+        format: uri
+      name:
+        type: string
+      version:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  Characteristic:
+    type: object
+    required:
+      - name
+      - value
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      valueType:
+        type: string
+      value:
+        type: object
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  Note:
+    type: object
+    required:
+      - text
+    properties:
+      id:
+        type: string
+      author:
+        type: string
+      date:
+        type: string
+        format: date-time
+      text:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+  RelatedParty:
+    type: object
+    required:
+      - id
+      - "@referredType"
+    properties:
+      id:
+        type: string
+      href:
+        type: string
+        format: uri
+      name:
+        type: string
+      role:
+        type: string
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string
+      "@referredType":
+        type: string
+  EventSubscription:
+    type: object
+    required:
+      - id
+      - callback
+    properties:
+      id:
+        type: string
+      callback:
+        type: string
+      query:
+        type: string
+  EventSubscriptionInput:
+    type: object
+    required:
+      - callback
+    properties:
+      callback:
+        type: string
+      query:
+        type: string
+  ServiceOrderCreateEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      eventType:
+        type: string
+      event:
+        type: object
+  ServiceOrderAttributeValueChangeEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      eventType:
+        type: string
+      fieldPath:
+        type: string
+      event:
+        type: object
+  ServiceOrderStateChangeEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      eventType:
+        type: string
+      event:
+        type: object
+  ServiceOrderDeleteEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      eventType:
+        type: string
+      event:
+        type: object
+  ServiceOrderInformationRequiredEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      eventType:
+        type: string
+      fieldPath:
+        type: string
+      event:
+        type: object
+  ServiceOrderMilestoneEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      eventType:
+        type: string
+      event:
+        type: object
+  ServiceOrderJeopardyEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      eventType:
+        type: string
+      event:
+        type: object
+  CancelServiceOrderCreateEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      eventType:
+        type: string
+      event:
+        type: object
+  CancelServiceOrderStateChangeEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      eventType:
+        type: string
+      event:
+        type: object
+  CancelServiceOrderInformationRequiredEvent:
+    type: object
+    properties:
+      eventId:
+        type: string
+      eventTime:
+        type: string
+        format: date-time
+      eventType:
+        type: string
+      fieldPath:
+        type: string
+      event:
+        type: object
+  Error:
+    type: object
+    required:
+      - code
+      - reason
+    properties:
+      code:
+        type: string
+      reason:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+      referenceError:
+        type: string
+        format: uri
+      "@baseType":
+        type: string
+      "@schemaLocation":
+        type: string
+        format: uri
+      "@type":
+        type: string

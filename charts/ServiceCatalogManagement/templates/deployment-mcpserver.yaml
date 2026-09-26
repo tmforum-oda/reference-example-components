@@ -1,0 +1,32 @@
+{{- if .Values.component.MCPServer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Release.Name}}-svcatmcp
+  labels:
+    oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      impl: {{.Release.Name}}-svcatmcp
+  template:
+    metadata:
+      labels:
+        app: {{.Release.Name}}-{{.Values.component.name}}
+        impl: {{.Release.Name}}-svcatmcp
+        version: {{.Values.mcp.versionLabel}}
+    spec:
+      containers:
+      - name: {{.Release.Name}}-svcatmcp
+        image: {{.Values.mcp.image}}
+        env:
+        - name: RELEASE_NAME
+          value: {{.Release.Name}}
+        - name: COMPONENT_NAME
+          value: {{.Release.Name}}-{{.Values.component.name}}
+        imagePullPolicy: Always
+        ports:
+        - name: {{.Release.Name}}-scmcp
+          containerPort: 8080
+{{- end }}

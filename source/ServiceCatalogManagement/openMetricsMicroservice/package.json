@@ -1,0 +1,20 @@
+{
+  "name": "openmetrics",
+  "version": "1.0.0",
+  "description": "Open Metrics server for Service Catalog Management",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node index.js"
+  },
+  "license": "Apache-2.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.17.1",
+    "prom-client": "^14.0.0"
+  },
+  "engines": {
+    "node": ">=8.10",
+    "npm": ">=6.0"
+  }
+}

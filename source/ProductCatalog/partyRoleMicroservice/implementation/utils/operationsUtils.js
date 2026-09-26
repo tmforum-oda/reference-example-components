@@ -177,9 +177,7 @@ function processCommonAttributes(req, type, obj) {
   return new Promise(function(resolve, reject) {    
 
     const typedef = swaggerUtils.getTypeDefinition(type);
-
-    // console.log("processCommonAttributes:: typedef=" + JSON.stringify(typedef,null,2));
-
+    
     if(Array.isArray(obj)) {
       return resolve(obj);
     }

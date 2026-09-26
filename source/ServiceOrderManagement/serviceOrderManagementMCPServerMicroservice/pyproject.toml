@@ -1,0 +1,20 @@
+[project]
+name = "service-order-management-MCP-Server"
+version = "0.1.0"
+description = "MCP Server for Service Order Management Component (TMF641)"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.6.0",
+    "python-dotenv>=1.0.0",
+    "fastapi>=0.103.0",
+    "uvicorn>=0.28.0",
+    "python-multipart>=0.0.20"
+]
+
+[project.scripts]
+service-order-management-mcp-server = "service_order_management_mcp_server:main"
+
+[tool.setuptools]
+py-modules = ["service_order_management_mcp_server", "service_order_management_api"]

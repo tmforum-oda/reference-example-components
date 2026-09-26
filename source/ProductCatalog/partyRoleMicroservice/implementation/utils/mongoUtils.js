@@ -16,7 +16,6 @@ var mongodb = null;
 function connectHelper(callback) {
   const database = process.env.MONGODB_DATABASE;
   var credentials_uri = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${database}`
-  credentials_uri = "mongodb://127.0.0.1:27017/tmf";
   let options = {
     useNewUrlParser: true
   };

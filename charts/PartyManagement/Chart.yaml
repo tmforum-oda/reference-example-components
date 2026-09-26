@@ -1,0 +1,10 @@
+apiVersion: v2
+name: partymanagement
+description: A reference example TMFC028-PartyManagement ODA Component
+
+type: application
+
+# This is the chart version.
+version: 1.0.0
+
+appVersion: "1.0.0"

@@ -1,0 +1,22 @@
+FROM python:3.13-slim-bookworm
+
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
+
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+ENV PATH="/root/.local/bin/:$PATH"
+
+WORKDIR /app
+
+ENV MCP_HOST=0.0.0.0 \
+    MCP_PORT=8080
+
+COPY MCPServerMicroservice/pyproject.toml /app/
+RUN uv pip install --system httpx mcp[cli] python-dotenv fastapi uvicorn python-multipart
+
+COPY MCPServerMicroservice/service_catalog_api.py /app/
+COPY MCPServerMicroservice/service_catalog_mcp_server.py /app/
+
+EXPOSE 8080
+
+CMD ["python", "service_catalog_mcp_server.py", "--port", "8080"]

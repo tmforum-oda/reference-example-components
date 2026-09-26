@@ -24,6 +24,19 @@ To uninstall the chart:
     helm delete <release name> -n components
 
 
+## Available Components
+
+| ODA Component | Chart name | Chart | Source |
+|---------------|------------|-------|--------|
+| TMFC001 Product Catalog Management | `productcatalog` | [charts/ProductCatalog](charts/ProductCatalog/) | [source/ProductCatalog](source/ProductCatalog/) |
+| TMFC002 Product Order Capture And Validation | `productordercaptureandvalidation` | [charts/ProductOrderCaptureAndValidation](charts/ProductOrderCaptureAndValidation/) | [source/ProductOrderCaptureAndValidation](source/ProductOrderCaptureAndValidation/) |
+| TMFC005 Product Inventory | `productinventory` | [charts/ProductInventory](charts/ProductInventory/) | [source/ProductInventory](source/ProductInventory/) |
+| TMFC006 Service Catalog Management | `servicecatalogmanagement` | [charts/ServiceCatalogManagement](charts/ServiceCatalogManagement/) | [source/ServiceCatalogManagement](source/ServiceCatalogManagement/) |
+| TMFC007 Service Order Management | `serviceordermanagement` | [charts/ServiceOrderManagement](charts/ServiceOrderManagement/) | [source/ServiceOrderManagement](source/ServiceOrderManagement/) |
+| TMFC008 Service Inventory | `serviceinventory` | [charts/ServiceInventory](charts/ServiceInventory/) | [source/ServiceInventory](source/ServiceInventory/) |
+| TMFC028 Party Management | `partymanagement` | [charts/PartyManagement](charts/PartyManagement/) | [source/PartyManagement](source/PartyManagement/) |
+
+
 ## Optional Features
 
 ### Optional API Dependency
@@ -46,5 +59,11 @@ Or when upgrading:
 
 ```
 helm upgrade <release name> oda-components/productcatalog --set component.MCPServer.enabled=true -n components
+```
+
+The Service Order Management component (TMFC007) also includes an optional MCP server, enabled the same way:
+
+```
+helm install <release name> oda-components/serviceordermanagement --set component.MCPServer.enabled=true -n components
 ```
 

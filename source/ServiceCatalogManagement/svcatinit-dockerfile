@@ -1,0 +1,6 @@
+FROM node:10.19
+COPY serviceCatalogInitializationMicroservice/implementation/package*.json /src/
+WORKDIR /src
+RUN npm install
+COPY serviceCatalogInitializationMicroservice/implementation ./
+CMD ["node", "initialization.js"]
