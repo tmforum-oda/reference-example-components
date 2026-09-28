@@ -67,3 +67,7 @@ The Service Order Management component (TMFC007) also includes an optional MCP s
 helm install <release name> oda-components/serviceordermanagement --set component.MCPServer.enabled=true -n components
 ```
 
+
+## License
+
+This repository is licensed under the [Apache License, Version 2.0](LICENSE), the same as [oda-canvas](https://github.com/tmforum-oda/oda-canvas). Third-party material vendored into the repository (for example `skills/skill-creator/`) keeps its own license, as stated in the `LICENSE` file in its directory.
