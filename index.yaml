@@ -3,6 +3,16 @@ entries:
   partymanagement:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-10-02T16:41:57.273600402Z"
+    description: A reference example TMFC028-PartyManagement ODA Component
+    digest: 776a662aa0af55719c3729c077d5bf039fae95c3b501d7b459ba4c1269428dc7
+    name: partymanagement
+    type: application
+    urls:
+    - https://github.com/tmforum-oda/reference-example-components/releases/download/partymanagement-1.0.1/partymanagement-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-04-29T13:54:49.138786646Z"
     description: A reference example TMFC028-PartyManagement ODA Component
     digest: a0bd41bc29179c95d967c176d2e9893aba6e64d4bb618f9733db1ef938418d5a
@@ -12,6 +22,16 @@ entries:
     - https://github.com/tmforum-oda/reference-example-components/releases/download/partymanagement-1.0.0/partymanagement-1.0.0.tgz
     version: 1.0.0
   productcatalog:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-10-02T16:41:57.513243047Z"
+    description: A reference example TMFC001-ProductCatalogManagement ODA Component
+    digest: c5fa568bf77f6cba2b3875683e4d2bba338dd244660d9180a030d6d3e02d0783
+    name: productcatalog
+    type: application
+    urls:
+    - https://github.com/tmforum-oda/reference-example-components/releases/download/productcatalog-1.4.3/productcatalog-1.4.3.tgz
+    version: 1.4.3
   - apiVersion: v2
     appVersion: 1.16.0
     created: "2026-04-29T13:48:33.033920161Z"
@@ -205,6 +225,16 @@ entries:
   productinventory:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2026-10-02T16:41:57.833697375Z"
+    description: A reference example TMFC005-ProductInventoryManagement ODA Component
+    digest: 0aa7eb8d734dad67d9ca2718321ad54aa518ada4d7656ca3cea3c087f17f18e4
+    name: productinventory
+    type: application
+    urls:
+    - https://github.com/tmforum-oda/reference-example-components/releases/download/productinventory-1.3.1/productinventory-1.3.1.tgz
+    version: 1.3.1
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2026-04-29T13:54:49.673867994Z"
     description: A reference example TMFC005-ProductInventoryManagement ODA Component
     digest: 3b2e26c6d0446ece59c3ea32b42251ed1d6345fad870140062e683d5de394add
@@ -286,6 +316,17 @@ entries:
   productordercaptureandvalidation:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-10-02T16:41:58.026871679Z"
+    description: A reference example TMFC002-ProductOrderCaptureAndValidation ODA
+      Component
+    digest: 27a83a2fd956c62b8b1f50f9e4611672b502660336f3ecf3d04f9bff1eb082e8
+    name: productordercaptureandvalidation
+    type: application
+    urls:
+    - https://github.com/tmforum-oda/reference-example-components/releases/download/productordercaptureandvalidation-0.2.0/productordercaptureandvalidation-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-04-29T13:54:49.922204611Z"
     description: A reference example TMFC002-ProductOrderCaptureAndValidation ODA
       Component
@@ -298,6 +339,16 @@ entries:
   servicecatalogmanagement:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-10-02T16:41:58.309153282Z"
+    description: A reference example TMFC006-ServiceCatalogManagement ODA Component
+    digest: 1db613513833b50361a821b6a10910c8fef6af4632f28aa90f6516be228044fe
+    name: servicecatalogmanagement
+    type: application
+    urls:
+    - https://github.com/tmforum-oda/reference-example-components/releases/download/servicecatalogmanagement-1.0.1/servicecatalogmanagement-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-04-29T13:54:50.18600406Z"
     description: A reference example TMFC006-ServiceCatalogManagement ODA Component
     digest: 9fbe30d4eb87320a05535934efaf5ec7e521ccd89bb993ec4d79b48d791700c1
@@ -308,6 +359,15 @@ entries:
     version: 1.0.0
   serviceinventory:
   - apiVersion: v2
+    created: "2026-10-02T16:41:58.541466676Z"
+    description: A reference example TMFC008-ServiceInventory ODA Component
+    digest: 1da620f5cfa16a0141384a27cb43e75be411f13c3e86a53219d022dcc69fa0b5
+    name: serviceinventory
+    type: application
+    urls:
+    - https://github.com/tmforum-oda/reference-example-components/releases/download/serviceinventory-1.0.1/serviceinventory-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
     created: "2026-04-29T13:54:50.420007228Z"
     description: A reference example TMFC008-ServiceInventory ODA Component
     digest: d43fe1f0fe4aeb2c9a8710be3ef1a2aecc3c42f83c6517e230a2d04c465c4485
@@ -316,4 +376,15 @@ entries:
     urls:
     - https://github.com/tmforum-oda/reference-example-components/releases/download/serviceinventory-1.0.0/serviceinventory-1.0.0.tgz
     version: 1.0.0
-generated: "2026-04-29T13:54:50.420081045Z"
+  serviceordermanagement:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-10-02T16:41:58.768145308Z"
+    description: A reference example TMFC007-ServiceOrderManagement ODA Component
+    digest: 4c870f1d0e22bb84ef844b3352b31e0f1e3e81d6277bceaa80e87c4a1d612946
+    name: serviceordermanagement
+    type: application
+    urls:
+    - https://github.com/tmforum-oda/reference-example-components/releases/download/serviceordermanagement-1.0.0/serviceordermanagement-1.0.0.tgz
+    version: 1.0.0
+generated: "2026-10-02T16:41:58.768235434Z"
