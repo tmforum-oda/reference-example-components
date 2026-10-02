@@ -2,5 +2,6 @@ apiVersion: v2
 name: serviceordermanagement
 description: A reference example TMFC007-ServiceOrderManagement ODA Component
 type: application
-version: 1.0.0
+version: 1.0.1
+# version: 1.0.1 - Fixed TMF672 specification URL (issue 63)
 appVersion: "1.0.0"

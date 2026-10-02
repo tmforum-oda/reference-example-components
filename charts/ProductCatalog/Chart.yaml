@@ -15,7 +15,8 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 1.4.3
+version: 1.4.4
+# version: 1.4.4 - Fixed TMF672 specification URL (issue 63)
 # version: 1.4.3 - Added architecture diagram to README
 # version: 1.4.2 - Updated for consistency using agent skill.
 # version: 1.4.1 - Fixed hardcoded release name in MCP API URL.
