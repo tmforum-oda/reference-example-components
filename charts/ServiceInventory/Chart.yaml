@@ -6,6 +6,7 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 1.0.1
+version: 1.0.2
+# version: 1.0.2 - Fixed TMF672 specification URL (issue 63)
 # version: 1.0.1 - Added architecture diagram to README
 # version: 1.0.0 - Initial TMFC008-ServiceInventory ODA Component implementation

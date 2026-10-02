@@ -93,7 +93,7 @@ spec:
     {{- if .Values.permissionspec.enabled }}
     - name: userrolesandpermissions
       specification:
-      - url: "https://raw.githubusercontent.com/tmforum-apis/TMF672_UserRolePermissions/master/TMF672-UserRolePermissions-v5.0.0.swagger.json"
+      - url: "https://raw.githubusercontent.com/tmforum-oda/reference-example-components/master/source/ProductCatalog/permissionSpecificationSetMicroservice/implementation/api/TMF672-Roles_And_Permissions-v5.0.0.oas.yaml"
       implementation: {{.Release.Name}}-permissionspecapi
       apiType: openapi
       id: TMF672
