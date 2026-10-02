@@ -2,5 +2,6 @@ apiVersion: v2
 name: servicecatalogmanagement
 description: A reference example TMFC006-ServiceCatalogManagement ODA Component
 type: application
-version: 1.0.0
+version: 1.0.1
+# version: 1.0.1 - Added architecture diagram to README
 appVersion: "1.0.0"

@@ -5,6 +5,7 @@ description: A reference example TMFC028-PartyManagement ODA Component
 type: application
 
 # This is the chart version.
-version: 1.0.0
+version: 1.0.1
+# version: 1.0.1 - Added architecture diagram to README
 
 appVersion: "1.0.0"

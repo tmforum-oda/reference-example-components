@@ -4,7 +4,8 @@ description: A reference example TMFC002-ProductOrderCaptureAndValidation ODA Co
 
 type: application
 
-version: 0.1.0
+version: 0.2.0
+# version: 0.2.0 - Added product order processor backend and order metrics (#69); added architecture diagram to README
 # version: 0.1.0 - Initial version with TMF622 exposed API and TMF620/TMF637 dependent APIs
 
 appVersion: "1.0.0"
