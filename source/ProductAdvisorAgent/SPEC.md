@@ -5,7 +5,7 @@
 | Status | Proposed |
 | Component folder | `source/ProductAdvisorAgent` (new), `source/ProductCatalog/MCPServerMicroservice` (extended) |
 | Standards baseline | A2A 1.0, MCP 2026-07-28, OAuth 2.0 (RFC 8693, RFC 9396, RFC 8707, RFC 9068, RFC 9728, RFC 9700) |
-| TM Forum alignment | TMFC001 Product Catalog Management, TMF620 Product Catalog Management API |
+| TM Forum alignment | TMFC001 Product Catalog Management, TMF620 Product Catalog Management API (v4, as implemented by the existing Product Catalog component) |
 
 ## Contents
 
@@ -641,8 +641,8 @@ No product data is returned in any error response.
 | Brand | `ProductSpecification.brand` (`RED` or `MVNO`), reached through `ProductOffering.productSpecification` |
 | Download speed | `ProductSpecification.productSpecCharacteristic` named `downloadSpeed`, unit `Mbps` |
 | Contract term | `ProductOffering.productOfferingTerm[]` with `duration { amount, units: "month" }` |
-| Monthly price | `ProductOfferingPrice` with:<br>- `priceType = "recurring"`;<br>- `recurringChargePeriodType = "month"`;<br>- `recurringChargePeriodLength = 1`;<br>- `price.taxIncludedAmount { unit: "GBP", value }`. |
-| Tax basis | **Prices include tax.** The delegation compares `taxIncludedAmount`. |
+| Monthly price | `ProductOfferingPrice` with:<br>- `priceType = "recurring"`;<br>- `recurringChargePeriodType = "month"`;<br>- `recurringChargePeriodLength = 1`;<br>- `price { unit: "GBP", value }`, the price **before** tax;<br>- `tax[]` with one `TaxItem { taxCategory: "VAT", taxRate: 20, taxAmount { unit: "GBP", value } }`. |
+| Tax basis | **The delegation compares the price including tax**, worked out as `price.value` + the sum of `tax[].taxAmount.value`. TMF620 v4 `ProductOfferingPrice` has no tax-included amount field. |
 
 ### 13.2 Test data
 
@@ -803,7 +803,7 @@ Content-Type: application/json
         "downloadSpeedMbps": 100,
         "contractTermMonths": 24,
         "monthlyPrice": { "unit": "GBP", "value": 35, "taxIncluded": true },
-        "href": "/productCatalogManagement/v5/productOffering/PO-RED-001"
+        "href": "/tmf-api/productCatalogManagement/v4/productOffering/PO-RED-001"
       },
       {
         "id": "PO-RED-002",
@@ -812,7 +812,7 @@ Content-Type: application/json
         "downloadSpeedMbps": 500,
         "contractTermMonths": 24,
         "monthlyPrice": { "unit": "GBP", "value": 50, "taxIncluded": true },
-        "href": "/productCatalogManagement/v5/productOffering/PO-RED-002"
+        "href": "/tmf-api/productCatalogManagement/v4/productOffering/PO-RED-002"
       }
     ]
   },
