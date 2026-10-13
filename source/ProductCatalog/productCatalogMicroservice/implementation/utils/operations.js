@@ -12,8 +12,13 @@ function processAssignmentRules(operation, doc) {
     // TMF620_Product_Catalog
     //
 
-    if (operation === 'tMF620createCatalog'){
-      //doc.lifecycleStatus= "Active";
+    // lifecycleStatus is mandatory in TMF620 responses, so default it on create
+    // when the client does not supply one. The services call this function with
+    // 'createXxx' operation names (the previous 'tMF620createCatalog' check never matched).
+    const tmf620CreateOperations = ['createCatalog', 'createCategory', 'createProductOffering',
+                                    'createProductOfferingPrice', 'createProductSpecification'];
+    if (tmf620CreateOperations.includes(operation) && doc.lifecycleStatus === undefined){
+      doc.lifecycleStatus = "In design";
     }
     
     //
