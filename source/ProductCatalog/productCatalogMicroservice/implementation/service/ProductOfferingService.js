@@ -202,7 +202,7 @@ exports.patchProductOffering = function(req, res, next) {
 
                   doc = swaggerUtils.cleanPayloadServiceType(doc);
 
-                  sendDoc(res, 201, doc);
+                  sendDoc(res, 200, doc);
                   notificationUtils.publish(req,doc,old);
                 })
                 .catch((error) => {

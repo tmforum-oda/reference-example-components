@@ -113,7 +113,8 @@ function getMongoQuery(req) {
   // test for date-time in query and allow partial equality matching, e.g. ="2018-08-21"
   //
   try {
-    const requestType = getPayloadType(req);
+    // list (GET) requests have no body, so derive the type from the response, not the payload
+    const requestType = getResponseType(req);
     const properties = Object.keys(res.criteria);
 
     var typeDefinition = getTypeDefinition(requestType);
@@ -121,10 +122,17 @@ function getMongoQuery(req) {
       typeDefinition = typeDefinition.properties;
     }
 
+    // query-to-mongo converts ISO date strings into Date objects, but date-time
+    // attributes are stored as strings, so match against the raw query value
+    const rawQuery = (req instanceof Object) ? querystring.parse(req._parsedUrl.query || '') : querystring.parse(req);
+
     properties.forEach(prop => {
       var paramDef = typeDefinition[prop];
       if(paramDef!==undefined && paramDef.type === "string" && paramDef.format === "date-time") {
-        const propVal = res.criteria[prop];
+        let propVal = res.criteria[prop];
+        if(propVal instanceof Date) {
+          propVal = (typeof rawQuery[prop] === 'string') ? rawQuery[prop] : propVal.toISOString();
+        }
         // equality test if not the value is an object
         if(!(propVal instanceof Object)) {
           if(!isNaN(Date.parse(propVal))) {
