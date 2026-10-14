@@ -50,8 +50,8 @@ mongodb:
   port: 27017
   database: tmf
 api:
-  image: lesterthomas/productcatalogapi:1.6
-  versionLabel: productcatalogapi-1.6
+  image: tmforumodacanvas/productcatalogapi:1.0.0
+  versionLabel: productcatalogapi-1.0.0
   otlp:
     console:
       enabled: false
@@ -59,21 +59,22 @@ api:
       enabled: true
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 metrics:
-  image: lesterthomas/openmetrics:1.0
+  image: tmforumodacanvas/productcatalogmetrics:1.0.0
+  versionLabel: productcatalogmetrics-1.0.0
 mcp:
-  image: lesterthomas/productcatalogmcp:0.14
-  versionLabel: productcatalogmcp-0.14
+  image: tmforumodacanvas/productcatalogmcp:1.0.0
+  versionLabel: productcatalogmcp-1.0.0
 partyrole:
-  image: lesterthomas/partyroleapi:1.1
-  versionLabel: partyroleapi-1.1
+  image: tmforumodacanvas/partyroleapi:1.0.0
+  versionLabel: partyroleapi-1.0.0
 permissionspec:
-  image: lesterthomas/permissionspecapi:0.20
-  versionLabel: permissionspecapi-0.20
+  image: tmforumodacanvas/permissionspecapi:1.0.0
+  versionLabel: permissionspecapi-1.0.0
   # Set to true to use permissionspec API instead of partyrole API
   enabled: true
 promotionmgmt:
-  image: lesterthomas/promotionmgmtapi:0.6
-  versionLabel: promotionmgmtapi-0.6
+  image: tmforumodacanvas/promotionmgmtapi:1.0.0
+  versionLabel: promotionmgmtapi-1.0.0
   otlp:
     console:
       enabled: false
@@ -83,3 +84,7 @@ promotionmgmt:
 canvasinfo:
   host: info.canvas.svc.cluster.local
   basepath: /
+initialization:
+  image: tmforumodacanvas/productcataloginitialization:1.0.0
+roleinitialization:
+  image: tmforumodacanvas/productcatalog-roleinitialization:1.0.0

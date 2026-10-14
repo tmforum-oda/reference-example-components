@@ -6,7 +6,6 @@ Reference patterns for generating new ODA Component source code. Reusable templa
 
 ```
 source/{ComponentName}/
-├── builddockerfile.sh                          # Multi-platform Docker build script
 ├── {apiname}-dockerfile                        # Dockerfile for each API microservice
 ├── roleinitialization-dockerfile               # Dockerfile for role init job
 ├── {component}initialization-dockerfile        # Dockerfile for component init job
@@ -72,19 +71,42 @@ CMD ["node", "index.js"]
 
 ---
 
-## Build Script Pattern (builddockerfile.sh)
+## Image Registration Pattern (dockerbuild-config.yaml)
 
-```bash
-docker buildx build -t "{dockerhub-namespace}/{componentname}api:1.0" --platform "linux/amd64,linux/arm64" -f {apiname}-dockerfile . --push
+Images are not built by a per-component script. Add one entry per image to `dockerbuild-config.yaml` at the repository root, and the *Build Component Images* workflow builds and publishes it:
 
-docker buildx build -t "{dockerhub-namespace}/roleinitialization:0.1" --platform "linux/amd64,linux/arm64" -f roleinitialization-dockerfile . --push
-
-docker buildx build -t "{dockerhub-namespace}/{componentname}initialization:0.1" --platform "linux/amd64,linux/arm64" -f {component}initialization-dockerfile . --push
-
-docker buildx build -t "{dockerhub-namespace}/openmetrics:1.0" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
+```yaml
+  - name: {componentnamelower}api
+    version: 1.0.0
+    context: source/{ComponentName}
+    dockerfile: {apiname}-dockerfile
+    paths:
+      - source/{ComponentName}/{apiname}-dockerfile
+      - source/{ComponentName}/{apiname}Microservice
+  - name: {componentnamelower}-roleinitialization
+    version: 1.0.0
+    context: source/{ComponentName}
+    dockerfile: roleinitialization-dockerfile
+    paths:
+      - source/{ComponentName}/roleinitialization-dockerfile
+      - source/{ComponentName}/roleInitializationMicroservice
+  - name: {componentnamelower}initialization
+    version: 1.0.0
+    context: source/{ComponentName}
+    dockerfile: {component}initialization-dockerfile
+    paths:
+      - source/{ComponentName}/{component}initialization-dockerfile
+      - source/{ComponentName}/{component}InitializationMicroservice
+  - name: {componentnamelower}metrics
+    version: 1.0.0
+    context: source/{ComponentName}
+    dockerfile: openMetricsMicroservice-dockerfile
+    paths:
+      - source/{ComponentName}/openMetricsMicroservice-dockerfile
+      - source/{ComponentName}/openMetricsMicroservice
 ```
 
-Tell the user to replace `{dockerhub-namespace}` with their own Docker Hub username or container registry namespace.
+Build an image locally with `python scripts/images.py build {componentnamelower}api`.
 
 ---
 

@@ -14,7 +14,7 @@ spec:
       labels:
         app: {{.Release.Name}}-{{.Values.component.name}}
         impl: {{.Release.Name}}-metricsapi
-        version: lesterthomas-metricsapi-latest
+        version: {{.Values.metrics.versionLabel}}
     spec:
       containers:
       - name: {{.Release.Name}}-openmetrics

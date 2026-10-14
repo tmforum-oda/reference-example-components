@@ -46,7 +46,7 @@ permissionspec:
 ```
 
 ## Docker Image
-The existing Docker image (`lesterthomas/roleinitialization:0.4`) will need to be rebuilt to include these changes.
+The `tmforumodacanvas/productordercaptureandvalidation-roleinitialization` image is built from this source (see `dockerbuild-config.yaml`).
 
 ## Backward Compatibility
 The changes maintain backward compatibility - existing deployments with `permissionspec.enabled: false` will continue to work with the Party Role API as before.

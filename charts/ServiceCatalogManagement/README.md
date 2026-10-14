@@ -109,16 +109,16 @@ helm install r1 .\servicecatalogmanagement --set permissionspec.enabled=false -n
 |---|---|---|
 | `mongodb.port` | `27017` | Port for the MongoDB instance (host derived from release name) |
 | `mongodb.database` | `tmf` | Database name |
-| `svcatapi.image` | `lesterthomas/servicecatalogapi:0.2` | Docker image for the Service Catalog API microservice |
+| `svcatapi.image` | `tmforumodacanvas/servicecatalogapi:1.0.0` | Docker image for the Service Catalog API microservice |
 | `svcatapi.otlp.console.enabled` | `false` | Log OpenTelemetry traces to console |
 | `svcatapi.otlp.protobuffCollector.enabled` | `true` | Send OpenTelemetry traces to the OTLP collector |
 | `svcatapi.otlp.protobuffCollector.url` | `http://observability-opentelemetry-collector...` | OTLP collector endpoint URL |
-| `svcqualapi.image` | `lesterthomas/servicequalityapi:0.2` | Docker image for the Service Quality Management API microservice |
+| `svcqualapi.image` | `tmforumodacanvas/servicequalityapi:1.0.0` | Docker image for the Service Quality Management API microservice |
 | `processflow.enabled` | `false` | Deploy the TMF701 Process Flow Management API microservice |
-| `processflow.image` | `lesterthomas/processflowapi:0.2` | Docker image for the Process Flow API microservice |
+| `processflow.image` | `tmforumodacanvas/processflowapi:1.0.0` | Docker image for the Process Flow API microservice |
 | `component.MCPServer.enabled` | `true` | Deploy the MCP server for AI agent access to the Service Catalog API |
-| `mcp.image` | `lesterthomas/servicecatalogmcp:0.1` | Docker image for the MCP server microservice |
-| `metrics.image` | `lesterthomas/servicecatalogmetrics:0.1` | Docker image for the open metrics microservice |
+| `mcp.image` | `tmforumodacanvas/servicecatalogmcp:1.0.0` | Docker image for the MCP server microservice |
+| `metrics.image` | `tmforumodacanvas/servicecatalogmetrics:1.0.0` | Docker image for the open metrics microservice |
 | `permissionspec.enabled` | `true` | Use TMF672 PermissionSpecificationSet API (set `false` for TMF669 PartyRole) |
-| `permissionspec.image` | `lesterthomas/permissionspecapi:0.20` | Docker image for the TMF672 role management microservice |
-| `partyrole.image` | `lesterthomas/partyroleapi:1.1` | Docker image for the TMF669 role management microservice |
+| `permissionspec.image` | `tmforumodacanvas/permissionspecapi:1.0.0` | Docker image for the TMF672 role management microservice |
+| `partyrole.image` | `tmforumodacanvas/partyroleapi:1.0.0` | Docker image for the TMF669 role management microservice |

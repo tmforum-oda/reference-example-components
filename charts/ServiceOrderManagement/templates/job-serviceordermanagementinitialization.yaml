@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: {{.Release.Name}}-serviceordermanagementinitialization
-        image: lesterthomas/serviceordermanagementinitialization:0.1
+        image: {{.Values.initialization.image}}
         env:
         - name: RELEASE_NAME
           value: {{.Release.Name}}

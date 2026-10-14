@@ -95,15 +95,16 @@ api:
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 
 metrics:
-  image: lesterthomas/openmetrics:1.0    # reuse existing image
+  image: {dockerhub-namespace}/{componentnamelower}metrics:1.0.0
+  versionLabel: {componentnamelower}metrics-1.0.0
 
 partyrole:
-  image: lesterthomas/partyroleapi:1.1   # reuse existing image
-  versionLabel: partyroleapi-1.1
+  image: tmforumodacanvas/partyroleapi:1.0.0   # shared image
+  versionLabel: partyroleapi-1.0.0
 
 permissionspec:
-  image: lesterthomas/permissionspecapi:0.20   # reuse existing image
-  versionLabel: permissionspecapi-0.20
+  image: tmforumodacanvas/permissionspecapi:1.0.0   # shared image
+  versionLabel: permissionspecapi-1.0.0
   enabled: true                          # default: use permissionspec over partyrole
 
 # Add one section per additional optional API:
@@ -451,7 +452,7 @@ spec:
     spec:
       containers:
       - name: {{.Release.Name}}-roleinitialization
-        image: lesterthomas/roleinitialization:0.6
+        image: {{.Values.roleinitialization.image}}
         env:
         - name: RELEASE_NAME
           value: {{.Release.Name}}

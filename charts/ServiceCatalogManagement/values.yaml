@@ -47,8 +47,8 @@ mongodb:
   database: tmf
 
 svcatapi:
-  image: lesterthomas/servicecatalogapi:0.2
-  versionLabel: servicecatalogapi-0.2
+  image: tmforumodacanvas/servicecatalogapi:1.0.0
+  versionLabel: servicecatalogapi-1.0.0
   otlp:
     console:
       enabled: false
@@ -57,8 +57,8 @@ svcatapi:
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 
 svcqualapi:
-  image: lesterthomas/servicequalityapi:0.2
-  versionLabel: servicequalityapi-0.2
+  image: tmforumodacanvas/servicequalityapi:1.0.0
+  versionLabel: servicequalityapi-1.0.0
   otlp:
     console:
       enabled: false
@@ -68,8 +68,8 @@ svcqualapi:
 
 processflow:
   enabled: false
-  image: lesterthomas/processflowapi:0.2
-  versionLabel: processflowapi-0.2
+  image: tmforumodacanvas/processflowapi:1.0.0
+  versionLabel: processflowapi-1.0.0
   otlp:
     console:
       enabled: false
@@ -78,21 +78,25 @@ processflow:
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 
 metrics:
-  image: lesterthomas/servicecatalogmetrics:0.1
+  image: tmforumodacanvas/servicecatalogmetrics:1.0.0
 
 mcp:
-  image: lesterthomas/servicecatalogmcp:0.1
-  versionLabel: servicecatalogmcp-0.1
+  image: tmforumodacanvas/servicecatalogmcp:1.0.0
+  versionLabel: servicecatalogmcp-1.0.0
 
 partyrole:
-  image: lesterthomas/partyroleapi:1.1
-  versionLabel: partyroleapi-1.1
+  image: tmforumodacanvas/partyroleapi:1.0.0
+  versionLabel: partyroleapi-1.0.0
 
 permissionspec:
-  image: lesterthomas/permissionspecapi:0.20
-  versionLabel: permissionspecapi-0.20
+  image: tmforumodacanvas/permissionspecapi:1.0.0
+  versionLabel: permissionspecapi-1.0.0
   enabled: true
 
 canvasinfo:
   host: info.canvas.svc.cluster.local
   basepath: /
+roleinitialization:
+  image: tmforumodacanvas/servicecatalogmanagement-roleinitialization:1.0.0
+initialization:
+  image: tmforumodacanvas/servicecataloginitialization:1.0.0

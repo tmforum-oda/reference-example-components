@@ -92,12 +92,12 @@ helm install r1 .\productinventory --set permissionspec.enabled=false -n compone
 |---|---|---|
 | `mongodb.port` | `27017` | Port for the MongoDB instance (host derived from release name) |
 | `mongodb.database` | `tmf` | Database name |
-| `api.image` | `lesterthomas/productinventoryapi:0.4` | Docker image for the Product Inventory API microservice |
+| `api.image` | `tmforumodacanvas/productinventoryapi:1.0.0` | Docker image for the Product Inventory API microservice |
 | `api.otlp.console.enabled` | `false` | Log OpenTelemetry traces to console |
 | `api.otlp.protobuffCollector.enabled` | `true` | Send OpenTelemetry traces to the OTLP collector |
 | `api.otlp.protobuffCollector.url` | `http://observability-opentelemetry-collector...` | OTLP collector endpoint URL |
-| `metrics.image` | `lesterthomas/productinventorymetrics:0.1` | Docker image for the open metrics microservice |
+| `metrics.image` | `tmforumodacanvas/productinventorymetrics:1.0.0` | Docker image for the open metrics microservice |
 | `permissionspec.enabled` | `true` | Use TMF672 PermissionSpecificationSet API (set `false` for TMF669 PartyRole) |
-| `permissionspec.image` | `lesterthomas/permissionspecapi:0.20` | Docker image for the TMF672 role management microservice |
-| `partyrole.image` | `lesterthomas/partyroleapi:1.1` | Docker image for the TMF669 role management microservice |
+| `permissionspec.image` | `tmforumodacanvas/permissionspecapi:1.0.0` | Docker image for the TMF672 role management microservice |
+| `partyrole.image` | `tmforumodacanvas/partyroleapi:1.0.0` | Docker image for the TMF669 role management microservice |
 

@@ -1,0 +1,334 @@
+# Container images for the reference example components.
+#
+# The "Build Component Images" workflow (.github/workflows/build-images.yml) reads
+# this file. Each image is built from <context>/<dockerfile>.
+#
+# - On a pull request, it builds (without pushing) every image whose watched
+#   paths or entry changed, and fails if that image's version tag already exists
+#   on Docker Hub.
+# - On merge to master, it builds the same images for linux/amd64 and
+#   linux/arm64 and pushes them. It never overwrites an existing tag.
+#
+# To publish a new image version, change the source and bump "version" here and
+# in the chart that uses the image.
+#
+# "republishedFrom" records the personal-account image that each 1.0.0 image was
+# copied from (issue #84). "scripts/images.py republish" copies those images, and
+# builds and pushes the images that have no "republishedFrom" from source.
+
+organization: tmforumodacanvas
+platforms: linux/amd64,linux/arm64
+
+images:
+
+  # Shared by every chart (source lives in ProductCatalog)
+  - name: partyroleapi
+    version: 1.0.0
+    context: source/ProductCatalog
+    dockerfile: partyrole-dockerfile
+    paths:
+      - source/ProductCatalog/partyrole-dockerfile
+      - source/ProductCatalog/partyRoleMicroservice
+    republishedFrom: lesterthomas/partyroleapi:1.1
+  - name: permissionspecapi
+    version: 1.0.0
+    context: source/ProductCatalog
+    dockerfile: permissionspec-dockerfile
+    paths:
+      - source/ProductCatalog/permissionspec-dockerfile
+      - source/ProductCatalog/permissionSpecificationSetMicroservice
+    republishedFrom: lesterthomas/permissionspecapi:0.20
+
+  # PartyManagement
+  - name: partymanagementapi
+    version: 1.0.0
+    context: source/PartyManagement
+    dockerfile: partymanagement-dockerfile
+    paths:
+      - source/PartyManagement/partymanagement-dockerfile
+      - source/PartyManagement/partyManagementMicroservice
+    republishedFrom: lesterthomas/partymanagementapi:0.4
+  - name: partymanagementmetrics
+    version: 1.0.0
+    context: source/PartyManagement
+    dockerfile: openMetricsMicroservice-dockerfile
+    paths:
+      - source/PartyManagement/openMetricsMicroservice-dockerfile
+      - source/PartyManagement/openMetricsMicroservice
+    # lesterthomas/partymanagementmetrics:0.1 was amd64-only, so 1.0.0 is rebuilt from source for every platform.
+  - name: partymanagementinitialization
+    version: 1.0.0
+    context: source/PartyManagement
+    dockerfile: partymanagementinitialization-dockerfile
+    paths:
+      - source/PartyManagement/partymanagementinitialization-dockerfile
+      - source/PartyManagement/partyManagementInitializationMicroservice
+    # lesterthomas/partymanagementinitialization:0.1 was amd64-only, so 1.0.0 is rebuilt from source for every platform.
+  - name: partymanagement-roleinitialization
+    version: 1.0.0
+    context: source/PartyManagement
+    dockerfile: roleinitialization-dockerfile
+    paths:
+      - source/PartyManagement/roleinitialization-dockerfile
+      - source/PartyManagement/roleInitializationMicroservice
+    republishedFrom: lesterthomas/roleinitialization:0.6
+
+  # ProductCatalog
+  - name: productcatalogapi
+    version: 1.0.0
+    context: source/ProductCatalog
+    dockerfile: prodcat-dockerfile
+    paths:
+      - source/ProductCatalog/prodcat-dockerfile
+      - source/ProductCatalog/productCatalogMicroservice
+    republishedFrom: lesterthomas/productcatalogapi:1.6
+  - name: productcatalogmetrics
+    version: 1.0.0
+    context: source/ProductCatalog
+    dockerfile: openMetricsMicroservice-dockerfile
+    paths:
+      - source/ProductCatalog/openMetricsMicroservice-dockerfile
+      - source/ProductCatalog/openMetricsMicroservice
+    republishedFrom: lesterthomas/openmetrics:1.0
+  - name: productcatalogmcp
+    version: 1.0.0
+    context: source/ProductCatalog
+    dockerfile: prodcat-mcp-dockerfile
+    paths:
+      - source/ProductCatalog/prodcat-mcp-dockerfile
+      - source/ProductCatalog/MCPServerMicroservice
+    republishedFrom: lesterthomas/productcatalogmcp:0.14
+  - name: promotionmgmtapi
+    version: 1.0.0
+    context: source/ProductCatalog
+    dockerfile: promotionmgmt-dockerfile
+    paths:
+      - source/ProductCatalog/promotionmgmt-dockerfile
+      - source/ProductCatalog/promotionManagementMicroservice
+    republishedFrom: lesterthomas/promotionmgmtapi:0.6
+  - name: productcataloginitialization
+    version: 1.0.0
+    context: source/ProductCatalog
+    dockerfile: productcataloginitialization-dockerfile
+    paths:
+      - source/ProductCatalog/productcataloginitialization-dockerfile
+      - source/ProductCatalog/productCatalogInitializationMicroservice
+    republishedFrom: lesterthomas/productcataloginitialization:0.3
+  - name: productcatalog-roleinitialization
+    version: 1.0.0
+    context: source/ProductCatalog
+    dockerfile: roleinitialization-dockerfile
+    paths:
+      - source/ProductCatalog/roleinitialization-dockerfile
+      - source/ProductCatalog/roleInitializationMicroservice
+    republishedFrom: lesterthomas/roleinitialization:0.6
+
+  # ProductInventory
+  - name: productinventoryapi
+    version: 1.0.0
+    context: source/ProductInventory
+    dockerfile: productinventory-dockerfile
+    paths:
+      - source/ProductInventory/productinventory-dockerfile
+      - source/ProductInventory/productInventoryMicroservice
+    republishedFrom: lesterthomas/productinventoryapi:0.4
+  - name: productinventorymetrics
+    version: 1.0.0
+    context: source/ProductInventory
+    dockerfile: openMetricsMicroservice-dockerfile
+    paths:
+      - source/ProductInventory/openMetricsMicroservice-dockerfile
+      - source/ProductInventory/openMetricsMicroservice
+    republishedFrom: lesterthomas/productinventorymetrics:0.1
+  - name: productinventoryinitialization
+    version: 1.0.0
+    context: source/ProductInventory
+    dockerfile: productinventoryinitialization-dockerfile
+    paths:
+      - source/ProductInventory/productinventoryinitialization-dockerfile
+      - source/ProductInventory/productInventoryInitializationMicroservice
+    republishedFrom: lesterthomas/productinventoryinitialization:0.1
+  - name: productinventory-roleinitialization
+    version: 1.0.0
+    context: source/ProductInventory
+    dockerfile: roleinitialization-dockerfile
+    paths:
+      - source/ProductInventory/roleinitialization-dockerfile
+      - source/ProductInventory/roleInitializationMicroservice
+    republishedFrom: lesterthomas/roleinitialization:0.1
+
+  # ProductOrderCaptureAndValidation
+  - name: productorderingapi
+    version: 1.0.0
+    context: source/ProductOrderCaptureAndValidation
+    dockerfile: productordering-dockerfile
+    paths:
+      - source/ProductOrderCaptureAndValidation/productordering-dockerfile
+      - source/ProductOrderCaptureAndValidation/productOrderingMicroservice
+    republishedFrom: lesterthomas/productorderingapi:0.9
+  - name: productordercaptureandvalidationmetrics
+    version: 1.0.0
+    context: source/ProductOrderCaptureAndValidation
+    dockerfile: openMetricsMicroservice-dockerfile
+    paths:
+      - source/ProductOrderCaptureAndValidation/openMetricsMicroservice-dockerfile
+      - source/ProductOrderCaptureAndValidation/openMetricsMicroservice
+    republishedFrom: adarshkrm/productordercaptureandvalidationmetrics:0.4
+  - name: productorderprocessor
+    version: 1.0.0
+    context: source/ProductOrderCaptureAndValidation
+    dockerfile: productorderprocessor-dockerfile
+    paths:
+      - source/ProductOrderCaptureAndValidation/productorderprocessor-dockerfile
+      - source/ProductOrderCaptureAndValidation/productOrderProcessorMicroservice
+    republishedFrom: adarshkrm/productorderprocessor:0.1
+  - name: productorderinitialization
+    version: 1.0.0
+    context: source/ProductOrderCaptureAndValidation
+    dockerfile: productorderinitialization-dockerfile
+    paths:
+      - source/ProductOrderCaptureAndValidation/productorderinitialization-dockerfile
+      - source/ProductOrderCaptureAndValidation/productOrderInitializationMicroservice
+    republishedFrom: lesterthomas/productorderinitialization:0.1
+  - name: productordercaptureandvalidation-roleinitialization
+    version: 1.0.0
+    context: source/ProductOrderCaptureAndValidation
+    dockerfile: roleinitialization-dockerfile
+    paths:
+      - source/ProductOrderCaptureAndValidation/roleinitialization-dockerfile
+      - source/ProductOrderCaptureAndValidation/roleInitializationMicroservice
+    republishedFrom: lesterthomas/roleinitialization:0.1
+
+  # ServiceCatalogManagement
+  - name: servicecatalogapi
+    version: 1.0.0
+    context: source/ServiceCatalogManagement
+    dockerfile: svcatapi-dockerfile
+    paths:
+      - source/ServiceCatalogManagement/svcatapi-dockerfile
+      - source/ServiceCatalogManagement/serviceCatalogMicroservice
+    republishedFrom: lesterthomas/servicecatalogapi:0.2
+  - name: servicequalityapi
+    version: 1.0.0
+    context: source/ServiceCatalogManagement
+    dockerfile: svcqualapi-dockerfile
+    paths:
+      - source/ServiceCatalogManagement/svcqualapi-dockerfile
+      - source/ServiceCatalogManagement/serviceQualityManagementMicroservice
+    republishedFrom: lesterthomas/servicequalityapi:0.2
+  - name: processflowapi
+    version: 1.0.0
+    context: source/ServiceCatalogManagement
+    dockerfile: procflowapi-dockerfile
+    paths:
+      - source/ServiceCatalogManagement/procflowapi-dockerfile
+      - source/ServiceCatalogManagement/processFlowMicroservice
+    republishedFrom: lesterthomas/processflowapi:0.2
+  - name: servicecatalogmetrics
+    version: 1.0.0
+    context: source/ServiceCatalogManagement
+    dockerfile: openMetricsMicroservice-dockerfile
+    paths:
+      - source/ServiceCatalogManagement/openMetricsMicroservice-dockerfile
+      - source/ServiceCatalogManagement/openMetricsMicroservice
+    republishedFrom: lesterthomas/servicecatalogmetrics:0.1
+  - name: servicecatalogmcp
+    version: 1.0.0
+    context: source/ServiceCatalogManagement
+    dockerfile: svcatmcp-dockerfile
+    paths:
+      - source/ServiceCatalogManagement/svcatmcp-dockerfile
+      - source/ServiceCatalogManagement/MCPServerMicroservice
+    republishedFrom: lesterthomas/servicecatalogmcp:0.1
+  - name: servicecataloginitialization
+    version: 1.0.0
+    context: source/ServiceCatalogManagement
+    dockerfile: svcatinit-dockerfile
+    paths:
+      - source/ServiceCatalogManagement/svcatinit-dockerfile
+      - source/ServiceCatalogManagement/serviceCatalogInitializationMicroservice
+    republishedFrom: lesterthomas/servicecataloginitialization:0.1
+  - name: servicecatalogmanagement-roleinitialization
+    version: 1.0.0
+    context: source/ServiceCatalogManagement
+    dockerfile: roleinit-dockerfile
+    paths:
+      - source/ServiceCatalogManagement/roleinit-dockerfile
+      - source/ServiceCatalogManagement/roleInitializationMicroservice
+    republishedFrom: lesterthomas/roleinitialization:0.1
+
+  # ServiceInventory
+  - name: serviceinventoryapi
+    version: 1.0.0
+    context: source/ServiceInventory
+    dockerfile: serviceinventory-dockerfile
+    paths:
+      - source/ServiceInventory/serviceinventory-dockerfile
+      - source/ServiceInventory/serviceInventoryMicroservice
+    republishedFrom: lesterthomas/serviceinventoryapi:0.4
+  - name: serviceinventorymetrics
+    version: 1.0.0
+    context: source/ServiceInventory
+    dockerfile: openMetricsMicroservice-dockerfile
+    paths:
+      - source/ServiceInventory/openMetricsMicroservice-dockerfile
+      - source/ServiceInventory/openMetricsMicroservice
+    # lesterthomas/serviceinventorymetrics:0.1 was amd64-only, so 1.0.0 is rebuilt from source for every platform.
+  - name: serviceinventoryinitialization
+    version: 1.0.0
+    context: source/ServiceInventory
+    dockerfile: serviceinventoryinitialization-dockerfile
+    paths:
+      - source/ServiceInventory/serviceinventoryinitialization-dockerfile
+      - source/ServiceInventory/serviceInventoryInitializationMicroservice
+    republishedFrom: lesterthomas/serviceinventoryinitialization:0.1
+  - name: serviceinventory-roleinitialization
+    version: 1.0.0
+    context: source/ServiceInventory
+    dockerfile: roleinitialization-dockerfile
+    paths:
+      - source/ServiceInventory/roleinitialization-dockerfile
+      - source/ServiceInventory/roleInitializationMicroservice
+    republishedFrom: lesterthomas/roleinitialization:0.6
+
+  # ServiceOrderManagement
+  - name: serviceorderapi
+    version: 1.0.0
+    context: source/ServiceOrderManagement
+    dockerfile: serviceordermanagement-dockerfile
+    paths:
+      - source/ServiceOrderManagement/serviceordermanagement-dockerfile
+      - source/ServiceOrderManagement/serviceOrderManagementMicroservice
+    republishedFrom: lesterthomas/serviceorderapi:0.1
+  - name: serviceordermanagementmetrics
+    version: 1.0.0
+    context: source/ServiceOrderManagement
+    dockerfile: openMetricsMicroservice-dockerfile
+    paths:
+      - source/ServiceOrderManagement/openMetricsMicroservice-dockerfile
+      - source/ServiceOrderManagement/openMetricsMicroservice
+    republishedFrom: lesterthomas/serviceordermanagementmetrics:0.1
+  - name: serviceordermanagementmcp
+    version: 1.0.0
+    context: source/ServiceOrderManagement
+    dockerfile: serviceordermanagement-mcp-dockerfile
+    paths:
+      - source/ServiceOrderManagement/serviceordermanagement-mcp-dockerfile
+      - source/ServiceOrderManagement/serviceOrderManagementMCPServerMicroservice
+    republishedFrom: lesterthomas/serviceordermanagementmcp:0.1
+  - name: serviceordermanagementinitialization
+    version: 1.0.0
+    context: source/ServiceOrderManagement
+    dockerfile: serviceordermanagementinitialization-dockerfile
+    paths:
+      - source/ServiceOrderManagement/serviceordermanagementinitialization-dockerfile
+      - source/ServiceOrderManagement/serviceOrderManagementInitializationMicroservice
+    republishedFrom: lesterthomas/serviceordermanagementinitialization:0.1
+  - name: serviceordermanagement-roleinitialization
+    version: 1.0.0
+    context: source/ServiceOrderManagement
+    dockerfile: roleinitialization-dockerfile
+    paths:
+      - source/ServiceOrderManagement/roleinitialization-dockerfile
+      - source/ServiceOrderManagement/roleInitializationMicroservice
+    republishedFrom: lesterthomas/roleinitialization:0.6

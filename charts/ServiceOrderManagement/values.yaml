@@ -45,8 +45,8 @@ mongodb:
   database: tmf
 
 api:
-  image: lesterthomas/serviceorderapi:0.1
-  versionLabel: serviceorderapi-0.1
+  image: tmforumodacanvas/serviceorderapi:1.0.0
+  versionLabel: serviceorderapi-1.0.0
   otlp:
     console:
       enabled: false
@@ -55,21 +55,25 @@ api:
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 
 metrics:
-  image: lesterthomas/serviceordermanagementmetrics:0.1
+  image: tmforumodacanvas/serviceordermanagementmetrics:1.0.0
 
 partyrole:
-  image: lesterthomas/partyroleapi:1.1
-  versionLabel: partyroleapi-1.1
+  image: tmforumodacanvas/partyroleapi:1.0.0
+  versionLabel: partyroleapi-1.0.0
 
 permissionspec:
-  image: lesterthomas/permissionspecapi:0.20
-  versionLabel: permissionspecapi-0.20
+  image: tmforumodacanvas/permissionspecapi:1.0.0
+  versionLabel: permissionspecapi-1.0.0
   enabled: true
 
 mcp:
-  image: lesterthomas/serviceordermanagementmcp:0.1
-  versionLabel: serviceordermanagementmcp-0.1
+  image: tmforumodacanvas/serviceordermanagementmcp:1.0.0
+  versionLabel: serviceordermanagementmcp-1.0.0
 
 canvasinfo:
   host: info.canvas.svc.cluster.local
   basepath: /
+roleinitialization:
+  image: tmforumodacanvas/serviceordermanagement-roleinitialization:1.0.0
+initialization:
+  image: tmforumodacanvas/serviceordermanagementinitialization:1.0.0

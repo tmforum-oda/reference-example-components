@@ -2,6 +2,7 @@ apiVersion: v2
 name: serviceordermanagement
 description: A reference example TMFC007-ServiceOrderManagement ODA Component
 type: application
-version: 1.0.1
+version: 1.0.2
+# version: 1.0.2 - Images moved to the tmforumodacanvas Docker Hub organization as 1.0.0 (issue 84)
 # version: 1.0.1 - Fixed TMF672 specification URL (issue 63)
 appVersion: "1.0.0"

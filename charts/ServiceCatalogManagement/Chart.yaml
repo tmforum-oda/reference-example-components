@@ -2,7 +2,8 @@ apiVersion: v2
 name: servicecatalogmanagement
 description: A reference example TMFC006-ServiceCatalogManagement ODA Component
 type: application
-version: 1.0.2
+version: 1.0.3
+# version: 1.0.3 - Images moved to the tmforumodacanvas Docker Hub organization as 1.0.0 (issue 84)
 # version: 1.0.2 - Fixed TMF672 specification URL (issue 63)
 # version: 1.0.1 - Added architecture diagram to README
 appVersion: "1.0.0"
