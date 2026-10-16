@@ -1,0 +1,155 @@
+name: Product Catalog conformance (TMFC001 CTK)
+
+# Deploys the Product Catalog reference component, built from this branch, onto an
+# ODA Canvas in kind and runs the TMFC001 conformance test kit from
+# tmforum-rand/TMForum-ODA-Ready-for-publication against it. See issue #81.
+
+on:
+  pull_request:
+    paths:
+      - 'charts/ProductCatalog/**'
+      - 'source/ProductCatalog/**'
+      - '.github/workflows/productcatalog-conformance.yml'
+  workflow_dispatch:
+
+env:
+  KIND_VERSION: v0.23.0
+  HELM_VERSION: v3.18.4
+  CTK_REPO: tmforum-rand/TMForum-ODA-Ready-for-publication
+  CTK_REF: v1.0.0
+  CTK_COMPONENT: TMFC001-ProductCatalogManagement
+  RELEASE: pc
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install kind and Helm
+        run: |
+          curl -sSLo ./kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-amd64"
+          chmod +x ./kind && sudo mv ./kind /usr/local/bin/kind
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh && ./get_helm.sh --version "${HELM_VERSION}"
+
+      - name: Create kind cluster
+        run: |
+          kind create cluster --wait 120s
+          kubectl get nodes
+
+      - name: Install Istio
+        run: |
+          helm repo add istio https://istio-release.storage.googleapis.com/charts
+          helm repo update
+          kubectl create namespace istio-system
+          helm install istio-base istio/base -n istio-system
+          helm install istiod istio/istiod -n istio-system --wait
+          kubectl create namespace istio-ingress
+          kubectl label namespace istio-ingress istio-injection=enabled
+          helm install istio-ingress istio/gateway -n istio-ingress \
+            --set labels.app=istio-ingress --set labels.istio=ingressgateway
+
+      # kind has no load balancer. The canvas builds API URLs from the ingress address,
+      # and the Open API CTKs call those URLs from Docker containers, so use the
+      # runner's docker0 address (reachable from the runner and from containers) and
+      # forward port 443 on it to the Istio gateway. This must happen before the
+      # component is installed, because the API operator reads it when APIs are created.
+      - name: Give the Istio ingress a reachable address
+        run: |
+          HOST_IP=$(ip -4 -o addr show docker0 | awk '{print $4}' | cut -d/ -f1)
+          echo "HOST_IP=${HOST_IP}" >> "$GITHUB_ENV"
+          kubectl patch svc istio-ingress -n istio-ingress --subresource=status --type=merge \
+            -p "{\"status\":{\"loadBalancer\":{\"ingress\":[{\"ip\":\"${HOST_IP}\"}]}}}"
+          kubectl rollout status deploy/istio-ingress -n istio-ingress --timeout=300s
+          sudo nohup "$(command -v kubectl)" --kubeconfig "$HOME/.kube/config" port-forward \
+            --address 0.0.0.0 -n istio-ingress svc/istio-ingress 443:443 > port-forward.log 2>&1 &
+          sleep 5 && cat port-forward.log
+
+      - name: Install ODA Canvas
+        run: |
+          helm repo add oda-canvas https://tmforum-oda.github.io/oda-canvas
+          helm repo update
+          # No --wait: the canvas post-install hooks create secrets the workloads need
+          helm install canvas oda-canvas/canvas-oda -n canvas --create-namespace \
+            --set preqrequisitechecks.istio=false --timeout 20m
+          kubectl wait --for=condition=Available deploy --all -n canvas --timeout=900s
+          kubectl get pods -A
+
+      - name: Build Product Catalog API image from this branch
+        working-directory: source/ProductCatalog
+        run: |
+          docker build -f prodcat-dockerfile -t local/productcatalogapi:ci .
+          kind load docker-image local/productcatalogapi:ci
+
+      - name: Install Product Catalog with the image from this branch
+        run: |
+          helm install "${RELEASE}" charts/ProductCatalog -n components
+          # The chart pins imagePullPolicy: Always, so switch to the locally loaded image afterwards
+          kubectl patch deploy "${RELEASE}-prodcatapi" -n components --type=json -p '[
+            {"op":"replace","path":"/spec/template/spec/containers/0/image","value":"local/productcatalogapi:ci"},
+            {"op":"replace","path":"/spec/template/spec/containers/0/imagePullPolicy","value":"IfNotPresent"}]'
+          kubectl rollout status deploy/"${RELEASE}-prodcatapi" -n components --timeout=300s
+          for i in $(seq 1 60); do
+            STATUS=$(kubectl get components -n components -o jsonpath="{.items[0].status['summary/status'].deployment_status}" 2>/dev/null || true)
+            echo "Component status: ${STATUS}"
+            [ "${STATUS}" = "Complete" ] && break
+            sleep 10
+          done
+          kubectl get components,exposedapis -n components
+          [ "${STATUS}" = "Complete" ]
+
+      - name: Checkout conformance test kit
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.CTK_REPO }}
+          ref: ${{ env.CTK_REF }}
+          path: rfp
+          sparse-checkout: ${{ env.CTK_COMPONENT }}/CTK/componentCTK
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run TMFC001 conformance test kit
+        working-directory: rfp/${{ env.CTK_COMPONENT }}/CTK/componentCTK
+        run: |
+          pip install -r scripts/requirements.txt
+          jq --arg rel "${RELEASE}" --arg ver "${GITHUB_SHA::7}" '
+            .releaseName = $rel | .component_to_run = "TMFC001" |
+            .ctkconfig.companyName = "TM Forum (CI)" |
+            .ctkconfig.productName = "Reference Product Catalog" |
+            .ctkconfig.productUrl = "https://github.com/tmforum-oda/reference-example-components" |
+            .ctkconfig.productVersion = $ver' CHANGE_ME.json > CHANGE_ME.tmp && mv CHANGE_ME.tmp CHANGE_ME.json
+          cd scripts && python CTK_Executor.py
+
+      - name: Upload conformance reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tmfc001-conformance-reports
+          path: |
+            rfp/${{ env.CTK_COMPONENT }}/CTK/componentCTK/Reports/
+            rfp/${{ env.CTK_COMPONENT }}/CTK/componentCTK/resources/api-ctks/*/reports/
+          if-no-files-found: warn
+
+      # The TMFC001 security API check is not enforced yet: the chart exposes TMF672
+      # while the published specification requires TMF669 (issue #79).
+      - name: Check TMF620 API CTK results
+        working-directory: rfp/${{ env.CTK_COMPONENT }}/CTK/componentCTK/resources/api-ctks
+        run: |
+          RESULTS=$(ls TMF620_*/reports/jsonResults.json)
+          TOTAL=$(jq '.run.stats.assertions.total' $RESULTS)
+          FAILED=$(jq '.run.stats.assertions.failed' $RESULTS)
+          echo "TMF620 assertions: $((TOTAL - FAILED)) of ${TOTAL} passed"
+          echo "### TMF620 API CTK: $((TOTAL - FAILED)) of ${TOTAL} assertions passed" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${FAILED}" -ne 0 ]; then
+            jq -r '.run.failures[] | "\(.source.name): \(.error.test)"' $RESULTS | sort | uniq -c | sort -rn | head -40
+            exit 1
+          fi
