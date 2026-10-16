@@ -1,0 +1,129 @@
+name: Build Component Images
+
+# Builds the images listed in dockerbuild-config.yaml.
+# - pull_request: builds the changed images for linux/amd64, without pushing.
+#   Fails if a changed image's version tag already exists, so bump it.
+# - push to master: builds the changed images for every platform and pushes them.
+#   Fails rather than overwrite an existing tag.
+# - workflow_dispatch: builds the named images, and pushes them if asked.
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - source/**
+      - dockerbuild-config.yaml
+      - scripts/images.py
+      - .github/workflows/build-images.yml
+  push:
+    branches:
+      - master
+    paths:
+      - source/**
+      - dockerbuild-config.yaml
+      - scripts/images.py
+      - .github/workflows/build-images.yml
+  workflow_dispatch:
+    inputs:
+      images:
+        description: "Comma-separated image names from dockerbuild-config.yaml, or 'all'"
+        required: true
+      push:
+        description: "Push the images to Docker Hub"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  select:
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.select.outputs.images }}
+      count: ${{ steps.select.outputs.count }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install PyYAML
+        run: python3 -m pip install --quiet pyyaml
+
+      - name: Select images to build
+        id: select
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          NAMES: ${{ inputs.images }}
+        run: |
+          case "$EVENT" in
+            pull_request)
+              images=$(python3 scripts/images.py select --base "$PR_BASE" --head HEAD --include-workflow) ;;
+            push)
+              images=$(python3 scripts/images.py select --base "$PUSH_BEFORE" --head HEAD) ;;
+            workflow_dispatch)
+              images=$(python3 scripts/images.py select --names "$NAMES") ;;
+          esac
+          echo "$images" | python3 -m json.tool
+          echo "images=$images" >> "$GITHUB_OUTPUT"
+          echo "count=$(echo "$images" | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))')" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: select
+    if: needs.select.outputs.count != '0'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.select.outputs.images) }}
+    name: ${{ matrix.name }}:${{ matrix.version }}
+    env:
+      PUSH: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.push) }}
+      IMAGE: ${{ matrix.image }}:${{ matrix.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check version format
+        run: |
+          if [[ ! "${{ matrix.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version ${{ matrix.version }} of ${{ matrix.name }} must be <n>.<n>.<n>" && exit 1
+          fi
+
+      - name: Login to Docker Hub
+        if: env.PUSH == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Fail if the tag already exists
+        if: matrix.checkTag
+        run: |
+          if out=$(docker buildx imagetools inspect "$IMAGE" 2>&1); then
+            echo "::error::$IMAGE already exists. Bump the version of ${{ matrix.name }} in dockerbuild-config.yaml and in the chart that uses it." && exit 2
+          elif grep -qiE "not found|does not exist" <<< "$out"; then
+            echo "$IMAGE does not exist yet."
+          else
+            echo "::error::Could not check whether $IMAGE exists: $out" && exit 1
+          fi
+
+      - name: Set up QEMU
+        if: env.PUSH == 'true'
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build${{ env.PUSH == 'true' && ' and push' || '' }}
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          platforms: ${{ env.PUSH == 'true' && matrix.platforms || 'linux/amd64' }}
+          push: ${{ env.PUSH == 'true' }}
+          tags: ${{ env.IMAGE }}

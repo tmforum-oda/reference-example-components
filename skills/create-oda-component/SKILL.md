@@ -61,8 +61,8 @@ Identify which exposed APIs are mandatory (`required: true`) and which are optio
 
 **Always implement:**
 - All mandatory exposed APIs (`required: true` in the spec's `coreFunction.exposedAPIs`)
-- The security API — use the existing shared **`lesterthomas/permissionspecapi:0.20`** (TMF672 PermissionSpecificationSet) image. This is the standard for all components. 
-- The management API (open metrics — use a component-specific tag, e.g. `lesterthomas/{componentnamelower}metrics:0.1`)
+- The security API — use the existing shared **`tmforumodacanvas/permissionspecapi:1.0.0`** (TMF672 PermissionSpecificationSet) image. This is the standard for all components. 
+- The management API (open metrics — use a component-specific tag, e.g. `tmforumodacanvas/{componentnamelower}metrics:1.0.0`)
 
 **Ask the user about each optional API:**
 > "The specification includes these optional exposed APIs. Which would you like to implement?
@@ -78,10 +78,10 @@ Note which APIs the user selects — this determines what microservices and Helm
 
 ## Step 3 — Gather Docker Registry Info
 
-Ask the user for their Docker Hub namespace (or container registry) for the new images:
+Components in this repository publish their images to the **`tmforumodacanvas`** Docker Hub organization, built by the *Build Component Images* workflow (`.github/workflows/build-images.yml`) from `dockerbuild-config.yaml`. Use `tmforumodacanvas` as `{dockerhub-namespace}` unless you are generating the component into a different repository; then ask the user:
 > "What Docker Hub username or container registry namespace should I use for the new images? (e.g. `myorg`)"
 
-This is used in `builddockerfile.sh` and `values.yaml`.
+This is used in `dockerbuild-config.yaml` and `values.yaml`.
 
 ---
 
@@ -145,13 +145,26 @@ Follow the Python/FastMCP pattern from `templates/source/MCPServerMicroservice/`
 - `{componentname}MCPServerMicroservice/pyproject.toml` — Python dependencies (fastmcp, httpx, uvicorn)
 - `{componentname}-mcp-dockerfile` — `FROM python:3.13`, `RUN pip install .`, `CMD python {componentname}_mcp_server.py`
 
-### 4f — Build Script
+### 4f — Register the images
 
-Create `builddockerfile.sh` listing `docker buildx build` commands for all new images, using multi-platform `linux/amd64,linux/arm64` builds. Follow the pattern from `references/source-patterns.md`.
+Add one entry per new image to `dockerbuild-config.yaml` at the repository root, following the existing entries:
 
-**Important naming rule for metrics image**: Use a component-specific tag (e.g. `{dockerhub-namespace}/{componentname}metrics:0.1`) rather than the shared `openmetrics:1.0` tag to avoid overwriting the ProductCatalog image. Update `values.yaml` `metrics.image` to match.
+```yaml
+  # {ComponentName}
+  - name: {componentnamelower}api
+    version: 1.0.0
+    context: source/{ComponentName}
+    dockerfile: {componentnamelower}-dockerfile
+    paths:
+      - source/{ComponentName}/{componentnamelower}-dockerfile
+      - source/{ComponentName}/{componentname}Microservice
+```
 
-**Do not include a `permissionspecapi` or `partyroleapi` build** in `builddockerfile.sh` — both use pre-built shared images (`lesterthomas/permissionspecapi:0.20` and `lesterthomas/partyroleapi:1.1`) with no source dockerfile in this directory.
+`paths` lists the Dockerfile and every directory it copies from; a change under them makes the workflow rebuild the image. Do not add `republishedFrom`.
+
+**Naming rules**: each image name must be unique across the file, because every image is built from exactly one Dockerfile. Use `{componentnamelower}metrics` for the metrics image and `{componentnamelower}-roleinitialization` for the role initialization image, rather than another component's image.
+
+**Do not add a `permissionspecapi` or `partyroleapi` entry** — both are shared images (`tmforumodacanvas/permissionspecapi:1.0.0` and `tmforumodacanvas/partyroleapi:1.0.0`) built from the ProductCatalog source.
 
 ---
 
@@ -172,9 +185,12 @@ Fill in from the parsed specification YAML:
 - `component.name` — lowercase component name
 - `component.functionalBlock` — from `componentMetadata.functionalBlock`
 - `component.publicationDate` — from `componentMetadata.publicationDate`
-- `api.image` — `{dockerhub-namespace}/{componentname}api:0.1`
-- `permissionspec.image: lesterthomas/permissionspecapi:0.20`, `permissionspec.enabled: true` — always default to permissionspec
-- `partyrole.image: lesterthomas/partyroleapi:1.1` — kept for reference but `permissionspec.enabled: true` means it won't be used
+- `api.image` — `{dockerhub-namespace}/{componentname}api:1.0.0`
+- `permissionspec.image: tmforumodacanvas/permissionspecapi:1.0.0`, `permissionspec.enabled: true` — always default to permissionspec
+- `partyrole.image: tmforumodacanvas/partyroleapi:1.0.0` — kept for reference but `permissionspec.enabled: true` means it won't be used
+- `initialization.image` — `{dockerhub-namespace}/{componentnamelower}initialization:1.0.0`
+- `roleinitialization.image` — `{dockerhub-namespace}/{componentnamelower}-roleinitialization:1.0.0`
+- Every image goes in `values.yaml` — never hard-code an image in a template
 - Add sections for each optional API that was selected (e.g. `promotionmgmt.image`, `promotionmgmt.enabled: false`)
 
 ### templates/component-{componentname}.yaml (the ODA Component CRD)
@@ -202,8 +218,8 @@ Generate the following, following `references/chart-patterns.md` patterns exactl
 - `service-mongodb.yaml` — standard MongoDB service
 - `service-registerallevents.yaml` — metrics service (port 4000, selector: metricsapi)
 - `service-rolemanagement.yaml` — conditional service (permissionspecapi or partyroleapi)
-- `job-roleinitialization.yaml` — standard role init job (uses lesterthomas/roleinitialization:0.1)
-- `job-{componentname}initialization.yaml` — component-specific init job
+- `job-roleinitialization.yaml` — standard role init job (image from `{{.Values.roleinitialization.image}}`)
+- `job-{componentname}initialization.yaml` — component-specific init job (image from `{{.Values.initialization.image}}`)
 - `persistentVolumeClaim-mongodb.yaml` — standard 5Gi PVC
 
 For each optional API that the user chose to include, add corresponding `deployment-{optionalapi}api.yaml` and `service-{optionalapi}api.yaml` templates (conditional on `{{- if .Values.{optionalapi}.enabled }}`).
@@ -224,53 +240,15 @@ Fix any lint errors before finishing. Common issues:
 
 ---
 
-## Step 7 — Build and Push Docker Images
+## Step 7 — Build the Docker Images
 
-After helm lint passes, build and push all Docker images. Run from the `source/{ComponentName}/` directory:
-
-```bash
-cd source/{ComponentName}/
-bash builddockerfile.sh
-```
-
-Or run each command individually to monitor build output per image:
+After helm lint passes, check that each new image builds (from the repository root):
 
 ```bash
-cd source/{ComponentName}/
-docker buildx build -t "{dockerhub-namespace}/{componentnamelower}api:0.1" --platform "linux/amd64,linux/arm64" -f {componentnamelower}-dockerfile . --push
-docker buildx build -t "{dockerhub-namespace}/{componentnamelower}initialization:0.1" --platform "linux/amd64,linux/arm64" -f {componentnamelower}initialization-dockerfile . --push
-docker buildx build -t "{dockerhub-namespace}/{componentnamelower}metrics:0.1" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
+python scripts/images.py build {componentnamelower}api
 ```
 
-Wait for each build to complete and confirm the push succeeded (`pushing manifest for docker.io/...` in the output).
-
-> **Note**: `docker buildx` requires a multi-platform builder. If not already set up, run `docker buildx create --use --name multiarch-builder` first.
-
-### Multi-Arch Build Reliability
-
-Multi-platform builds can sometimes stall during the registry push phase despite successful local builds. If you encounter `--push` hanging indefinitely or manifest errors:
-
-1. **Add `--provenance=false` flag** to all `docker buildx build` commands. This reduces manifest complexity and improves registry upload reliability:
-   ```bash
-   docker buildx build -t "{namespace}/{image}:0.1" --platform "linux/amd64,linux/arm64" -f {dockerfile} . --push --provenance=false
-   ```
-
-2. **For persistent push failures**, use the per-architecture workaround:
-   ```bash
-   # Build separate tags for each architecture
-   docker buildx build -t "{namespace}/{image}:0.1-amd64" --platform linux/amd64 -f {dockerfile} . --push --provenance=false
-   docker buildx build -t "{namespace}/{image}:0.1-arm64" --platform linux/arm64 -f {dockerfile} . --push --provenance=false
-   
-   # Compose multi-arch manifest from per-arch images
-   docker buildx imagetools create -t {namespace}/{image}:0.1 {namespace}/{image}:0.1-amd64 {namespace}/{image}:0.1-arm64
-   ```
-   Single-platform pushes are more reliable than multi-platform `--push`, and `imagetools create` assembles the final manifest atomically.
-
-3. **Verify successful push** by inspecting the manifest:
-   ```bash
-   docker buildx imagetools inspect {namespace}/{image}:0.1
-   ```
-   Both `linux/amd64` and `linux/arm64` manifests should be listed.
+Do not push the images by hand. When the pull request is opened, the *Build Component Images* workflow builds the new images; when it is merged, the workflow builds them for `linux/amd64` and `linux/arm64` and pushes them to Docker Hub.
 
 ---
 
@@ -322,7 +300,6 @@ Create a new file explaining the source code structure for developers who want t
    | `{componentname}InitializationMicroservice/` | Registers the metrics microservice as an event listener on first deploy |
    | `openMetricsMicroservice/` | Prometheus/OpenMetrics endpoint that counts business events |
    | `*-dockerfile` | Dockerfile for each microservice |
-   | `builddockerfile.sh` | Script to build and push all Docker images |
 
 3. **Architecture overview** — a short paragraph describing how the microservices interact:
    - The main API microservice stores data in MongoDB and publishes events to registered listeners via the hub endpoint.
@@ -341,12 +318,7 @@ Create a new file explaining the source code structure for developers who want t
    | `config.json` | Runtime config (strict_schema: true) |
    | `package.json` | npm dependencies |
 
-5. **Building Docker images** — show commands:
-   ```bash
-   cd source/{ComponentName}/
-   bash builddockerfile.sh
-   ```
-   Or individually per image. Note the multi-platform build requires `docker buildx`.
+5. **Building Docker images** — list each image and its Dockerfile, say that the *Build Component Images* workflow publishes them from `dockerbuild-config.yaml` when a pull request merges, and show the local build command (`python scripts/images.py build {image}`). Follow the section in any existing `source/*/README.md`.
 
 6. **Running locally** (optional guidance) — briefly describe how a developer could run a single microservice locally for testing with a local MongoDB instance.
 
@@ -369,4 +341,4 @@ Tell the user what was created, what they need to do next:
 - **Security API** (`securityFunction.exposedAPIs`) is always implemented — use the existing shared role management implementation images unless the user wants custom ones.
 - **OpenAPI spec URLs**: Get them from `exposedAPIs[].specification[0].url` in the specification YAML. The swagger spec must be downloaded and saved as `api/swagger.yaml` in each microservice.
 - **Naming consistency**: The Kubernetes service name for each API becomes the hostname for inter-service communication. It must match the `implementation` field in the Component CRD and the selector in the Service template.
-- **Docker Buildx multi-arch**: Always use `--provenance=false` on multi-platform builds. If standard multi-platform `--push` stalls, use per-arch `--push` followed by `docker buildx imagetools create` to compose the final manifest.
+- **Images**: Publish images through `dockerbuild-config.yaml` and the *Build Component Images* workflow, not by hand. Never reuse an existing image tag — bump the `version` instead.

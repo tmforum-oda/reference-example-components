@@ -74,11 +74,11 @@ r1-serviceordermanagement        Component   Complete
 |---|---|---|
 | `mongodb.port` | `27017` | MongoDB port |
 | `mongodb.database` | `tmf` | MongoDB database name |
-| `api.image` | `lesterthomas/serviceorderapi:0.1` | Docker image for the TMF641 API microservice |
+| `api.image` | `tmforumodacanvas/serviceorderapi:1.0.0` | Docker image for the TMF641 API microservice |
 | `api.otlp.console.enabled` | `false` | Enable OTLP console exporter for tracing |
 | `api.otlp.protobuffCollector.enabled` | `true` | Enable OTLP protobuf collector for tracing |
 | `api.otlp.protobuffCollector.url` | `http://...` | URL of the OTLP protobuf collector |
-| `metrics.image` | `lesterthomas/serviceordermanagementmetrics:0.1` | Docker image for the metrics microservice |
+| `metrics.image` | `tmforumodacanvas/serviceordermanagementmetrics:1.0.0` | Docker image for the metrics microservice |
 | `permissionspec.enabled` | `true` | Use TMF672 PermissionSpecificationSet API (true) or TMF669 PartyRole API (false) |
 | `component.MCPServer.enabled` | `false` | Deploy the MCP server for AI agent access |
 | `component.dependentAPIs.enabled` | `false` | Enable dependent API declarations in the Component CRD |

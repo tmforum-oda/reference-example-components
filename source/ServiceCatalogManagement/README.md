@@ -20,7 +20,6 @@ This is the Node.js reference implementation of the [TMFC006 Service Catalog Man
 | `svcatinit-dockerfile` | Dockerfile for the Service Catalog initialization job |
 | `openMetricsMicroservice-dockerfile` | Dockerfile for the open metrics microservice |
 | `svcatmcp-dockerfile` | Dockerfile for the MCP server microservice |
-| `builddockerfile.sh` | Script to build and push all Docker images to Docker Hub |
 
 ## Architecture overview
 
@@ -98,25 +97,29 @@ These 14 files are identical across all reference components — they are copied
 
 ## Building Docker images
 
-From the `source/ServiceCatalogManagement/` directory:
+The images are published to the `tmforumodacanvas` Docker Hub organization by the
+[Build Component Images](../../.github/workflows/build-images.yml) workflow, which reads
+[`dockerbuild-config.yaml`](../../dockerbuild-config.yaml):
+
+| Image | Dockerfile |
+|-------|------------|
+| `tmforumodacanvas/servicecatalogapi:1.0.0` | `svcatapi-dockerfile` |
+| `tmforumodacanvas/servicequalityapi:1.0.0` | `svcqualapi-dockerfile` |
+| `tmforumodacanvas/processflowapi:1.0.0` | `procflowapi-dockerfile` |
+| `tmforumodacanvas/servicecatalogmetrics:1.0.0` | `openMetricsMicroservice-dockerfile` |
+| `tmforumodacanvas/servicecatalogmcp:1.0.0` | `svcatmcp-dockerfile` |
+| `tmforumodacanvas/servicecataloginitialization:1.0.0` | `svcatinit-dockerfile` |
+| `tmforumodacanvas/servicecatalogmanagement-roleinitialization:1.0.0` | `roleinit-dockerfile` |
+
+To publish a change, bump the image's `version` in `dockerbuild-config.yaml` and in the chart's
+`values.yaml`. The pull request builds the changed images, and merging it pushes them for
+`linux/amd64` and `linux/arm64`. The workflow fails rather than overwrite an existing tag.
+
+To build an image locally (from the repository root):
 
 ```bash
-bash builddockerfile.sh
+python scripts/images.py build servicecatalogapi
 ```
-
-Or individually:
-
-```bash
-docker buildx build -t "lesterthomas/servicecatalogapi:0.2" --platform "linux/amd64,linux/arm64" -f svcatapi-dockerfile . --push
-docker buildx build -t "lesterthomas/servicequalityapi:0.2" --platform "linux/amd64,linux/arm64" -f svcqualapi-dockerfile . --push
-docker buildx build -t "lesterthomas/processflowapi:0.2" --platform "linux/amd64,linux/arm64" -f procflowapi-dockerfile . --push
-docker buildx build -t "lesterthomas/roleinit-servicecatalog:0.1" --platform "linux/amd64,linux/arm64" -f roleinit-dockerfile . --push
-docker buildx build -t "lesterthomas/servicecataloginit:0.1" --platform "linux/amd64,linux/arm64" -f svcatinit-dockerfile . --push
-docker buildx build -t "lesterthomas/openmetrics-servicecatalog:0.1" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
-docker buildx build -t "lesterthomas/servicecatalogmcp:0.1" --platform "linux/amd64,linux/arm64" -f svcatmcp-dockerfile . --push
-```
-
-> Multi-platform builds require a buildx builder. If not already set up: `docker buildx create --use --name multiarch-builder`
 
 ## Running a microservice locally
 

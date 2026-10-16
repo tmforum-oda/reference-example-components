@@ -16,7 +16,6 @@ This is the Node.js reference implementation of the [TMFC002 — Product Order C
 | `productorderinitialization-dockerfile` | Dockerfile for the product order initialization Job |
 | `productorderprocessor-dockerfile` | Dockerfile for the product order processor microservice |
 | `openMetricsMicroservice-dockerfile` | Dockerfile for the open metrics microservice |
-| `builddockerfile.sh` | Script to build and push all Docker images to Docker Hub |
 
 ## Architecture Overview
 
@@ -77,23 +76,27 @@ The two downstream dependency names (`downstreamproductcatalog` and `downstreamp
 
 ## Building Docker Images
 
-From the `source/ProductOrderCaptureAndValidation/` directory:
+The images are published to the `tmforumodacanvas` Docker Hub organization by the
+[Build Component Images](../../.github/workflows/build-images.yml) workflow, which reads
+[`dockerbuild-config.yaml`](../../dockerbuild-config.yaml):
+
+| Image | Dockerfile |
+|-------|------------|
+| `tmforumodacanvas/productorderingapi:1.0.0` | `productordering-dockerfile` |
+| `tmforumodacanvas/productordercaptureandvalidationmetrics:1.0.0` | `openMetricsMicroservice-dockerfile` |
+| `tmforumodacanvas/productorderprocessor:1.0.0` | `productorderprocessor-dockerfile` |
+| `tmforumodacanvas/productorderinitialization:1.0.0` | `productorderinitialization-dockerfile` |
+| `tmforumodacanvas/productordercaptureandvalidation-roleinitialization:1.0.0` | `roleinitialization-dockerfile` |
+
+To publish a change, bump the image's `version` in `dockerbuild-config.yaml` and in the chart's
+`values.yaml`. The pull request builds the changed images, and merging it pushes them for
+`linux/amd64` and `linux/arm64`. The workflow fails rather than overwrite an existing tag.
+
+To build an image locally (from the repository root):
 
 ```bash
-bash builddockerfile.sh
+python scripts/images.py build productorderingapi
 ```
-
-Or build images individually:
-
-```bash
-docker buildx build -t "lesterthomas/productorderingapi:0.1" --platform "linux/amd64,linux/arm64" -f productordering-dockerfile . --push
-docker buildx build -t "lesterthomas/roleinitialization:0.1" --platform "linux/amd64,linux/arm64" -f roleinitialization-dockerfile . --push
-docker buildx build -t "lesterthomas/productorderprocessor:0.1" --platform "linux/amd64,linux/arm64" -f productorderprocessor-dockerfile . --push
-docker buildx build -t "lesterthomas/productorderinitialization:0.1" --platform "linux/amd64,linux/arm64" -f productorderinitialization-dockerfile . --push
-docker buildx build -t "lesterthomas/productordercaptureandvalidationmetrics:0.1" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
-```
-
-> **Note**: `docker buildx` requires a multi-platform builder. If not already configured, run `docker buildx create --use --name multiarch-builder` first.
 
 ## Running Locally
 

@@ -14,7 +14,6 @@ This is the Node.js reference implementation of the [TMFC008 Service Inventory M
 | `roleinitialization-dockerfile` | Dockerfile for the role initialization job |
 | `serviceinventoryinitialization-dockerfile` | Dockerfile for the initialization job |
 | `openMetricsMicroservice-dockerfile` | Dockerfile for the open metrics microservice |
-| `builddockerfile.sh` | Script to build and push all Docker images to Docker Hub |
 
 ## Architecture overview
 
@@ -81,21 +80,26 @@ These 14 files are identical across all reference components — they are copied
 
 ## Building Docker images
 
-From the `source/ServiceInventory/` directory:
+The images are published to the `tmforumodacanvas` Docker Hub organization by the
+[Build Component Images](../../.github/workflows/build-images.yml) workflow, which reads
+[`dockerbuild-config.yaml`](../../dockerbuild-config.yaml):
+
+| Image | Dockerfile |
+|-------|------------|
+| `tmforumodacanvas/serviceinventoryapi:1.0.0` | `serviceinventory-dockerfile` |
+| `tmforumodacanvas/serviceinventorymetrics:1.0.0` | `openMetricsMicroservice-dockerfile` |
+| `tmforumodacanvas/serviceinventoryinitialization:1.0.0` | `serviceinventoryinitialization-dockerfile` |
+| `tmforumodacanvas/serviceinventory-roleinitialization:1.0.0` | `roleinitialization-dockerfile` |
+
+To publish a change, bump the image's `version` in `dockerbuild-config.yaml` and in the chart's
+`values.yaml`. The pull request builds the changed images, and merging it pushes them for
+`linux/amd64` and `linux/arm64`. The workflow fails rather than overwrite an existing tag.
+
+To build an image locally (from the repository root):
 
 ```bash
-bash builddockerfile.sh
+python scripts/images.py build serviceinventoryapi
 ```
-
-Or individually:
-
-```bash
-docker buildx build -t "lesterthomas/serviceinventoryapi:0.1" --platform "linux/amd64,linux/arm64" -f serviceinventory-dockerfile . --push
-docker buildx build -t "lesterthomas/serviceinventoryinitialization:0.1" --platform "linux/amd64,linux/arm64" -f serviceinventoryinitialization-dockerfile . --push
-docker buildx build -t "lesterthomas/serviceinventorymetrics:0.1" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
-```
-
-> Multi-platform builds require a buildx builder. If not already set up: `docker buildx create --use --name multiarch-builder`
 
 ## Running a microservice locally
 

@@ -14,7 +14,6 @@ This is the Node.js reference implementation of the [TMFC028 Party Management](h
 | `roleinitialization-dockerfile` | Dockerfile for the role initialization job |
 | `partymanagementinitialization-dockerfile` | Dockerfile for the initialization job |
 | `openMetricsMicroservice-dockerfile` | Dockerfile for the open metrics microservice |
-| `builddockerfile.sh` | Script to build and push all Docker images to Docker Hub |
 
 ## Architecture overview
 
@@ -83,21 +82,26 @@ These 14 files are identical across all reference components — they are copied
 
 ## Building Docker images
 
-From the `source/PartyManagement/` directory:
+The images are published to the `tmforumodacanvas` Docker Hub organization by the
+[Build Component Images](../../.github/workflows/build-images.yml) workflow, which reads
+[`dockerbuild-config.yaml`](../../dockerbuild-config.yaml):
+
+| Image | Dockerfile |
+|-------|------------|
+| `tmforumodacanvas/partymanagementapi:1.0.0` | `partymanagement-dockerfile` |
+| `tmforumodacanvas/partymanagementmetrics:1.0.0` | `openMetricsMicroservice-dockerfile` |
+| `tmforumodacanvas/partymanagementinitialization:1.0.0` | `partymanagementinitialization-dockerfile` |
+| `tmforumodacanvas/partymanagement-roleinitialization:1.0.0` | `roleinitialization-dockerfile` |
+
+To publish a change, bump the image's `version` in `dockerbuild-config.yaml` and in the chart's
+`values.yaml`. The pull request builds the changed images, and merging it pushes them for
+`linux/amd64` and `linux/arm64`. The workflow fails rather than overwrite an existing tag.
+
+To build an image locally (from the repository root):
 
 ```bash
-bash builddockerfile.sh
+python scripts/images.py build partymanagementapi
 ```
-
-Or individually:
-
-```bash
-docker buildx build -t "lesterthomas/partymanagementapi:0.1" --platform "linux/amd64,linux/arm64" -f partymanagement-dockerfile . --push
-docker buildx build -t "lesterthomas/partymanagementinitialization:0.1" --platform "linux/amd64,linux/arm64" -f partymanagementinitialization-dockerfile . --push
-docker buildx build -t "lesterthomas/partymanagementmetrics:0.1" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
-```
-
-> Multi-platform builds require a buildx builder. If not already set up: `docker buildx create --use --name multiarch-builder`
 
 ## Running a microservice locally
 

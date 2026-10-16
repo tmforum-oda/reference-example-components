@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: {{.Release.Name}}-serviceinventoryinitialization
-        image: lesterthomas/serviceinventoryinitialization:0.1
+        image: {{.Values.initialization.image}}
         env:
         - name: RELEASE_NAME
           value: {{.Release.Name}}

@@ -116,16 +116,16 @@ You can configure the following aspects of the component by changing the values 
 |---|---|---|
 | `mongodb.port` | `27017` | The port to connect to the MongoDB instance. The host is derived from the release name. |
 | `mongodb.database` | `tmf` | The database name to connect to in MongoDB. |
-| `api.image` | `lesterthomas/productorderingapi:0.9` | The image for the TMF622 Product Ordering API microservice. |
+| `api.image` | `tmforumodacanvas/productorderingapi:1.0.0` | The image for the TMF622 Product Ordering API microservice. |
 | `api.otlp.console.enabled` | `false` | Whether OpenTelemetry traces are logged to the console instead of being sent to the collector. |
 | `api.otlp.protobuffCollector.enabled` | `true` | Whether OpenTelemetry traces are sent to the OTL Collector. Does not apply if `api.otlp.console.enabled` is `true`. |
 | `api.otlp.protobuffCollector.url` | `http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces` | The URL of the OTL Collector endpoint. |
-| `processor.image` | `adarshkrm/productorderprocessor:0.1` | The image for the product order processor microservice. |
+| `processor.image` | `tmforumodacanvas/productorderprocessor:1.0.0` | The image for the product order processor microservice. |
 | `processor.replicas` | `1` | The number of processor replicas to deploy. Uses MongoDB atomic operations to ensure orders are processed exactly once across multiple replicas. |
-| `metrics.image` | `adarshkrm/productordercaptureandvalidationmetrics:0.4` | The image for the OpenMetrics microservice. |
+| `metrics.image` | `tmforumodacanvas/productordercaptureandvalidationmetrics:1.0.0` | The image for the OpenMetrics microservice. |
 | `permissionspec.enabled` | `true` | When `true`, deploys the TMF672 Permission Specification Set API. When `false`, deploys the TMF669 Party Role API. |
-| `permissionspec.image` | `lesterthomas/permissionspecapi:0.20` | The image for the TMF672 Permission Specification Set microservice. |
-| `partyrole.image` | `lesterthomas/partyroleapi:1.1` | The image for the TMF669 Party Role microservice (used when `permissionspec.enabled=false`). |
+| `permissionspec.image` | `tmforumodacanvas/permissionspecapi:1.0.0` | The image for the TMF672 Permission Specification Set microservice. |
+| `partyrole.image` | `tmforumodacanvas/partyroleapi:1.0.0` | The image for the TMF669 Party Role microservice (used when `permissionspec.enabled=false`). |
 | `component.dependentAPIs.enabled` | `true` | When `true`, declares the TMF620 and TMF637 dependent APIs in the Component CRD so the Canvas can wire up downstream connections. Both are mandatory for order validation and inventory creation. |
 | `component.dependentAPIs.rejectUnauthorizedCertificates` | `false` | When `true`, the API microservice will reject self-signed TLS certificates from downstream APIs. |
 | `canvasinfo.host` | `info.canvas.svc.cluster.local` | The Canvas Info service hostname used to discover dependent API URLs at runtime. |

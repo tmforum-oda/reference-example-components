@@ -46,8 +46,8 @@ mongodb:
   port: 27017
   database: tmf
 api:
-  image: lesterthomas/productinventoryapi:0.4
-  versionLabel: productinventoryapi-0.4
+  image: tmforumodacanvas/productinventoryapi:1.0.0
+  versionLabel: productinventoryapi-1.0.0
   otlp:
     console:
       enabled: false
@@ -55,13 +55,14 @@ api:
       enabled: true
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 metrics:
-  image: lesterthomas/productinventorymetrics:0.1
+  image: tmforumodacanvas/productinventorymetrics:1.0.0
+  versionLabel: productinventorymetrics-1.0.0
 partyrole:
-  image: lesterthomas/partyroleapi:1.1
-  versionLabel: partyroleapi-1.1
+  image: tmforumodacanvas/partyroleapi:1.0.0
+  versionLabel: partyroleapi-1.0.0
 permissionspec:
-  image: lesterthomas/permissionspecapi:0.20
-  versionLabel: permissionspecapi-0.20
+  image: tmforumodacanvas/permissionspecapi:1.0.0
+  versionLabel: permissionspecapi-1.0.0
   # Set to true to use permissionspec API instead of partyrole API
   enabled: true
 canvasinfo:
@@ -69,3 +70,7 @@ canvasinfo:
   basepath: /
 service:
   port: 80
+roleinitialization:
+  image: tmforumodacanvas/productinventory-roleinitialization:1.0.0
+initialization:
+  image: tmforumodacanvas/productinventoryinitialization:1.0.0

@@ -16,7 +16,6 @@ Node.js reference implementation of the TMFC007 Service Order Management ODA Com
 | `roleinitialization-dockerfile` | Dockerfile for the role initialization job |
 | `openMetricsMicroservice-dockerfile` | Dockerfile for the metrics microservice |
 | `serviceordermanagement-mcp-dockerfile` | Dockerfile for the MCP server |
-| `builddockerfile.sh` | Script to build and push all Docker images |
 
 ## Architecture overview
 
@@ -44,20 +43,27 @@ The main API microservice (`serviceOrderManagementMicroservice`) stores service 
 
 ## Building Docker images
 
-```bash
-cd source/ServiceOrderManagement/
-bash builddockerfile.sh
-```
+The images are published to the `tmforumodacanvas` Docker Hub organization by the
+[Build Component Images](../../.github/workflows/build-images.yml) workflow, which reads
+[`dockerbuild-config.yaml`](../../dockerbuild-config.yaml):
 
-Or individually:
-```bash
-docker buildx build -t "lesterthomas/serviceorderapi:0.1" --platform "linux/amd64,linux/arm64" -f serviceordermanagement-dockerfile . --push
-docker buildx build -t "lesterthomas/serviceordermanagementinitialization:0.1" --platform "linux/amd64,linux/arm64" -f serviceordermanagementinitialization-dockerfile . --push
-docker buildx build -t "lesterthomas/serviceordermanagementmetrics:0.1" --platform "linux/amd64,linux/arm64" -f openMetricsMicroservice-dockerfile . --push
-docker buildx build -t "lesterthomas/serviceordermanagementmcp:0.1" --platform "linux/amd64,linux/arm64" -f serviceordermanagement-mcp-dockerfile . --push
-```
+| Image | Dockerfile |
+|-------|------------|
+| `tmforumodacanvas/serviceorderapi:1.0.0` | `serviceordermanagement-dockerfile` |
+| `tmforumodacanvas/serviceordermanagementmetrics:1.0.0` | `openMetricsMicroservice-dockerfile` |
+| `tmforumodacanvas/serviceordermanagementmcp:1.0.0` | `serviceordermanagement-mcp-dockerfile` |
+| `tmforumodacanvas/serviceordermanagementinitialization:1.0.0` | `serviceordermanagementinitialization-dockerfile` |
+| `tmforumodacanvas/serviceordermanagement-roleinitialization:1.0.0` | `roleinitialization-dockerfile` |
 
-Note: Multi-platform builds require `docker buildx`. If not set up, run `docker buildx create --use --name multiarch-builder` first.
+To publish a change, bump the image's `version` in `dockerbuild-config.yaml` and in the chart's
+`values.yaml`. The pull request builds the changed images, and merging it pushes them for
+`linux/amd64` and `linux/arm64`. The workflow fails rather than overwrite an existing tag.
+
+To build an image locally (from the repository root):
+
+```bash
+python scripts/images.py build serviceorderapi
+```
 
 ## Running locally
 
