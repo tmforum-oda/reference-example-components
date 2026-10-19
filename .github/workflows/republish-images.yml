@@ -35,18 +35,22 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Fail if any tag already exists
+      - name: Find images that do not exist yet
+        id: missing
         run: |
-          existing=0
+          missing=""
           for ref in $(python3 scripts/images.py list | awk '{print $1}'); do
             if docker buildx imagetools inspect "$ref" > /dev/null 2>&1; then
-              echo "::error::$ref already exists"; existing=1
+              echo "$ref already exists, skipping"
+            else
+              name=${ref#*/}; missing="$missing ${name%%:*}"
             fi
           done
-          exit $existing
+          echo "names=$missing" >> "$GITHUB_OUTPUT"
 
       - name: Republish
-        run: python3 scripts/images.py republish
+        if: steps.missing.outputs.names != ''
+        run: python3 scripts/images.py republish ${{ steps.missing.outputs.names }}
 
       - name: Verify
         run: |
