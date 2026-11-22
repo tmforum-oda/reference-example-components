@@ -75,8 +75,8 @@ metrics:
   image: tmforumodacanvas/productcatalogmetrics:1.1.0
   versionLabel: productcatalogmetrics-1.1.0
 mcp:
-  image: tmforumodacanvas/productcatalogmcp:1.0.0
-  versionLabel: productcatalogmcp-1.0.0
+  image: tmforumodacanvas/productcatalogmcp:1.1.0
+  versionLabel: productcatalogmcp-1.1.0
 partyrole:
   image: tmforumodacanvas/partyroleapi:1.0.0
   versionLabel: partyroleapi-1.0.0

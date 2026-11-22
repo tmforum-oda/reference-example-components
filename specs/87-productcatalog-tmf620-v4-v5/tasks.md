@@ -164,7 +164,11 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - `helm lint` and `helm template`, with the toggle on and off.
 - **Depends on:** T1, T9.
 
-### T21. Image config and docs
+### T21. Image config and docs ✅ done
+- Result: `dockerbuild-config.yaml` has `productcatalogapiv5:1.0.0` (watching `prodcat-v5-dockerfile`, `productCatalogV5Microservice` and `shared/tmf620-compat`); `productcatalogapi` and `productcatalogmetrics` were already at `1.1.0`. `scripts/images.py select --base master --head HEAD` picks exactly the four images this branch changes.
+- **Also bumped:** `productcatalogmcp` `1.0.0` → `1.1.0` (`dockerbuild-config.yaml` and chart `values.yaml`), not in spec §9. T8 removed `constraint` from the tool descriptions in `product_catalog_mcp_server.py`, which is built into that image, so the build workflow would otherwise refuse to rebuild over the existing `1.0.0` tag.
+- Chart README: a "TMF620 v4 and v5" section (the two ExposedAPIs and paths, the shared v5-format store, warnings, the 409/422/400 errors, migration and quarantine, the toggle, a link to the matrix, and the `--reuse-values` upgrade note), the compatibility counter under the management function, 9 microservices, `kubectl get exposedapis`, and `component.tmf620v5.enabled` and `apiv5.image` in the values table (the stale `api.image` default is corrected). Repo README: a short section with a link to the chart README and the matrix.
+- `ProductCatalog-architecture.svg` regenerated from chart 1.5.0 (MCP and dependent APIs on) with the `generate-component-svg-diagram` scripts. That renderer merges an API's `specification[]` entries into one row and only reads the root `implementation`, so a small wrapper (kept outside the repo) draws one TMF620 row per version, each linked to its own microservice. The plugin's `verify.mjs` agrees on everything except that extra row and its link; its independent audit has no warnings. Worth fixing in the plugin: one exposed row per `specification[]` entry, with the per-version `implementation`.
 - Add `productcatalogapiv5` to `dockerbuild-config.yaml` and bump `productcatalogapi` and `productcatalogmetrics`.
 - Update the repo `README.md` and the chart README (both versions, the compatibility behaviour, a link to the matrix); regenerate `ProductCatalog-architecture.svg`.
 - **Depends on:** T20.

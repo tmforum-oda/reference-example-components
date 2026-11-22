@@ -83,6 +83,14 @@ images:
       - source/ProductCatalog/productCatalogMicroservice
       - source/ProductCatalog/shared/tmf620-compat
     republishedFrom: lesterthomas/productcatalogapi:1.6
+  - name: productcatalogapiv5
+    version: 1.0.0
+    context: source/ProductCatalog
+    dockerfile: prodcat-v5-dockerfile
+    paths:
+      - source/ProductCatalog/prodcat-v5-dockerfile
+      - source/ProductCatalog/productCatalogV5Microservice
+      - source/ProductCatalog/shared/tmf620-compat
   - name: productcatalogmetrics
     version: 1.1.0
     context: source/ProductCatalog
@@ -92,7 +100,7 @@ images:
       - source/ProductCatalog/openMetricsMicroservice
     republishedFrom: lesterthomas/openmetrics:1.0
   - name: productcatalogmcp
-    version: 1.0.0
+    version: 1.1.0
     context: source/ProductCatalog
     dockerfile: prodcat-mcp-dockerfile
     paths:

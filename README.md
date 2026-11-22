@@ -39,6 +39,16 @@ To uninstall the chart:
 
 ## Optional Features
 
+### TMF620 v4 and v5 in the Product Catalog
+
+From chart 1.5.0 the Product Catalog component exposes TMF620 Product Catalog Management **v4 and v5 side by side**, over one MongoDB that stores every resource in the v5 format. The Canvas shows two ExposedAPIs (`...-productcatalogmanagement-v4` and `...-productcatalogmanagement-v5`), a resource created through one version can be used through the other, and existing v4 data is migrated on startup. Where v4 cannot carry v5 data, the v4 API returns an `X-TMF-Compatibility-Warning` header or a TMF error that says what to do, and the metrics API counts each case. See the [chart README](charts/ProductCatalog/README.md#tmf620-v4-and-v5) and the [compatibility matrix](specs/87-productcatalog-tmf620-v4-v5/compatibility-matrix.md).
+
+v5 is on by default. To expose v4 only:
+
+```
+helm install <release name> oda-components/productcatalog --set component.tmf620v5.enabled=false -n components
+```
+
 ### Optional API Dependency
 
 The Product Catalog component can be installed with an option API dependency (for a downstream Product Catalog API). By default, this dependency is not enabled. You can enable it with:
