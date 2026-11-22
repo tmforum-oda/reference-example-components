@@ -44,6 +44,10 @@ component:
     dependencyName: downstreamproductcatalog
   MCPServer:
     enabled: false
+  # TMF620 v5 alongside v4 on the same data (issue #87). false: v4 only, as before 1.5.0
+  # (the documents are still stored in the v5 format).
+  tmf620v5:
+    enabled: true
 security:
   canvasSystemRole: canvasRole
 mongodb:
@@ -52,6 +56,15 @@ mongodb:
 api:
   image: tmforumodacanvas/productcatalogapi:1.1.0
   versionLabel: productcatalogapi-1.1.0
+  otlp:
+    console:
+      enabled: false
+    protobuffCollector:
+      enabled: true
+      url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
+apiv5:
+  image: tmforumodacanvas/productcatalogapiv5:1.0.0
+  versionLabel: productcatalogapiv5-1.0.0
   otlp:
     console:
       enabled: false

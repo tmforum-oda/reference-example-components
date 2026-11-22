@@ -155,7 +155,10 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 
 ## Phase 5: Chart and local ODA Canvas
 
-### T20. Helm chart
+### T20. Helm chart ✅ done
+- Result: chart `1.5.0` with a changelog line. `values.yaml` has `component.tmf620v5.enabled: true` and `apiv5.*` (image `productcatalogapiv5:1.0.0`, the same structure as `api`); `api` and `metrics` were already at `1.1.0`. The v4 deployment gets `METRICS_COMPATIBILITY_URL=http://{release}-{component}-sm:4000/compatibility`. New `deployment-productcatalogapiv5.yaml` and `service-productcatalogapiv5.yaml` (startup probe on `.../v5/catalog`), both only when the toggle is on. `productcatalogmanagement` now has a `specification[]` entry per version: the v4 one keeps the root `implementation`, `path`, `developerUI` and gateway policy; the v5 one (official `main` v5.0.0 URL) overrides `implementation`, `path`, `developerUI` and `port`, and inherits the gateway policy.
+- Checks: `helm lint` passes with the toggle on and off. With it off, `helm template` gives the same output as `master` apart from the new env var and `version: v4.0.0`. The oda-canvas TMFOP001 `normalize_apis` and `build_exposedapi_name`, run on the rendered Components, give `r1-productcatalogmanagement-productcatalogmanagement-v4` for `master`, toggle off and toggle on (**the name is unchanged, so an upgrade does not recreate it**), plus `…-productcatalogmanagement-v5` → `r1-prodcatapiv5` with the toggle on. A server-side dry run on the local Canvas cluster (Component CRD v1) accepts both renders and keeps every field of the v5 entry.
+- Note for T22/T23: `helm upgrade --reuse-values` from 1.4.5 fails to render (`component.tmf620v5` is nil), because it ignores the new chart defaults. Upgrade with plain values or `--reset-then-reuse-values` (Helm ≥ 3.14).
 - `values.yaml` (`component.tmf620v5.enabled`, `apiv5.*`), `METRICS_COMPATIBILITY_URL` on the v4 deployment, new deployment and service templates for v5, and a second `specification[]` entry (v5) on the existing `productcatalogmanagement` exposed API in `component-productcatalog.yaml` (spec §4.4, §9). Check that the existing v4 ExposedAPI keeps its name across the upgrade.
 - Chart `1.5.0` with a changelog line; image versions `productcatalogapi:1.1.0` and `productcatalogapiv5:1.0.0`.
 - `helm lint` and `helm template`, with the toggle on and off.
