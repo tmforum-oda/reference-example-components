@@ -75,12 +75,13 @@ images:
 
   # ProductCatalog
   - name: productcatalogapi
-    version: 1.0.0
+    version: 1.1.0
     context: source/ProductCatalog
     dockerfile: prodcat-dockerfile
     paths:
       - source/ProductCatalog/prodcat-dockerfile
       - source/ProductCatalog/productCatalogMicroservice
+      - source/ProductCatalog/shared/tmf620-compat
     republishedFrom: lesterthomas/productcatalogapi:1.6
   - name: productcatalogmetrics
     version: 1.1.0

@@ -296,3 +296,12 @@ test('MCP server example payloads: constraint is refused, the rest translates', 
     console.log(`    MCP example ${file}: ${r.problems.length ? r.problems.map(p => p.path).join(', ') : 'translates cleanly'}`);
   }
 });
+
+test('relatedParty on a resource that defines none (an extension attribute) passes through unchanged', () => {
+  const ext = [{ id: 'pr-9', role: 'manager', '@referredType': 'PartyRole' }];
+  const v5 = toV5('productOffering', { id: 'po', name: 'x', relatedParty: ext });
+  assert.deepStrictEqual(v5.doc.relatedParty, ext);
+  const v4 = toV4('productOffering', { '@type': 'ProductOffering', id: 'po', name: 'x', relatedParty: [{ '@type': 'RelatedPartyRefOrPartyRoleRef', partyOrPartyRole: { '@type': 'PartyRef', id: 'p' } }] });
+  assert.deepStrictEqual(v4.doc.relatedParty, [{ '@type': 'RelatedPartyRefOrPartyRoleRef', partyOrPartyRole: { '@type': 'PartyRef', id: 'p' } }]);
+  assert.deepStrictEqual(v4.warnings, []);
+});

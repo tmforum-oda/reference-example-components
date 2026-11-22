@@ -60,7 +60,7 @@ While building a reference ODA Component that serves TMF620 v4 and v5 over a sha
 
 ## Before you post (notes for you, not part of the issue)
 
-- **Not yet tested at runtime:** the tool impacts above are written as known behaviours of tool categories. If you want a concrete reproduction first, T10 (the v5 service on `oas3-tools`) will show what our own validator does with `BooleanCharacteristicValueSpecification`. Its result could be added as a "Reproduction" section.
+- **Tested at runtime (T9/T10, express-openapi-validator 5.6.2):** `BooleanCharacteristicValueSpecification` is accepted, but `value` is never checked against any subtype: an `IntegerCharacteristicValueSpecification` with `value: "Unlimited"` passes. That could be added as a "Reproduction" section. A second, independent problem is drafted in [upstream-issue-draft-TMF620-v5-oneOf.md](upstream-issue-draft-TMF620-v5-oneOf.md).
 - **The "other v5 APIs" sentence** is a suggestion, not a finding; I haven't checked TMF633 or the others.
 - **To post it from a terminal,** after saving the text between the `---` lines as `issue-body.md`:
 

@@ -1,12 +1,13 @@
 'use strict';
 
-// Scaffold tests for the v5 API (task T9): routing, validation, TMF errors, docs,
+// Tests for the v5 API (tasks T9, T10): routing, validation, TMF errors, docs,
 // and how the validator treats the polymorphism cases in the compatibility matrix
-// (S5 and G3). No MongoDB needed.
+// (S5 and G3). Uses the in-memory store; crud.test.js covers the operations.
 
 const test = require('node:test');
 const assert = require('node:assert');
 const { createApp } = require('../app');
+const { memoryStore } = require('../utils/store');
 
 const COMPONENT = 'r1-productcatalogmanagement';
 const BASE = `/${COMPONENT}/tmf-api/productCatalogManagement/v5`;
@@ -14,7 +15,7 @@ let server;
 let origin;
 
 test.before(async () => {
-  server = createApp({ componentName: COMPONENT }).listen(0);
+  server = createApp({ componentName: COMPONENT, store: memoryStore() }).listen(0);
   await new Promise(resolve => server.once('listening', resolve));
   origin = `http://127.0.0.1:${server.address().port}`;
 });
@@ -74,10 +75,15 @@ test('Swagger UI and the OAS document are served', async () => {
   assert.strictEqual(apiDocs.json.servers[0].url, BASE);
 });
 
-test('in-scope operations are routed and answer 501 until T10', async () => {
-  const r = await call('GET', '/productCatalog?lifecycleStatus=Active&limit=5');
-  assertTmfError(r, 501);
-  assert.match(r.json.message, /listProductCatalog .* planned .* T10/);
+test('without a database, in-scope operations answer 501', async () => {
+  const bare = createApp({ componentName: COMPONENT }).listen(0);
+  await new Promise(resolve => bare.once('listening', resolve));
+  try {
+    const res = await fetch(`http://127.0.0.1:${bare.address().port}${BASE}/productCatalog`);
+    const json = await res.json();
+    assert.strictEqual(res.status, 501);
+    assert.match(json.message, /listProductCatalog .* without a database/);
+  } finally { bare.close(); }
 });
 
 test('out-of-scope operations answer 501 with the reason', async () => {
@@ -105,12 +111,12 @@ test('malformed JSON gives a TMF 400', async () => {
 
 test('PATCH accepts application/merge-patch+json bodies', async () => {
   const r = await call('PATCH', '/productOffering/po-1', { '@type': 'ProductOffering', lifecycleStatus: 'Active' }, 'application/merge-patch+json');
-  assertTmfError(r, 501);   // passed validation and reached the handler
+  assertTmfError(r, 404);   // passed validation and reached the handler
 });
 
 test('a valid StringCharacteristicValueSpecification passes validation', async () => {
   const r = await call('POST', '/productSpecification', spec([{ '@type': 'StringCharacteristicValueSpecification', value: '5G SA' }]));
-  assertTmfError(r, 501);
+  assert.strictEqual(r.status, 201, r.text);
 });
 
 // Characterisation tests: they record what express-openapi-validator does with the
@@ -119,17 +125,19 @@ test('a valid StringCharacteristicValueSpecification passes validation', async (
 // characteristicValueSpecification[] is typed as the base CharacteristicValueSpecification
 // with a discriminator but no oneOf, so the validator checks the base schema only: it
 // requires @type and checks valueFrom/valueTo, but does not check `value` against the
-// subtype. The v5 service therefore runs its own check (shared tmf620-compat module,
-// task T10), and these 501s become 422s for the mismatches.
+// subtype. The v5 service therefore runs its own check (checkV5Value from the shared
+// tmf620-compat module) and refuses mismatches with 422.
 
 test('matrix S5: BooleanCharacteristicValueSpecification is accepted (missing mapping does not block it)', async () => {
   const r = await call('POST', '/productSpecification', spec([{ '@type': 'BooleanCharacteristicValueSpecification', value: true }]));
-  assertTmfError(r, 501);
+  assert.strictEqual(r.status, 201, r.text);
 });
 
-test('validator gap: a value that does not fit its subtype is not caught by the OAS validator', async () => {
+test('validator gap: a value that does not fit its subtype passes the OAS validator and is refused by the service', async () => {
   const r = await call('POST', '/productSpecification', spec([{ '@type': 'IntegerCharacteristicValueSpecification', value: 'Unlimited' }]));
-  assertTmfError(r, 501);   // T10: expect 422 from the service's own check
+  assertTmfError(r, 400);
+  assert.strictEqual(r.json.code, 'TMF620-V5-400-CHARVALUE-TYPE');
+  assert.match(r.json.message, /productSpecCharacteristic\[0\]\.characteristicValueSpecification\[0\]: value "Unlimited" does not fit @type IntegerCharacteristicValueSpecification/);
 });
 
 test('the validator does enforce @type and integer valueFrom on characteristic values', async () => {
@@ -152,5 +160,5 @@ test('matrix G3: a custom pricingLogicAlgorithm subtype with @schemaLocation pas
       name: 'Monthly rating'
     }]
   });
-  assertTmfError(r, 501);
+  assert.strictEqual(r.status, 201, r.text);
 });

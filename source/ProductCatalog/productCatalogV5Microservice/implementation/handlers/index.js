@@ -4,8 +4,8 @@
 //
 // In scope for issue #87: create / list / retrieve / patch / delete for
 // productCatalog, category, productOffering, productOfferingPrice and
-// productSpecification. Their handlers are added in task T10; until then they
-// answer 501 like the out-of-scope operations (hub, listeners, import/export jobs).
+// productSpecification (handlers/resources.js). The other operations (hub,
+// listeners, import/export jobs) answer 501.
 
 const { sendError } = require('../utils/tmfError');
 
@@ -21,13 +21,13 @@ function notImplemented(operationId, why) {
   };
 }
 
-// Handlers implemented so far, keyed by operationId. T10 fills this in.
-const implemented = {};
-
-function handlerFor(operationId) {
-  if (implemented[operationId]) return implemented[operationId];
-  if (IN_SCOPE.has(operationId)) return notImplemented(operationId, 'is planned but not implemented yet (issue #87, task T10).');
-  return notImplemented(operationId, 'is not part of this reference implementation, which covers catalog, category, productOffering, productOfferingPrice and productSpecification.');
+// implemented: handlers keyed by operationId (from resources.createHandlers)
+function handlerLookup(implemented) {
+  return function handlerFor(operationId) {
+    if (implemented && implemented[operationId]) return implemented[operationId];
+    if (IN_SCOPE.has(operationId)) return notImplemented(operationId, 'is not available: this API was started without a database.');
+    return notImplemented(operationId, 'is not part of this reference implementation, which covers catalog, category, productOffering, productOfferingPrice and productSpecification.');
+  };
 }
 
-module.exports = { handlerFor, IN_SCOPE, RESOURCES, VERBS };
+module.exports = { handlerLookup, IN_SCOPE, RESOURCES, VERBS };

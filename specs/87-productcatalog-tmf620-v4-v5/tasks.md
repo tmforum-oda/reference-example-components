@@ -29,7 +29,8 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - `node:test` table-driven tests: each matrix row in both directions, round-trip `v5ToV4(v4ToV5(x)) == x` for every v4 fixture, and each lossy case returning the right warning or error.
 - **Depends on:** T1 (T2 for C5).
 
-### T4. Compatibility errors and warnings
+### T4. Compatibility errors and warnings ✅ done
+- Result: `utils/tmf620Storage.js` (`sendProblems`: one TMF Error from `toTmfError`, a `warn` log line and a metric count; `warningCollector`: one `X-TMF-Compatibility-Warning` value per resource and code) and `utils/compatMetrics.js` (counts summed per code, resource and operation and sent in one batch every 2 s; an outage is logged once and the counts are dropped). `errorUtils.js` is unchanged: the compatibility errors are TMF Error bodies built by the shared module. 12 `node:test` tests (`npm test`). Checked end to end: the counts reach `tmf620_compatibility_total` in the metrics service.
 - Wire `toTmfError` and the `TMF620-COMPAT-*` codes from `tmf620-compat` into `utils/errorUtils.js` (message builder from spec §7.2 (resource, id, attribute, reason, next step, matrix link).
 - Add the `X-TMF-Compatibility-Warning` response header helper and `warn`-level logging.
 - Add a compatibility metric reporter (spec §7.3): fire-and-forget POST to `METRICS_COMPATIBILITY_URL`, one count per code per response, never blocking or failing the request. Unit-test the batching and that a metrics outage doesn't affect the response.
@@ -42,13 +43,15 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - `openMetricsMicroservice/index.js`: a `<component>_tmf620_compatibility_total` counter with labels `code`, `kind`, `resource` and `operation`; a `POST /compatibility` endpoint that checks the label values against the allowed sets (so labels stay bounded) and increments it. Bump the `productcatalogmetrics` image to `1.1.0`.
 - **Depends on:** none (can start straight away).
 
-### T5. Write path
+### T5. Write path ✅ done
+- Result: create and patch for the five resources moved into `utils/resourceOperations.js`; the services call it. POST runs the existing v4 steps (validation, `traverse`, common attributes, the #80 `lifecycleStatus` default) and then `v4ToV5`; PATCH uses `v4Patch` (array merge by key, 409 for entries v4 cannot see) and `replaceOne`. Documents get `_schema` and a version-neutral `href`. Events carry the v4 view. A document without `_schema` (not migrated yet, T7) is converted as a whole on its first v4 PATCH. Image `productcatalogapi:1.1.0`; a `.dockerignore` keeps local `node_modules` (with Windows links to `shared/`) out of the images.
 - Add `tmf620-compat` as a `file:../../shared/tmf620-compat` dependency and copy `shared/tmf620-compat` into the v4 image, as `prodcat-v5-dockerfile` does.
 - In `CatalogService`, `CategoryService`, `ProductOfferingService`, `ProductOfferingPriceService` and `ProductSpecificationService`: apply `v4ToV5` before `insertOne`; implement PATCH as read → v4 view → merge-patch → `v4ToV5` → merge into stored → `checkPatchCompatibility` → write.
 - Store `href` version-neutral (change `operationsUtils.js:200`, `:230`) and add `_schema`.
 - **Depends on:** T3, T4.
 
-### T6. Read path
+### T6. Read path ✅ done (with T5: v4 reads of v5 documents need it)
+- Result: `listResource` and `retrieveResource` map filters and `fields` with `mapFilter`/`mapFields` before `getMongoQuery` (so the #80 date-time equality still applies), return `v5ToV4` views with warning headers, and keep `?fields=` responses to the requested attributes plus `id` and `href`. Documents without `_schema` are returned as stored. Downstream-API results are appended untranslated, as before. Unchanged from before: a date-time *range* filter (`lastUpdate>=…`) matches nothing on v4, because query-to-mongo turns the value into a Date and the attribute is stored as a string; only the equality and prefix form from #80 works.
 - Map filters and `fields` in `mongoUtils.getMongoQuery`, `listResource` and `retrieveResource`; apply `v5ToV4` to the results and set warning headers; build the v4 `href` at response time.
 - Keep the #80 date-filter behaviour working on the v5 paths.
 - **Depends on:** T3, T4.
@@ -74,7 +77,11 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - Add `prodcat-v5-dockerfile`.
 - **Depends on:** T1. Can run in parallel with Phase 1–2.
 
-### T10. v5 CRUD on the shared collections
+### T10. v5 CRUD on the shared collections ✅ done
+- Result: `handlers/resources.js` on `utils/store.js` (MongoDB driver 6.10.0, the same `MONGODB_*` variables and collections as v4; an in-memory store for tests). Filters with `.gt/.gte/.lt/.lte/.ne/.regex` and `>=`/`<=`, comma = any of, `fields`, `offset`/`limit`, `sort`, `X-Total-Count`/`X-Result-Count`. PATCH: merge patch (`application/json` and `application/merge-patch+json`) and JSON Patch; JSON Patch Query answers 501. Unmigrated documents: 500 `TMF620-V5-500-UNMIGRATED`. 22 tests, including one that serves every v4-written telco fixture through v5 with response validation on.
+- **Deviation:** characteristic values that do not fit their `@type` are refused with **400** `TMF620-V5-400-CHARVALUE-TYPE`, not 422: the v5.0.0 OAS defines no 422 response, and response validation enforces that.
+- **Found:** the official OAS needs two adjustments before a JSON Schema validator can use it (`utils/spec.js` `validatorSpec`; [upstream draft](upstream-issue-draft-TMF620-v5-oneOf.md)). The example payloads reuse `id` values, which breaks every response validator; and the `oneOf` "ref or value" schemas are not exclusive, so every `relatedParty` was refused. Also fixed in `tmf620-compat`: `relatedParty` on productOffering, productOfferingPrice and category (defined in neither version) now passes through unchanged instead of being restructured.
+- Checked against MongoDB with both images: write through either version, read, patch and delete through the other (19 checks), and the BDD `@smoke` feature, 10 of 10.
 - POST/GET/list/PATCH/DELETE for the five resources, writing the v5 document as is (`@type`, `_schema`, version-neutral `href`), with `href` built at response time, the default `lifecycleStatus`, filters, `fields`, `offset`/`limit` with `X-Total-Count`/`X-Result-Count`, PATCH returning 200, and `merge-patch+json` (plus JSON Patch if the OAS requires it).
 - Refuse documents with no `_schema` marker (spec §8).
 - Catalog is served at `/productCatalog` (`@type: ProductCatalog`) from the `Catalog` collection (matrix G1).

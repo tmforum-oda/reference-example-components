@@ -32,63 +32,19 @@ const {updateQueryServiceType, updatePayloadServiceType, cleanPayloadServiceType
 
 const {TError, TErrorEnum, sendError} = require('../utils/errorUtils');
 
+const {createResource, patchResource} = require('../utils/resourceOperations');
+
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 
 exports.createProductOffering = function(req, res, next) {
   /**
    * Creates a ProductOffering
-   * This operation creates a ProductOffering entity.
-   *
-   * productOffering ProductOffering_Create The ProductOffering to be created
-   * returns ProductOffering
+   * The v4 payload is stored as a TMF620 v5 resource (issue #87); see utils/resourceOperations.js
    **/
 
   console.log('createProductOffering :: ' + req.method + ' ' + req.url + ' ' + req.headers.host);
-
-  /* matching isRestfulCreate - argument productOffering */
-  
-  const resourceType = getResponseType(req);
-  const requestSchema = getPayloadSchema(req);
-
-  swaggerUtils.getPayload(req)
-    .then(payload => validateRequest(req, 'createProductOffering', payload))
-    .then(payload => traverse(req, requestSchema, payload,[],getPayloadType(req)))
-    .then(payload => processCommonAttributes(req, resourceType, payload))
-    .then(payload => processAssignmentRules('createProductOffering', payload))
-    .then(payload => {
-
-      const internalError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
-
-      payload = swaggerUtils.updatePayloadServiceType(payload, req,'');
-
-      mongoUtils.connect().then(db => {
-        db.collection(resourceType)
-          .insertOne(payload)
-          .then(() => {
-
-            payload = cleanPayloadServiceType(payload);
-
-            sendDoc(res, 201, payload);
-            notificationUtils.publish(req,payload);
-          })
-          .catch((error) => {
-            console.log("createProductOffering: error=" + error);
-            sendError(res, internalError);
-          })
-      })
-      .catch((error) => {
-        console.log("createProductOffering: error=" + error);
-        sendError(res, internalError);
-      })
-    })
-    .catch( error => {
-      console.log("createProductOffering: error=" + error.toString());
-      sendError(res, error);
-    });
-
-
-
+  return createResource(req, res, 'createProductOffering');
 };
 
 exports.deleteProductOffering = function(req, res, next) {
@@ -154,85 +110,11 @@ exports.listProductOffering = function(req, res, next) {
 exports.patchProductOffering = function(req, res, next) {
   /**
    * Updates partially a ProductOffering
-   * This operation updates partially a ProductOffering entity.
-   *
-   * id String Identifier of the ProductOffering
-   * productOffering ProductOffering_Update The ProductOffering to be updated
-   * returns ProductOffering
+   * Merged into the stored TMF620 v5 resource, keeping what v4 cannot see (issue #87)
    **/
 
   console.log('patchProductOffering :: ' + req.method + ' ' + req.url + ' ' + req.headers.host);
-
-  /* matching isRestfulPatch */
-
-  const internalError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Unable to update resource");
-
-  const resourceType = getResponseType(req);
-  const requestSchema = getPayloadSchema(req);
-
-  const id = String(req.swagger.params.id.value);
-  var query = {
-   id: id
-  };
-
-  query = swaggerUtils.updateQueryServiceType(query, req, 'id');
-
-  swaggerUtils.getPayload(req)
-    .then(payload => validateRequest(req,'patchProductOffering',payload))
-    .then(payload => traverse(req,requestSchema,payload,[],getPayloadType(req)))
-    .then(payload => {
-
-      mongoUtils.connect().then(db => {
-        // first check if resource exists
-        db.collection(resourceType)
-        .findOne(query)
-        .then(old => {
-          if (old==undefined) {
-            return sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND,"No resource with given id"));
-          }
-
-          payload = swaggerUtils.updatePayloadServiceType(payload, req, 'id');
-          
-          // then update and return the complete resource
-          db.collection(resourceType)
-            .updateOne(query, {$set: payload}, {upsert: false})
-            .then(() => {
-              db.collection(resourceType).findOne(query)
-                .then((doc) => {
-
-                  doc = swaggerUtils.cleanPayloadServiceType(doc);
-
-                  sendDoc(res, 200, doc);
-                  notificationUtils.publish(req,doc,old);
-                })
-                .catch((error) => {
-                  console.log("patchProductOffering error=" + error);
-                  return sendError(res, internalError);
-                });
-            })
-            .catch((error) => {
-              console.log("patchProductOffering error=" + error);
-              return sendError(res, internalError);
-            })
-          })
-        .catch((error) => {
-          console.log("patchProductOffering error=" + error);
-          return sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND,"No resource with given id"));
-        });        
-      })
-      .catch((error) => {
-        console.log("patchProductOffering error=" + error);
-        return sendError(res, internalError);
-      });
-  })
-  .catch(error => {
-    console.log("patchProductOffering error=" + error);
-    return sendError(res, error);
-  });
-
-
-
-
+  return patchResource(req, res, 'patchProductOffering');
 };
 
 exports.retrieveProductOffering = function(req, res, next) {

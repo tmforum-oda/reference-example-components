@@ -43,4 +43,68 @@ function toExpressPath(oasPath) {
   return oasPath.replace(/\{([^}]+)\}/g, ':$1');
 }
 
-module.exports = { SPEC_FILE, loadOfficialSpec, basePathFor, specForComponent, listOperations, toExpressPath };
+// The spec without its examples, for express-openapi-validator. The validator puts
+// components into every schema it compiles, and Ajv (draft-04 rules, as for OAS 3.0)
+// reads the `id` attributes of the example payloads as schema ids; the official
+// examples reuse ids (for example '9881'), which makes every response validator fail
+// with "resolves to more than one schema".
+function withoutExamples(spec) {
+  const copy = structuredClone(spec);
+  if (copy.components) delete copy.components.examples;
+  const strip = (node) => {
+    if (Array.isArray(node)) { node.forEach(strip); return; }
+    if (!node || typeof node !== 'object') return;
+    if (node.content && typeof node.content === 'object') {
+      Object.values(node.content).forEach(media => { if (media) { delete media.examples; delete media.example; } });
+    }
+    Object.values(node).forEach(strip);
+  };
+  strip(copy.paths);
+  strip(copy.components);
+  return copy;
+}
+
+// The TMF620 v5.0.0 OAS models "reference or value" and "party or party role" as
+// oneOf + discriminator (for example PartyRefOrPartyRoleRef: PartyRef | PartyRoleRef).
+// The branches do not exclude each other's attributes, so a plain JSON Schema
+// validator finds that a PartyRef also matches PartyRoleRef and refuses the
+// document ("must match exactly one schema in oneOf"): every relatedParty would be
+// refused. This applies the discriminator: each branch only matches its own @type
+// values from the mapping. An @type outside the mapping (a TMF extension subtype,
+// matrix G3) must match at least one branch.
+function withDiscriminatedOneOf(spec) {
+  const copy = structuredClone(spec);
+  const schemas = (copy.components && copy.components.schemas) || {};
+  for (const name of Object.keys(schemas)) {
+    const schema = schemas[name];
+    if (!Array.isArray(schema.oneOf) || !schema.discriminator || !schema.discriminator.mapping) continue;
+    const prop = schema.discriminator.propertyName;
+    const mapping = schema.discriminator.mapping;
+    const all = Object.keys(mapping);
+    const branches = schema.oneOf.map(branch => {
+      const values = all.filter(k => mapping[k] === branch.$ref);
+      if (!values.length) return branch;
+      return { allOf: [branch, { type: 'object', required: [prop], properties: { [prop]: { enum: values } } }] };
+    });
+    branches.push({ allOf: [
+      { type: 'object', required: [prop], properties: { [prop]: { not: { enum: all } } } },
+      { anyOf: schema.oneOf }
+    ] });
+    schema.oneOf = branches;
+    // enforced by the branches now; express-openapi-validator's own discriminator
+    // handling is meant for top-level request bodies and misreads nested ones
+    delete schema.discriminator;
+  }
+  return copy;
+}
+
+// What express-openapi-validator gets: the official spec, without examples and
+// with discriminated oneOfs
+function validatorSpec(spec) {
+  return withDiscriminatedOneOf(withoutExamples(spec));
+}
+
+module.exports = {
+  withoutExamples,
+  withDiscriminatedOneOf,
+  validatorSpec, SPEC_FILE, loadOfficialSpec, basePathFor, specForComponent, listOperations, toExpressPath };

@@ -11,18 +11,21 @@ if (process.env.OTL_EXPORTER_TRACE_PROTO_ENABLED !== 'false' || process.env.OTL_
 const http = require('http');
 const { createApp } = require('./app');
 const { basePathFor } = require('./utils/spec');
+const { mongoStore } = require('./utils/store');
 
 const port = process.env.PORT || 8080;
 const componentName = process.env.COMPONENT_NAME || 'r1-productcatalogmanagement'; // default for local testing
 const validateResponses = process.env.OAS_VALIDATE_RESPONSES !== 'false';
 
 const started = Date.now();
-const app = createApp({ componentName, validateResponses });
+const store = mongoStore();
+const app = createApp({ componentName, validateResponses, store });
 const basePath = basePathFor(componentName);
 
 http.createServer(app).listen(port, () => {
   console.log(`TMF620 v5 API for ${componentName} listening on port ${port} (ready in ${Date.now() - started} ms)`);
   console.log(`  API:        http://localhost:${port}${basePath}`);
   console.log(`  Swagger UI: http://localhost:${port}${basePath}/docs`);
+  console.log(`  Database:   ${store.describe()} (shared with the v4 API)`);
   console.log(`  Response validation: ${validateResponses ? 'on' : 'off'}`);
 });

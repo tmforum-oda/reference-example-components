@@ -1,0 +1,4 @@
+# Images install their own dependencies; a local node_modules (with links to
+# ../../shared on Windows) must not be copied in.
+**/node_modules
+**/reports

@@ -92,6 +92,12 @@ function walk(node, v5Name, v4Name, mode, path, out) {
 // ---------------------------------------------------------------------------
 // Structural transforms, v4 -> v5
 
+// Only catalog and productSpecification define relatedParty (in both versions). On the
+// other resources it is an extension attribute and passes through unchanged.
+function hasRelatedParty(info) {
+  return !!v5Props(info.v5Def).relatedParty;
+}
+
 function relatedPartyToV5(list) {
   if (!Array.isArray(list)) return list;
   return list.map(rp => {
@@ -208,7 +214,7 @@ function toV5(resource, v4doc, ctx) {
     doc['@type'] = info.v5Def;
   }
 
-  if (doc.relatedParty !== undefined) doc.relatedParty = relatedPartyToV5(doc.relatedParty);
+  if (doc.relatedParty !== undefined && hasRelatedParty(info)) doc.relatedParty = relatedPartyToV5(doc.relatedParty);
 
   if (resource === 'category' && doc.parentId !== undefined) {
     if (doc.parentId === null || doc.parentId === '') {
@@ -328,7 +334,7 @@ function toV4(resource, v5doc, ctx) {
 
   walk(doc, info.v5Def, info.v4Def, 'toV4', '', out);
 
-  if (doc.relatedParty !== undefined) doc.relatedParty = relatedPartyToV4(doc.relatedParty, out);
+  if (doc.relatedParty !== undefined && hasRelatedParty(info)) doc.relatedParty = relatedPartyToV4(doc.relatedParty, out);
 
   if (resource === 'category' && doc.parent !== undefined) {
     if (doc.parent && typeof doc.parent === 'object') {

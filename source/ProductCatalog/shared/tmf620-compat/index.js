@@ -6,7 +6,7 @@
 const { toV5, toV4 } = require('./lib/translate');
 const { v4Patch, mergePatch } = require('./lib/patch');
 const { mapFilter, mapFields } = require('./lib/query');
-const { normaliseHref, buildHref } = require('./lib/href');
+const { normaliseHref, buildHref, mapHrefs } = require('./lib/href');
 const { checkV5Value, allowedSubtypes } = require('./lib/charValue');
 const { toTmfError, warningHeaders, CODES } = require('./lib/messages');
 const { RESOURCES } = require('./lib/model');
@@ -26,6 +26,7 @@ module.exports = {
   // both
   normaliseHref,
   buildHref,
+  mapHrefs,
   mergePatch,
   toTmfError,
   warningHeaders,

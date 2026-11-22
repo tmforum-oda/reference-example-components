@@ -8,9 +8,10 @@ const express = require('express');
 const OpenApiValidator = require('express-openapi-validator');
 const swaggerUiDist = require('swagger-ui-dist');
 
-const { specForComponent, basePathFor, listOperations, toExpressPath } = require('./utils/spec');
+const { specForComponent, basePathFor, listOperations, toExpressPath, validatorSpec } = require('./utils/spec');
 const { sendError, fromValidationError } = require('./utils/tmfError');
-const { handlerFor } = require('./handlers');
+const { handlerLookup } = require('./handlers');
+const { createHandlers } = require('./handlers/resources');
 
 const JSON_TYPES = [
   'application/json',
@@ -24,6 +25,8 @@ function createApp(options) {
   const validateResponses = options.validateResponses !== false;
   const spec = specForComponent(componentName);
   const basePath = basePathFor(componentName);
+  // options.store: utils/store.js (MongoDB shared with the v4 API, or in memory for tests)
+  const handlerFor = handlerLookup(options.store ? createHandlers({ store: options.store, componentName }) : undefined);
   const app = express();
 
   app.disable('x-powered-by');
@@ -53,7 +56,7 @@ function createApp(options) {
   app.use(basePath + '/docs', express.static(swaggerUiDist.getAbsoluteFSPath(), { index: 'index.html' }));
 
   app.use(OpenApiValidator.middleware({
-    apiSpec: spec,
+    apiSpec: validatorSpec(spec),
     validateRequests: {
       // TMF list operations accept attribute filters (?name=...&lifecycleStatus=...)
       // that the OAS does not list as parameters
@@ -71,7 +74,8 @@ function createApp(options) {
 
   const router = express.Router({ mergeParams: true });
   for (const op of listOperations(spec)) {
-    router[op.method](toExpressPath(op.path), handlerFor(op.operationId));
+    const handler = handlerFor(op.operationId);
+    router[op.method](toExpressPath(op.path), (req, res, next) => Promise.resolve(handler(req, res, next)).catch(next));
   }
   app.use(basePath, router);
 

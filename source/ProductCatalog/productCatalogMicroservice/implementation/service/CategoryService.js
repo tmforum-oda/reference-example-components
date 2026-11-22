@@ -31,63 +31,19 @@ const {updateQueryServiceType, updatePayloadServiceType, cleanPayloadServiceType
 
 const {TError, TErrorEnum, sendError} = require('../utils/errorUtils');
 
+const {createResource, patchResource} = require('../utils/resourceOperations');
+
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 
 exports.createCategory = function(req, res, next) {
   /**
    * Creates a Category
-   * This operation creates a Category entity.
-   *
-   * category Category_Create The Category to be created
-   * returns Category
+   * The v4 payload is stored as a TMF620 v5 resource (issue #87); see utils/resourceOperations.js
    **/
 
   console.log('createCategory :: ' + req.method + ' ' + req.url + ' ' + req.headers.host);
-
-  /* matching isRestfulCreate - argument category */
-  
-  const resourceType = getResponseType(req);
-  const requestSchema = getPayloadSchema(req);
-
-  swaggerUtils.getPayload(req)
-    .then(payload => validateRequest(req, 'createCategory', payload))
-    .then(payload => traverse(req, requestSchema, payload,[],getPayloadType(req)))
-    .then(payload => processCommonAttributes(req, resourceType, payload))
-    .then(payload => processAssignmentRules('createCategory', payload))
-    .then(payload => {
-
-      const internalError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
-
-      payload = swaggerUtils.updatePayloadServiceType(payload, req,'');
-
-      mongoUtils.connect().then(db => {
-        db.collection(resourceType)
-          .insertOne(payload)
-          .then(() => {
-
-            payload = cleanPayloadServiceType(payload);
-
-            sendDoc(res, 201, payload);
-            notificationUtils.publish(req,payload);
-          })
-          .catch((error) => {
-            console.log("createCategory: error=" + error);
-            sendError(res, internalError);
-          })
-      })
-      .catch((error) => {
-        console.log("createCategory: error=" + error);
-        sendError(res, internalError);
-      })
-    })
-    .catch( error => {
-      console.log("createCategory: error=" + error.toString());
-      sendError(res, error);
-    });
-
-
-
+  return createResource(req, res, 'createCategory');
 };
 
 exports.deleteCategory = function(req, res, next) {
@@ -153,85 +109,11 @@ exports.listCategory = function(req, res, next) {
 exports.patchCategory = function(req, res, next) {
   /**
    * Updates partially a Category
-   * This operation updates partially a Category entity.
-   *
-   * id String Identifier of the Category
-   * category Category_Update The Category to be updated
-   * returns Category
+   * Merged into the stored TMF620 v5 resource, keeping what v4 cannot see (issue #87)
    **/
 
   console.log('patchCategory :: ' + req.method + ' ' + req.url + ' ' + req.headers.host);
-
-  /* matching isRestfulPatch */
-
-  const internalError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Unable to update resource");
-
-  const resourceType = getResponseType(req);
-  const requestSchema = getPayloadSchema(req);
-
-  const id = String(req.swagger.params.id.value);
-  var query = {
-   id: id
-  };
-
-  query = swaggerUtils.updateQueryServiceType(query, req, 'id');
-
-  swaggerUtils.getPayload(req)
-    .then(payload => validateRequest(req,'patchCategory',payload))
-    .then(payload => traverse(req,requestSchema,payload,[],getPayloadType(req)))
-    .then(payload => {
-
-      mongoUtils.connect().then(db => {
-        // first check if resource exists
-        db.collection(resourceType)
-        .findOne(query)
-        .then(old => {
-          if (old==undefined) {
-            return sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND,"No resource with given id"));
-          }
-
-          payload = swaggerUtils.updatePayloadServiceType(payload, req, 'id');
-          
-          // then update and return the complete resource
-          db.collection(resourceType)
-            .updateOne(query, {$set: payload}, {upsert: false})
-            .then(() => {
-              db.collection(resourceType).findOne(query)
-                .then((doc) => {
-
-                  doc = swaggerUtils.cleanPayloadServiceType(doc);
-
-                  sendDoc(res, 200, doc);
-                  notificationUtils.publish(req,doc,old);
-                })
-                .catch((error) => {
-                  console.log("patchCategory error=" + error);
-                  return sendError(res, internalError);
-                });
-            })
-            .catch((error) => {
-              console.log("patchCategory error=" + error);
-              return sendError(res, internalError);
-            })
-          })
-        .catch((error) => {
-          console.log("patchCategory error=" + error);
-          return sendError(res, new TError(TErrorEnum.RESOURCE_NOT_FOUND,"No resource with given id"));
-        });        
-      })
-      .catch((error) => {
-        console.log("patchCategory error=" + error);
-        return sendError(res, internalError);
-      });
-  })
-  .catch(error => {
-    console.log("patchCategory error=" + error);
-    return sendError(res, error);
-  });
-
-
-
-
+  return patchResource(req, res, 'patchCategory');
 };
 
 exports.retrieveCategory = function(req, res, next) {

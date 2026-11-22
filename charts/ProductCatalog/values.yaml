@@ -50,8 +50,8 @@ mongodb:
   port: 27017
   database: tmf
 api:
-  image: tmforumodacanvas/productcatalogapi:1.0.0
-  versionLabel: productcatalogapi-1.0.0
+  image: tmforumodacanvas/productcatalogapi:1.1.0
+  versionLabel: productcatalogapi-1.1.0
   otlp:
     console:
       enabled: false

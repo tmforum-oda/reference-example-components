@@ -6,6 +6,7 @@ const {getResponseType} = require('../utils/swaggerUtils');
 const {sendDoc} = require('../utils/mongoUtils');
 const {cleanPayloadServiceType} = require('../utils/swaggerUtils');
 const {TError, TErrorEnum, sendError} = require('../utils/errorUtils');
+const storage = require('../utils/tmf620Storage');
 
 
 /**
@@ -21,11 +22,24 @@ const {TError, TErrorEnum, sendError} = require('../utils/errorUtils');
 async function listResource(req, res) {
   /* matching isRestfulIndex */
  
-  var query = mongoUtils.getMongoQuery(req);
+  const resourceType = getResponseType(req);
+  const resource = storage.resourceOf(resourceType);
+
+  // v4 attribute names in filters and fields -> TMF620 v5 storage paths (issue #87)
+  var mongoReq = req;
+  var v4Fields;
+  if (resource) {
+    const mapped = storage.mapQuery(resource, storage.parseQueryString(req._parsedUrl && req._parsedUrl.query));
+    if (mapped.problems.length) {
+      return storage.sendProblems(res, mapped.problems, resource, undefined, 'filter');
+    }
+    v4Fields = mapped.v4Fields;
+    mongoReq = Object.create(req, { _parsedUrl: { value: Object.assign({}, req._parsedUrl, { query: storage.stringifyQuery(mapped.query) }) } });
+  }
+
+  var query = mongoUtils.getMongoQuery(mongoReq);
 
   query = swaggerUtils.updateQueryServiceType(query, req,'');
-
-  const resourceType = getResponseType(req);
 
   const internalError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
   
@@ -86,7 +100,18 @@ async function listResource(req, res) {
     doc = await db.collection(resourceType).find(query.criteria, query.options).toArray();
   } catch (error) {
     console.log("listResource: error=" + error);
-    sendError(res, internalError);
+    return sendError(res, internalError);
+  }
+
+  // stored TMF620 v5 documents -> v4 view, with compatibility warnings
+  if (resource) {
+    const warnings = storage.warningCollector(resource, 'list');
+    doc = doc.map(d => {
+      const view = storage.toV4View(resource, d);
+      warnings.add(view.warnings, view.doc.id);
+      return storage.projectView(view.doc, v4Fields);
+    });
+    warnings.apply(res);
   }
 
 

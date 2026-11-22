@@ -132,6 +132,13 @@ G1, G2, G4, R1/R2. No other differences.
 | `W-PARTYROLE` | header | R2 | the relatedParty index and the omitted `partyId`/`partyName` |
 | `W-EMBEDDED-POP` | header | O1 | which prices were shown as refs or left out |
 
+The v5 API has its own codes (the v5.0.0 OAS defines no 422, so it uses 400):
+
+| Code | HTTP | When |
+|---|---|---|
+| `TMF620-V5-400-CHARVALUE-TYPE` | 400 | S5: a characteristic value does not fit its `@type` (the OAS validator doesn't check this) |
+| `TMF620-V5-500-UNMIGRATED` | 500 | the document has no `_schema` marker: written by an older v4 service and not migrated yet (spec §8) |
+
 Header format (spec §7.2): `X-TMF-Compatibility-Warning: <code>; resource=<type>/<id>; paths=<p1>,<p2>; see=<link to this file>#<row>`
 
 ## Corrections to the first draft of the spec (C1–C11)

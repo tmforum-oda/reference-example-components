@@ -6,7 +6,8 @@
   "scripts": {
     "prestart": "npm install",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "node --test \"test/**/*.test.js\""
   },
   "keywords": [
     "swagger"
@@ -36,6 +37,7 @@
     "request-promise": "^4.2.2",
     "swagger-tools": "0.10.1",
     "swagger-ui-dist": "^3.17.6",
+    "tmf620-compat": "file:../../shared/tmf620-compat",
     "untildify": "^3.0.3",
     "uuid": "^3.3.2"
   },

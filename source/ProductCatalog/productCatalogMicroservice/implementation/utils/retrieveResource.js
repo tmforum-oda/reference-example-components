@@ -6,6 +6,7 @@ const {getResponseType} = require('../utils/swaggerUtils');
 const {sendDoc} = require('../utils/mongoUtils');
 const {cleanPayloadServiceType} = require('../utils/swaggerUtils');
 const {TError, TErrorEnum, sendError} = require('../utils/errorUtils');
+const storage = require('../utils/tmf620Storage');
 
 
 /**
@@ -24,12 +25,25 @@ async function retrieveResource(req, res) {
 
   var id = String(req.swagger.params.id.value);
 
-  var query = mongoUtils.getMongoQuery(req);
+  const resourceType = getResponseType(req);
+  const resource = storage.resourceOf(resourceType);
+
+  // v4 field names -> TMF620 v5 storage names (issue #87)
+  var mongoReq = req;
+  var v4Fields;
+  if (resource) {
+    const mapped = storage.mapQuery(resource, storage.parseQueryString(req._parsedUrl && req._parsedUrl.query));
+    if (mapped.problems.length) {
+      return storage.sendProblems(res, mapped.problems, resource, id, 'filter');
+    }
+    v4Fields = mapped.v4Fields;
+    mongoReq = Object.create(req, { _parsedUrl: { value: Object.assign({}, req._parsedUrl, { query: storage.stringifyQuery(mapped.query) }) } });
+  }
+
+  var query = mongoUtils.getMongoQuery(mongoReq);
   query.criteria.id = id
 
   query = swaggerUtils.updateQueryServiceType(query, req,'id');
-
-  const resourceType = getResponseType(req); 
 
   const internalError =  new TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Internal database error");
 
@@ -40,6 +54,13 @@ async function retrieveResource(req, res) {
 
 
     if (doc) {
+      if (resource) {
+        const view = storage.toV4View(resource, doc);
+        const warnings = storage.warningCollector(resource, 'read');
+        warnings.add(view.warnings, view.doc.id);
+        warnings.apply(res);
+        doc = storage.projectView(view.doc, v4Fields);
+      }
       const cleanedDoc = cleanPayloadServiceType(doc);
       sendDoc(res, 200, cleanedDoc);
     } else {
