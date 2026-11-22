@@ -47,7 +47,7 @@ Two BDD test clients, one per API version, prove this on a local ODA Canvas usin
           │                                               │
  ┌────────▼─────────────────┐               ┌─────────────▼────────────┐
  │ {release}-prodcatapi     │               │ {release}-prodcatapiv5   │
- │ swagger-tools, v4 OAS    │               │ oas3-tools, v5.0.0 OAS   │
+ │ swagger-tools, v4 OAS    │               │ express-openapi-validator│
  │ ┌──────────────────────┐ │               │ stores and returns the   │
  │ │ v4⇄v5 translator     │ │               │ v5 document as is        │
  │ │ + compatibility check│ │               └─────────────┬────────────┘
@@ -59,12 +59,14 @@ Two BDD test clients, one per API version, prove this on a local ODA Canvas usin
 
 Decisions:
 
-1. **Two deployments, one database.** A new `productCatalogV5Microservice` (Node.js, `oas3-tools`, generated from the official TMF620 v5.0.0 OAS), deployed as `{release}-prodcatapiv5`. The v4 service stays on `swagger-tools`. Rewriting the v4 service onto OAS 3 tooling is not needed and would put the #80 CTK results at risk.
-2. **The v5 document is the stored document.** The v5 service needs no translation. All compatibility logic lives in one place: a translator module in the v4 service (`utils/tmf620v5/`), applied at the persistence boundary: after v4 request validation, before the database write, and after the database read, before the response.
+1. **Two deployments, one database.** A new `productCatalogV5Microservice` (Node.js 22, Express and `express-openapi-validator`, driven by the official TMF620 v5.0.0 OAS; `oas3-tools` 2.2.3 was tried and rejected because it cannot parse `application/merge-patch+json` bodies and replaces TMF error bodies with its own), deployed as `{release}-prodcatapiv5`. The v4 service stays on `swagger-tools`. Rewriting the v4 service onto OAS 3 tooling is not needed and would put the #80 CTK results at risk.
+2. **The v5 document is the stored document.** The v5 service needs no translation. All compatibility logic lives in one place: the `source/ProductCatalog/shared/tmf620-compat` module, used by the v4 service at the persistence boundary: after v4 request validation, before the database write, and after the database read, before the response.
 3. **Same collection names** in both services (`Catalog`, `Category`, `ProductOffering`, `ProductOfferingPrice`, `ProductSpecification`).
-4. **The component exposes two APIs**, so the Canvas creates two ExposedAPI resources and two gateway routes:
-   - `productcatalogmanagement`: TMF620, v4 spec URL, path `.../productCatalogManagement/v4` (unchanged)
-   - `productcatalogmanagementv5`: TMF620, v5.0.0 spec URL, path `.../productCatalogManagement/v5`, implementation `{release}-prodcatapiv5`
+4. **One exposed API with two versions.** The Canvas Component v1 schema supports several versions of the same API: each entry in an exposed API's `specification[]` can override `implementation`, `path`, `developerUI`, `port` and `gatewayConfiguration`. The component operator (`normalize_apis` / `build_exposedapi_name` in oda-canvas TMFOP001) turns each entry into its own ExposedAPI named `<component>-<apiName>-<major version>`. So `productcatalogmanagement` (id TMF620) keeps its name and gets two `specification[]` entries:
+   - `version: v4`: the v4 spec URL, path `.../productCatalogManagement/v4`, implementation `{release}-prodcatapi` → ExposedAPI `{release}-productcatalogmanagement-productcatalogmanagement-v4` (**the same name as today**, so upgrades don't recreate it)
+   - `version: v5`: the v5.0.0 spec URL, path `.../productCatalogManagement/v5`, implementation `{release}-prodcatapiv5`, developerUI `.../v5/docs` → ExposedAPI `…-productcatalogmanagement-v5`
+
+   `version` is set explicitly on both entries rather than left for the operator to infer from the URL.
 5. **Helm toggle** `component.tmf620v5.enabled` (default `true`) controls the v5 deployment, service and ExposedAPI entry. With it set to `false`, the chart behaves as it does today, except that the documents are stored in v5 format.
 
 ## 5. Storage format
@@ -113,7 +115,7 @@ The full, row-by-row mapping is in **[compatibility-matrix.md](compatibility-mat
 - **v5-only data, left out of v4 reads with a warning and kept on v4 PATCH:** `externalIdentifier`, `policy`, `allowedAction`, `productOfferingRelationship`, `productOfferingCharacteristic`, `bundledGroupProductOffering`, `intentSpecification`, ProductSpecification `category`, ref `version`s, `PartyRoleRef.partyId/partyName`, characteristic `id`s.
 - **v4-only data, refused with `422`** (the store stays pure v5): `ProductOfferingPrice.constraint`, `charSpecSeq`, `serviceSpecification.targetServiceSchema`, `targetProductSchema.@baseType`, `bundledProductOffering[].lifecycleStatus`. Custom `@type` subtypes with `@schemaLocation` are **not** v4-only: they use the TMF extension pattern that v5 shares, and pass through (G3).
 - **Refused with a clear error:** characteristic values that don't fit their `valueType` (422), non-integer `valueFrom`/`valueTo` (422, v5 uses integers), attachments with neither `id` nor content (422), v4 PATCHes that would drop v5 entries the array merge can't match, such as embedded prices with no `id` (409), filter values that can't be converted (400).
-- **Defect in the v5 spec itself:** the Boolean and Float characteristic-value subtypes are missing from the discriminator mapping (S5). To be checked in T10 and reported to TM Forum.
+- **Defect in the v5 spec itself:** the Boolean and Float characteristic-value subtypes are missing from the discriminator mapping (S5). Checked in T9: `express-openapi-validator` accepts them, but it does not check `value` against the subtype at all (an `IntegerCharacteristicValueSpecification` with `value: "Unlimited"` passes). The v5 service therefore runs `checkV5Value` from `tmf620-compat` on every characteristic value (T10). To be reported to TM Forum.
 
 ### 7.2 Error and warning format
 
@@ -158,7 +160,7 @@ Existing data can't be "rejected", so the 422 rule (§13.1) works differently he
 - `values.yaml`: `component.tmf620v5.enabled: true`, plus `apiv5.image`, `apiv5.versionLabel` and `apiv5.otlp` (the same structure as `api`).
 - `deployment-productcatalogapi.yaml`: new env var `METRICS_COMPATIBILITY_URL=http://{release}-{component}-sm:4000/compatibility` (§7.3).
 - New templates: `deployment-productcatalogapiv5.yaml` and `service-productcatalogapiv5.yaml` (startup probe on `.../v5/catalog`).
-- `component-productcatalog.yaml`: the second exposed API (§4.4), with the official v5.0.0 spec URL (§13.3).
+- `component-productcatalog.yaml`: a second `specification[]` entry on the existing `productcatalogmanagement` exposed API (§4.4), with the official v5.0.0 spec URL (§13.3), included only when `component.tmf620v5.enabled`.
 - Chart `1.4.5` → **`1.5.0`**. `productcatalogapi` image `1.0.0` → `1.1.0`; `productcatalogmetrics` `1.0.0` → `1.1.0` (the new counter); new `productcatalogapiv5:1.0.0`. Add the entries to `dockerbuild-config.yaml`.
 - Update `README.md` (repo and chart) and regenerate `ProductCatalog-architecture.svg`.
 

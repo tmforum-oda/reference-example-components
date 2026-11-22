@@ -1,0 +1,25 @@
+{
+  "name": "productcatalog-tmf620-bdd",
+  "version": "0.1.0",
+  "description": "BDD test clients for the Product Catalog component's TMF620 v4 and v5 APIs (issue #87)",
+  "private": true,
+  "scripts": {
+    "test": "cucumber-js --profile all",
+    "test:smoke": "cucumber-js --profile smoke",
+    "test:v4": "cucumber-js --profile v4",
+    "test:v5": "cucumber-js --profile v5",
+    "test:cross": "cucumber-js --profile cross",
+    "test:compat": "cucumber-js --profile compat",
+    "test:dry-run": "cucumber-js --profile all --dry-run",
+    "test:unit": "node --test \"test/**/*.test.js\""
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@cucumber/cucumber": "^7.3.2",
+    "axios": "^1.7.3",
+    "chai": "^4.3.6"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

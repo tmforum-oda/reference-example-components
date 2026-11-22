@@ -4,7 +4,8 @@
   "description": "Register for all events from Open-APIs",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js"
+    "start": "node index.js",
+    "test": "node --test"
   },
   "author": "Lester Thomas",
   "license": "ISC",

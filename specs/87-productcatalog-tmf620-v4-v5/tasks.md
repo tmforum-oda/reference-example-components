@@ -21,26 +21,29 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 
 ## Phase 1: Translator (v4 service)
 
-### T3. Translator module and unit tests
-- `productCatalogMicroservice/implementation/utils/tmf620v5/`: `v4ToV5(type, doc)`, `v5ToV4(type, doc) → {doc, warnings[]}`, `mapFilter(type, query)`, `mapFields(type, fields)`, `checkPatchCompatibility(type, stored, patch)`, `normaliseHref`/`buildHref`.
+### T3. Translator module and unit tests ✅ done
+- Result: `source/ProductCatalog/shared/tmf620-compat/` (shared with the v5 service, so it is not under the v4 service): `v4ToV5`, `v5ToV4`, `v4Patch` (in place of `checkPatchCompatibility`), `mapFilter`, `mapFields`, `toTmfError`, `warningHeaders`, `normaliseHref`/`buildHref`, `checkV5Value`. Attribute tables are generated from both specs into `generated/shapes.json`; `npm test` fails if they are stale. 46 `node:test` tests, named after the matrix rows; they also pass on Node 16.
+- Original scope: `v4ToV5(type, doc)`, `v5ToV4(type, doc) → {doc, warnings[]}`, `mapFilter(type, query)`, `mapFields(type, fields)`, `checkPatchCompatibility(type, stored, patch)`, `normaliseHref`/`buildHref`.
 - Drive the mappings from a table generated from (or checked against) the compatibility matrix, not from scattered `if`s. Generate the G2 `@type`-by-position table from the v5 OAS.
 - Implement the PATCH array merge by key (matrix "PATCH from v4") so that 409 happens only for unmatched entries.
 - `node:test` table-driven tests: each matrix row in both directions, round-trip `v5ToV4(v4ToV5(x)) == x` for every v4 fixture, and each lossy case returning the right warning or error.
 - **Depends on:** T1 (T2 for C5).
 
 ### T4. Compatibility errors and warnings
-- Add the `TMF620-COMPAT-*` codes to `utils/errorUtils.js` with the message builder from spec §7.2 (resource, id, attribute, reason, next step, matrix link).
+- Wire `toTmfError` and the `TMF620-COMPAT-*` codes from `tmf620-compat` into `utils/errorUtils.js` (message builder from spec §7.2 (resource, id, attribute, reason, next step, matrix link).
 - Add the `X-TMF-Compatibility-Warning` response header helper and `warn`-level logging.
 - Add a compatibility metric reporter (spec §7.3): fire-and-forget POST to `METRICS_COMPATIBILITY_URL`, one count per code per response, never blocking or failing the request. Unit-test the batching and that a metrics outage doesn't affect the response.
 - **Depends on:** T3.
 
 ## Phase 2: v4 service on v5 storage
 
-### T4a. Compatibility counter in the metrics microservice
+### T4a. Compatibility counter in the metrics microservice ✅ done
+- Result: `openMetricsMicroservice/compatibility.js` (+ 6 tests). `POST /compatibility` takes one report or an array `{code, resource, operation, count?}`, returns 204, or 400 naming the bad report; nothing is counted unless all are valid. Image `productcatalogmetrics:1.1.0`.
 - `openMetricsMicroservice/index.js`: a `<component>_tmf620_compatibility_total` counter with labels `code`, `kind`, `resource` and `operation`; a `POST /compatibility` endpoint that checks the label values against the allowed sets (so labels stay bounded) and increments it. Bump the `productcatalogmetrics` image to `1.1.0`.
 - **Depends on:** none (can start straight away).
 
 ### T5. Write path
+- Add `tmf620-compat` as a `file:../../shared/tmf620-compat` dependency and copy `shared/tmf620-compat` into the v4 image, as `prodcat-v5-dockerfile` does.
 - In `CatalogService`, `CategoryService`, `ProductOfferingService`, `ProductOfferingPriceService` and `ProductSpecificationService`: apply `v4ToV5` before `insertOne`; implement PATCH as read → v4 view → merge-patch → `v4ToV5` → merge into stored → `checkPatchCompatibility` → write.
 - Store `href` version-neutral (change `operationsUtils.js:200`, `:230`) and add `_schema`.
 - **Depends on:** T3, T4.
@@ -65,8 +68,9 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 
 ## Phase 3: v5 service
 
-### T9. Scaffold `productCatalogV5Microservice`
-- Node.js + `oas3-tools`, following `permissionSpecificationSetMicroservice`: v5 OAS from T1, base path `/{COMPONENT_NAME}/tmf-api/productCatalogManagement/v5/`, request and response validation, OpenTelemetry instrumentation like the v4 service, Swagger UI at `/docs`.
+### T9. Scaffold `productCatalogV5Microservice` ✅ done
+- Result: Express 4 + `express-openapi-validator` 5.6.2 on Node 22 (not `oas3-tools`: see spec §4, point 1). Every in-scope operation answers 501 until T10; out-of-scope ones answer 501 with a clear reason. Request validation lists every problem in one TMF Error. 13 tests, including characterisation tests for S5. `prodcat-v5-dockerfile` builds and runs.
+- Original scope: Node.js + `oas3-tools`, following `permissionSpecificationSetMicroservice`: v5 OAS from T1, base path `/{COMPONENT_NAME}/tmf-api/productCatalogManagement/v5/`, request and response validation, OpenTelemetry instrumentation like the v4 service, Swagger UI at `/docs`.
 - Add `prodcat-v5-dockerfile`.
 - **Depends on:** T1. Can run in parallel with Phase 1–2.
 
@@ -74,7 +78,7 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - POST/GET/list/PATCH/DELETE for the five resources, writing the v5 document as is (`@type`, `_schema`, version-neutral `href`), with `href` built at response time, the default `lifecycleStatus`, filters, `fields`, `offset`/`limit` with `X-Total-Count`/`X-Result-Count`, PATCH returning 200, and `merge-patch+json` (plus JSON Patch if the OAS requires it).
 - Refuse documents with no `_schema` marker (spec §8).
 - Catalog is served at `/productCatalog` (`@type: ProductCatalog`) from the `Catalog` collection (matrix G1).
-- Check that the validator accepts `BooleanCharacteristicValueSpecification`/`FloatCharacteristicValueSpecification` despite the missing discriminator mapping (matrix S5); if it doesn't, use the fallback from the matrix and record it for the upstream report.
+- Matrix S5: the validator accepts the Boolean/Float subtypes but never checks `value` against the subtype (found in T9). Run `checkV5Value` from `tmf620-compat` on every characteristic value on POST and PATCH and refuse mismatches with 422; turn the T9 characterisation test for `IntegerCharacteristicValueSpecification` + `"Unlimited"` into a 422 test.
 - **Depends on:** T9.
 
 ### T11. Local docker-compose for the dev loop
@@ -83,7 +87,8 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 
 ## Phase 4: BDD test clients
 
-### T12. BDD project skeleton
+### T12. BDD project skeleton ✅ done
+- Result: Cucumber 7 project with profiles, env config, run id, ordered cleanup, README and the `@smoke` F000 connectivity feature (10 scenarios; v4 passes on the local Canvas, v5 404s until T20). Ajv moves to T13 with the response validation.
 - `source/ProductCatalog/tests/bdd/`: `package.json` (Cucumber.js at the same major version as oda-canvas, Chai, Axios, Ajv), `cucumber.js` profiles (`v4`, `v5`, `cross`, `compat`, `all`), env config (spec §10.1), `Hooks.js` with run id and ordered cleanup, and a README.
 - **Depends on:** none (can start straight away).
 
@@ -118,7 +123,7 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 ## Phase 5: Chart and local ODA Canvas
 
 ### T20. Helm chart
-- `values.yaml` (`component.tmf620v5.enabled`, `apiv5.*`), `METRICS_COMPATIBILITY_URL` on the v4 deployment, new deployment and service templates for v5, and the second exposedAPI entry in `component-productcatalog.yaml` (spec §9).
+- `values.yaml` (`component.tmf620v5.enabled`, `apiv5.*`), `METRICS_COMPATIBILITY_URL` on the v4 deployment, new deployment and service templates for v5, and a second `specification[]` entry (v5) on the existing `productcatalogmanagement` exposed API in `component-productcatalog.yaml` (spec §4.4, §9). Check that the existing v4 ExposedAPI keeps its name across the upgrade.
 - Chart `1.5.0` with a changelog line; image versions `productcatalogapi:1.1.0` and `productcatalogapiv5:1.0.0`.
 - `helm lint` and `helm template`, with the toggle on and off.
 - **Depends on:** T1, T9.

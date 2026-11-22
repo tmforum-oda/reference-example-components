@@ -59,8 +59,8 @@ api:
       enabled: true
       url: http://observability-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
 metrics:
-  image: tmforumodacanvas/productcatalogmetrics:1.0.0
-  versionLabel: productcatalogmetrics-1.0.0
+  image: tmforumodacanvas/productcatalogmetrics:1.1.0
+  versionLabel: productcatalogmetrics-1.1.0
 mcp:
   image: tmforumodacanvas/productcatalogmcp:1.0.0
   versionLabel: productcatalogmcp-1.0.0
