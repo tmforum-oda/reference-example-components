@@ -5,6 +5,7 @@
 
 const { When, Then } = require('@cucumber/cucumber');
 const { expect } = require('chai');
+const { resolveText } = require('../../support/telco');
 
 function remember(world, resource, res) {
   if (res.status === 201 && res.body && res.body.id) {
@@ -43,10 +44,12 @@ When('I delete the created {string}', async function (resource) {
   this.debug(this.lastResponse.describe());
 });
 
-// `attribute` may be a dotted path, e.g. 'price.value'
+// `attribute` may be a dotted path, e.g. 'price.value'; `value` may hold {{id:alias}}
 Then('the response attribute {string} is {string}', function (attribute, value) {
+  value = resolveText(this, value);
   const body = this.lastResponse.body;
-  expect(body, this.lastResponse.describe()).to.be.an('object');
+  // an object, or a list ('0.name')
+  expect(body !== null && typeof body === 'object', this.lastResponse.describe()).to.equal(true);
   const actual = attribute.split('.').reduce((o, k) => (o === undefined || o === null ? undefined : o[k]), body);
   expect(String(actual), `${attribute} in ${this.lastResponse.describe()}`).to.equal(value);
 });

@@ -124,15 +124,20 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - Scenario Outlines over `v4` and `v5` (spec §10.3), with the lifecycle In design → Active → price change → Retired → DELETE.
 - **Depends on:** T13, T14.
 
-### T16. Cross-version feature F006
+### T16. Cross-version feature F006 ✅ done
+- Result: `TMF620-F006-Cross-Version-Interoperability.feature`, 14 rows (all five resources, including a price relationship, an instalment and the bundle, in both directions) plus 2 list scenarios. The read in the other version is compared with what that version's own telco builder renders, with the same ids, and must carry no compatibility warnings. **16/16 on the compose stack.** Steps that name the version on each call and refer to resources by alias are in `CrossVersionSteps.js`; `support/telco.js` holds the creation and comparison code that F001–F008 share.
 - Resource × direction outline: create in A → read in B → PATCH in B → read in A → DELETE in A → 404 in B; list parity.
 - **Depends on:** T13, T14.
 
-### T17. Compatibility feature F007
+### T17. Compatibility feature F007 ✅ done
+- Result: `TMF620-F007-Compatibility-Boundaries.feature`, 22 scenarios covering G3, R2, K1, S2, S3 (body and filter), S4 (both ways), S5 (both ways), S6/S7, S8 (both ways), S9, O1, O3, O5, P1 (body and filter), P2 and P3. Each checks the header or the error code and message, that a refused write stored nothing, that v5-only data survives a v4 update, and that the counter went up for the code, resource and operation (`support/metrics.js`). **22/22 on the compose stack.**
+- Found and fixed: **a v4 PATCH of `productOfferingPrice` turned a v5 price embedded by value (with an id) into a bare reference**, silently losing its `price`, `priceType` and the rest. The v4 view shows that price as a reference, so a client sends it back as one; the array merge now keeps the stored value and applies only `name` and `version` (`lib/patch.js`, unit test in `patch.test.js`). The errors' "Use … for data that only TMF620 v5 can represent" now names the resource's v5 URL, not just the collection.
+- Notes: the v5 OAS requires `id` and `lastUpdate` on a price embedded in a create (FVO) but not in a PATCH (MVO), so the id-less O1 case (the 409) can only arise from a v5 PATCH; F007 sets it up that way. The v4 OAS refuses extension attributes on `pricingLogicAlgorithm` (it lists its properties), so G3 is checked with `@type` and `@schemaLocation` only.
 - One scenario per matrix row that loses or refuses data (G3, R2, K1, S2–S9, O1, O3, O5, P1–P3). Each also checks that `<component>_tmf620_compatibility_total` went up for the expected `code` (read from the metrics endpoint before and after): warning header on read, 409/422/400 with the documented `code` and message content, and a check that the v5-only data is still there afterwards.
 - **Depends on:** T13, T14, T4.
 
-### T18. End-to-end feature F008
+### T18. End-to-end feature F008 ✅ done
+- Result: `TMF620-F008-Telco-Catalogue-End-to-End.feature`. v4 builds the consumer catalogue (26 resources), v5 builds the small-business catalogue on top of it (5 more, reusing the categories, specifications and prices v4 made), then: every entry is listed by name in both versions, a v5 enrichment of FF1000 (`externalIdentifier`, `productOfferingRelationship`) survives a v4 lifecycle change, filters by `category.id`, `productSpecification.id` + `lifecycleStatus`, `parentId`/`parent.id` and `name` agree in both versions, and the scenario deletes everything itself and checks for 404 in both. **1/1; the whole suite 105/105, and nothing left in MongoDB afterwards.**
 - Consumer catalogue built through v4, Small Business catalogue built through v5, a v5 enrichment on a consumer offering, list and filter checks in both versions, clean teardown with nothing left behind.
 - **Depends on:** T15, T16.
 

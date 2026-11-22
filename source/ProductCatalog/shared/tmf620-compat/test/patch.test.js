@@ -89,3 +89,19 @@ test('O1: replacing prices that include an embedded price without id is refused 
   assert.deepStrictEqual(other.problems, [], 'patching other attributes is fine');
   assert.strictEqual(other.doc.productOfferingPrice.length, 2);
 });
+
+test('O1: a v4 patch that sends back an embedded price (with id) as a reference keeps the embedded value', () => {
+  const s = stored('productOffering');
+  const embedded = { '@type': 'ProductOfferingPrice', id: 'pop-emb', name: 'Activation fee', priceType: 'oneTime', lifecycleStatus: 'Active', price: { unit: 'GBP', value: 10 } };
+  s.productOfferingPrice.push(embedded);
+  // The v4 view shows it as {id, name}; the client sends that back with a new name
+  const refs = s.productOfferingPrice.map(p => ({ id: p.id, name: p.name }));
+  refs[1].name = 'Connection fee';
+  const r = v4Patch('productOffering', s, { productOfferingPrice: refs }, ctx);
+  assert.deepStrictEqual(r.problems, []);
+  assert.strictEqual(r.doc.productOfferingPrice[0]['@type'], 'ProductOfferingPriceRef');
+  assert.deepStrictEqual(r.doc.productOfferingPrice[1], Object.assign({}, embedded, { name: 'Connection fee' }));
+  // Dropping it from the list through v4 still removes it, as for any reference
+  const fewer = v4Patch('productOffering', s, { productOfferingPrice: refs.slice(0, 1) }, ctx);
+  assert.strictEqual(fewer.doc.productOfferingPrice.length, 1);
+});

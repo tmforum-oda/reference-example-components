@@ -80,7 +80,7 @@ Stored entries left out of the patch are removed, because that is what the v4 cl
 
 | # | Difference | v4 → v5 | v5 → v4 | Code |
 |---|---|---|---|---|
-| O1 | **`productOfferingPrice[]`: v4 refs only; v5 `oneOf [ProductOfferingPrice, ProductOfferingPriceRef]`** (embedded value allowed) | `@type: ProductOfferingPriceRef` | Refs pass through. An embedded value **with** `id` becomes a v4 ref `{id, href, name}` plus a warning; one **without** `id` is left out plus a warning | `W-EMBEDDED-POP`; a v4 PATCH of `productOfferingPrice` while id-less embedded values exist gives **`TMF620-COMPAT-409-UNMATCHED`** |
+| O1 | **`productOfferingPrice[]`: v4 refs only; v5 `oneOf [ProductOfferingPrice, ProductOfferingPriceRef]`** (embedded value allowed) | `@type: ProductOfferingPriceRef` | Refs pass through. An embedded value **with** `id` becomes a v4 ref `{id, href, name}` plus a warning; one **without** `id` is left out plus a warning | `W-EMBEDDED-POP`; a v4 PATCH that sends the reference back keeps the embedded value (only `name`/`version` change); a v4 PATCH of `productOfferingPrice` while id-less embedded values exist gives **`TMF620-COMPAT-409-UNMATCHED`** |
 | O2 | `attachment[]` | as S8 | as S8 | as S8 |
 | O3 | `bundledProductOffering[].lifecycleStatus` is v4 only (v5 `BundledProductOffering` is a `ProductOfferingRef` + option) | Refused (the bundled offering's own `lifecycleStatus` is on that offering) | n/a | **`TMF620-COMPAT-422-V4ONLY-ATTR`** |
 | O4 | `prodSpecCharValueUse[].productSpecCharacteristicValue[]`: items become polymorphic `CharacteristicValueSpecification`; `prodSpecCharValueUse[].id` is new in v5 | as S2/S3; `id` is generated | as S2/S3; `id` gets a warning | as S2/S3 |

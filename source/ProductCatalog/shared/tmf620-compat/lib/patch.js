@@ -67,6 +67,16 @@ function preserve(stored, fresh, v5Name) {
   if (!isObject(fresh) || !isObject(stored)) return fresh;
 
   const concrete = resolveV5(v5Name, fresh);
+
+  // O1: the v4 view shows a price embedded by value (with id) as a reference, so a
+  // v4 patch sends it back as one. Keep the stored value; only what the reference
+  // carries (name, version) can change through v4.
+  if (concrete === 'ProductOfferingPriceRef' && resolveV5(v5Name, stored) === 'ProductOfferingPrice') {
+    const kept = clone(stored);
+    ['name', 'version'].forEach(k => { if (fresh[k] !== undefined) kept[k] = clone(fresh[k]); });
+    return kept;
+  }
+
   const result = clone(fresh);
 
   if (concrete === 'RelatedPartyRefOrPartyRoleRef') {

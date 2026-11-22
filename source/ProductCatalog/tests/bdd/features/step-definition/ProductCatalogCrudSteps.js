@@ -7,32 +7,16 @@
 
 const { Given, When, Then } = require('@cucumber/cucumber');
 const { expect } = require('chai');
-const data = require('../../testData');
+const { createTelcoEntry, createTelcoEntries, missingContent } = require('../../support/telco');
 
 // Attributes a server may always return, even when `fields` selects others
 const ALWAYS_RETURNED = ['id', 'href', '@type', '@baseType', '@schemaLocation', '@referredType'];
 
-function telco(world) {
-  world.telco = world.telco || {};
-  return world.telco;
-}
-
-function context(world) {
-  return {
-    ref: (kind, key) => telco(world)[`${kind}/${key}`],
-    name: n => world.client().testName(n)
-  };
-}
-
-// Creates one catalogue entry through the current client and records it
+// Creates one catalogue entry through the current client and records it as the
+// scenario's resource of that kind
 async function createEntry(world, kind, key) {
-  const client = world.client();
-  const body = client.build(kind, data.payload(world.version, kind, key, context(world)));
-  const res = await client.create(kind, body);
-  world.debug(res.describe());
+  const { res, body } = await createTelcoEntry(world, world.version, kind, key);
   if (res.status === 201 && res.body && res.body.id) {
-    world.track(world.version, kind, res.body.id);
-    telco(world)[`${kind}/${key}`] = { id: res.body.id, name: res.body.name };
     world.createdIds = world.createdIds || {};
     world.createdIds[kind] = res.body.id;
     world.created_ = world.created_ || {};
@@ -45,23 +29,6 @@ function created(world, kind) {
   const body = world.created_ && world.created_[kind];
   expect(body, `no ${kind} was created in this scenario`).to.be.an('object');
   return body;
-}
-
-// Every attribute that was sent is in the response with the same value. Arrays are
-// compared item by item; the response may hold more (ids, hrefs, @type, defaults).
-function missingContent(sent, received, path) {
-  if (sent === null || typeof sent !== 'object') {
-    return sent === received ? [] : [`${path || '(root)'}: sent ${JSON.stringify(sent)}, got ${JSON.stringify(received)}`];
-  }
-  if (Array.isArray(sent)) {
-    if (!Array.isArray(received)) return [`${path}: sent an array, got ${JSON.stringify(received)}`];
-    if (received.length !== sent.length) return [`${path}: sent ${sent.length} items, got ${received.length}`];
-    return sent.reduce((all, item, i) => all.concat(missingContent(item, received[i], `${path}[${i}]`)), []);
-  }
-  if (received === null || typeof received !== 'object') return [`${path || '(root)'}: sent an object, got ${JSON.stringify(received)}`];
-  return Object.keys(sent)
-    .filter(k => k !== 'lastUpdate')   // set by the server
-    .reduce((all, k) => all.concat(missingContent(sent[k], received[k], path ? `${path}.${k}` : k)), []);
 }
 
 async function listCreated(world, kind, extra) {
@@ -77,11 +44,7 @@ function shiftedLastUpdate(world, kind, seconds) {
 }
 
 Given('the telco catalogue entries that the {string} {string} refers to exist', async function (kind, key) {
-  for (const [k, x] of data.creationOrder([[kind, key]], { withoutRoots: true })) {
-    const { res } = await createEntry(this, k, x);
-    expect(res.status, `creating ${k} '${x}', which ${kind} '${key}' refers to: ${res.describe()}`).to.equal(201);
-    expect(res.schemaErrors, `${k} '${x}': ${(res.schemaErrors || []).join('; ')}`).to.deep.equal([]);
-  }
+  await createTelcoEntries(this, this.version, [[kind, key]], { withoutRoots: true });
 });
 
 When('I create the {string} {string} from the telco catalogue', async function (kind, key) {

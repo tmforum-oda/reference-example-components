@@ -140,7 +140,7 @@ function logCompat(level, message) {
 }
 
 function sendProblems(res, problems, resource, id, operation) {
-  const e = compat.toTmfError(problems, { resource, id, operation, v5Path: `${v5BasePath()}/${resource === 'catalog' ? 'productCatalog' : resource}` });
+  const e = compat.toTmfError(problems, { resource, id, operation, v5Path: `${v5BasePath()}/${resource === 'catalog' ? 'productCatalog' : resource}${id ? '/' + id : ''}` });
   logCompat('warn', `TMF620 compatibility: ${operation} ${resource}${id ? '/' + id : ''} refused with ${e.status}: ${problems.map(p => p.code + ' ' + p.path).join(', ')}`);
   metrics.reporter().recordAll(problems, resource, operation === 'filter' ? 'filter' : operation);
   res.statusCode = e.status;
