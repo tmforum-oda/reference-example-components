@@ -138,6 +138,12 @@ function getMongoQuery(req) {
           if(!isNaN(Date.parse(propVal))) {
             res.criteria[prop] = {$regex: '^' + propVal + '.*' };
           }
+        } else {
+          // range operators ($gt, $gte, $lt, $lte, $ne): compare as ISO 8601 strings,
+          // which order the same way as the instants they stand for (issue #87)
+          Object.keys(propVal).forEach(op => {
+            if(propVal[op] instanceof Date) propVal[op] = propVal[op].toISOString();
+          });
         }
       }
     });

@@ -51,7 +51,7 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - **Depends on:** T3, T4.
 
 ### T6. Read path ✅ done (with T5: v4 reads of v5 documents need it)
-- Result: `listResource` and `retrieveResource` map filters and `fields` with `mapFilter`/`mapFields` before `getMongoQuery` (so the #80 date-time equality still applies), return `v5ToV4` views with warning headers, and keep `?fields=` responses to the requested attributes plus `id` and `href`. Documents without `_schema` are returned as stored. Downstream-API results are appended untranslated, as before. Unchanged from before: a date-time *range* filter (`lastUpdate>=…`) matches nothing on v4, because query-to-mongo turns the value into a Date and the attribute is stored as a string; only the equality and prefix form from #80 works.
+- Result: `listResource` and `retrieveResource` map filters and `fields` with `mapFilter`/`mapFields` before `getMongoQuery` (so the #80 date-time equality still applies), return `v5ToV4` views with warning headers, and keep `?fields=` responses to the requested attributes plus `id` and `href`. Documents without `_schema` are returned as stored. Downstream-API results are appended untranslated, as before. Unchanged from before: a date-time *range* filter (`lastUpdate>=…`) matches nothing on v4, because query-to-mongo turns the value into a Date and the attribute is stored as a string; only the equality and prefix form from #80 works. **Fixed in T15:** `getMongoQuery` turns Date values inside range operators back into ISO strings, so `lastUpdate>=…` and `lastUpdate<=…` now work (the TMF630 `.gte` suffix form is still not understood by query-to-mongo; v5 takes both).
 - Map filters and `fields` in `mongoUtils.getMongoQuery`, `listResource` and `retrieveResource`; apply `v5ToV4` to the results and set warning headers; build the v4 `href` at response time.
 - Keep the #80 date-filter behaviour working on the v5 paths.
 - **Depends on:** T3, T4.
@@ -63,7 +63,11 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - Unit test against a seeded in-memory or local Mongo.
 - **Depends on:** T5.
 
-### T8. v4 regression check
+### T8. v4 regression check ✅ done
+- Result: **TMF620 v4.1.0 CTK (`tmforumorg/tmf620-v4.1.0-ctk:1.0.1`) 396/396 assertions, 44/44 requests** against the v4 service in the compose stack (v5 storage), run twice, the second time after the T15 date-range fix. The CTK's own payloads carry no v4-only attributes.
+- MCP server: `constraint` is gone from `example_payloads/productOfferingPrice.json`, the `create_product_offering_price` tool description, the `schema://tmf620/productOfferingPrice` resource and the Postman collection. The example also had two older faults that the v4 API already refused with 400 (`pricingLogicAlgorithm` as an object instead of an array, `validFor` dates without seconds or zone, `duration.value` instead of `amount`); fixed, so the example now creates a price. An agent that still sends `constraint` gets the 422 `TMF620-COMPAT-422-V4ONLY-ATTR` body passed through by `product_catalog_api.py`, naming the attribute and suggesting `policy[]` on v5.
+- `test_product_catalog_api.py`: all five resource tests pass against the compose v4 service (its URL is hard-coded, so a wrapper overrode `API_URL`); `--populate` creates its 46 enterprise resources, which v5 then lists with no schema problems; `--clean` removes them.
+- Initialization job: `POST /hub` still answers 201. Federation: a second v4 instance with a stand-in Canvas info service lists its own catalog plus the downstream one, and the merged list matches the v4 schema. The v5 service does not federate (unchanged scope).
 - Run the TMF620 v4.1.0 CTK locally against the v4 service (docker-compose: mongo + v4 service). The result must match #80 (396/396).
 - Check that the initialization job, MCP server tests (`test_product_catalog_api.py`) and dependent-API federation still work.
 - **MCP server:** remove the v4-only `constraint` from `example_payloads/productOfferingPrice.json`, from the `create_product_offering_price` tool example in `product_catalog_mcp_server.py` (around line 1858) and from its Postman collection, so agents aren't taught a payload that now returns 422. Check that an agent which does send it gets a 422 message it can act on.
@@ -108,11 +112,15 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - `Tmf620Client` interface; `Tmf620V4Client` and `Tmf620V5Client` with version-specific paths (`/catalog` vs `/productCatalog`) and payload builders (the v5 builder sends the FVO-required `lifecycleStatus`, `lastUpdate` and `priceType`); validation of every response against that version's OAS; capture of status, headers and body for the steps.
 - **Depends on:** T1, T12.
 
-### T14. Telco catalogue test data
+### T14. Telco catalogue test data ✅ done
+- Result: `testData/telco-catalogue.yaml` (2 catalogs, 6 categories, 5 specifications with string, integer, boolean and range characteristics, 11 prices: recurring, one-off, instalment, usage and a 50% discount linked by `popRelationship`, and 7 offerings including the bundle), `testData/catalogue.js` (lookup, references, creation order), `testData/v4/builders.js` and `testData/v5/builders.js` (written independently of the translator, so they can catch it). 7 unit tests: every entry is a valid `*_Create` (v4) and `*_FVO` (v5) body, the two shapes differ where the matrix says, dependencies come first, and no name holds a comma (a comma in a filter means "any of").
 - `testData/telco-catalogue.yaml` (spec §10.2: catalogues, categories, the five specifications with characteristics, seven offerings including the bundle, the prices including recurring, one-off, instalment, usage and discount relationship) plus v4 and v5 builders that render it in each version's shape.
 - **Depends on:** T1, T12.
 
-### T15. CRUD features F001–F005
+### T15. CRUD features F001–F005 ✅ done
+- Result: `TMF620-F001`…`F005` (generated once from one template, then kept by hand), 46 Scenario Outline rows over v4 and v5 (`@v4`/`@v5` Examples, profile `crud`), steps in `ProductCatalogCrudSteps.js`. Each row creates the entries the resource refers to, then: create (201, spec, href, the sent content comes back, `In design`) → get → list by name, by `lifecycleStatus` (match and no match), by a `lastUpdate` range (match and no match) and with `fields` → PATCH to Active → a change (for prices a price change, FF500 32.00 → 30.00) → Retired → get → DELETE (204) → 404. **46/46 against the compose stack; the whole suite 66/66.**
+- Found and fixed: the v4 date-range filter (see T6); the v5 service refused `fields=name,lifecycleStatus` because the OAS leaves `allowReserved` false and TMF630 writes plain commas, so `validatorSpec` now allows reserved characters in query values (test in `crud.test.js`).
+- Differences left: v4 also matches a partial date (`lastUpdate=2026-11-22`, #80); v5 matches dates exactly or by range.
 - Scenario Outlines over `v4` and `v5` (spec §10.3), with the lifecycle In design → Active → price change → Retired → DELETE.
 - **Depends on:** T13, T14.
 

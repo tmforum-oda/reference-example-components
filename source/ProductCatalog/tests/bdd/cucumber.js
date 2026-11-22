@@ -5,6 +5,7 @@
 //   @v4 @v5  CRUD scenarios for one API version (on the Examples rows)
 //   @cross   cross-version interoperability (TMF620-F006)
 //   @compat  compatibility boundaries (TMF620-F007)
+//   @crud    CRUD and lifecycle per resource (TMF620-F001 to F005)
 //   @e2e     end-to-end telco catalogue (TMF620-F008)
 //   @SkipTest  not run
 
@@ -32,5 +33,6 @@ module.exports = {
   v5: withTags('@v5'),
   cross: withTags('@cross'),
   compat: withTags('@compat'),
+  crud: withTags('@crud'),
   e2e: withTags('@e2e')
 };

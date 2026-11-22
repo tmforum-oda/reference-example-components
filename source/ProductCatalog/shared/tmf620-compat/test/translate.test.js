@@ -285,12 +285,14 @@ test('internal storage fields are never returned', () => {
   assert.strictEqual(v4._schema, undefined);
 });
 
-test('MCP server example payloads: constraint is refused, the rest translates', () => {
+test('MCP server example payloads translate; the v4-only constraint they used to carry is refused', () => {
   const path = require('path');
   const dir = path.join(__dirname, '..', '..', '..', 'MCPServerMicroservice', 'example_payloads');
-  const pop = toV5('productOfferingPrice', require(path.join(dir, 'productOfferingPrice.json')));
-  assert.deepStrictEqual(pop.problems.map(p => p.path), ['constraint']);
-  for (const [file, resource] of [['catalog', 'catalog'], ['category', 'category'], ['productOffering', 'productOffering'], ['productSpecification', 'productSpecification']]) {
+  const example = require(path.join(dir, 'productOfferingPrice.json'));
+  assert.strictEqual(example.constraint, undefined, 'T8 took constraint out of the MCP example');
+  const withConstraint = Object.assign({}, example, { constraint: [{ id: '525', name: 'PriceRuleNo1', '@referredType': 'PriceConstraint' }] });
+  assert.deepStrictEqual(toV5('productOfferingPrice', withConstraint).problems.map(p => p.path), ['constraint']);
+  for (const [file, resource] of [['catalog', 'catalog'], ['category', 'category'], ['productOffering', 'productOffering'], ['productOfferingPrice', 'productOfferingPrice'], ['productSpecification', 'productSpecification']]) {
     const r = toV5(resource, require(path.join(dir, `${file}.json`)));
     assert.ok(r.problems.every(p => p.code === 'TMF620-COMPAT-422-V4ONLY-ATTR'), `${file}: ${JSON.stringify(r.problems)}`);
     console.log(`    MCP example ${file}: ${r.problems.length ? r.problems.map(p => p.path).join(', ') : 'translates cleanly'}`);

@@ -98,13 +98,28 @@ function withDiscriminatedOneOf(spec) {
   return copy;
 }
 
-// What express-openapi-validator gets: the official spec, without examples and
-// with discriminated oneOfs
+// TMF630 writes lists in query values with plain commas (fields=name,lifecycleStatus),
+// but the OAS query parameters leave allowReserved at false, so the validator would
+// refuse every unencoded comma. This allows reserved characters in query values.
+function withReservedQueryValues(spec) {
+  const copy = structuredClone(spec);
+  const allow = (params) => (params || []).forEach(p => { if (p && p.in === 'query') p.allowReserved = true; });
+  allow(Object.values((copy.components && copy.components.parameters) || {}));
+  Object.values(copy.paths || {}).forEach(item => {
+    allow(item.parameters);
+    HTTP_METHODS.forEach(m => item[m] && allow(item[m].parameters));
+  });
+  return copy;
+}
+
+// What express-openapi-validator gets: the official spec, without examples, with
+// discriminated oneOfs and with reserved characters allowed in query values
 function validatorSpec(spec) {
-  return withDiscriminatedOneOf(withoutExamples(spec));
+  return withReservedQueryValues(withDiscriminatedOneOf(withoutExamples(spec)));
 }
 
 module.exports = {
   withoutExamples,
   withDiscriminatedOneOf,
+  withReservedQueryValues,
   validatorSpec, SPEC_FILE, loadOfficialSpec, basePathFor, specForComponent, listOperations, toExpressPath };

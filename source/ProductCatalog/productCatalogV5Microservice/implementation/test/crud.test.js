@@ -119,6 +119,10 @@ test('list: filters, operators, fields, paging, sort and the count headers', asy
   assert.deepStrictEqual(Object.keys(page.json[0]).sort(), ['@type', 'href', 'id', 'name']);
   assert.strictEqual(page.json[0].name, 'Full Fibre 150', 'string sort: 1000 < 150 < 500');
 
+  const fields = await call('GET', '/productOffering?name.regex=^Full&fields=name,lifecycleStatus');
+  assert.strictEqual(fields.status, 200, `TMF630 commas in fields are accepted unencoded: ${fields.text}`);
+  assert.deepStrictEqual(Object.keys(fields.json[0]).sort(), ['@type', 'href', 'id', 'lifecycleStatus', 'name']);
+
   const bad = await call('GET', '/productOffering?_schema=x');
   assert.strictEqual(bad.status, 400);
 });

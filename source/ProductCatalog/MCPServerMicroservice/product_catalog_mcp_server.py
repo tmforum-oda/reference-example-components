@@ -945,11 +945,6 @@ async def product_offering_price_create(product_offering_price_data: dict) -> di
                 items:
                 $ref: '#/definitions/BundledProductOfferingPriceRelationship'
                 type: array
-            constraint:
-                description: The Constraint resource represents a policy/rule applied to ProductOfferingPrice.
-                items:
-                $ref: '#/definitions/ConstraintRef'
-                type: array
             description:
                 description: Description of the productOfferingPrice
                 type: string
@@ -1854,13 +1849,6 @@ async def product_offering_price_schema() -> dict:
                     "bundledPopRelationship": {
                         "description": "this object represents a bundle relationship from a bundle product offering price (parent) to a simple product offering price (child). A simple product offering price may participate in more than one bundle relationship.' items: $ref: ",
                         "type": "array",
-                    },
-                    "constraint": {
-                        "description": "The Constraint resource represents a policy/rule applied to ProductOfferingPrice.",
-                        "items": {
-                            "$ref": "#/definitions/ConstraintRef",
-                            "type": "array",
-                        },
                     },
                     "description": {
                         "description": "Description of the productOfferingPrice",

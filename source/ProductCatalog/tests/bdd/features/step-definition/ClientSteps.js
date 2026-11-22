@@ -43,10 +43,12 @@ When('I delete the created {string}', async function (resource) {
   this.debug(this.lastResponse.describe());
 });
 
+// `attribute` may be a dotted path, e.g. 'price.value'
 Then('the response attribute {string} is {string}', function (attribute, value) {
   const body = this.lastResponse.body;
   expect(body, this.lastResponse.describe()).to.be.an('object');
-  expect(String(body[attribute]), `${attribute} in ${this.lastResponse.describe()}`).to.equal(value);
+  const actual = attribute.split('.').reduce((o, k) => (o === undefined || o === null ? undefined : o[k]), body);
+  expect(String(actual), `${attribute} in ${this.lastResponse.describe()}`).to.equal(value);
 });
 
 Then('the response href is under the {string} base path', function (version) {

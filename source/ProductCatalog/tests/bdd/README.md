@@ -12,7 +12,7 @@ npm run test:dry-run                # check that every step has a definition
 npm run test:unit                   # unit tests for the support code
 ```
 
-Profiles: `smoke`, `v4`, `v5`, `cross` (write with one version, read with the other), `compat` (the compatibility errors and warnings), `e2e`, `all`.
+Profiles: `smoke`, `crud` (F001–F005), `v4`, `v5`, `cross` (write with one version, read with the other), `compat` (the compatibility errors and warnings), `e2e`, `all`.
 
 ## Local stack (no cluster)
 
@@ -29,6 +29,10 @@ v4 is on port 18084, v5 on 18085, metrics on 14000, and MongoDB on 27087 for see
 ## Test clients
 
 `clients/Tmf620V4Client.js` and `clients/Tmf620V5Client.js` share one interface (`create`, `get`, `list`, `patch`, `delete`, `build`). Each checks every successful response against its own version's spec (`clients/schemas.js`), so the step `the response matches the TMF620 '<version>' specification` fails if a v4 client ever gets v5-shaped data, or the reverse.
+
+## Test data
+
+`testData/telco-catalogue.yaml` describes the Example Telco catalogue once, without version-specific shapes. `testData/v4/builders.js` and `testData/v5/builders.js` turn an entry into a create body for that version, resolving references to entries created earlier in the scenario. The step `Given the telco catalogue entries that the '<kind>' '<key>' refers to exist` creates what an entry needs first (for an offering: its specification, prices and categories).
 
 ## Configuration
 
