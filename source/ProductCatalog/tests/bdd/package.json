@@ -10,6 +10,8 @@
     "test:v5": "cucumber-js --profile v5",
     "test:cross": "cucumber-js --profile cross",
     "test:compat": "cucumber-js --profile compat",
+    "test:crud": "cucumber-js --profile crud",
+    "test:e2e": "cucumber-js --profile e2e",
     "test:dry-run": "cucumber-js --profile all --dry-run",
     "test:unit": "node --test \"test/**/*.test.js\"",
     "local:up": "docker compose up -d --build --wait",

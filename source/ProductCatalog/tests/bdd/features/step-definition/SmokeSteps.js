@@ -25,6 +25,15 @@ Then('the response status is {int}', function (status) {
   expect(res.status, res.describe()).to.equal(status);
 });
 
+// TMF630 paging: 200 when the page holds everything, 206 when there is more (the
+// v4 service answers 206 once the store holds more than `limit` items)
+Then('the response is a page of the list', function () {
+  const res = this.lastResponse;
+  expect([200, 206], res.describe()).to.include(res.status);
+  expect(res.body, res.describe()).to.be.an('array');
+  expect(res.schemaErrors, `${res.method} ${res.url}: ${(res.schemaErrors || []).join('; ')}`).to.deep.equal([]);
+});
+
 Then('the response body is a JSON array', function () {
   expect(this.lastResponse.body, 'response body').to.be.an('array');
 });

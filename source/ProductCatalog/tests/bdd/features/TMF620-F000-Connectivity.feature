@@ -8,8 +8,7 @@ Feature: TMF620-F000 Connectivity: both API versions answer
   Scenario Outline: The '<apiVersion>' API lists '<resource>' resources
     Given the TMF620 '<apiVersion>' API
     When I list '<resource>' resources
-    Then the response status is 200
-    And the response body is a JSON array
+    Then the response is a page of the list
 
     Examples:
       | apiVersion | resource             |

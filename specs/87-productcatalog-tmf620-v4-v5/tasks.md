@@ -141,7 +141,15 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - Consumer catalogue built through v4, Small Business catalogue built through v5, a v5 enrichment on a consumer offering, list and filter checks in both versions, clean teardown with nothing left behind.
 - **Depends on:** T15, T16.
 
-### T19. Green on docker-compose
+### T19. Green on docker-compose ✅ done
+- Result, on a stack built with `--no-cache` from this branch, holding data written by the **pre-#87 v4 service** (the `be11fd0` image, run against the same MongoDB, wrote the whole telco catalogue: 31 resources, plus a price with `constraint`, a specification with `charSpecSeq`, and one whose integer characteristic has the value `"Unlimited"`):
+  - **Migration on startup:** 33 converted (2 with quarantined attributes), 1 left unchanged. All 31 telco resources read back through v4 and v5 with the content each version's builder renders, no warnings and no schema problems; v5 lists show them all. `constraint` and `charSpecSeq` are in `MigrationQuarantine`; the unconvertible specification is still served by v4, and v5 answers `500 TMF620-V5-500-UNMIGRATED`. The counter shows `W-V4ONLY-QUARANTINED` ×2 and `TMF620-COMPAT-422-CHARVALUE-TYPE` ×1 with `operation=migration`. A restart converts nothing.
+  - **BDD, with that data still in the store:** smoke 20, v4 23, v5 23, crud 46, cross 16, compat 22, e2e 1; **all 105/105** (2850 steps), and the dry run finds every step.
+  - **Unit tests:** tmf620-compat 53, v4 15, v5 22, BDD support 22, metrics 6.
+  - **TMF620 v4.1.0 CTK:** 44/44 requests, 1038/1038 assertions (more than the earlier 396 because the lists now hold the migrated catalogue).
+  - Afterwards nothing the suite or the seed created is left; only the CTK's own "Cisco Firepower NGFW" specification (the CTK does not delete it) and the two quarantine records (kept by design).
+- Found and fixed: F000 expected `200` from `GET …?limit=1`. With more than one item stored, v4 answers `206 Partial Content` (TMF630 paging, unchanged from before #87; the CTK accepts it), so the smoke check now takes a page as `200` or `206`, and also checks the page against the spec.
+- Difference left: for a partial page v5 answers `200` and v4 `206`, both with `X-Total-Count` and `X-Result-Count`. Both OAS files declare only `200` for a list.
 - All profiles pass against the T11 stack.
 - **Depends on:** T5–T7, T10, T11, T15–T18.
 
