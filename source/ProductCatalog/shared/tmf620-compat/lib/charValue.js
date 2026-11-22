@@ -107,7 +107,7 @@ function inferV5Type(cvs, parentValueType) {
     type = typeName(stem, true);
   } else if (declaredStem) {
     if (!fitsStem(declaredStem, value)) {
-      return { error: `value ${describeValue(value)} is not a ${valueType}` };
+      return { error: `value ${describeValue(value)} is not ${/^[aeiou]/i.test(valueType) ? "an" : "a"} ${valueType}` };
     }
     type = typeName(declaredStem, false);
   } else {

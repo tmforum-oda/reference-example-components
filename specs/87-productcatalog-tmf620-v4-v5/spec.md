@@ -153,7 +153,7 @@ Every compatibility warning and error is also counted, so operators can see how 
 
 Existing deployments hold v4-format documents with v4 `href`s. On startup, the v4 service runs an **idempotent migration**: every document in the five collections without `_schema: "TMF620-5.0.0"` is translated with `v4ToV5` and marked. The migration is logged, and documents it cannot convert are reported and left unchanged.
 
-Existing data can't be "rejected", so the 422 rule (§13.1) works differently here. Any v4-only attribute in a stored document (matrix S4, S6, S7, O3, P1) is **moved out** before conversion: one record per document goes into a `MigrationQuarantine` collection (`resourceType`, `id`, the removed paths and their values, `migratedAt`). The main collections stay pure v5, nothing is lost, and the log names every document affected, so an operator can review the quarantine and re-model the data through v5 (for example `constraint` → `policy[]`). Neither API serves `MigrationQuarantine`. The v5 service refuses to serve unmarked documents (`500` with a clear message) rather than return malformed v5.
+Existing data can't be "rejected", so the 422 rule (§13.1) works differently here. Any v4-only attribute in a stored document (matrix S4, S6, S7, O3, P1) is **moved out** before conversion: one record per document goes into a `MigrationQuarantine` collection (`resourceType`, `id`, the removed paths and their values, `migratedAt`). The main collections stay pure v5, nothing is lost, and the log names every document affected, so an operator can review the quarantine and re-model the data through v5 (for example `constraint` → `policy[]`). Neither API serves `MigrationQuarantine`. The v5 service refuses to serve unmarked documents (`500` with a clear message on a GET; left out of lists) rather than return malformed v5.
 
 ## 9. Helm chart and component changes
 
@@ -200,7 +200,7 @@ source/ProductCatalog/tests/bdd/
 
 - **The two test clients** share the same interface, so a feature file runs against either one: `Given the TMF620 '<apiVersion>' client`. Each client validates every response against its own version's OAS (an Ajv-based schema check), so a v4 client fails if the translator ever returns v5-shaped data, and the reverse.
 - **Configuration** through environment variables: `TMF620_V4_BASE_URL` and `TMF620_V5_BASE_URL` (defaults built from `CANVAS_GATEWAY_URL=https://localhost` and `RELEASE_NAME=r1`), optional `TMF620_ACCESS_TOKEN` and `TMF620_TLS_INSECURE=true` for the local Canvas's self-signed certificate.
-- **Isolation:** every scenario tags what it creates with a run id (`externalIdentifier` on v5, name suffix on v4), and the `After` hooks delete it in dependency order (offerings → prices → specifications → categories → catalogs).
+- **Isolation:** every scenario tags what it creates with a run id (a name suffix in both versions; T13), and the `After` hooks delete it in dependency order (offerings → prices → specifications → categories → catalogs).
 
 ### 10.2 Telco catalogue test data (brand-neutral: "Example Telco")
 

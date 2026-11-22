@@ -158,7 +158,7 @@ test('S2: a value that does not fit its valueType is refused with 422', () => {
   const r = toV5('productSpecification', { id: 'ps', name: 'x', productSpecCharacteristic: [{ name: 'Data allowance', valueType: 'integer', productSpecCharacteristicValue: [{ value: 'Unlimited' }, { value: ['a', 1] }] }] });
   assert.deepStrictEqual(codes(r.problems), ['TMF620-COMPAT-422-CHARVALUE-TYPE', 'TMF620-COMPAT-422-CHARVALUE-TYPE']);
   assert.deepStrictEqual(paths(r.problems), ['productSpecCharacteristic[0].productSpecCharacteristicValue[0]', 'productSpecCharacteristic[0].productSpecCharacteristicValue[1]']);
-  assert.match(r.problems[0].detail, /"Unlimited" is not a integer/);
+  assert.match(r.problems[0].detail, /"Unlimited" is not an integer/);
 });
 
 test('S2: a v4 @type that is not a v5 value subtype is replaced, with a warning', () => {

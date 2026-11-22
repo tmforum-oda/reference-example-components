@@ -137,7 +137,7 @@ The v5 API has its own codes (the v5.0.0 OAS defines no 422, so it uses 400):
 | Code | HTTP | When |
 |---|---|---|
 | `TMF620-V5-400-CHARVALUE-TYPE` | 400 | S5: a characteristic value does not fit its `@type` (the OAS validator doesn't check this) |
-| `TMF620-V5-500-UNMIGRATED` | 500 | the document has no `_schema` marker: written by an older v4 service and not migrated yet (spec §8) |
+| `TMF620-V5-500-UNMIGRATED` | 500 | the document has no `_schema` marker: written by an older v4 service and not migrated yet (spec §8). GET of one document only; lists leave such documents out |
 
 Header format (spec §7.2): `X-TMF-Compatibility-Warning: <code>; resource=<type>/<id>; paths=<p1>,<p2>; see=<link to this file>#<row>`
 

@@ -56,7 +56,8 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - Keep the #80 date-filter behaviour working on the v5 paths.
 - **Depends on:** T3, T4.
 
-### T7. Data migration on startup
+### T7. Data migration on startup ✅ done
+- Result: `migrateDocument` in `tmf620-compat` (moves the V4ONLY paths out with their values, then converts) and `utils/migration.js` in the v4 service, started after the server listens (`TMF620_MIGRATE_ON_STARTUP=false` turns it off). It retries until MongoDB answers and never stops the API from starting. A document is replaced only while it still has no `_schema`, so replicas can run it at once. Quarantine records are upserted by resource and id. A summary line per run, a line per quarantined or failed document, and `W-V4ONLY-QUARANTINED` / error counts with `operation=migration`. Documents it cannot convert are left unchanged and reported again on every start. 5 tests in `tmf620-compat`, 3 in the v4 service; checked against MongoDB in the compose stack (catalog converted in place, `constraint` quarantined, broken specification left alone).
 - Idempotent conversion of documents with no `_schema` marker (spec §8), with logging of converted / skipped / failed documents.
 - Move v4-only attributes out of each document into `MigrationQuarantine` (resourceType, id, removed paths and values, migratedAt) before conversion; neither API serves that collection.
 - Unit test against a seeded in-memory or local Mongo.
@@ -78,7 +79,8 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - **Depends on:** T1. Can run in parallel with Phase 1–2.
 
 ### T10. v5 CRUD on the shared collections ✅ done
-- Result: `handlers/resources.js` on `utils/store.js` (MongoDB driver 6.10.0, the same `MONGODB_*` variables and collections as v4; an in-memory store for tests). Filters with `.gt/.gte/.lt/.lte/.ne/.regex` and `>=`/`<=`, comma = any of, `fields`, `offset`/`limit`, `sort`, `X-Total-Count`/`X-Result-Count`. PATCH: merge patch (`application/json` and `application/merge-patch+json`) and JSON Patch; JSON Patch Query answers 501. Unmigrated documents: 500 `TMF620-V5-500-UNMIGRATED`. 22 tests, including one that serves every v4-written telco fixture through v5 with response validation on.
+- Result: `handlers/resources.js` on `utils/store.js` (MongoDB driver 6.10.0, the same `MONGODB_*` variables and collections as v4; an in-memory store for tests). Filters with `.gt/.gte/.lt/.lte/.ne/.regex` and `>=`/`<=`, comma = any of, `fields`, `offset`/`limit`, `sort`, `X-Total-Count`/`X-Result-Count`. PATCH: merge patch (`application/json` and `application/merge-patch+json`) and JSON Patch; JSON Patch Query answers 501. Unmigrated documents: 500 `TMF620-V5-500-UNMIGRATED` on a GET (lists leave them out since T13). 22 tests, including one that serves every v4-written telco fixture through v5 with response validation on.
+- **Changed in T13:** lists leave unmigrated documents out (and log how many) instead of answering 500, so one document the migration cannot convert does not break the whole list; a GET of that document still answers 500.
 - **Deviation:** characteristic values that do not fit their `@type` are refused with **400** `TMF620-V5-400-CHARVALUE-TYPE`, not 422: the v5.0.0 OAS defines no 422 response, and response validation enforces that.
 - **Found:** the official OAS needs two adjustments before a JSON Schema validator can use it (`utils/spec.js` `validatorSpec`; [upstream draft](upstream-issue-draft-TMF620-v5-oneOf.md)). The example payloads reuse `id` values, which breaks every response validator; and the `oneOf` "ref or value" schemas are not exclusive, so every `relatedParty` was refused. Also fixed in `tmf620-compat`: `relatedParty` on productOffering, productOfferingPrice and category (defined in neither version) now passes through unchanged instead of being restructured.
 - Checked against MongoDB with both images: write through either version, read, patch and delete through the other (19 checks), and the BDD `@smoke` feature, 10 of 10.
@@ -88,7 +90,8 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - Matrix S5: the validator accepts the Boolean/Float subtypes but never checks `value` against the subtype (found in T9). Run `checkV5Value` from `tmf620-compat` on every characteristic value on POST and PATCH and refuse mismatches with 422; turn the T9 characterisation test for `IntegerCharacteristicValueSpecification` + `"Unlimited"` into a 422 test.
 - **Depends on:** T9.
 
-### T11. Local docker-compose for the dev loop
+### T11. Local docker-compose for the dev loop ✅ done
+- Result: `tests/bdd/docker-compose.yaml` (mongo 5, metrics, v4 and v5 built from this checkout; ports 27087, 14000, 18084, 18085) and `npm run local:up`, `test:local`, `test:local:smoke`, `local:down`. `scripts/run-local.js` points the suite at the containers.
 - `source/ProductCatalog/tests/bdd/docker-compose.yaml`: mongo + v4 + v5 on one network, so the BDD suite can run without a cluster.
 - **Depends on:** T9 (v4 image builds today).
 
@@ -99,7 +102,9 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - `source/ProductCatalog/tests/bdd/`: `package.json` (Cucumber.js at the same major version as oda-canvas, Chai, Axios, Ajv), `cucumber.js` profiles (`v4`, `v5`, `cross`, `compat`, `all`), env config (spec §10.1), `Hooks.js` with run id and ordered cleanup, and a README.
 - **Depends on:** none (can start straight away).
 
-### T13. The two test clients
+### T13. The two test clients ✅ done
+- Result: `clients/Tmf620Client.js` (create/get/list/patch/delete, a `Tmf620Response` with status, headers, body, compatibility warnings and schema problems), `Tmf620V4Client.js` and `Tmf620V5Client.js` (paths, FVO builder, merge-patch with `@type`). `clients/schemas.js` validates 2xx bodies (and v5 errors) with Ajv 8 against each version's own spec, with the v5 discriminators applied and v4 `format: uri` read as a URI reference, because the v4 service has always returned a relative `@schemaLocation`. F000 now also runs a create/read/patch/delete round trip per client and resource: 20 of 20 against the compose stack. 7 unit tests show that each validator refuses the other version's shapes.
+- **Deviation:** test data is tagged with the run id in the name in both versions, not with `externalIdentifier` on v5: that attribute is v5-only on three resources, and the v4 warnings it causes would get in the way of the F007 checks.
 - `Tmf620Client` interface; `Tmf620V4Client` and `Tmf620V5Client` with version-specific paths (`/catalog` vs `/productCatalog`) and payload builders (the v5 builder sends the FVO-required `lifecycleStatus`, `lastUpdate` and `priceType`); validation of every response against that version's OAS; capture of status, headers and body for the steps.
 - **Depends on:** T1, T12.
 

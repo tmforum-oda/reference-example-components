@@ -9,6 +9,8 @@ const axios = require('axios');
 const { setWorldConstructor, setDefaultTimeout } = require('@cucumber/cucumber');
 const { loadConfig, resourceUrl } = require('./config');
 const { cleanupPlan } = require('./cleanup');
+const { Tmf620V4Client } = require('../clients/Tmf620V4Client');
+const { Tmf620V5Client } = require('../clients/Tmf620V5Client');
 
 setDefaultTimeout(60 * 1000);
 
@@ -37,7 +39,15 @@ class Tmf620World {
     this.runId = RUN_ID;
     this.created = [];       // {version, resource, id}
     this.lastResponse = undefined;
-    this.clients = {};       // filled by the test clients (T13), keyed by 'v4' / 'v5'
+    const deps = { config: this.config, http: this.http, runId: this.runId };
+    this.clients = { v4: new Tmf620V4Client(deps), v5: new Tmf620V5Client(deps) };
+  }
+
+  // The test client for 'v4' or 'v5'
+  client(version) {
+    const c = this.clients[version || this.version];
+    if (!c) throw new Error(`Unknown TMF620 API version '${version || this.version}' (expected v4 or v5)`);
+    return c;
   }
 
   // Records a created resource so it is deleted after the scenario.

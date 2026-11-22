@@ -158,15 +158,18 @@ test('PATCH refuses a characteristic value that does not fit its @type (matrix S
   assert.strictEqual(p.json.code, 'TMF620-V5-400-CHARVALUE-TYPE');
 });
 
-test('a document an older v4 service wrote (no _schema) is refused with 500, not served', async () => {
+test('a document an older v4 service wrote (no _schema) is refused with 500 and left out of lists', async () => {
   store.collections.Category = store.collections.Category || [];
   store.collections.Category.push({ _id: 'legacy', id: 'catg-legacy', name: 'Old', parentId: 'catg-mobile', href: `/${COMPONENT}/tmf-api/productCatalogManagement/v4/category/catg-legacy` });
   const g = await call('GET', '/category/catg-legacy');
   assert.strictEqual(g.status, 500);
   assert.strictEqual(g.json.code, 'TMF620-V5-500-UNMIGRATED');
   assert.match(g.json.message, /not been migrated/);
-  const l = await call('GET', '/category?name=Old');
-  assert.strictEqual(l.status, 500);
+  const orig = console.warn; console.warn = () => {};
+  let l;
+  try { l = await call('GET', '/category?name=Old'); } finally { console.warn = orig; }
+  assert.strictEqual(l.status, 200, 'lists leave unmigrated documents out');
+  assert.deepStrictEqual(l.json, []);
   assert.strictEqual((await call('PATCH', '/category/catg-legacy', { '@type': 'Category', name: 'x' }, 'application/merge-patch+json')).status, 500);
   store.collections.Category = store.collections.Category.filter(d => d.id !== 'catg-legacy');
 });

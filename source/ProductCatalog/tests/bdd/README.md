@@ -14,6 +14,22 @@ npm run test:unit                   # unit tests for the support code
 
 Profiles: `smoke`, `v4`, `v5`, `cross` (write with one version, read with the other), `compat` (the compatibility errors and warnings), `e2e`, `all`.
 
+## Local stack (no cluster)
+
+`docker-compose.yaml` runs MongoDB, the metrics microservice and both APIs, built from this checkout:
+
+```sh
+npm run local:up            # docker compose up -d --build --wait
+npm run test:local:smoke    # or test:local for everything
+npm run local:down          # stops it and deletes the data
+```
+
+v4 is on port 18084, v5 on 18085, metrics on 14000, and MongoDB on 27087 for seeding and inspecting data.
+
+## Test clients
+
+`clients/Tmf620V4Client.js` and `clients/Tmf620V5Client.js` share one interface (`create`, `get`, `list`, `patch`, `delete`, `build`). Each checks every successful response against its own version's spec (`clients/schemas.js`), so the step `the response matches the TMF620 '<version>' specification` fails if a v4 client ever gets v5-shaped data, or the reverse.
+
 ## Configuration
 
 | Variable | Default | Meaning |

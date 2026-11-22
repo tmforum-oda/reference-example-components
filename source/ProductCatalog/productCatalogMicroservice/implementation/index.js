@@ -95,6 +95,11 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   http.createServer(app).listen(serverPort, function () {
     console.log('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
     console.log('Swagger-ui is available on http://localhost:'+ serverPort  + swaggerDoc.basePath + 'docs', serverPort);
+
+    // Convert documents written before the TMF620 v5 storage format (issue #87, spec section 8)
+    if (process.env.TMF620_MIGRATE_ON_STARTUP !== 'false') {
+      require('./utils/migration').migrateOnStartup(mongoUtils.connect);
+    }
   });
 
 });

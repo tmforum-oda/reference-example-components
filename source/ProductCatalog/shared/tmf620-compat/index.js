@@ -10,6 +10,7 @@ const { normaliseHref, buildHref, mapHrefs } = require('./lib/href');
 const { checkV5Value, allowedSubtypes } = require('./lib/charValue');
 const { toTmfError, warningHeaders, CODES } = require('./lib/messages');
 const { RESOURCES } = require('./lib/model');
+const { migrateDocument } = require('./lib/migrate');
 
 const STORAGE_SCHEMA = 'TMF620-5.0.0';
 
@@ -23,6 +24,7 @@ module.exports = {
   v4Patch,
   mapFilter,
   mapFields,
+  migrateDocument,
   // both
   normaliseHref,
   buildHref,

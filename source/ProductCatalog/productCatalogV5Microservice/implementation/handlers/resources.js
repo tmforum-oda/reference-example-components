@@ -8,7 +8,8 @@
 //   - hrefs to this catalogue are stored version-neutral (/<resource>/<id>) and
 //     built from the v5 base path in every response
 //   - documents without the _schema marker were written by an older v4 service and
-//     not migrated yet (spec section 8); they are refused with 500, not served as v5
+//     not migrated yet (spec section 8); a GET of one answers 500 and lists leave
+//     them out, so they are never served as v5
 
 const crypto = require('crypto');
 const compat = require('tmf620-compat');
@@ -116,13 +117,16 @@ function createHandlers(options) {
     handlers['list' + resourceName] = async (req, res) => {
       const q = buildQuery(req.originalUrl.split('?')[1]);
       if (q.problems.length) return sendError(res, 400, 'TMF620-V5-400', 'Invalid query', q.problems.join('; '));
+      // Unmigrated documents are left out of lists (a GET of one answers 500), so one
+      // document the migration could not convert does not break the whole list
+      const criteria = Object.assign({}, q.criteria, { _schema: compat.STORAGE_SCHEMA });
       let docs, total;
       try {
-        total = await store.count(info.collection, q.criteria);
-        docs = await store.find(info.collection, q.criteria, { skip: q.options.skip, limit: q.options.limit, sort: q.options.sort, projection: q.options.projection });
+        total = await store.count(info.collection, criteria);
+        docs = await store.find(info.collection, criteria, { skip: q.options.skip, limit: q.options.limit, sort: q.options.sort, projection: q.options.projection });
+        const skipped = await store.count(info.collection, Object.assign({}, q.criteria, { _schema: { $ne: compat.STORAGE_SCHEMA } }));
+        if (skipped) console.warn(`list ${info.key}: ${skipped} matching document(s) left out: not migrated to the v5 storage format (see the v4 API's migration log)`);
       } catch (err) { return failed(res, err, 'list ' + info.key); }
-      const legacy = docs.filter(d => d._schema !== compat.STORAGE_SCHEMA).map(d => d.id);
-      if (legacy.length) return unmigrated(res, info, legacy);
       res.set('X-Total-Count', String(total));
       res.set('X-Result-Count', String(docs.length));
       res.status(200).json(docs.map(d => toResponse(d, q.options.fields)));

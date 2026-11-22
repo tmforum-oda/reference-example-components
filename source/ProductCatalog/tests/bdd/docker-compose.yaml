@@ -1,0 +1,65 @@
+# Local dev loop for issue #87 (task T11): MongoDB, the TMF620 v4 and v5 APIs on
+# one shared database, and the metrics microservice, without a cluster.
+#
+#   docker compose up -d --build          (from this folder)
+#   npm run test:local                    (the BDD suite against these containers)
+#   docker compose down -v
+#
+# The component name in the API paths is r1-productcatalogmanagement, as in a
+# Helm release called r1.
+
+name: prodcat-tmf620
+
+x-component: &component
+  COMPONENT_NAME: r1-productcatalogmanagement
+  MONGODB_HOST: mongo
+  MONGODB_PORT: "27017"
+  MONGODB_DATABASE: tmf
+  OTL_EXPORTER_TRACE_PROTO_ENABLED: "false"
+
+services:
+  mongo:
+    image: mongo:5
+    ports:
+      - "27087:27017"     # for seeding and inspecting data from the host
+    healthcheck:
+      test: ["CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  metrics:
+    build:
+      context: ../..
+      dockerfile: openMetricsMicroservice-dockerfile
+    environment:
+      COMPONENT_NAME: r1-productcatalogmanagement
+    ports:
+      - "14000:4000"
+
+  api-v4:
+    build:
+      context: ../..
+      dockerfile: prodcat-dockerfile
+    environment:
+      <<: *component
+      METRICS_COMPATIBILITY_URL: http://metrics:4000/compatibility
+    ports:
+      - "18084:8080"
+    depends_on:
+      mongo:
+        condition: service_healthy
+      metrics:
+        condition: service_started
+
+  api-v5:
+    build:
+      context: ../..
+      dockerfile: prodcat-v5-dockerfile
+    environment:
+      <<: *component
+    ports:
+      - "18085:8080"
+    depends_on:
+      mongo:
+        condition: service_healthy
