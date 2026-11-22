@@ -58,6 +58,7 @@ services:
       dockerfile: prodcat-v5-dockerfile
     environment:
       <<: *component
+      METRICS_COMPATIBILITY_URL: http://metrics:4000/compatibility
     ports:
       - "18085:8080"
     depends_on:

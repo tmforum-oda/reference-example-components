@@ -69,8 +69,8 @@ test('converts, quarantines, and leaves what it cannot convert', async () => {
   const reporter = recorder();
   const { total, summary } = await migrate(db, { log: m => logs.push(m), reporter, now: () => '2026-11-22T00:00:00.000Z' });
 
-  assert.deepStrictEqual(total, { converted: 2, quarantined: 1, failed: 1, skipped: 1 });
-  assert.deepStrictEqual(summary.catalog, { converted: 1, quarantined: 0, failed: 0, skipped: 0 });
+  assert.deepStrictEqual(total, { converted: 2, quarantined: 1, defaulted: 2, failed: 1, skipped: 1 });
+  assert.deepStrictEqual(summary.catalog, { converted: 1, quarantined: 0, defaulted: 1, failed: 0, skipped: 0 });
 
   const cat = db.data.Catalog.find(d => d.id === 'cat-1');
   assert.strictEqual(cat._id, 'm1', 'same Mongo document');
@@ -120,4 +120,26 @@ test('waits for MongoDB and never throws', async () => {
   assert.strictEqual(r.total.converted, 0);
   const never = await migrateOnStartup(() => Promise.reject(new Error('down')), { attempts: 2, delayMs: 1, log: () => {} });
   assert.strictEqual(never, undefined);
+});
+
+test('gives converted documents without a lifecycleStatus "In design", and keeps any other value', async () => {
+  const db = fakeDb({
+    Category: [
+      { _id: 'l1', id: 'catg-none', name: 'Written by productcatalogapi:1.0.0' },
+      { _id: 'l2', id: 'catg-active', name: 'Has a status', lifecycleStatus: 'Active' },
+      { _id: 'l3', id: 'catg-done', name: 'Already migrated', _schema: 'TMF620-5.0.0' }
+    ],
+    ProductSpecification: [
+      { _id: 'l4', id: 'ps-bad', name: 'Broken', productSpecCharacteristic: [{ name: 'Data', valueType: 'integer', productSpecCharacteristicValue: [{ value: 'Unlimited' }] }] }
+    ]
+  });
+  const logs = [];
+  const { total } = await migrate(db, { log: m => logs.push(m), reporter: recorder() });
+
+  assert.strictEqual(total.defaulted, 1);
+  assert.strictEqual(db.data.Category.find(d => d.id === 'catg-none').lifecycleStatus, 'In design');
+  assert.strictEqual(db.data.Category.find(d => d.id === 'catg-active').lifecycleStatus, 'Active');
+  assert.strictEqual(db.data.Category.find(d => d.id === 'catg-done').lifecycleStatus, undefined, 'documents already in v5 format are not touched');
+  assert.strictEqual(db.data.ProductSpecification[0].lifecycleStatus, undefined, 'a document left unchanged stays unchanged');
+  assert.match(logs[logs.length - 1], /1 given lifecycleStatus "In design" because they had none/);
 });

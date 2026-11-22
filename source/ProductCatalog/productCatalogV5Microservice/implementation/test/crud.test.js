@@ -14,11 +14,14 @@ const fixtures = require('tmf620-compat/test/fixtures');
 const COMPONENT = 'r1-productcatalogmanagement';
 const BASE = `/${COMPONENT}/tmf-api/productCatalogManagement/v5`;
 const store = memoryStore();
+const logs = [];
+const counted = [];
+const reporter = { record: (code, resource, operation, count) => counted.push({ code, resource, operation, count }), recordAll: (items, resource, operation) => items.forEach(i => counted.push({ code: i.code, resource, operation, count: 1 })) };
 let server;
 let origin;
 
 test.before(async () => {
-  server = createApp({ componentName: COMPONENT, store, validateResponses: true }).listen(0);
+  server = createApp({ componentName: COMPONENT, store, validateResponses: true, reporter, log: m => logs.push(m) }).listen(0);
   await new Promise(resolve => server.once('listening', resolve));
   origin = `http://127.0.0.1:${server.address().port}`;
 });
@@ -162,20 +165,69 @@ test('PATCH refuses a characteristic value that does not fit its @type (matrix S
   assert.strictEqual(p.json.code, 'TMF620-V5-400-CHARVALUE-TYPE');
 });
 
-test('a document an older v4 service wrote (no _schema) is refused with 500 and left out of lists', async () => {
+// Documents an older v4 service wrote (no _schema), for example through the previous
+// v4 pod during a rolling upgrade, after the new pod's startup migration
+const V4PATH = `/${COMPONENT}/tmf-api/productCatalogManagement/v4`;
+
+test('a GET converts a document still in the v4 format and serves it as v5', async () => {
   store.collections.Category = store.collections.Category || [];
-  store.collections.Category.push({ _id: 'legacy', id: 'catg-legacy', name: 'Old', parentId: 'catg-mobile', href: `/${COMPONENT}/tmf-api/productCatalogManagement/v4/category/catg-legacy` });
+  store.collections.Category.push({ _id: 'legacy-1', id: 'catg-legacy', name: 'Old', parentId: 'catg-mobile', href: `${V4PATH}/category/catg-legacy` });
   const g = await call('GET', '/category/catg-legacy');
+  assert.strictEqual(g.status, 200, g.text);
+  assert.strictEqual(g.json.parent.id, 'catg-mobile');
+  assert.strictEqual(g.json.lifecycleStatus, 'In design', 'given the default: it had no lifecycleStatus');
+  assert.strictEqual(g.json.href, `${BASE}/category/catg-legacy`);
+  const stored = store.collections.Category.find(d => d.id === 'catg-legacy');
+  assert.strictEqual(stored._schema, compat.STORAGE_SCHEMA, 'stored in the v5 format now');
+  assert.strictEqual(stored._id, 'legacy-1', 'the same document');
+  assert.ok(logs.some(m => /catg-legacy converted to the v5 storage format/.test(m)));
+  store.collections.Category = store.collections.Category.filter(d => d.id !== 'catg-legacy');
+});
+
+test('a list converts documents still in the v4 format before it runs', async () => {
+  store.collections.Category.push({ _id: 'legacy-2', id: 'catg-legacy-2', name: 'Old list', parentId: 'catg-mobile', lifecycleStatus: 'Active' });
+  const l = await call('GET', '/category?parent.id=catg-mobile&name=Old%20list');
+  assert.strictEqual(l.status, 200, l.text);
+  assert.deepStrictEqual(l.json.map(c => [c.id, c.lifecycleStatus]), [['catg-legacy-2', 'Active']], 'found by its v5 filter, status kept');
+  store.collections.Category = store.collections.Category.filter(d => d.id !== 'catg-legacy-2');
+});
+
+test('a PATCH converts first, quarantining what v5 cannot hold, then applies the patch', async () => {
+  store.collections.ProductOfferingPrice = store.collections.ProductOfferingPrice || [];
+  store.collections.ProductOfferingPrice.push({ _id: 'legacy-3', id: 'pop-legacy', name: 'Old price', priceType: 'recurring', price: { unit: 'GBP', value: 9 },
+    constraint: [{ id: 'con-1', name: 'UK customers only' }] });
+  counted.length = 0;
+  const p = await call('PATCH', '/productOfferingPrice/pop-legacy', { '@type': 'ProductOfferingPrice', description: 'patched through v5' }, 'application/merge-patch+json');
+  assert.strictEqual(p.status, 200, p.text);
+  assert.strictEqual(p.json.description, 'patched through v5');
+  assert.strictEqual(p.json.constraint, undefined);
+  const q = store.collections[compat.QUARANTINE].find(d => d.id === 'pop-legacy');
+  assert.strictEqual(q.resourceType, 'ProductOfferingPrice');
+  assert.deepStrictEqual(q.removed, [{ path: 'constraint', value: [{ id: 'con-1', name: 'UK customers only' }] }]);
+  assert.deepStrictEqual(counted, [{ code: 'W-V4ONLY-QUARANTINED', resource: 'productOfferingPrice', operation: 'migration', count: 1 }]);
+  store.collections.ProductOfferingPrice = store.collections.ProductOfferingPrice.filter(d => d.id !== 'pop-legacy');
+});
+
+test('a document that cannot be converted is refused with 500 saying why, left out of lists, and reported once', async () => {
+  store.collections.ProductSpecification = store.collections.ProductSpecification || [];
+  const legacy = { _id: 'legacy-4', id: 'ps-legacy', name: 'Unconvertible spec',
+    productSpecCharacteristic: [{ name: 'Data allowance', valueType: 'integer', productSpecCharacteristicValue: [{ value: 'Unlimited' }] }] };
+  store.collections.ProductSpecification.push(JSON.parse(JSON.stringify(legacy)));
+  counted.length = 0;
+  const g = await call('GET', '/productSpecification/ps-legacy');
   assert.strictEqual(g.status, 500);
   assert.strictEqual(g.json.code, 'TMF620-V5-500-UNMIGRATED');
-  assert.match(g.json.message, /not been migrated/);
+  assert.match(g.json.message, /ps-legacy .*cannot be converted.*Unlimited.*The v4 API still serves it/);
   const orig = console.warn; console.warn = () => {};
   let l;
-  try { l = await call('GET', '/category?name=Old'); } finally { console.warn = orig; }
-  assert.strictEqual(l.status, 200, 'lists leave unmigrated documents out');
+  try { l = await call('GET', '/productSpecification?name=Unconvertible%20spec'); } finally { console.warn = orig; }
+  assert.strictEqual(l.status, 200, 'one bad document does not break the list');
   assert.deepStrictEqual(l.json, []);
-  assert.strictEqual((await call('PATCH', '/category/catg-legacy', { '@type': 'Category', name: 'x' }, 'application/merge-patch+json')).status, 500);
-  store.collections.Category = store.collections.Category.filter(d => d.id !== 'catg-legacy');
+  assert.strictEqual((await call('PATCH', '/productSpecification/ps-legacy', { '@type': 'ProductSpecification', name: 'x' }, 'application/merge-patch+json')).status, 500);
+  assert.strictEqual(counted.length, 1, 'counted once, not on every request');
+  const stored = store.collections.ProductSpecification.find(d => d.id === 'ps-legacy');
+  assert.deepStrictEqual(stored, legacy, 'left unchanged');
+  store.collections.ProductSpecification = store.collections.ProductSpecification.filter(d => d.id !== 'ps-legacy');
 });
 
 // Cross-version: what the v4 API writes (tmf620-compat v4ToV5 on the telco fixtures)

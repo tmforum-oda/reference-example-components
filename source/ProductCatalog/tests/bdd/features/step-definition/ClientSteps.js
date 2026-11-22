@@ -3,7 +3,7 @@
 // Create / read / patch / delete through the current test client (T13). The full
 // CRUD features (F001-F005) build on these.
 
-const { When, Then } = require('@cucumber/cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 const { expect } = require('chai');
 const { resolveText } = require('../../support/telco');
 
@@ -21,12 +21,22 @@ function createdId(world, resource) {
   return id;
 }
 
-When('I create a minimal {string} named {string}', async function (resource, name) {
-  const client = this.client();
+async function createMinimal(world, resource, name) {
+  const client = world.client();
   const res = await client.create(resource, client.build(resource, { name: client.testName(name) }));
-  this.debug(res.describe());
-  this.lastResponse = res;
-  remember(this, resource, res);
+  world.debug(res.describe());
+  world.lastResponse = res;
+  remember(world, resource, res);
+  return res;
+}
+
+When('I create a minimal {string} named {string}', async function (resource, name) {
+  await createMinimal(this, resource, name);
+});
+
+Given('a minimal {string} named {string} has been created', async function (resource, name) {
+  const res = await createMinimal(this, resource, name);
+  expect(res.status, res.describe()).to.equal(201);
 });
 
 When('I retrieve the created {string}', async function (resource) {

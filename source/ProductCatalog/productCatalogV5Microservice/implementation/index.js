@@ -19,7 +19,9 @@ const validateResponses = process.env.OAS_VALIDATE_RESPONSES !== 'false';
 
 const started = Date.now();
 const store = mongoStore();
-const app = createApp({ componentName, validateResponses, store });
+// Compatibility counter (spec 7.3): the v5 API reports the documents it migrates
+const reporter = require('tmf620-compat').createReporter({ url: process.env.METRICS_COMPATIBILITY_URL });
+const app = createApp({ componentName, validateResponses, store, reporter });
 const basePath = basePathFor(componentName);
 
 http.createServer(app).listen(port, () => {

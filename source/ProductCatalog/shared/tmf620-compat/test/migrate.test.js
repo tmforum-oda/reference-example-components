@@ -54,3 +54,24 @@ test('the input document is not changed', () => {
   migrateDocument('productOfferingPrice', pop, ctx);
   assert.deepStrictEqual(pop, { id: 'p', name: 'x', constraint: [{ id: 'c' }] });
 });
+
+// migrateStored: one stored document, as both APIs use it (v4 startup migration, v5 on first read)
+test('migrateStored marks the document, keeps internal fields, defaults lifecycleStatus and builds the quarantine record', () => {
+  const compat = require('../index');
+  const stored = { _id: 'x1', _serviceType: 'st', id: 'pop-9', name: 'Old price', priceType: 'recurring', constraint: [{ id: 'c-1', name: 'UK only' }] };
+  const r = compat.migrateStored('productOfferingPrice', stored, { componentName: 'r1-productcatalogmanagement' }, () => '2026-11-22T00:00:00.000Z');
+  assert.deepStrictEqual(r.problems, []);
+  assert.strictEqual(r.doc._schema, compat.STORAGE_SCHEMA);
+  assert.strictEqual(r.doc._serviceType, 'st');
+  assert.strictEqual(r.doc._id, undefined, 'the caller replaces by _id');
+  assert.strictEqual(r.doc.lifecycleStatus, 'In design');
+  assert.strictEqual(r.defaulted, true);
+  assert.deepStrictEqual(r.quarantine, { resourceType: 'ProductOfferingPrice', id: 'pop-9', removed: [{ path: 'constraint', value: [{ id: 'c-1', name: 'UK only' }] }], migratedAt: '2026-11-22T00:00:00.000Z' });
+  const kept = compat.migrateStored('category', { id: 'c', name: 'n', lifecycleStatus: 'Active' }, {});
+  assert.strictEqual(kept.doc.lifecycleStatus, 'Active');
+  assert.strictEqual(kept.defaulted, false);
+  assert.strictEqual(kept.quarantine, undefined);
+  const bad = compat.migrateStored('productSpecification', { id: 's', name: 'n', productSpecCharacteristic: [{ name: 'D', valueType: 'integer', productSpecCharacteristicValue: [{ value: 'Unlimited' }] }] }, {});
+  assert.strictEqual(bad.doc, undefined);
+  assert.match(compat.describeProblems(bad.problems), /Unlimited/);
+});

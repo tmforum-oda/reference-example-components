@@ -7,9 +7,12 @@
 //   - internal fields start with '_' (_id, _schema) and are never returned
 //   - hrefs to this catalogue are stored version-neutral (/<resource>/<id>) and
 //     built from the v5 base path in every response
-//   - documents without the _schema marker were written by an older v4 service and
-//     not migrated yet (spec section 8); a GET of one answers 500 and lists leave
-//     them out, so they are never served as v5
+//   - documents without the _schema marker were written by an older v4 service
+//     (spec section 8). The v4 API migrates them when it starts; one written after
+//     that (for example by the previous v4 pod during a rolling upgrade) is migrated
+//     here, with the same code, the first time a GET, PATCH or list meets it. Only a
+//     document that cannot be converted is refused (500) on a GET or PATCH and left
+//     out of lists, so it is never served as v5
 
 const crypto = require('crypto');
 const compat = require('tmf620-compat');
@@ -26,7 +29,7 @@ const RESOURCES = {
   ProductSpecification: { key: 'productSpecification', collection: 'ProductSpecification', segment: 'productSpecification' }
 };
 
-const DEFAULT_LIFECYCLE_STATUS = 'In design';   // the same default as the v4 API (#80)
+const DEFAULT_LIFECYCLE_STATUS = compat.DEFAULT_LIFECYCLE_STATUS;   // the same default as the v4 API (#80)
 
 function isObject(v) { return v !== null && typeof v === 'object' && !Array.isArray(v); }
 
@@ -48,6 +51,54 @@ function createHandlers(options) {
   const store = options.store;
   const componentName = options.componentName;
   const basePath = `/${componentName}/tmf-api/productCatalogManagement/v5`;
+  const reporter = options.reporter || { record() {}, recordAll() {} };
+  const log = options.log || (m => console.log(m));
+  // Documents that could not be converted, by content: logged and counted once, and
+  // tried again only when their content changes (for example after a fix through v4)
+  const unconvertible = new Map();
+
+  // A stored document in the v4 format -> {doc} (now stored in the v5 format) or {problems}
+  async function migrateOne(info, stored) {
+    if (stored.id === undefined || stored.id === null) {
+      return { problems: [{ path: 'id', detail: 'the stored document has no id' }] };
+    }
+    const key = `${info.collection}/${stored._id}`;
+    const fingerprint = crypto.createHash('sha1').update(JSON.stringify(stored)).digest('hex');
+    const known = unconvertible.get(key);
+    if (known && known.fingerprint === fingerprint) return { problems: known.problems };
+
+    const r = compat.migrateStored(info.key, stored, { componentName });
+    if (!r.doc) {
+      unconvertible.set(key, { fingerprint, problems: r.problems });
+      log(`TMF620 migration (v5 API): ${info.key}/${stored.id} cannot be converted and is left unchanged: ${compat.describeProblems(r.problems)}`);
+      reporter.recordAll(r.problems, info.key, 'migration');
+      return { problems: r.problems };
+    }
+    if (r.quarantine) await store.upsert(compat.QUARANTINE, { resourceType: info.collection, id: stored.id }, r.quarantine);
+    const matched = await store.replace(info.collection, Object.assign({ _id: stored._id }, compat.NOT_MIGRATED), r.doc);
+    if (!matched) {
+      // converted meanwhile by the v4 API or another replica
+      const now = await store.findOne(info.collection, { _id: stored._id });
+      if (compat.isMigrated(now)) return { doc: now };
+      return { problems: [{ path: 'id', detail: 'the stored document changed while it was being converted; try again' }] };
+    }
+    unconvertible.delete(key);
+    const notes = [];
+    if (r.quarantined.length) notes.push(`moved ${r.quarantined.map(q => q.path).join(', ')} to ${compat.QUARANTINE} (TMF620 v5 has no equivalent)`);
+    if (r.defaulted) notes.push(`lifecycleStatus set to "${DEFAULT_LIFECYCLE_STATUS}" (it had none)`);
+    log(`TMF620 migration (v5 API): ${info.key}/${stored.id} converted to the v5 storage format${notes.length ? ': ' + notes.join('; ') : ''}`);
+    if (r.quarantined.length) reporter.record('W-V4ONLY-QUARANTINED', info.key, 'migration', r.quarantined.length);
+    return { doc: Object.assign({ _id: stored._id }, r.doc) };
+  }
+
+  // Converts every document of the collection still in the v4 format (normally none);
+  // returns how many could not be converted
+  async function migratePending(info) {
+    const pending = await store.find(info.collection, compat.NOT_MIGRATED, {});
+    let left = 0;
+    for (const stored of pending) { if ((await migrateOne(info, stored)).problems) left++; }
+    return left;
+  }
 
   function toResponse(stored, fields) {
     const doc = JSON.parse(JSON.stringify(stored));
@@ -56,10 +107,10 @@ function createHandlers(options) {
     return projectDoc(doc, fields);
   }
 
-  function unmigrated(res, info, ids) {
-    sendError(res, 500, 'TMF620-V5-500-UNMIGRATED', 'Stored data is not in the TMF620 v5 format yet',
-      `${info.key} ${ids.join(', ')} ${ids.length > 1 ? 'were' : 'was'} written by an older Product Catalog v4 service and ${ids.length > 1 ? 'have' : 'has'} not been migrated to the v5 storage format. ` +
-      'The v4 API migrates all stored documents when it starts (spec section 8); restart it, or read the resource through the v4 API.');
+  function unmigrated(res, info, id, problems) {
+    sendError(res, 500, 'TMF620-V5-500-UNMIGRATED', 'Stored data cannot be converted to the TMF620 v5 format',
+      `${info.key} ${id} was written by an older Product Catalog v4 service and cannot be converted to the v5 storage format: ` +
+      `${compat.describeProblems(problems)}. The v4 API still serves it: correct it through the v4 API (it is converted the next time it is read here), or delete it.`);
   }
 
   function failed(res, err, what) {
@@ -110,22 +161,27 @@ function createHandlers(options) {
       let doc;
       try { doc = await store.findOne(info.collection, { id: req.params.id }); } catch (err) { return failed(res, err, 'retrieve ' + info.key); }
       if (!doc) return sendError(res, 404, 'TMF620-V5-404', 'Resource not found', `No ${info.key} with id ${req.params.id}`);
-      if (doc._schema !== compat.STORAGE_SCHEMA) return unmigrated(res, info, [doc.id]);
+      if (!compat.isMigrated(doc)) {
+        let m;
+        try { m = await migrateOne(info, doc); } catch (err) { return failed(res, err, 'retrieve ' + info.key); }
+        if (m.problems) return unmigrated(res, info, doc.id, m.problems);
+        doc = m.doc;
+      }
       res.json(toResponse(doc, q.options.fields));
     };
 
     handlers['list' + resourceName] = async (req, res) => {
       const q = buildQuery(req.originalUrl.split('?')[1]);
       if (q.problems.length) return sendError(res, 400, 'TMF620-V5-400', 'Invalid query', q.problems.join('; '));
-      // Unmigrated documents are left out of lists (a GET of one answers 500), so one
-      // document the migration could not convert does not break the whole list
+      // Documents still in the v4 format are converted first. One that cannot be
+      // converted is left out (a GET of it answers 500), so it does not break the list
       const criteria = Object.assign({}, q.criteria, { _schema: compat.STORAGE_SCHEMA });
       let docs, total;
       try {
+        const left = await migratePending(info);
         total = await store.count(info.collection, criteria);
         docs = await store.find(info.collection, criteria, { skip: q.options.skip, limit: q.options.limit, sort: q.options.sort, projection: q.options.projection });
-        const skipped = await store.count(info.collection, Object.assign({}, q.criteria, { _schema: { $ne: compat.STORAGE_SCHEMA } }));
-        if (skipped) console.warn(`list ${info.key}: ${skipped} matching document(s) left out: not migrated to the v5 storage format (see the v4 API's migration log)`);
+        if (left) console.warn(`list ${info.key}: ${left} document(s) left out: they cannot be converted to the v5 storage format (see the migration log)`);
       } catch (err) { return failed(res, err, 'list ' + info.key); }
       res.set('X-Total-Count', String(total));
       res.set('X-Result-Count', String(docs.length));
@@ -141,7 +197,12 @@ function createHandlers(options) {
       let stored;
       try { stored = await store.findOne(info.collection, { id: req.params.id }); } catch (err) { return failed(res, err, 'patch ' + info.key); }
       if (!stored) return sendError(res, 404, 'TMF620-V5-404', 'Resource not found', `No ${info.key} with id ${req.params.id}`);
-      if (stored._schema !== compat.STORAGE_SCHEMA) return unmigrated(res, info, [stored.id]);
+      if (!compat.isMigrated(stored)) {
+        let m;
+        try { m = await migrateOne(info, stored); } catch (err) { return failed(res, err, 'patch ' + info.key); }
+        if (m.problems) return unmigrated(res, info, stored.id, m.problems);
+        stored = m.doc;
+      }
 
       const current = JSON.parse(JSON.stringify(stored));
       const internal = {};

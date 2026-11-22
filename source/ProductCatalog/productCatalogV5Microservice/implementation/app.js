@@ -26,7 +26,7 @@ function createApp(options) {
   const spec = specForComponent(componentName);
   const basePath = basePathFor(componentName);
   // options.store: utils/store.js (MongoDB shared with the v4 API, or in memory for tests)
-  const handlerFor = handlerLookup(options.store ? createHandlers({ store: options.store, componentName }) : undefined);
+  const handlerFor = handlerLookup(options.store ? createHandlers({ store: options.store, componentName, reporter: options.reporter, log: options.log }) : undefined);
   const app = express();
 
   app.disable('x-powered-by');

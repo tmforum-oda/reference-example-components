@@ -11,8 +11,10 @@ const { checkV5Value, allowedSubtypes } = require('./lib/charValue');
 const { toTmfError, warningHeaders, CODES } = require('./lib/messages');
 const { RESOURCES } = require('./lib/model');
 const { migrateDocument } = require('./lib/migrate');
+const stored = require('./lib/stored');
+const { createReporter } = require('./lib/metrics');
 
-const STORAGE_SCHEMA = 'TMF620-5.0.0';
+const STORAGE_SCHEMA = stored.STORAGE_SCHEMA;
 
 module.exports = {
   STORAGE_SCHEMA,
@@ -25,6 +27,15 @@ module.exports = {
   mapFilter,
   mapFields,
   migrateDocument,
+  // stored documents (v4 startup migration, v5 migration of what it meets)
+  migrateStored: stored.migrateStored,
+  isMigrated: stored.isMigrated,
+  describeProblems: stored.describeProblems,
+  NOT_MIGRATED: stored.NOT_MIGRATED,
+  QUARANTINE: stored.QUARANTINE,
+  DEFAULT_LIFECYCLE_STATUS: stored.DEFAULT_LIFECYCLE_STATUS,
+  // compatibility metric
+  createReporter,
   // both
   normaliseHref,
   buildHref,

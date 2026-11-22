@@ -10,6 +10,7 @@
 //   count(collection, criteria) -> number
 //   replace(collection, criteria, doc) -> matched count
 //   remove(collection, criteria) -> deleted count
+//   upsert(collection, criteria, fields)   set fields on the matching document, or insert one
 
 function mongoStore(options) {
   const { MongoClient } = require('mongodb');
@@ -42,6 +43,7 @@ function mongoStore(options) {
     async count(c, criteria) { return (await db()).collection(c).countDocuments(criteria); },
     async replace(c, criteria, doc) { return (await (await db()).collection(c).replaceOne(criteria, doc)).matchedCount; },
     async remove(c, criteria) { return (await (await db()).collection(c).deleteOne(criteria)).deletedCount; },
+    async upsert(c, criteria, fields) { await (await db()).collection(c).updateOne(criteria, { $set: fields }, { upsert: true }); },
     async close() { if (clientPromise) (await clientPromise).close(); clientPromise = undefined; }
   };
 }
@@ -145,6 +147,11 @@ function memoryStore() {
       if (i < 0) return 0;
       coll(c).splice(i, 1);
       return 1;
+    },
+    async upsert(c, criteria, fields) {
+      const d = coll(c).find(x => matches(x, criteria));
+      if (d) Object.assign(d, copy(fields));
+      else coll(c).push(Object.assign({ _id: 'mem-' + (++seq) }, copy(criteria), copy(fields)));
     },
     async close() {}
   };

@@ -53,6 +53,22 @@ When('I create the {string} {string} from the telco catalogue', async function (
   this.lastSent = body;
 });
 
+// Setup for a scenario about something other than the create: the entry, and what
+// it refers to, exist through the current client
+Given('the {string} {string} has been created from the telco catalogue', async function (kind, key) {
+  await createTelcoEntries(this, this.version, [[kind, key]], { withoutRoots: true });
+  const { res, body } = await createEntry(this, kind, key);
+  expect(res.status, res.describe()).to.equal(201);
+  this.lastResponse = res;
+  this.lastSent = body;
+});
+
+Given('the created {string} is {string}', async function (kind, lifecycleStatus) {
+  const res = await this.client().patch(kind, created(this, kind).id, { lifecycleStatus });
+  this.debug(res.describe());
+  expect(res.status, res.describe()).to.equal(200);
+});
+
 Then('the response holds the content that was sent', function () {
   const res = this.lastResponse;
   expect(res.body, res.describe()).to.be.an('object');

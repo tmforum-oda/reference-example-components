@@ -24,22 +24,44 @@ Given('the telco catalogue entries that the {string} {string} refers to exist in
   await createTelcoEntries(this, version, [[kind, key]], { withoutRoots: true });
 });
 
+async function createFromTelco(world, version, kind, key) {
+  const { res, body } = await createTelcoEntry(world, version, kind, key);
+  respond(world, res);
+  world.lastSent = body;
+  world.lastSentKind = kind;
+  return res;
+}
+
+async function createWith(world, version, kind, alias, json) {
+  const client = world.client(version);
+  const attributes = resolveJson(world, json);
+  if (attributes.name === undefined) attributes.name = client.testName(`F007 ${alias}`);
+  const body = client.build(kind, attributes);
+  const res = respond(world, await client.create(kind, body));
+  world.lastSent = body;
+  world.lastSentKind = kind;
+  remember(world, version, kind, alias, res, body);
+  return res;
+}
+
 When('the {string} client creates the {string} {string} from the telco catalogue', async function (version, kind, key) {
-  const { res, body } = await createTelcoEntry(this, version, kind, key);
-  respond(this, res);
-  this.lastSent = body;
-  this.lastSentKind = kind;
+  await createFromTelco(this, version, kind, key);
 });
 
 When('the {string} client creates the {string} {string} with:', async function (version, kind, alias, json) {
-  const client = this.client(version);
-  const attributes = resolveJson(this, json);
-  if (attributes.name === undefined) attributes.name = client.testName(`F007 ${alias}`);
-  const body = client.build(kind, attributes);
-  const res = respond(this, await client.create(kind, body));
-  this.lastSent = body;
-  this.lastSentKind = kind;
-  remember(this, version, kind, alias, res, body);
+  await createWith(this, version, kind, alias, json);
+});
+
+// Setup steps: the same calls, for a scenario that is about what happens next
+Given('the {string} client has created the {string} {string} from the telco catalogue', async function (version, kind, key) {
+  await createTelcoEntries(this, version, [[kind, key]], { withoutRoots: true });
+  const res = await createFromTelco(this, version, kind, key);
+  expect(res.status, res.describe()).to.equal(201);
+});
+
+Given('the {string} client has created the {string} {string} with:', async function (version, kind, alias, json) {
+  const res = await createWith(this, version, kind, alias, json);
+  expect(res.status, res.describe()).to.equal(201);
 });
 
 // --- reading and changing ---
@@ -52,6 +74,12 @@ When('the {string} client retrieves the {string}', async function (version, alia
 When('the {string} client patches the {string} with:', async function (version, alias, json) {
   const r = lookup(this, alias);
   respond(this, await this.client(version).patch(r.kind, r.id, resolveJson(this, json)));
+});
+
+Given('the {string} client has patched the {string} with:', async function (version, alias, json) {
+  const r = lookup(this, alias);
+  const res = respond(this, await this.client(version).patch(r.kind, r.id, resolveJson(this, json)));
+  expect(res.status, res.describe()).to.equal(200);
 });
 
 When('the {string} client deletes the {string}', async function (version, alias) {
