@@ -159,7 +159,7 @@ Existing data can't be "rejected", so the 422 rule (§13.1) works differently he
 
 - `values.yaml`: `component.tmf620v5.enabled: true`, plus `apiv5.image`, `apiv5.versionLabel` and `apiv5.otlp` (the same structure as `api`).
 - `deployment-productcatalogapi.yaml`: new env var `METRICS_COMPATIBILITY_URL=http://{release}-{component}-sm:4000/compatibility` (§7.3).
-- New templates: `deployment-productcatalogapiv5.yaml` and `service-productcatalogapiv5.yaml` (startup probe on `.../v5/catalog`).
+- New templates: `deployment-productcatalogapiv5.yaml` and `service-productcatalogapiv5.yaml` (startup probe on the API root `.../v5`, which the v5 service answers with its entry point).
 - `component-productcatalog.yaml`: a second `specification[]` entry on the existing `productcatalogmanagement` exposed API (§4.4), with the official v5.0.0 spec URL (§13.3), included only when `component.tmf620v5.enabled`.
 - Chart `1.4.5` → **`1.5.0`**. `productcatalogapi` image `1.0.0` → `1.1.0`; `productcatalogmetrics` `1.0.0` → `1.1.0` (the new counter); new `productcatalogapiv5:1.0.0`. Add the entries to `dockerbuild-config.yaml`.
 - Update `README.md` (repo and chart) and regenerate `ProductCatalog-architecture.svg`.

@@ -47,7 +47,7 @@ spec:
           containerPort: 8080
         startupProbe:
           httpGet:
-            path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v5/catalog
+            path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v5
             port: 8080
           initialDelaySeconds: 10
           periodSeconds: 5
