@@ -13,7 +13,12 @@ The Product Catalog component now serves TMF620 **v4** and **v5** side by side. 
 - **Chart 1.5.0:**
   - `component.tmf620v5.enabled` (default `true`).
   - A second `specification[]` entry on `productcatalogmanagement`, so the Canvas creates a second ExposedAPI. The existing v4 ExposedAPI keeps its name.
-- **MCP** (`productcatalogmcp` 1.1.0): v4-only `constraint` removed from the examples and tool descriptions.
+- **Renamed for consistency with v5:**
+  - The v4 deployment and service `<release>-prodcatapi` are now `<release>-prodcatapiv4`, matching `<release>-prodcatapiv5`. So are the template files, the port name and the Dockerfile (`prodcat-v4-dockerfile`). Image names and ExposedAPI names are unchanged.
+  - The source folder `productCatalogMicroservice` is now `productCatalogV4Microservice`, matching `productCatalogV5Microservice`.
+  - A ClusterIP Service with the old name `<release>-prodcatapi` stays as an alias. The initialization Job (`productcataloginitialization:1.0.0`) still calls it, and it is kept unchanged because Kubernetes can't change a Job's pod template on upgrade. Re-running it would also register a second `/hub` listener, which the v4 hub doesn't dedupe.
+  - On upgrade, the v4 pod is replaced, so v4 is briefly unavailable while the new pod starts. Both ExposedAPIs keep their UIDs.
+- **MCP** (`productcatalogmcp` 1.1.0): v4-only `constraint` removed from the examples and tool descriptions. It gets the v4 URL from `TMF620_V4_API_URL`, which the chart sets.
 - **BDD tests:** Cucumber.js, in `source/ProductCatalog/tests/bdd`, with separate v4 and v5 clients that check every response against that version's OAS.
 
 ### Acceptance criteria (spec §12)
@@ -30,7 +35,7 @@ The Product Catalog component now serves TMF620 **v4** and **v5** side by side. 
 | Upgrade from chart 1.4.5 | ✅ 34 seeded documents: 33 converted, 2 of them with attributes quarantined, and 1 that couldn't be converted left as it was. Everything reads back through both versions, and the v4 ExposedAPI keeps its UID |
 | Compatibility counter scraped by the Canvas Prometheus | ⚠️ It counts with the right labels. Without a ServiceMonitor, though, the Canvas Prometheus doesn't scrape it (see below) |
 
-**Full BDD suite on the Canvas: 348/348 scenarios, 2388 steps, in 4m31s.**
+**Full BDD suite on the Canvas: 348/348 scenarios, 2388 steps, in 4m31s.** It passed 348/348 again after each rename. A fresh install's init Job registered through the alias.
 
 **Unit tests:**
 
