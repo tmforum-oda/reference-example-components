@@ -4,9 +4,9 @@ FROM node:16
 COPY shared/tmf620-compat/package.json shared/tmf620-compat/index.js /app/shared/tmf620-compat/
 COPY shared/tmf620-compat/lib /app/shared/tmf620-compat/lib
 COPY shared/tmf620-compat/generated /app/shared/tmf620-compat/generated
-WORKDIR /app/productCatalogMicroservice/implementation
-COPY productCatalogMicroservice/implementation/package*.json ./
+WORKDIR /app/productCatalogV4Microservice/implementation
+COPY productCatalogV4Microservice/implementation/package*.json ./
 RUN npm install
-COPY productCatalogMicroservice/implementation ./
+COPY productCatalogV4Microservice/implementation ./
 EXPOSE 8080
 CMD ["node", "index.js"]

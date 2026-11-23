@@ -22,7 +22,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\source\\ProductCatalog\\productCatalogMicroservice\\implementation\\index.js"
+            "program": "${workspaceFolder}\\source\\ProductCatalog\\productCatalogV4Microservice\\implementation\\index.js"
         },
         {
             "type": "node",

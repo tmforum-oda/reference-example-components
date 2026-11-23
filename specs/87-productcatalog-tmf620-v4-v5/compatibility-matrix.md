@@ -6,7 +6,7 @@ The authoritative mapping for the v4 translation layer. Spec: [spec.md](spec.md)
 
 | | File | Notes |
 |---|---|---|
-| v4 | `source/ProductCatalog/productCatalogMicroservice/implementation/api/swagger.yaml` | TMF620 v4.0.0, Swagger 2.0, 91 definitions. What the v4 service runs today. |
+| v4 | `source/ProductCatalog/productCatalogV4Microservice/implementation/api/swagger.yaml` | TMF620 v4.0.0, Swagger 2.0, 91 definitions. What the v4 service runs today. |
 | v5 | `source/ProductCatalog/productCatalogV5Microservice/implementation/api/TMF620-Product_Catalog_Management-v5.0.0.oas.yaml` | Copied unchanged from [tmforum-apis/TMF620_ProductCatalog](https://github.com/tmforum-apis/TMF620_ProductCatalog) (`main`, commit `8886c7d`, 2025-11-07, Apache-2.0). OpenAPI 3.0.1, 271 schemas, 56 reachable from the five resources. SHA-256 `a84bc2e4…7429351`. |
 
 Method (rerun with `python tools/flatten_tmf620.py <v4 swagger.yaml> <v5 oas.yaml> <out_dir>`, needs PyYAML): every attribute path of the five resources was flattened four levels deep (following `allOf`, `$ref`, `oneOf` and arrays) in both files and compared. Each difference found is a row below. Attributes not listed are identical in name and type in both versions and map one-to-one.

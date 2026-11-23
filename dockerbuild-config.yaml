@@ -80,7 +80,7 @@ images:
     dockerfile: prodcat-v4-dockerfile
     paths:
       - source/ProductCatalog/prodcat-v4-dockerfile
-      - source/ProductCatalog/productCatalogMicroservice
+      - source/ProductCatalog/productCatalogV4Microservice
       - source/ProductCatalog/shared/tmf620-compat
     republishedFrom: lesterthomas/productcatalogapi:1.6
   - name: productcatalogapiv5

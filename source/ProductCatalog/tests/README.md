@@ -21,7 +21,7 @@ The Product Catalog serves TMF620 Product Catalog Management v4 and v5 side by s
 
 * **Unit tests** for each part:
   * the v4 to v5 conversion library: [`shared/tmf620-compat/test`](../shared/tmf620-compat/test)
-  * the v4 service's storage and startup migration: [`productCatalogMicroservice/implementation/test`](../productCatalogMicroservice/implementation/test)
+  * the v4 service's storage and startup migration: [`productCatalogV4Microservice/implementation/test`](../productCatalogV4Microservice/implementation/test)
   * the v5 service: [`productCatalogV5Microservice/implementation/test`](../productCatalogV5Microservice/implementation/test)
   * the compatibility counter: [`openMetricsMicroservice/compatibility.test.js`](../openMetricsMicroservice/compatibility.test.js)
 * **BDD tests** in [`bdd`](bdd), which call both API versions the way a client would, against a local docker-compose stack or a component deployed in an ODA Canvas:
@@ -68,7 +68,7 @@ Set environment variables for your local mongo database:
 * `CANVAS_INFO_HOST_PORT` - 'localhost:8638' for the stub testing.
 
 ```
-cd productCatalogMicroservice/implementation
+cd productCatalogV4Microservice/implementation
 npm start
 ```
 

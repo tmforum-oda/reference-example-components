@@ -20,7 +20,7 @@ const addFormats = require('ajv-formats');
 
 const SOURCE = path.join(__dirname, '..', '..', '..');
 const SPEC_FILES = {
-  v4: process.env.TMF620_V4_SPEC || path.join(SOURCE, 'productCatalogMicroservice', 'implementation', 'api', 'swagger.yaml'),
+  v4: process.env.TMF620_V4_SPEC || path.join(SOURCE, 'productCatalogV4Microservice', 'implementation', 'api', 'swagger.yaml'),
   v5: process.env.TMF620_V5_SPEC || path.join(SOURCE, 'productCatalogV5Microservice', 'implementation', 'api', 'TMF620-Product_Catalog_Management-v5.0.0.oas.yaml')
 };
 

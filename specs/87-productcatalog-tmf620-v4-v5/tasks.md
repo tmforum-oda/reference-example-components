@@ -178,6 +178,7 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
     - A fresh `r2` install's init Job registered through the alias (201). `r2` was removed afterwards.
     - BDD: **348/348**.
   - The diagram was regenerated.
+  - The v4 service's source folder is now `productCatalogV4Microservice`, matching `productCatalogV5Microservice`. The Dockerfile, build config, the shape generator, the BDD schema paths, the READMEs (including the PartyManagement and ServiceInventory notes on the copied utils) and `.vscode/launch.json` follow. The unit tests pass (v4 16, tmf620-compat 54, BDD support 22). The rebuilt v4 image runs on the Canvas, and BDD passes **348/348**.
 
 ### T21. Image config and docs ✅ done
 - Result: `dockerbuild-config.yaml` has `productcatalogapiv5:1.0.0` (watching `prodcat-v5-dockerfile`, `productCatalogV5Microservice` and `shared/tmf620-compat`); `productcatalogapi` and `productcatalogmetrics` were already at `1.1.0`. `scripts/images.py select --base master --head HEAD` picks exactly the four images this branch changes.

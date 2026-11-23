@@ -15,7 +15,7 @@ const path = require('path');
 const yaml = require('js-yaml');
 
 const ROOT = path.join(__dirname, '..', '..', '..');
-const V4_FILE = path.join(ROOT, 'productCatalogMicroservice', 'implementation', 'api', 'swagger.yaml');
+const V4_FILE = path.join(ROOT, 'productCatalogV4Microservice', 'implementation', 'api', 'swagger.yaml');
 const V5_FILE = path.join(ROOT, 'productCatalogV5Microservice', 'implementation', 'api', 'TMF620-Product_Catalog_Management-v5.0.0.oas.yaml');
 const OUT_FILE = path.join(__dirname, '..', 'generated', 'shapes.json');
 

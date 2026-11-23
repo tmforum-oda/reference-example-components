@@ -9,7 +9,7 @@ This folder holds the Cucumber.js (BDD) tests. This README also covers the unit 
 | Kind | Where | What it runs against | What it proves |
 |---|---|---|---|
 | Unit: conversion library | [`shared/tmf620-compat/test`](../../shared/tmf620-compat/test) | nothing: plain functions | v4 ↔ v5 translation of every resource, the compatibility matrix rows (warnings, 409/422/400), PATCH merging, query and href translation, error messages, the stored-document migration. It also checks that the generated v4/v5 shape files match the specs. |
-| Unit: v4 service | [`productCatalogMicroservice/implementation/test`](../../productCatalogMicroservice/implementation/test) | an in-memory fake of MongoDB | the v4 storage layer (v4 in, v5 stored, v4 out), the startup migration (conversion, quarantine, `lifecycleStatus` default, idempotency, concurrent replicas), and the compatibility counter reporter |
+| Unit: v4 service | [`productCatalogV4Microservice/implementation/test`](../../productCatalogV4Microservice/implementation/test) | an in-memory fake of MongoDB | the v4 storage layer (v4 in, v5 stored, v4 out), the startup migration (conversion, quarantine, `lifecycleStatus` default, idempotency, concurrent replicas), and the compatibility counter reporter |
 | Unit: v5 service | [`productCatalogV5Microservice/implementation/test`](../../productCatalogV5Microservice/implementation/test) | the v5 app on an in-memory store, over HTTP | routes, filters, paging, sorting, merge and JSON Patch, the API root used by the health check, response validation against the v5 spec, and converting documents still in the v4 format on read |
 | Unit: metrics | [`openMetricsMicroservice/compatibility.test.js`](../../openMetricsMicroservice/compatibility.test.js) | the handler with a fake request | the `/compatibility` endpoint that counts `<component>_tmf620_compatibility_total` |
 | Unit: BDD support | [`test`](test) | nothing | the test clients' schema validation (each version refuses the other's shapes), the builders that turn telco test data into v4 and v5 bodies, alias placeholders and metric parsing |
@@ -46,7 +46,7 @@ npm install
 ```sh
 npm run test:unit                                               # BDD support code (this folder)
 (cd ../../shared/tmf620-compat && npm install && npm test)
-(cd ../../productCatalogMicroservice/implementation && npm install && npm test)
+(cd ../../productCatalogV4Microservice/implementation && npm install && npm test)
 (cd ../../productCatalogV5Microservice/implementation && npm install && npm test)
 (cd ../../openMetricsMicroservice && npm install && node --test compatibility.test.js)
 ```

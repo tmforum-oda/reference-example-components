@@ -31,7 +31,7 @@ Two BDD test clients, one per API version, prove this on a local ODA Canvas usin
 
 ## 3. Current state (what this builds on)
 
-- `productCatalogMicroservice` is a Node.js service generated from the **TMF620 v4.0.0 Swagger 2.0** file (`api/swagger.yaml`) and run with `swagger-tools` 0.10.1, which cannot load OpenAPI 3. The base path is `/{COMPONENT_NAME}/tmf-api/productCatalogManagement/v4/`.
+- `productCatalogV4Microservice` is a Node.js service generated from the **TMF620 v4.0.0 Swagger 2.0** file (`api/swagger.yaml`) and run with `swagger-tools` 0.10.1, which cannot load OpenAPI 3. The base path is `/{COMPONENT_NAME}/tmf-api/productCatalogManagement/v4/`.
 - Documents go into the `{release}-mongodb` database `tmf`, one collection per resource type (`getResponseType(req)`: `Catalog`, `Category`, …).
 - `href` is stored as `req.url + "/" + id`, which includes the component name and the `/v4` path (`utils/operationsUtils.js:200`, `:230`). A v5 API reading these documents would hand out v4 links, so this has to change (§6.4).
 - The #80 fixes (default `lifecycleStatus`, date-time filters, PATCH returns 200) must keep passing the TMF620 v4 CTK.
