@@ -63,7 +63,7 @@ Decisions:
 2. **The v5 document is the stored document.** The v5 service needs no translation. All compatibility logic lives in one place: the `source/ProductCatalog/shared/tmf620-compat` module, used by the v4 service at the persistence boundary: after v4 request validation, before the database write, and after the database read, before the response.
 3. **Same collection names** in both services (`Catalog`, `Category`, `ProductOffering`, `ProductOfferingPrice`, `ProductSpecification`).
 4. **One exposed API with two versions.** The Canvas Component v1 schema supports several versions of the same API: each entry in an exposed API's `specification[]` can override `implementation`, `path`, `developerUI`, `port` and `gatewayConfiguration`. The component operator (`normalize_apis` / `build_exposedapi_name` in oda-canvas TMFOP001) turns each entry into its own ExposedAPI named `<component>-<apiName>-<major version>`. So `productcatalogmanagement` (id TMF620) keeps its name and gets two `specification[]` entries:
-   - `version: v4`: the v4 spec URL, path `.../productCatalogManagement/v4`, implementation `{release}-prodcatapi` → ExposedAPI `{release}-productcatalogmanagement-productcatalogmanagement-v4` (**the same name as today**, so upgrades don't recreate it)
+   - `version: v4`: the v4 spec URL, path `.../productCatalogManagement/v4`, implementation `{release}-prodcatapiv4` → ExposedAPI `{release}-productcatalogmanagement-productcatalogmanagement-v4` (**the same name as today**, so upgrades don't recreate it)
    - `version: v5`: the v5.0.0 spec URL, path `.../productCatalogManagement/v5`, implementation `{release}-prodcatapiv5`, developerUI `.../v5/docs` → ExposedAPI `…-productcatalogmanagement-v5`
 
    `version` is set explicitly on both entries rather than left for the operator to infer from the URL.
@@ -158,7 +158,7 @@ Existing data can't be "rejected", so the 422 rule (§13.1) works differently he
 ## 9. Helm chart and component changes
 
 - `values.yaml`: `component.tmf620v5.enabled: true`, plus `apiv5.image`, `apiv5.versionLabel` and `apiv5.otlp` (the same structure as `api`).
-- `deployment-productcatalogapi.yaml`: new env var `METRICS_COMPATIBILITY_URL=http://{release}-{component}-sm:4000/compatibility` (§7.3).
+- `deployment-productcatalogapiv4.yaml` (renamed from `deployment-productcatalogapi.yaml`, with the deployment and service `{release}-prodcatapi` → `{release}-prodcatapiv4` to match v5; the MCP server gets the v4 URL from `TMF620_V4_API_URL`; a ClusterIP Service `{release}-prodcatapi` is kept as an alias for the initialization Job, which stays as it was in 1.4.x because Kubernetes can't change a Job's pod template on upgrade): new env var `METRICS_COMPATIBILITY_URL=http://{release}-{component}-sm:4000/compatibility` (§7.3).
 - New templates: `deployment-productcatalogapiv5.yaml` and `service-productcatalogapiv5.yaml` (startup probe on the API root `.../v5`, which the v5 service answers with its entry point).
 - `component-productcatalog.yaml`: a second `specification[]` entry on the existing `productcatalogmanagement` exposed API (§4.4), with the official v5.0.0 spec URL (§13.3), included only when `component.tmf620v5.enabled`.
 - Chart `1.4.5` → **`1.5.0`**. `productcatalogapi` image `1.0.0` → `1.1.0`; `productcatalogmetrics` `1.0.0` → `1.1.0` (the new counter); new `productcatalogapiv5:1.0.0`. Add the entries to `dockerbuild-config.yaml`.

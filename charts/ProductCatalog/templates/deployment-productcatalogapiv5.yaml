@@ -1,6 +1,6 @@
 {{- if .Values.component.tmf620v5.enabled }}
 # TMF620 v5 API (issue #87). Shares the component's MongoDB with the v4 API
-# ({{.Release.Name}}-prodcatapi), which stores every document in the v5 format.
+# ({{.Release.Name}}-prodcatapiv4), which stores every document in the v5 format.
 apiVersion: apps/v1
 kind: Deployment
 metadata:

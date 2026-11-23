@@ -40,7 +40,7 @@ services:
   api-v4:
     build:
       context: ../..
-      dockerfile: prodcat-dockerfile
+      dockerfile: prodcat-v4-dockerfile
     environment:
       <<: *component
       METRICS_COMPATIBILITY_URL: http://metrics:4000/compatibility

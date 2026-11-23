@@ -39,7 +39,7 @@ The component exposes TMF620 v4.0.0 and v5.0.0 as two versions of one API (`prod
 
 | ExposedAPI | Path | Microservice |
 |---|---|---|
-| `<release>-productcatalogmanagement-productcatalogmanagement-v4` | `/<release>-productcatalogmanagement/tmf-api/productCatalogManagement/v4` | `<release>-prodcatapi` |
+| `<release>-productcatalogmanagement-productcatalogmanagement-v4` | `/<release>-productcatalogmanagement/tmf-api/productCatalogManagement/v4` | `<release>-prodcatapiv4` |
 | `<release>-productcatalogmanagement-productcatalogmanagement-v5` | `/<release>-productcatalogmanagement/tmf-api/productCatalogManagement/v5` | `<release>-prodcatapiv5` |
 
 Both read and write the same MongoDB, and every document is stored in the v5 format, so a resource created through one version can be read, changed and deleted through the other with the same id. The v4 service translates at its persistence boundary; the v5 service stores and returns v5 documents as they are.
@@ -56,7 +56,7 @@ v5 is on by default. To expose v4 only, as before chart 1.5.0, set `component.tm
 helm install <release name> oda-components/productcatalog --set component.tmf620v5.enabled=false -n components
 ```
 
-When upgrading from chart 1.4.x, don't use `--reuse-values`: it keeps only the old values, which have no `component.tmf620v5` or `apiv5`, and the chart fails to render. Use your own values file, or `--reset-then-reuse-values` (Helm 3.14 or later). The v4 ExposedAPI keeps its name, so the Canvas does not recreate it.
+When upgrading from chart 1.4.x, don't use `--reuse-values`: it keeps only the old values, which have no `component.tmf620v5` or `apiv5`, and the chart fails to render. Use your own values file, or `--reset-then-reuse-values` (Helm 3.14 or later). The v4 ExposedAPI keeps its name, so the Canvas does not recreate it. The v4 deployment and service are renamed from `<release>-prodcatapi` to `<release>-prodcatapiv4`, to match `<release>-prodcatapiv5`, so the upgrade replaces them and v4 is briefly unavailable while the new pod starts. A ClusterIP Service with the old name is kept as an alias, because the initialization Job, which can't be changed on upgrade, still calls it. Use the new name, or better, the ExposedAPI URL, for anything new.
 
 ### Management function
 

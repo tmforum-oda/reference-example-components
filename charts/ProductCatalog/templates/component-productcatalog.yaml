@@ -29,7 +29,7 @@ spec:
       - url: "https://raw.githubusercontent.com/tmforum-apis/TMF620_ProductCatalog/master/TMF620-ProductCatalog-v4.0.0.swagger.json"
         version: v4.0.0
         apiType: openapi
-        implementation: {{.Release.Name}}-prodcatapi
+        implementation: {{.Release.Name}}-prodcatapiv4
         path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4
         developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4/docs
         port: 8080

@@ -72,7 +72,7 @@ Both collections use two collection variables. Update them to point to your inst
 
 Find the NodePorts with:
 ```bash
-kubectl get svc pc1-prodcatapi pc1-permissionspecapi -n components
+kubectl get svc pc1-prodcatapiv4 pc1-permissionspecapi -n components
 ```
 
 ## Running with Postman

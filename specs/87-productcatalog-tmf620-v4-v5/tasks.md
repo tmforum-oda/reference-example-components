@@ -166,6 +166,19 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - `helm lint` and `helm template`, with the toggle on and off.
 - **Depends on:** T1, T9.
 
+- **Changed after T24 (v4 naming):**
+  - The v4 deployment and service are now `{release}-prodcatapiv4`, matching `{release}-prodcatapiv5`. The template files are `deployment-` and `service-productcatalogapiv4.yaml`, the port is `pcapi4`, and the Dockerfile is `prodcat-v4-dockerfile`. The image names are unchanged, because the images are already published.
+  - The MCP server gets the v4 URL from `TMF620_V4_API_URL`, which the chart sets. Its default is the new service name.
+  - The initialization Job is unchanged (`productcataloginitialization:1.0.0`). Kubernetes can't change a Job's pod template, so changing the Job would make an upgrade from 1.4.x fail. Re-running it would register a second `/hub` listener, because the v4 hub doesn't dedupe, and metrics would be counted twice. So a ClusterIP Service with the old name `{release}-prodcatapi` stays as an alias for it.
+  - The ExposedAPI names don't change.
+  - **On the Canvas:**
+    - `helm upgrade` of `r1` (revision 4) replaced the deployment. Helm took over the existing Service as the alias.
+    - Both ExposedAPIs kept their UIDs and point at `r1-prodcatapiv4`.
+    - The v4 API answers 200 through both `r1-prodcatapi` and `r1-prodcatapiv4`.
+    - A fresh `r2` install's init Job registered through the alias (201). `r2` was removed afterwards.
+    - BDD: **348/348**.
+  - The diagram was regenerated.
+
 ### T21. Image config and docs ✅ done
 - Result: `dockerbuild-config.yaml` has `productcatalogapiv5:1.0.0` (watching `prodcat-v5-dockerfile`, `productCatalogV5Microservice` and `shared/tmf620-compat`); `productcatalogapi` and `productcatalogmetrics` were already at `1.1.0`. `scripts/images.py select --base master --head HEAD` picks exactly the four images this branch changes.
 - **Also bumped:** `productcatalogmcp` `1.0.0` → `1.1.0` (`dockerbuild-config.yaml` and chart `values.yaml`), not in spec §9. T8 removed `constraint` from the tool descriptions in `product_catalog_mcp_server.py`, which is built into that image, so the build workflow would otherwise refuse to rebuild over the existing `1.0.0` tag.

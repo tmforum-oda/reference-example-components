@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{.Release.Name}}-prodcatapi
+  name: {{.Release.Name}}-prodcatapiv4
   labels:
     oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      impl: {{.Release.Name}}-prodcatapi
+      impl: {{.Release.Name}}-prodcatapiv4
   template:
     metadata:
       labels:
         app: {{.Release.Name}}-{{.Values.component.name}}
-        impl: {{.Release.Name}}-prodcatapi
+        impl: {{.Release.Name}}-prodcatapiv4
         version: {{.Values.api.versionLabel}}
     spec:
       containers:
-      - name: {{.Release.Name}}-prodcatapi
+      - name: {{.Release.Name}}-prodcatapiv4
         image: {{.Values.api.image}}
         env:
         - name: DEPENDENT_APIS_REJECT_UNAUTHORIZED_CERTIFICATES
@@ -50,7 +50,7 @@ spec:
           value: "{{.Values.canvasinfo.basepath}}" 
         imagePullPolicy: Always
         ports:
-        - name: {{.Release.Name}}-pcapi
+        - name: {{.Release.Name}}-pcapi4
           containerPort: 8080
         startupProbe:
           httpGet:

@@ -25,6 +25,8 @@ spec:
           value: {{.Release.Name}}
         - name: COMPONENT_NAME
           value: {{.Release.Name}}-{{.Values.component.name}}        
+        - name: TMF620_V4_API_URL
+          value: http://{{.Release.Name}}-prodcatapiv4:8080/{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4
         imagePullPolicy: Always
         ports:
         - name: {{.Release.Name}}-pcmcp

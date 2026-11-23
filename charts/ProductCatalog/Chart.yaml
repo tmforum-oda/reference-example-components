@@ -16,7 +16,7 @@ type: application
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
 version: 1.5.0
-# version: 1.5.0 - TMF620 v5 alongside v4 on one v5-format store, with v4 data migrated on startup (issue 87)
+# version: 1.5.0 - TMF620 v5 alongside v4 on one v5-format store, with v4 data migrated on startup; v4 deployment and service renamed to <release>-prodcatapiv4, old service name kept as an alias (issue 87)
 # version: 1.4.5 - Images moved to the tmforumodacanvas Docker Hub organization as 1.0.0 (issue 84)
 # version: 1.4.4 - Fixed TMF672 specification URL (issue 63)
 # version: 1.4.3 - Added architecture diagram to README
