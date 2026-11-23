@@ -236,15 +236,17 @@ Translator unit tests (table-driven, `node:test`, in the v4 service) cover each 
 
 ## 12. Acceptance criteria
 
-- [ ] Both APIs are exposed by one component instance, and the Canvas shows two ready ExposedAPIs.
-- [ ] Every stored document is valid TMF620 v5.0.0, and no v4-shaped data is in MongoDB after migration.
-- [ ] CRUD passes for all five resources in both versions (F001–F005).
-- [ ] Every cross-version scenario passes (F006).
-- [ ] Every row of the compatibility matrix has a passing scenario or unit test; every lossy case gives the documented warning or error, and no v5 data is silently lost through v4 (F007).
-- [ ] The end-to-end telco catalogue runs clean and leaves no data behind (F008).
-- [ ] TMF620 v4 CTK: no regression. MCP server, initialization job and dependent-API federation still work on v4.
-- [ ] Upgrade from chart 1.4.5 keeps the existing data readable through both versions.
-- [ ] `<component>_tmf620_compatibility_total` is scraped by the Canvas Prometheus and counts every warning and error the BDD suite triggers, with the right labels.
+Checked 2026-11-23 on the local Canvas (T22, T23); details in [tasks.md](tasks.md).
+
+- [x] Both APIs are exposed by one component instance, and the Canvas shows two ready ExposedAPIs. *(T22: `…-productcatalogmanagement-v4` and `…-v5` ready with gateway routes; the v4 one keeps its name and UID across the upgrade, T23.)*
+- [x] Every stored document is valid TMF620 v5.0.0, and no v4-shaped data is in MongoDB after migration. *(T19, T23: every converted document reads back through v5 with no schema problems. A document that cannot be converted, such as an integer characteristic with the value `"Unlimited"`, is left unchanged as §8 specifies: it is logged and counted, and v5 refuses it with `500 TMF620-V5-500-UNMIGRATED`.)*
+- [x] CRUD passes for all five resources in both versions (F001–F005). *(208 scenarios.)*
+- [x] Every cross-version scenario passes (F006). *(50 scenarios.)*
+- [x] Every row of the compatibility matrix has a passing scenario or unit test; every lossy case gives the documented warning or error, and no v5 data is silently lost through v4 (F007). *(32 scenarios, one Rule per lossy row: G3, R2, K1, S2–S9, O1, O3, O5, P1–P3. The seamless rows are covered by the `tmf620-compat` unit tests and the F001–F006 round trips.)*
+- [x] The end-to-end telco catalogue runs clean and leaves no data behind (F008). *(8 scenarios.)*
+- [x] TMF620 v4 CTK: no regression. MCP server, initialization job and dependent-API federation still work on v4. *(v4.1.0 CTK 44/44 requests, all assertions, on compose, the Canvas and the upgraded data. Initialization job and federation checked on the Canvas. The MCP server was checked on compose only (T8): with `component.MCPServer.enabled=true` the Canvas refuses the Component because the `productcatalogmcp` exposed API has no `specification`, which also happens on `master`.)*
+- [x] Upgrade from chart 1.4.5 keeps the existing data readable through both versions. *(T23.)*
+- [ ] `<component>_tmf620_compatibility_total` is scraped by the Canvas Prometheus and counts every warning and error the BDD suite triggers, with the right labels. *(Counting and labels: met. Every F007 scenario checks its series goes up, and 15 series showed up with the right labels. Scraping: not met by default. The local Canvas's kube-prometheus-stack selects only ServiceMonitors, and the component gets only `prometheus.io/*` annotations, so no component metric is scraped, including the existing `_api_counter`. That gap is on the Canvas side and predates #87. It worked with a temporary ServiceMonitor.)*
 
 ## 13. Open questions
 

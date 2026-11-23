@@ -204,7 +204,8 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - Chart 1.4.5 + v4 seed data (include a POP with `constraint` and a spec with `charSpecSeq`) → upgrade to 1.5.0 → check the migration log → the v5 client reads the seeded data; the v4 client reads it unchanged except for the v4-only attributes, which are in `MigrationQuarantine`.
 - **Depends on:** T7, T22.
 
-### T24. Ready to contribute (maintainer decision)
+### T24. Ready to contribute (maintainer decision) 🟡 in progress
+- Result so far (2026-11-23): spec §12 ticked, with the evidence for each criterion. 8 of 9 are met. The metric criterion is only partly met: the counter counts with the right labels, but the local Canvas Prometheus doesn't scrape component metrics without a ServiceMonitor (a gap on the Canvas side that predates #87). The MCP server was checked on compose only. The write-up was posted on #87 (https://github.com/tmforum-oda/reference-example-components/issues/87#issuecomment-7095587671); the text is kept in [issue-87-verification-comment-draft.md](issue-87-verification-comment-draft.md). The PR decision is still open.
 - Tick the spec §12 acceptance criteria, write the verification results up on #87, and only then decide whether to open a PR.
 - **Depends on:** T22, T23.
 
