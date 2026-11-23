@@ -56,7 +56,7 @@ v5 is on by default. To expose v4 only, as before chart 1.5.0, set `component.tm
 helm install <release name> oda-components/productcatalog --set component.tmf620v5.enabled=false -n components
 ```
 
-When upgrading from chart 1.4.x, don't use `--reuse-values`: it keeps only the old values, which have no `component.tmf620v5` or `apiv5`, and the chart fails to render. Use your own values file, or `--reset-then-reuse-values` (Helm 3.14 or later). The v4 ExposedAPI keeps its name, so the Canvas does not recreate it. The v4 deployment and service are renamed from `<release>-prodcatapi` to `<release>-prodcatapiv4`, to match `<release>-prodcatapiv5`, so the upgrade replaces them and v4 is briefly unavailable while the new pod starts. A ClusterIP Service with the old name is kept as an alias, because the initialization Job, which can't be changed on upgrade, still calls it. Use the new name, or better, the ExposedAPI URL, for anything new.
+When upgrading from chart 1.4.x, don't use `--reuse-values`: it keeps only the old values, which have no `component.tmf620v5` or `apiv5`, and the chart fails to render. Use your own values file, or `--reset-then-reuse-values` (Helm 3.14 or later). The v4 ExposedAPI keeps its name, so the Canvas does not recreate it. The v4 deployment and service were renamed to `<release>-prodcatapiv4` in chart 1.4.6 (see [Upgrading to chart 1.4.6](#upgrading-to-chart-146)). Upgrading straight from 1.4.5 to 1.5.0 makes both changes in one go.
 
 ### Management function
 
@@ -135,6 +135,14 @@ kubectl get exposedapis -n components
 
 (The DEPLOYMENT_STATUS will cycle through a number of interim states as part of the deployment). 
 If the deployment fails, refer to the [Troubleshooting-Guide](https://github.com/tmforum-oda/oda-ca-docs/tree/master/Troubleshooting-Guide).
+
+### Upgrading to chart 1.4.6
+
+Chart 1.4.6 renames the TMF620 v4 API deployment and service from `<release>-prodcatapi` to `<release>-prodcatapiv4`. This gets them ready for TMF620 v5, which runs beside v4 as `<release>-prodcatapiv5`. The ExposedAPI keeps its name, so the Canvas updates its route rather than recreating it.
+
+- The upgrade replaces the v4 deployment rather than rolling it, so the v4 API is briefly unavailable while the new pod starts.
+- The initialization Job is now `<release>-prodcatinit`. A Job's pod template can't be changed, so the upgrade replaces the Job and it runs again. The v4 API returns an existing listener when the same callback registers again, so the metrics microservice still gets each event once.
+- Anything outside the chart that calls the v4 service by its old name has to use `<release>-prodcatapiv4`, or better, the ExposedAPI URL.
 
  
 ## Configuration

@@ -138,7 +138,8 @@ if (require.main === module) {
   const text = JSON.stringify(generate(), null, 1) + '\n';
   if (process.argv.includes('--check')) {
     const current = fs.existsSync(OUT_FILE) ? fs.readFileSync(OUT_FILE, 'utf8') : '';
-    if (current !== text) {
+    // Ignore line endings: a Windows checkout with core.autocrlf has CRLF.
+    if (current.replace(/\r\n/g, '\n') !== text) {
       console.error('generated/shapes.json is out of date: run npm run generate');
       process.exit(1);
     }

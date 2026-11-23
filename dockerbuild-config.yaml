@@ -116,7 +116,7 @@ images:
       - source/ProductCatalog/promotionManagementMicroservice
     republishedFrom: lesterthomas/promotionmgmtapi:0.6
   - name: productcataloginitialization
-    version: 1.0.0
+    version: 1.1.0
     context: source/ProductCatalog
     dockerfile: productcataloginitialization-dockerfile
     paths:

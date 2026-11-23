@@ -1,7 +1,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{.Release.Name}}-productcataloginitialization
+  # Renamed from <release>-productcataloginitialization in chart 1.4.6. A Job's pod template
+  # can't be changed, so an upgrade replaces the Job instead; re-running it is safe because
+  # the v4 API returns an existing listener instead of registering it twice.
+  name: {{.Release.Name}}-prodcatinit
   labels:
     oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
 spec:
@@ -18,6 +21,8 @@ spec:
           value: {{.Release.Name}}           
         - name: COMPONENT_NAME
           value: {{.Release.Name}}-{{.Values.component.name}}           
+        - name: TMF620_V4_API_URL
+          value: http://{{.Release.Name}}-prodcatapiv4:8080/{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4
         imagePullPolicy: Always
       restartPolicy: OnFailure
   backoffLimit: 10

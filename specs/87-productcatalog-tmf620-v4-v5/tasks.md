@@ -167,16 +167,14 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
 - **Depends on:** T1, T9.
 
 - **Changed after T24 (v4 naming):**
-  - The v4 deployment and service are now `{release}-prodcatapiv4`, matching `{release}-prodcatapiv5`. The template files are `deployment-` and `service-productcatalogapiv4.yaml`, the port is `pcapi4`, and the Dockerfile is `prodcat-v4-dockerfile`. The image names are unchanged, because the images are already published.
-  - The MCP server gets the v4 URL from `TMF620_V4_API_URL`, which the chart sets. Its default is the new service name.
-  - The initialization Job is unchanged (`productcataloginitialization:1.0.0`). Kubernetes can't change a Job's pod template, so changing the Job would make an upgrade from 1.4.x fail. Re-running it would register a second `/hub` listener, because the v4 hub doesn't dedupe, and metrics would be counted twice. So a ClusterIP Service with the old name `{release}-prodcatapi` stays as an alias for it.
-  - The ExposedAPI names don't change.
-  - **On the Canvas:**
-    - `helm upgrade` of `r1` (revision 4) replaced the deployment. Helm took over the existing Service as the alias.
-    - Both ExposedAPIs kept their UIDs and point at `r1-prodcatapiv4`.
-    - The v4 API answers 200 through both `r1-prodcatapi` and `r1-prodcatapiv4`.
-    - A fresh `r2` install's init Job registered through the alias (201). `r2` was removed afterwards.
-    - BDD: **348/348**.
+  - The v4 deployment and service are now `{release}-prodcatapiv4`, matching `{release}-prodcatapiv5`. The template files are `deployment-` and `service-productcatalogapiv4.yaml`, the port is `pcapi4`, and the Dockerfile is `prodcat-v4-dockerfile`. The image names are unchanged. The ExposedAPI names don't change.
+  - First done on this branch, with a ClusterIP alias Service `{release}-prodcatapi` for the unchanged initialization Job.
+  - Then moved into **chart 1.4.6** (PR #89, merged into `master`):
+    - `productcatalogapi` 1.0.1: `POST /hub` returns an existing listener instead of registering it twice.
+    - The init Job is renamed to `{release}-prodcatinit`, so an upgrade replaces it.
+    - `productcataloginitialization` 1.1.0 and the MCP server read the v4 URL from `TMF620_V4_API_URL`.
+  - Merging `master` into this branch removed the alias. The 1.5.0 init Job renders exactly as in 1.4.6, so an upgrade from 1.4.6 leaves it alone.
+  - The `--check` of `tmf620-compat`'s shape generator now ignores line endings. A Windows checkout with `core.autocrlf` has CRLF, and the check failed on it.
   - The diagram was regenerated.
   - The v4 service's source folder is now `productCatalogV4Microservice`, matching `productCatalogV5Microservice`. The Dockerfile, build config, the shape generator, the BDD schema paths, the READMEs (including the PartyManagement and ServiceInventory notes on the copied utils) and `.vscode/launch.json` follow. The unit tests pass (v4 16, tmf620-compat 54, BDD support 22). The rebuilt v4 image runs on the Canvas, and BDD passes **348/348**.
 
@@ -211,6 +209,23 @@ Legend: **Depends on** lists the tasks that must be done first. Tasks with no de
   - Through the gateway, all 31 telco resources read back through v4 and v5 with the expected content, no warnings and no schema problems; the quarantined price and specification read through both without the v4-only attributes; the unconvertible specification is still served by v4, and v5 answers `500 TMF620-V5-500-UNMIGRATED`.
   - With that data present, the BDD `all` profile passes **105/105**. After the seed was deleted, the v4.1.0 CTK passes 44/44 requests, 413/413 assertions.
 - **Rerun with the `lifecycleStatus` default** (decided after the finding below): fresh 1.4.5 install, the same seed, upgrade to 1.5.0 with the rebuilt v4 image. `33 converted (2 with quarantined attributes, 33 given lifecycleStatus "In design" because they had none), 1 left unchanged`; afterwards only the unconvertible specification has no `lifecycleStatus`. The seed reads back with no problems; **with the migrated data present the v4.1.0 CTK passes 44/44 requests, 1027/1027 assertions**; BDD `all` 105/105; the seed was then deleted.
+- **Rerun from chart 1.4.6** (after #89 was merged, 2026-11-23):
+  - **Starting point:** a fresh install of the published chart 1.4.6 from `master` as `r1`, on Docker Hub images (`productcatalogapi:1.0.1`, `productcataloginitialization:1.1.0`). The component was `Complete`. The same seed went in through its v4 API: 34 unmarked documents (1.0.1 sets `lifecycleStatus`) and one metrics listener.
+  - **Upgrade:** `helm upgrade` to 1.5.0 with the local images from this branch (revision 2).
+    - The init Job renders the same in both charts, so it wasn't touched.
+    - `r1-prodcatapiv4` kept its name and rolled.
+    - All four existing ExposedAPIs kept their UIDs, and `…-productcatalogmanagement-v5` was added and is ready.
+  - **Migration:** `33 converted (2 with quarantined attributes, 0 given lifecycleStatus "In design" because they had none), 1 left unchanged`.
+    - `MigrationQuarantine` holds `constraint` and `charSpecSeq`.
+    - The counter shows `W-V4ONLY-QUARANTINED` ×2 and `TMF620-COMPAT-422-CHARVALUE-TYPE`, with `operation=migration`.
+    - There is still one metrics listener.
+  - **Reads:** all 31 telco entries read back through v4 and v5 with no problems. The quarantined price and specification read through both. The unconvertible specification is served by v4 and refused by v5 with `500 TMF620-V5-500-UNMIGRATED`.
+  - **Tests, with that data present:**
+    - BDD **348/348** (2388 steps).
+    - TMF620 v4.1.0 CTK **44/44 requests, 1038/1038 assertions**.
+    - The overlap check (unmarked documents written after the migration) behaves as above: converted, quarantined, or refused with the reason.
+  - **Unit tests on the merged tree:** tmf620-compat 54, v4 16, v5 25, metrics 6, BDD support 22.
+  - The seed is still in `r1`.
 - `helm upgrade --reuse-values` fails as documented (`component.tmf620v5` is nil); `--reset-then-reuse-values` renders.
 - **Found (before #87):** the published `productcatalogapi:1.0.0` image is older than `master` and does not default `lifecycleStatus` on create (the #80 fix that sets `In design` is in `master` but was never published). None of the 34 documents written through chart 1.4.5 have a `lifecycleStatus`, so with them present the v4 CTK fails 84 of 728 assertions ("Response has lifecycleStatus attribute", "Instance has all mandatory attributes"). The migration keeps documents as they were, so the gap carries over to 1.5.0. Decision: the migration gives such documents `In design` (spec §8); see the rerun above.
 - **Rolling-update overlap:** the 1.4.5 and 1.5.0 v4 pods run side by side for a few seconds, so a document written through the old pod after the new one has migrated is still in the v4 format. The v5 API now converts such a document itself, with the same `tmf620-compat` code, the first time a GET, PATCH or list meets it; only one that cannot be converted gets `500 UNMIGRATED`. v5 unit tests: 25 (GET, list and PATCH convert; an unconvertible one is refused, left out of lists, counted once and left unchanged). On the Canvas, three unmarked documents were written straight into MongoDB: a category without `lifecycleStatus` came back from a v5 GET converted with `In design`; a price with `constraint` was found by a v5 list, with `constraint` moved to `MigrationQuarantine` and `W-V4ONLY-QUARANTINED` counted with `operation=migration`; a specification with an integer characteristic of `"Unlimited"` got `500` with the reason, was left out of the v5 list, was still served by v4 and was logged once. The v5 deployment now sets `METRICS_COMPATIBILITY_URL`.

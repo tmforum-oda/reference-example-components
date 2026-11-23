@@ -46,7 +46,7 @@ Two BDD test clients, one per API version, prove this on a local ODA Canvas usin
  .../productCatalogManagement/v4            .../productCatalogManagement/v5
           │                                               │
  ┌────────▼─────────────────┐               ┌─────────────▼────────────┐
- │ {release}-prodcatapi     │               │ {release}-prodcatapiv5   │
+ │ {release}-prodcatapiv4   │               │ {release}-prodcatapiv5   │
  │ swagger-tools, v4 OAS    │               │ express-openapi-validator│
  │ ┌──────────────────────┐ │               │ stores and returns the   │
  │ │ v4⇄v5 translator     │ │               │ v5 document as is        │
@@ -158,7 +158,7 @@ Existing data can't be "rejected", so the 422 rule (§13.1) works differently he
 ## 9. Helm chart and component changes
 
 - `values.yaml`: `component.tmf620v5.enabled: true`, plus `apiv5.image`, `apiv5.versionLabel` and `apiv5.otlp` (the same structure as `api`).
-- `deployment-productcatalogapiv4.yaml` (renamed from `deployment-productcatalogapi.yaml`, with the deployment and service `{release}-prodcatapi` → `{release}-prodcatapiv4` to match v5; the MCP server gets the v4 URL from `TMF620_V4_API_URL`; a ClusterIP Service `{release}-prodcatapi` is kept as an alias for the initialization Job, which stays as it was in 1.4.x because Kubernetes can't change a Job's pod template on upgrade): new env var `METRICS_COMPATIBILITY_URL=http://{release}-{component}-sm:4000/compatibility` (§7.3).
+- `deployment-productcatalogapiv4.yaml` (named `{release}-prodcatapiv4` since chart 1.4.6, PR #89, which also made `/hub` registration idempotent and renamed the initialization Job): new env var `METRICS_COMPATIBILITY_URL=http://{release}-{component}-sm:4000/compatibility` (§7.3).
 - New templates: `deployment-productcatalogapiv5.yaml` and `service-productcatalogapiv5.yaml` (startup probe on the API root `.../v5`, which the v5 service answers with its entry point).
 - `component-productcatalog.yaml`: a second `specification[]` entry on the existing `productcatalogmanagement` exposed API (§4.4), with the official v5.0.0 spec URL (§13.3), included only when `component.tmf620v5.enabled`.
 - Chart `1.4.5` → **`1.5.0`**. `productcatalogapi` image `1.0.0` → `1.1.0`; `productcatalogmetrics` `1.0.0` → `1.1.0` (the new counter); new `productcatalogapiv5:1.0.0`. Add the entries to `dockerbuild-config.yaml`.

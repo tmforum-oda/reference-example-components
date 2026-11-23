@@ -98,6 +98,6 @@ canvasinfo:
   host: info.canvas.svc.cluster.local
   basepath: /
 initialization:
-  image: tmforumodacanvas/productcataloginitialization:1.0.0
+  image: tmforumodacanvas/productcataloginitialization:1.1.0
 roleinitialization:
   image: tmforumodacanvas/productcatalog-roleinitialization:1.0.0
