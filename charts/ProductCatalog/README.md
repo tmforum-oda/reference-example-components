@@ -104,6 +104,14 @@ r1-productcatalogmanagement   Complete
 (The DEPLOYMENT_STATUS will cycle through a number of interim states as part of the deployment). 
 If the deployment fails, refer to the [Troubleshooting-Guide](https://github.com/tmforum-oda/oda-ca-docs/tree/master/Troubleshooting-Guide).
 
+### Upgrading to chart 1.4.6
+
+Chart 1.4.6 renames the TMF620 v4 API deployment and service from `<release>-prodcatapi` to `<release>-prodcatapiv4`. This gets them ready for TMF620 v5, which runs beside v4 as `<release>-prodcatapiv5`. The ExposedAPI keeps its name, so the Canvas updates its route rather than recreating it.
+
+- The upgrade replaces the v4 deployment rather than rolling it, so the v4 API is briefly unavailable while the new pod starts.
+- The initialization Job is now `<release>-prodcatinit`. A Job's pod template can't be changed, so the upgrade replaces the Job and it runs again. The v4 API returns an existing listener when the same callback registers again, so the metrics microservice still gets each event once.
+- Anything outside the chart that calls the v4 service by its old name has to use `<release>-prodcatapiv4`, or better, the ExposedAPI URL.
+
  
 ## Configuration
 You can configure the following aspects of the component:

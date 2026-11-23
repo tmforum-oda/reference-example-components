@@ -26,11 +26,13 @@ log_dir.mkdir(exist_ok=True)
 
 logger = logging.getLogger("product-catalog-api")
 
-# Constants
-if RELEASE_NAME == "local":
+# Constants: TMF620_V4_API_URL (set by the chart) wins; otherwise the v4 service in the same release
+if os.environ.get("TMF620_V4_API_URL"):
+    API_URL = os.environ["TMF620_V4_API_URL"].rstrip("/")
+elif RELEASE_NAME == "local":
     API_URL = "https://localhost/r1-productcatalogmanagement/tmf-api/productCatalogManagement/v4"
 else:
-    API_URL = f"http://{RELEASE_NAME}-prodcatapi:8080/{RELEASE_NAME}-productcatalogmanagement/tmf-api/productCatalogManagement/v4"
+    API_URL = f"http://{RELEASE_NAME}-prodcatapiv4:8080/{RELEASE_NAME}-productcatalogmanagement/tmf-api/productCatalogManagement/v4"
 logger.info(f"API URL: {API_URL}")
 
 
