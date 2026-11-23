@@ -121,9 +121,25 @@ function register(req, res, next) {
       }
 
       mongoUtils.connect().then(db => {
+        // A listener already registered with the same callback and query is returned as it is,
+        // so registering again (for example when the initialization job re-runs) doesn't
+        // deliver every event twice. (_query can't be compared: it includes the new id.)
+        const sameListener = {
+          callback: doc.callback,
+          query: (doc.query === undefined) ? { $exists: false } : doc.query,
+          _serviceGroup: doc._serviceGroup
+        };
         db.collection(HUB)
-          .insertOne(doc)
-          .then(() => sendDoc(res, 201, payload))
+          .findOne(sameListener)
+          .then((existing) => {
+            if (existing) {
+              console.log("register: listener already registered for callback " + doc.callback + ", id " + existing.id);
+              return sendDoc(res, 201, clean(existing));
+            }
+            return db.collection(HUB)
+              .insertOne(doc)
+              .then(() => sendDoc(res, 201, payload));
+          })
           .catch((error) => sendError(res, TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Database error")));
       })
       .catch((error) => sendError(res, TError(TErrorEnum.INTERNAL_SERVER_ERROR, "Database error")));

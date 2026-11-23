@@ -75,7 +75,7 @@ images:
 
   # ProductCatalog
   - name: productcatalogapi
-    version: 1.0.0
+    version: 1.0.1
     context: source/ProductCatalog
     dockerfile: prodcat-dockerfile
     paths:
@@ -91,7 +91,7 @@ images:
       - source/ProductCatalog/openMetricsMicroservice
     republishedFrom: lesterthomas/openmetrics:1.0
   - name: productcatalogmcp
-    version: 1.0.0
+    version: 1.0.1
     context: source/ProductCatalog
     dockerfile: prodcat-mcp-dockerfile
     paths:
@@ -107,7 +107,7 @@ images:
       - source/ProductCatalog/promotionManagementMicroservice
     republishedFrom: lesterthomas/promotionmgmtapi:0.6
   - name: productcataloginitialization
-    version: 1.0.0
+    version: 1.1.0
     context: source/ProductCatalog
     dockerfile: productcataloginitialization-dockerfile
     paths:

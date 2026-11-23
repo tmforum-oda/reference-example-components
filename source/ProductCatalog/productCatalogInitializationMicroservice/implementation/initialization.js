@@ -2,6 +2,9 @@ const axios = require('axios');
 
 var releaseName = process.env.RELEASE_NAME; 
 var componentName = process.env.COMPONENT_NAME; 
+// Base URL of the TMF620 v4 API; the chart sets it. The default is the v4 service in the same release.
+var apiUrl = process.env.TMF620_V4_API_URL ||
+  'http://' + releaseName + '-prodcatapiv4:8080/' + componentName + '/tmf-api/productCatalogManagement/v4';
 
 const metricsEventListner = {
   callback: "http://" + componentName + "-sm:4000/listener"
@@ -15,7 +18,7 @@ const createMetricsEventListner = async () => {
   while (complete == false) {
     try {
         await delay(5000);  // retry every 5 seconds
-        const url = 'http://' + releaseName + '-prodcatapi:8080/' + componentName + '/tmf-api/productCatalogManagement/v4/hub';
+        const url = apiUrl + '/hub';
         console.log('POSTing listner with callback ',metricsEventListner, ' to: ', url);
         const res = await axios.post(
           url, 
