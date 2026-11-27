@@ -52,10 +52,11 @@ spec:
         template: "{{.Values.component.apipolicy.template}}"
     {{- if .Values.component.MCPServer.enabled }}
     - name: productcatalogmcp
-      implementation: {{.Release.Name}}-prodcatmcp
-      apiType: mcp
-      path: /{{.Release.Name}}-{{.Values.component.name}}/mcp
-      port: 8080
+      specification:
+      - implementation: {{.Release.Name}}-prodcatmcp
+        apiType: mcp
+        path: /{{.Release.Name}}-{{.Values.component.name}}/mcp
+        port: 8080
     {{- end }}      
     - name: promotionmanagement
       specification:
