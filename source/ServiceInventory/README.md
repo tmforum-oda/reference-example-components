@@ -59,7 +59,7 @@ The microservices interact as follows:
 
 ### Shared utilities (`utils/`)
 
-These 14 files are identical across all reference components — they are copied verbatim from `source/ProductCatalog/productCatalogMicroservice/implementation/utils/`:
+These 14 files are identical across all reference components — they are copied verbatim from `source/ProductCatalog/productCatalogV4Microservice/implementation/utils/`:
 
 | File | Purpose |
 |---|---|

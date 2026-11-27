@@ -1,0 +1,57 @@
+{{- if .Values.component.tmf620v5.enabled }}
+# TMF620 v5 API (issue #87). Shares the component's MongoDB with the v4 API
+# ({{.Release.Name}}-prodcatapiv4), which stores every document in the v5 format.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Release.Name}}-prodcatapiv5
+  labels:
+    oda.tmforum.org/componentName: {{.Release.Name}}-{{.Values.component.name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      impl: {{.Release.Name}}-prodcatapiv5
+  template:
+    metadata:
+      labels:
+        app: {{.Release.Name}}-{{.Values.component.name}}
+        impl: {{.Release.Name}}-prodcatapiv5
+        version: {{.Values.apiv5.versionLabel}}
+    spec:
+      containers:
+      - name: {{.Release.Name}}-prodcatapiv5
+        image: {{.Values.apiv5.image}}
+        env:
+        - name: RELEASE_NAME
+          value: {{.Release.Name}}
+        - name: COMPONENT_NAME
+          value: {{.Release.Name}}-{{.Values.component.name}}
+        - name: OTL_EXPORTER_CONSOLE_ENABLED
+          value: "{{.Values.apiv5.otlp.console.enabled}}"
+        - name: OTL_EXPORTER_TRACE_PROTO_ENABLED
+          value: "{{.Values.apiv5.otlp.protobuffCollector.enabled}}"
+        - name: OTL_EXPORTER_TRACE_PROTO_COLLECTOR_URL
+          value: {{.Values.apiv5.otlp.protobuffCollector.url}}
+        - name: MONGODB_HOST
+          value: {{.Release.Name}}-mongodb
+        - name: MONGODB_PORT
+          value: "{{.Values.mongodb.port}}"
+        - name: MONGODB_DATABASE
+          value: {{.Values.mongodb.database}}
+        - name: NODE_ENV
+          value: production
+        - name: METRICS_COMPATIBILITY_URL
+          value: http://{{.Release.Name}}-{{.Values.component.name}}-sm:4000/compatibility
+        imagePullPolicy: Always
+        ports:
+        - name: {{.Release.Name}}-pcapi5
+          containerPort: 8080
+        startupProbe:
+          httpGet:
+            path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v5
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 30
+{{- end }}

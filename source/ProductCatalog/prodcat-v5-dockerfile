@@ -1,0 +1,21 @@
+# TMF620 Product Catalog Management v5 API (issue #87). Build context: source/ProductCatalog
+FROM node:22-alpine
+
+# The v4 <-> v5 compatibility module, at the same relative path as in the repository
+# (../../shared/tmf620-compat from the service). Runtime files only.
+COPY shared/tmf620-compat/package.json shared/tmf620-compat/index.js /app/shared/tmf620-compat/
+COPY shared/tmf620-compat/lib /app/shared/tmf620-compat/lib
+COPY shared/tmf620-compat/generated /app/shared/tmf620-compat/generated
+
+WORKDIR /app/productCatalogV5Microservice/implementation
+COPY productCatalogV5Microservice/implementation/package*.json ./
+RUN npm ci --omit=dev
+COPY productCatalogV5Microservice/implementation/app.js productCatalogV5Microservice/implementation/index.js ./
+COPY productCatalogV5Microservice/implementation/api ./api
+COPY productCatalogV5Microservice/implementation/handlers ./handlers
+COPY productCatalogV5Microservice/implementation/utils ./utils
+
+ENV NODE_ENV=production
+EXPOSE 8080
+USER node
+CMD ["node", "index.js"]

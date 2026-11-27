@@ -15,7 +15,8 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 1.4.6
+version: 1.5.0
+# version: 1.5.0 - TMF620 v5 alongside v4 on one v5-format store, with v4 data migrated on startup (issue 87); MCP exposed API under specification[] and mcp pinned below 2.0 (PR 90)
 # version: 1.4.6 - v4 API deployment and service renamed to <release>-prodcatapiv4; v4 hub registration made idempotent and the initialization Job renamed so it is replaced on upgrade
 # version: 1.4.5 - Images moved to the tmforumodacanvas Docker Hub organization as 1.0.0 (issue 84)
 # version: 1.4.4 - Fixed TMF672 specification URL (issue 63)

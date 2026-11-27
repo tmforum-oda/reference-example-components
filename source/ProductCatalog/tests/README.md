@@ -15,6 +15,27 @@ There are three test colections for the Product Catalog Management:
 And one test collection for the Promotion Management.
 
 
+# Testing TMF620 v4 and v5 support
+
+The Product Catalog serves TMF620 Product Catalog Management v4 and v5 side by side over one MongoDB in the v5 format (issue #87, see [the spec](../../../specs/87-productcatalog-tmf620-v4-v5/spec.md)). It is tested at three levels:
+
+* **Unit tests** for each part:
+  * the v4 to v5 conversion library: [`shared/tmf620-compat/test`](../shared/tmf620-compat/test)
+  * the v4 service's storage and startup migration: [`productCatalogV4Microservice/implementation/test`](../productCatalogV4Microservice/implementation/test)
+  * the v5 service: [`productCatalogV5Microservice/implementation/test`](../productCatalogV5Microservice/implementation/test)
+  * the compatibility counter: [`openMetricsMicroservice/compatibility.test.js`](../openMetricsMicroservice/compatibility.test.js)
+* **BDD tests** in [`bdd`](bdd), which call both API versions the way a client would, against a local docker-compose stack or a component deployed in an ODA Canvas:
+  * every resource on v4 and on v5;
+  * data written through one version and read and changed through the other;
+  * the warnings and errors where v4 cannot carry v5 data (one scenario per row of the compatibility matrix), with the compatibility metric;
+  * an end-to-end telco catalogue built through both versions.
+* **The TM Forum v4.1.0 conformance test kit (CTK)**, run against the v4 API to show that adding v5 has not changed v4.
+
+The upgrade from chart 1.4.5 (v4 only) was also tested on a Canvas: existing v4 data is migrated to the v5 format and stays readable through both versions.
+
+See [the BDD README](bdd/README.md) for what each kind of test covers and how to run it, and the [task list](../../../specs/87-productcatalog-tmf620-v4-v5/tasks.md) for the recorded results.
+
+
 # Testing the dependent API implementation
 
 The product catalog implements the optional dependency on other Product Catalogs. It federates any resources from downstream catalogs for both retrieve by ID and list operations. It does not allow any updates to the downstream product catalogs. The product catalog microservice queries a Canvas.Info API service to get details of the downstream APIs.
@@ -47,7 +68,7 @@ Set environment variables for your local mongo database:
 * `CANVAS_INFO_HOST_PORT` - 'localhost:8638' for the stub testing.
 
 ```
-cd productCatalogMicroservice/implementation
+cd productCatalogV4Microservice/implementation
 npm start
 ```
 

@@ -22,10 +22,26 @@ spec:
   coreFunction:
     exposedAPIs: 
     - name: productcatalogmanagement
+      # One entry per version (issue #87): the Canvas creates one ExposedAPI per entry,
+      # named <component>-productcatalogmanagement-<major version>, with that entry's
+      # apiType, implementation, path, developerUI and port. Both versions share the gateway policy.
       specification:
       - url: "https://raw.githubusercontent.com/tmforum-apis/TMF620_ProductCatalog/master/TMF620-ProductCatalog-v4.0.0.swagger.json"
-      implementation: {{.Release.Name}}-prodcatapiv4
-      apiType: openapi
+        version: v4.0.0
+        apiType: openapi
+        implementation: {{.Release.Name}}-prodcatapiv4
+        path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4
+        developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4/docs
+        port: 8080
+      {{- if .Values.component.tmf620v5.enabled }}
+      - url: "https://raw.githubusercontent.com/tmforum-apis/TMF620_ProductCatalog/main/TMF620-Product_Catalog_Management-v5.0.0.oas.yaml"
+        version: v5.0.0
+        apiType: openapi
+        implementation: {{.Release.Name}}-prodcatapiv5
+        path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v5
+        developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v5/docs
+        port: 8080
+      {{- end }}
       id: TMF620
       gatewayConfiguration:
         apiKeyVerification: {{.Values.component.apipolicy.apiKeyVerification | toYaml | nindent 10}}
@@ -34,15 +50,13 @@ spec:
         OASValidation: {{.Values.component.apipolicy.OASValidation | toYaml | nindent 10}}
         CORS: {{.Values.component.apipolicy.CORS | toYaml | nindent 10}}
         template: "{{.Values.component.apipolicy.template}}"
-      path: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4
-      developerUI: /{{.Release.Name}}-{{.Values.component.name}}/tmf-api/productCatalogManagement/v4/docs
-      port: 8080
     {{- if .Values.component.MCPServer.enabled }}
     - name: productcatalogmcp
-      implementation: {{.Release.Name}}-prodcatmcp
-      apiType: mcp
-      path: /{{.Release.Name}}-{{.Values.component.name}}/mcp
-      port: 8080
+      specification:
+      - implementation: {{.Release.Name}}-prodcatmcp
+        apiType: mcp
+        path: /{{.Release.Name}}-{{.Values.component.name}}/mcp
+        port: 8080
     {{- end }}      
     - name: promotionmanagement
       specification:

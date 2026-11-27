@@ -1,0 +1,12 @@
+FROM node:16
+# TMF620 v4 <-> v5 compatibility module (issue #87), at the same relative path as in
+# the repository (../../shared/tmf620-compat from the service). Runtime files only.
+COPY shared/tmf620-compat/package.json shared/tmf620-compat/index.js /app/shared/tmf620-compat/
+COPY shared/tmf620-compat/lib /app/shared/tmf620-compat/lib
+COPY shared/tmf620-compat/generated /app/shared/tmf620-compat/generated
+WORKDIR /app/productCatalogV4Microservice/implementation
+COPY productCatalogV4Microservice/implementation/package*.json ./
+RUN npm install
+COPY productCatalogV4Microservice/implementation ./
+EXPOSE 8080
+CMD ["node", "index.js"]

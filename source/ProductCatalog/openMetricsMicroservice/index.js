@@ -15,6 +15,11 @@ const counter = new client.Counter({
   labelNames: ['NotificationEvent']
 });
 
+// TMF620 v4/v5 compatibility warnings and errors reported by the v4 API (issue #87)
+const compatibility = require('./compatibility');
+const compatibilityCounter = compatibility.createCompatibilityCounter(client, metricName);
+server.post('/compatibility', compatibility.compatibilityHandler(compatibilityCounter));
+
 server.get('/' + componentName + '/', async function(req, res) {
     res.send('Microservice to report prometheus metrics from ODA Components. Go to /metrics to see the metrics')
   })

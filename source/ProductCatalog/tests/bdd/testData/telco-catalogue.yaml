@@ -1,0 +1,258 @@
+# Example Telco: one version-neutral description of a consumer and small-business
+# telco catalogue (spec 10.2). testData/v4 and testData/v5 render each entry in that
+# version's payload shape; testData/catalogue.js loads this file.
+#
+# Entries are found by kind and key. References to other entries use their keys and
+# are resolved at build time to the ids of resources created in the same scenario.
+# Amounts are GBP. Names get the run id appended when they are created.
+
+parties:
+  owner: { id: org-example-telco, name: Example Telco, role: owner, referredType: Organization }
+
+catalog:
+  consumer:
+    name: Example Telco Consumer Catalogue
+    description: Mobile, broadband and TV for consumers
+    catalogType: Product
+    version: "2026.11"
+    owner: owner
+    validFrom: "2026-11-01T00:00:00Z"
+    categories: [mobile, broadband, tv, bundles]
+  small-business:
+    name: Example Telco Small Business Catalogue
+    description: Connectivity for businesses with up to 50 employees
+    catalogType: Product
+    version: "2026.11"
+    owner: owner
+    validFrom: "2026-11-01T00:00:00Z"
+    categories: [mobile, broadband]
+
+category:
+  mobile:
+    name: Mobile
+    description: Mobile plans and handsets
+    isRoot: true
+  sim-only:
+    name: SIM-only Plans
+    description: Mobile plans without a device
+    isRoot: false
+    parent: mobile
+  handsets:
+    name: Handsets
+    description: Smartphones on a monthly plan
+    isRoot: false
+    parent: mobile
+  broadband:
+    name: Home Broadband
+    description: Full fibre to the premises
+    isRoot: true
+  tv:
+    name: TV & Entertainment
+    description: IPTV channel packs and add-ons
+    isRoot: true
+  bundles:
+    name: Bundles
+    description: Broadband and TV together
+    isRoot: true
+
+productSpecification:
+  5g-mobile:
+    name: 5G Mobile Service
+    description: 5G mobile voice, text and data
+    brand: Example Telco
+    productNumber: MOB-5G
+    version: "1.0"
+    owner: owner
+    characteristics:
+      - name: Data allowance
+        valueType: string
+        configurable: true
+        values: [{ value: 30GB }, { value: 100GB }, { value: Unlimited, default: true }]
+      - name: Network technology
+        valueType: string
+        values: [{ value: 5G SA, default: true }, { value: 5G NSA }, { value: 4G }]
+      - name: EU roaming
+        valueType: boolean
+        configurable: true
+        values: [{ value: true, default: true }, { value: false }]
+      - name: Tethering allowance
+        valueType: integer
+        range: { from: 0, to: 100, unit: GB }
+  full-fibre:
+    name: Full Fibre Broadband
+    description: Fibre to the premises broadband
+    brand: Example Telco
+    productNumber: BB-FTTP
+    version: "1.0"
+    owner: owner
+    characteristics:
+      - name: Download speed
+        valueType: integer
+        configurable: true
+        values: [{ value: 150, unit: Mbps }, { value: 500, unit: Mbps, default: true }, { value: 1000, unit: Mbps }]
+      - name: Upload speed
+        valueType: integer
+        values: [{ value: 30, unit: Mbps }, { value: 75, unit: Mbps }, { value: 115, unit: Mbps }]
+      - name: Access technology
+        valueType: string
+        values: [{ value: FTTP, default: true }]
+      - name: Static IP
+        valueType: boolean
+        configurable: true
+        values: [{ value: false, default: true }, { value: true }]
+  smartphone:
+    name: Smartphone Device
+    description: 5G smartphone
+    brand: Nova
+    productNumber: DEV-NOVA-X5
+    version: "1.0"
+    owner: owner
+    characteristics:
+      - name: Model
+        valueType: string
+        values: [{ value: Nova X5 5G, default: true }]
+      - name: Storage
+        valueType: integer
+        configurable: true
+        values: [{ value: 128, unit: GB }, { value: 256, unit: GB, default: true }]
+      - name: Colour
+        valueType: string
+        configurable: true
+        values: [{ value: Midnight, default: true }, { value: Glacier }]
+  iptv:
+    name: IPTV Service
+    description: Live and on-demand TV over broadband
+    brand: Example Telco
+    productNumber: TV-IPTV
+    version: "1.0"
+    owner: owner
+    characteristics:
+      - name: Channel pack
+        valueType: string
+        values: [{ value: Essentials, default: true }, { value: Entertainment }]
+      - name: UHD
+        valueType: boolean
+        values: [{ value: false, default: true }, { value: true }]
+      - name: Concurrent streams
+        valueType: integer
+        values: [{ value: 2, default: true }, { value: 4 }]
+  home-bundle:
+    name: Home Bundle
+    description: Full Fibre broadband and IPTV together
+    brand: Example Telco
+    productNumber: BUN-HOME
+    version: "1.0"
+    owner: owner
+    isBundle: true
+    bundles: [full-fibre, iptv]
+
+# kind: recurring | oneTime | usage | discount
+productOfferingPrice:
+  5g-unlimited-monthly:
+    name: 5G Unlimited monthly charge
+    kind: recurring
+    amount: 30.00
+  5g-100gb-monthly:
+    name: 5G 100GB monthly charge
+    kind: recurring
+    amount: 18.00
+  ff500-monthly:
+    name: Full Fibre 500 monthly charge
+    kind: recurring
+    amount: 32.00
+    changedAmount: 30.00          # the price change the lifecycle scenarios make
+  ff1000-discount:
+    name: Full Fibre 1000 half price for 6 months
+    kind: discount
+    percentage: 50
+    termMonths: 6
+  ff1000-monthly:
+    name: Full Fibre 1000 monthly charge
+    kind: recurring
+    amount: 45.00
+    relationships: [{ price: ff1000-discount, type: discount }]
+  tv-essentials-monthly:
+    name: TV Essentials monthly charge
+    kind: recurring
+    amount: 12.00
+  home-bundle-monthly:
+    name: Home Bundle monthly charge
+    kind: recurring
+    amount: 52.00
+  installation:
+    name: Broadband installation
+    kind: oneTime
+    amount: 60.00
+  handset-upfront:
+    name: Nova X5 upfront payment
+    kind: oneTime
+    amount: 49.00
+  handset-instalment:
+    name: Nova X5 device instalment
+    kind: recurring
+    amount: 35.00
+    termMonths: 36
+  roaming-day:
+    name: Roaming outside the EU zone per day   # no commas in names: a comma in a filter means 'any of'
+    kind: usage
+    amount: 3.00
+    usageUnit: day
+
+productOffering:
+  5g-unlimited-24:
+    name: 5G Unlimited SIM-only 24 months
+    description: Unlimited 5G data, calls and texts on a 24-month plan
+    specification: 5g-mobile
+    prices: [5g-unlimited-monthly, roaming-day]
+    categories: [sim-only]
+    termMonths: 24
+    charValues: [{ name: Data allowance, valueType: string, value: Unlimited }]
+  5g-100gb-12:
+    name: 5G 100GB SIM-only 12 months
+    description: 100GB of 5G data, unlimited calls and texts on a 12-month plan
+    specification: 5g-mobile
+    prices: [5g-100gb-monthly, roaming-day]
+    categories: [sim-only]
+    termMonths: 12
+    charValues: [{ name: Data allowance, valueType: string, value: 100GB }]
+  nova-x5-36:
+    name: Nova X5 5G 256GB on 5G Unlimited 36 months
+    description: The Nova X5 5G with 256GB, paid monthly with 5G Unlimited
+    specification: smartphone
+    prices: [handset-upfront, handset-instalment, 5g-unlimited-monthly]
+    categories: [handsets]
+    termMonths: 36
+    charValues: [{ name: Storage, valueType: integer, value: 256, unit: GB }]
+  ff500:
+    name: Full Fibre 500
+    description: 500 Mbps full fibre broadband on a 24-month plan
+    specification: full-fibre
+    prices: [ff500-monthly, installation]
+    categories: [broadband]
+    termMonths: 24
+    charValues: [{ name: Download speed, valueType: integer, value: 500, unit: Mbps }]
+  ff1000:
+    name: Full Fibre 1000
+    description: 1 Gbps full fibre broadband on a 24-month plan
+    specification: full-fibre
+    prices: [ff1000-monthly, installation]
+    categories: [broadband]
+    termMonths: 24
+    charValues: [{ name: Download speed, valueType: integer, value: 1000, unit: Mbps }]
+  tv-essentials:
+    name: TV Essentials add-on
+    description: The Essentials channel pack, two streams
+    specification: iptv
+    prices: [tv-essentials-monthly]
+    categories: [tv]
+    termMonths: 12
+    charValues: [{ name: Channel pack, valueType: string, value: Essentials }]
+  home-bundle:
+    name: "Home Bundle: Full Fibre 1000 + TV Essentials"
+    description: Full Fibre 1000 broadband with the TV Essentials pack
+    specification: home-bundle
+    isBundle: true
+    bundles: [ff1000, tv-essentials]
+    prices: [home-bundle-monthly, installation]
+    categories: [bundles]
+    termMonths: 24

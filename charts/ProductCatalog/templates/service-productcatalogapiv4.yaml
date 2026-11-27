@@ -13,4 +13,3 @@ spec:
   type: NodePort
   selector:
     impl: {{.Release.Name}}-prodcatapiv4
-
